@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Engineering portfolio for an Industrial Automation and Digital Twin Engineer focused on virtual commissioning, PLC simulation, OPC UA, and automation software systems."
+  >
+  <title>Industrial Automation & Digital Twin Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#home">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="navbar container" aria-label="Primary navigation">
+      <a class="brand" href="#home">
+        <span class="brand-mark">AE</span>
+        <span class="brand-text">Automation Engineer</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+        aria-label="Toggle navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links" id="nav-menu">
+        <a href="#home">Home</a>
+        <a href="#projects">Projects</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#domains">Domains</a>
+        <a href="#articles">Articles</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero section" id="home">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Engineering Portfolio</p>
+          <h1>Your Name</h1>
+          <p class="hero-title">Industrial Automation &amp; Digital Twin Engineer</p>
+          <p class="hero-description">
+            I design engineering systems that connect virtual commissioning, PLC simulation,
+            OPC UA communication, digital twin visualization, and automation software tools into
+            practical, testable workflows for modern industrial environments.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#projects">View Projects</a>
+            <a class="button button-secondary" href="#contact">Contact</a>
+          </div>
+        </div>
+
+        <div class="hero-panel" aria-label="Core engineering focus">
+          <div class="panel-header">
+            <span class="status-dot"></span>
+            <span>System Focus</span>
+          </div>
+          <ul class="focus-list">
+            <li>Virtual commissioning workflows</li>
+            <li>PLC behavior and fault simulation</li>
+            <li>OPC UA connectivity and data exchange</li>
+            <li>Unity-based digital twin visualization</li>
+            <li>Engineering software integration</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Selected Work</p>
+          <h2>Projects</h2>
+          <p>
+            Example projects demonstrating automation engineering, simulation logic,
+            and digital twin system thinking.
+          </p>
+        </div>
+
+        <div class="card-grid projects-grid">
+          <article class="card project-card">
+            <div class="card-top">
+              <h3>Unity Digital Twin Demo</h3>
+              <div class="tags" aria-label="Technology tags">
+                <span>Unity</span>
+                <span>C#</span>
+                <span>OPC UA</span>
+                <span>Simulation</span>
+              </div>
+            </div>
+            <p>
+              A real-time visualization concept linking simulated machine states to a 3D Unity
+              environment for operator review and engineering validation.
+            </p>
+            <ul class="detail-list">
+              <li>Problem: Machine behavior was difficult to explain before physical commissioning.</li>
+              <li>Solution: Built a 3D digital twin that mirrors live and simulated signals.</li>
+              <li>Result: Improved communication between controls, software, and project stakeholders.</li>
+            </ul>
+          </article>
+
+          <article class="card project-card">
+            <div class="card-top">
+              <h3>PLC Error Simulation System</h3>
+              <div class="tags" aria-label="Technology tags">
+                <span>PLC</span>
+                <span>OPC UA</span>
+                <span>Diagnostics</span>
+                <span>Testing</span>
+              </div>
+            </div>
+            <p>
+              A simulation setup for injecting realistic PLC faults and abnormal signal conditions
+              to test alarm logic, error handling, and operator response.
+            </p>
+            <ul class="detail-list">
+              <li>Problem: Fault scenarios were hard to reproduce consistently during testing.</li>
+              <li>Solution: Created repeatable error states through controlled simulation inputs.</li>
+              <li>Result: Enabled earlier debugging of alarms, interlocks, and recovery sequences.</li>
+            </ul>
+          </article>
+
+          <article class="card project-card">
+            <div class="card-top">
+              <h3>Automation Engineering Tool / Training Panel</h3>
+              <div class="tags" aria-label="Technology tags">
+                <span>Automation</span>
+                <span>HMI</span>
+                <span>Training</span>
+                <span>Systems</span>
+              </div>
+            </div>
+            <p>
+              A compact engineering demonstrator used to explain control logic, software structure,
+              and operator interaction in a training-friendly environment.
+            </p>
+            <ul class="detail-list">
+              <li>Problem: New engineers needed a practical way to understand control workflows.</li>
+              <li>Solution: Structured a panel with modular logic, visualization, and guided scenarios.</li>
+              <li>Result: Reduced onboarding friction and supported hands-on engineering learning.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="architecture">
+      <div class="container architecture-layout">
+        <div class="section-heading">
+          <p class="eyebrow">Systems Thinking</p>
+          <h2>Architecture</h2>
+          <p>
+            A simple layered view of how industrial signals move from simulated control behavior
+            into software services and visual digital twin experiences.
+          </p>
+        </div>
+
+        <div class="architecture-content">
+          <pre class="architecture-diagram"><code>Unity Visualization
+    |
+    v
+API Layer
+    |
+    v
+OPC UA Client
+    |
+    v
+OPC UA Server
+    |
+    v
+PLC Simulation</code></pre>
+          <p>
+            The PLC simulation produces machine states and fault conditions. An OPC UA server exposes
+            these signals, an OPC UA client reads and translates the data, the API layer organizes
+            it for application use, and the Unity visualization presents the system state in a clear,
+            interactive digital twin interface.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="domains">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Core Expertise</p>
+          <h2>Engineering Domains</h2>
+          <p>
+            Technical areas that define my work across automation, integration, and simulation projects.
+          </p>
+        </div>
+
+        <div class="card-grid domains-grid">
+          <article class="card domain-card">
+            <h3>Virtual Commissioning</h3>
+            <p>
+              Building and testing machine logic in a simulated environment before installation to
+              reduce commissioning risk and accelerate startup.
+            </p>
+          </article>
+
+          <article class="card domain-card">
+            <h3>PLC Simulation</h3>
+            <p>
+              Reproducing machine signals, sequences, and fault cases to validate controls behavior,
+              interlocks, and operator-facing diagnostics.
+            </p>
+          </article>
+
+          <article class="card domain-card">
+            <h3>OPC UA Integration</h3>
+            <p>
+              Connecting automation devices and software layers through structured, interoperable
+              industrial data exchange.
+            </p>
+          </article>
+
+          <article class="card domain-card">
+            <h3>Automation Software</h3>
+            <p>
+              Creating engineering tools and software workflows that support testing, visualization,
+              commissioning, and technical communication.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="articles">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Writing</p>
+          <h2>Articles</h2>
+          <p>
+            Placeholder article summaries for future technical writing and thought leadership.
+          </p>
+        </div>
+
+        <div class="card-grid articles-grid">
+          <article class="card article-card">
+            <h3>Understanding Virtual Commissioning</h3>
+            <p>
+              A practical overview of why simulation-first workflows matter in machine development
+              and system validation.
+            </p>
+          </article>
+
+          <article class="card article-card">
+            <h3>Building a Digital Twin with Unity and OPC UA</h3>
+            <p>
+              A technical walkthrough of linking industrial data to a real-time 3D visualization layer.
+            </p>
+          </article>
+
+          <article class="card article-card">
+            <h3>How to Simulate PLC Errors</h3>
+            <p>
+              An introduction to designing repeatable fault scenarios for testing alarm and recovery logic.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container about-layout">
+        <div class="section-heading">
+          <p class="eyebrow">Profile</p>
+          <h2>About</h2>
+        </div>
+        <div class="about-copy">
+          <p>
+            I come from an automation engineering background with a strong interest in digital twins,
+            simulation-driven development, and software-supported commissioning. My work focuses on
+            how engineering systems, control logic, data interfaces, and visualization layers fit
+            together into reliable industrial solutions.
+          </p>
+          <p>
+            I am especially interested in projects where system architecture, industrial communication,
+            and practical engineering tools meet to improve testing, understanding, and deployment quality.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="contact">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Connect</p>
+          <h2>Contact</h2>
+          <p>Replace the placeholders below with your actual public contact details.</p>
+        </div>
+
+        <div class="contact-card card">
+          <div class="contact-item">
+            <span class="contact-label">Email</span>
+            <a href="mailto:your.email@example.com">your.email@example.com</a>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">LinkedIn</span>
+            <a href="https://www.linkedin.com/in/your-linkedin" target="_blank" rel="noreferrer">
+              linkedin.com/in/your-linkedin
+            </a>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">GitHub</span>
+            <a href="https://github.com/your-github" target="_blank" rel="noreferrer">
+              github.com/your-github
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p>&copy; <span id="year"></span> Your Name. Industrial Automation &amp; Digital Twin Engineer.</p>
+      <a href="#home">Back to top</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
