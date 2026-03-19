@@ -1,310 +1,354 @@
-// Centralized bilingual content dictionary for all visible UI text.
+// Bilingual content model for all copy and structured project data.
 const translations = {
   en: {
-    pageTitle: "Industrial Automation & Digital Twin Engineer",
+    pageTitle: "Systems Portfolio",
     skipLink: "Skip to content",
-    brandSubtitle: "Industrial Systems Portfolio",
+    brandSubtitle: "Problem Solving Through Engineering Systems",
     navHome: "Home",
     navProjects: "Projects",
-    navArchitecture: "Architecture",
     navDomains: "Domains",
     navAbout: "About",
     navContact: "Contact",
-    heroEyebrow: "Industrial Automation Portfolio",
-    heroTitle: "Industrial Automation & Digital Twin Engineer",
+    heroEyebrow: "Engineering Systems Portfolio",
+    heroTitle: "Systems Thinking for Industrial Software, Simulation, and Digital Delivery",
     heroDescription:
-      "I build engineering systems that connect virtual commissioning, PLC simulation, OPC UA integration, and digital twin visualization into practical workflows for industrial projects.",
-    heroPrimaryAction: "View Projects",
-    heroSecondaryAction: "Contact",
-    metricsHeading: "Engineering Focus",
-    metricOne: "Control behavior simulation",
-    metricTwo: "Industrial data interoperability",
-    metricThree: "Digital twin visualization",
-    projectsEyebrow: "Selected Work",
-    projectsTitle: "Projects",
+      "I work on technical problems that sit between control logic, simulation, industrial data exchange, and software representation. My focus is turning complex systems into structures that can be tested, understood, and delivered with less ambiguity.",
+    heroPrimaryAction: "Explore Projects",
+    heroSecondaryAction: "Read Profile",
+    panelBadge: "Method",
+    projectsEyebrow: "Selected Projects",
+    projectsTitle: "Project Case Studies",
     projectsIntro:
-      "Project summaries are structured to help recruiters understand the engineering challenge, the system approach, and the delivery impact.",
-    architectureEyebrow: "System View",
-    architectureTitle: "Architecture",
-    architectureIntro:
-      "A concise stack view showing how simulation data moves into software services and operator-facing visualization.",
-    architectureDescription:
-      "The PLC simulation produces state, alarms, and fault conditions. OPC UA exposes the data layer, integration services normalize it, and the front-end visualization turns engineering signals into an understandable digital twin.",
-    domainsEyebrow: "Technical Scope",
-    domainsTitle: "Engineering Domains",
+      "Each project is framed around the problem, the system response, and the technical decisions that made the solution work.",
+    domainsEyebrow: "Capability Areas",
+    domainsTitle: "Domains",
     domainsIntro:
-      "Core capability areas that are directly relevant to automation engineering, commissioning teams, and digital transformation programs.",
+      "These are the technical domains where I typically translate unclear requirements into structured systems and testable workflows.",
     aboutEyebrow: "Profile",
     aboutTitle: "About",
+    aboutLead: "My work is centered on technical problem solving rather than a single job title.",
     aboutParagraphOne:
-      "I work at the intersection of automation engineering, software integration, and simulation-driven delivery. My focus is on building systems that allow control logic, industrial communication, and digital representations of equipment to be tested earlier and explained more clearly.",
+      "I am interested in projects where physical systems, software abstractions, and engineering constraints need to be brought into one coherent operating model. That often means turning unclear interactions into explicit flows, interfaces, and validation paths.",
     aboutParagraphTwo:
-      "I am particularly interested in virtual commissioning, PLC behavior modeling, OPC UA-based interoperability, and engineering tools that make complex systems easier to validate, maintain, and scale.",
-    contactEyebrow: "Connect",
-    contactTitle: "Contact",
+      "Across simulation, system integration, and digital tooling, I focus on reducing uncertainty: making system behavior visible earlier, separating concerns clearly, and structuring implementation so teams can reason about it.",
+    contactEyebrow: "Contact",
+    contactTitle: "Get In Touch",
     contactIntro:
       "Replace the placeholders below with your public contact details before publishing.",
     contactEmailLabel: "Email",
     contactLinkedinLabel: "LinkedIn",
     contactGithubLabel: "GitHub",
-    footerText: "Industrial Automation & Digital Twin Engineer.",
+    footerText: "Engineering systems portfolio.",
     footerAction: "Back to top",
     focusItems: [
-      "Virtual commissioning and pre-commissioning validation",
-      "PLC sequence logic, fault simulation, and alarm testing",
-      "OPC UA integration between control and software layers",
-      "Unity-based digital twin visualization for technical communication"
+      "Reduce ambiguity by turning system behavior into explicit flows.",
+      "Design interfaces that allow software and physical logic to be tested earlier.",
+      "Use architecture as a problem-solving tool, not as documentation after the fact.",
+      "Build technical representations that help teams reason, debug, and align."
     ],
-    architectureDiagram: [
-      "Unity / Web Visualization",
-      "          |",
-      "          v",
-      "Integration API Layer",
-      "          |",
-      "          v",
-      "OPC UA Client & Data Mapping",
-      "          |",
-      "          v",
-      "OPC UA Server / Gateway",
-      "          |",
-      "          v",
-      "PLC Simulation / Control Logic"
-    ].join("\n"),
     projectLabels: {
+      pitch: "One-line pitch",
       problem: "Problem",
       solution: "Solution",
-      architecture: "Architecture",
-      technologies: "Technologies",
-      result: "Result"
+      highlights: "Technical Highlights",
+      result: "Result",
+      systemView: "System View",
+      tech: "Tech",
+      expand: "Open",
+      collapse: "Close"
     },
     projects: [
       {
-        title: "Unity Digital Twin Demo",
+        title: "Digital Twin Review Environment",
+        pitch: "Turn machine logic into a shared visual model before hardware is available.",
         summary:
-          "A demonstration environment for visualizing simulated machine status, operating modes, and alarm conditions in a 3D interface.",
+          "A project for making simulated equipment behavior understandable to controls, software, and non-specialist stakeholders in the same review loop.",
         problem:
-          "Project teams needed a clearer way to review machine behavior before physical equipment was available for commissioning.",
+          "Teams were discussing sequences and states in different abstractions: PLC logic, spreadsheet tags, and informal descriptions. That made design reviews slow and error-prone.",
         solution:
-          "I connected simulated control signals to a Unity-based scene so engineering stakeholders could inspect machine states in real time.",
-        architecture:
-          "PLC simulation publishes process states through OPC UA, a lightweight integration layer maps tags to visual states, and the Unity client renders equipment behavior.",
-        technologies: ["Unity", "C#", "OPC UA", "PLC Simulation"],
-        result: [
-          "Improved early design reviews and technical communication.",
-          "Reduced ambiguity around machine sequences and alarm behavior."
-        ]
+          "I structured the system so simulated signals could drive a real-time visualization layer. The goal was not just display, but shared understanding of machine behavior before physical commissioning.",
+        highlights: [
+          "Mapped control-state tags to visual objects and operating modes.",
+          "Separated simulation data, translation logic, and front-end rendering responsibilities.",
+          "Used the visualization layer as a validation surface for sequence and alarm logic."
+        ],
+        result:
+          "The project reduced review ambiguity and made it easier to identify mismatches between expected behavior and implemented logic earlier in the lifecycle.",
+        diagram: [
+          "PLC Simulation",
+          "     |",
+          "     v",
+          "Tag / State Mapping",
+          "     |",
+          "     v",
+          "Visualization Logic",
+          "     |",
+          "     v",
+          "Shared Design Review"
+        ].join("\n"),
+        technologies: ["Simulation", "Unity", "C#", "OPC UA", "State Mapping"]
       },
       {
-        title: "PLC Error Simulation System",
+        title: "Fault Injection Test System",
+        pitch: "Create repeatable failure conditions so recovery logic can be validated with intent.",
         summary:
-          "A repeatable testing setup for generating PLC faults, signal loss, and abnormal process conditions before site commissioning.",
+          "A structured testing setup for reproducing alarm, interlock, and abnormal-state scenarios without waiting for unpredictable field conditions.",
         problem:
-          "Fault scenarios were difficult to reproduce consistently, which made alarm verification and recovery testing unreliable.",
+          "Error handling logic often looked correct in nominal flows but failed under edge conditions because faults were hard to recreate consistently during commissioning.",
         solution:
-          "I designed a simulation workflow that injects controlled error states into the PLC logic and exposes them to supervisory software.",
-        architecture:
-          "A simulated PLC runtime generates predefined fault cases, OPC UA exposes diagnostic values, and test views validate alarms, interlocks, and reset behavior.",
-        technologies: ["PLC", "Diagnostics", "OPC UA", "Test Automation"],
-        result: [
-          "Enabled structured verification of alarm handling and recovery paths.",
-          "Shifted debugging effort earlier in the project lifecycle."
-        ]
+          "I built a testable fault-injection path that could trigger known abnormal states through simulation, exposing diagnostic behavior to software and operator-facing views.",
+        highlights: [
+          "Defined reusable fault scenarios instead of one-off manual tests.",
+          "Separated normal process behavior from injected abnormal-state behavior.",
+          "Used exposed diagnostics to validate alarm timing, interlock response, and reset handling."
+        ],
+        result:
+          "Testing shifted from reactive troubleshooting to deliberate validation, improving confidence in exception handling before site startup.",
+        diagram: [
+          "Fault Scenario Library",
+          "        |",
+          "        v",
+          "Simulation Runtime",
+          "        |",
+          "        v",
+          "Diagnostics / Alarm Checks",
+          "        |",
+          "        v",
+          "Recovery Validation"
+        ].join("\n"),
+        technologies: ["PLC", "Diagnostics", "Test Design", "OPC UA", "Validation Logic"]
       },
       {
-        title: "Automation Engineering Tool / Training Panel",
+        title: "Engineering Training Platform",
+        pitch: "Package complex control behavior into a compact system people can learn from directly.",
         summary:
-          "A compact engineering demonstrator used to teach control logic structure, device interaction, and troubleshooting workflows.",
+          "A modular training and demonstration setup designed to explain system behavior, signal relationships, and troubleshooting patterns through a smaller but representative platform.",
         problem:
-          "New engineers and trainees needed a practical environment to understand automation architecture without depending on full production equipment.",
+          "New team members could read documentation, but they still lacked a concrete model for how software, signals, and control responses connected in practice.",
         solution:
-          "I assembled a modular training panel with simple sequences, status visualization, and guided troubleshooting scenarios.",
-        architecture:
-          "The panel combines controller logic, operator-facing indicators, and documented training flows so users can connect software behavior to physical signals.",
-        technologies: ["Automation", "Training Panel", "HMI", "Systems Integration"],
-        result: [
-          "Improved onboarding for controls-oriented engineering work.",
-          "Created a reusable platform for demonstrations and technical training."
-        ]
+          "I designed a compact system that preserved the logic relationships of a larger environment while making the signal flow and behavior visible enough for guided learning and troubleshooting.",
+        highlights: [
+          "Abstracted a larger engineering workflow into a teachable subset.",
+          "Made state transitions and operator feedback observable at each step.",
+          "Used the platform as both a training tool and a demonstration of system structure."
+        ],
+        result:
+          "The platform reduced onboarding time and improved the quality of technical conversations by giving people a shared operating model instead of isolated diagrams.",
+        diagram: [
+          "Training Inputs",
+          "      |",
+          "      v",
+          "Control Logic Core",
+          "      |",
+          "      v",
+          "Indicators / HMI",
+          "      |",
+          "      v",
+          "Guided Troubleshooting"
+        ].join("\n"),
+        technologies: ["Control Logic", "HMI", "Training Design", "Signal Modeling", "Systems Integration"]
       }
     ],
     domains: [
       {
-        icon: "VC",
-        title: "Virtual Commissioning",
+        mark: "ST",
+        title: "System Thinking",
         description:
-          "Testing machine sequences and interaction logic in a simulated environment before physical startup to reduce commissioning risk and schedule pressure."
+          "Breaking large technical problems into components, interfaces, and flows that teams can reason about and verify."
       },
       {
-        icon: "PS",
-        title: "PLC Simulation",
+        mark: "SI",
+        title: "Simulation & Validation",
         description:
-          "Modeling machine states, process events, and fault conditions to validate controls behavior, interlocks, and exception handling."
+          "Using simulated behavior as a way to test assumptions early instead of waiting for late-stage commissioning feedback."
       },
       {
-        icon: "OU",
-        title: "OPC UA Integration",
+        mark: "DI",
+        title: "Data & Integration",
         description:
-          "Designing structured communication between control systems and software services using interoperable industrial data models."
+          "Designing clear communication paths between control systems, software services, and visualization layers."
       },
       {
-        icon: "AS",
-        title: "Automation Software",
+        mark: "UX",
+        title: "Technical Communication",
         description:
-          "Developing tools and interfaces that support testing, visualization, diagnostics, and engineering collaboration."
+          "Building representations that make complex systems easier to review, explain, and align around."
       }
     ]
   },
   zh: {
-    pageTitle: "工业自动化与数字孪生工程师",
+    pageTitle: "系统工程作品集",
     skipLink: "跳转到正文",
-    brandSubtitle: "工业系统作品集",
+    brandSubtitle: "通过工程系统解决复杂问题",
     navHome: "首页",
     navProjects: "项目",
-    navArchitecture: "架构",
-    navDomains: "工程方向",
+    navDomains: "能力方向",
     navAbout: "关于",
     navContact: "联系",
-    heroEyebrow: "工业自动化作品集",
-    heroTitle: "工业自动化与数字孪生工程师",
+    heroEyebrow: "工程系统作品集",
+    heroTitle: "面向工业软件、仿真与数字化交付的系统思维",
     heroDescription:
-      "我专注于将虚拟调试、PLC 仿真、OPC UA 集成与数字孪生可视化组合成可落地的工业工程流程，用于前期验证、联调和系统沟通。",
+      "我关注的是控制逻辑、仿真、工业数据交换与软件表达之间的技术问题。核心工作不是堆叠工具，而是把复杂系统整理成可以验证、可以解释、可以交付的清晰结构。",
     heroPrimaryAction: "查看项目",
-    heroSecondaryAction: "联系我",
-    metricsHeading: "工程重点",
-    metricOne: "控制逻辑与行为仿真",
-    metricTwo: "工业数据互联互通",
-    metricThree: "数字孪生可视化",
+    heroSecondaryAction: "阅读简介",
+    panelBadge: "方法",
     projectsEyebrow: "代表项目",
-    projectsTitle: "项目经历",
+    projectsTitle: "项目案例",
     projectsIntro:
-      "以下项目以招聘视角重新组织，突出工程问题、系统方案以及实际交付价值。",
-    architectureEyebrow: "系统视图",
-    architectureTitle: "系统架构",
-    architectureIntro:
-      "用简洁的层级结构展示仿真数据如何进入集成服务，并最终呈现在可视化界面中。",
-    architectureDescription:
-      "PLC 仿真层生成设备状态、报警和故障场景；OPC UA 提供统一的数据接口；集成服务完成标签映射与数据整理；前端可视化将工程信号转化为易于理解的数字孪生界面。",
-    domainsEyebrow: "技术范围",
-    domainsTitle: "工程方向",
+      "每个项目都围绕问题、系统性应对方式以及关键技术决策展开，而不是简单罗列职责。",
+    domainsEyebrow: "能力范围",
+    domainsTitle: "能力方向",
     domainsIntro:
-      "这些能力方向与自动化岗位、调试团队以及工业数字化项目高度相关。",
-    aboutEyebrow: "个人简介",
+      "这些方向体现的是我如何把模糊需求转化为可验证、可协作、可交付的系统结构。",
+    aboutEyebrow: "简介",
     aboutTitle: "关于我",
+    aboutLead: "我更关注技术问题的解决方式，而不是被单一岗位名称定义。",
     aboutParagraphOne:
-      "我的工作定位在自动化工程、软件集成与仿真驱动交付的交叉点。关注点是把控制逻辑、工业通信和设备数字化表达提前打通，让系统更早验证，也更容易向团队说明。",
+      "我尤其感兴趣的是那些需要把物理系统、软件抽象和工程约束放进同一运行模型中的项目。这通常意味着把模糊的交互关系整理成明确的流程、接口和验证路径。",
     aboutParagraphTwo:
-      "我尤其关注虚拟调试、PLC 行为建模、基于 OPC UA 的系统互联，以及能够提升验证效率、维护性和扩展性的工程工具。",
-    contactEyebrow: "联系方式",
-    contactTitle: "联系",
+      "无论是在仿真、系统集成还是数字化工具场景中，我的核心目标都是降低不确定性：更早看见系统行为，更清楚地划分责任边界，并让团队能够真正推理和讨论系统本身。",
+    contactEyebrow: "联系",
+    contactTitle: "联系方式",
     contactIntro:
       "正式发布前，请将下面的占位信息替换为你真实可公开的联系方式。",
     contactEmailLabel: "邮箱",
     contactLinkedinLabel: "领英",
     contactGithubLabel: "GitHub",
-    footerText: "工业自动化与数字孪生工程师。",
+    footerText: "系统工程作品集。",
     footerAction: "返回顶部",
     focusItems: [
-      "虚拟调试与上线前验证",
-      "PLC 顺序控制、故障仿真与报警测试",
-      "控制层与软件层之间的 OPC UA 集成",
-      "面向沟通与验证的 Unity 数字孪生可视化"
+      "通过明确系统流向来降低沟通与实现中的歧义。",
+      "设计能够提前验证的软件与物理逻辑接口。",
+      "把架构当作解决问题的工具，而不是事后补写的文档。",
+      "构建有助于团队理解、调试和对齐的技术表达方式。"
     ],
-    architectureDiagram: [
-      "Unity / Web 可视化层",
-      "          |",
-      "          v",
-      "集成 API 服务层",
-      "          |",
-      "          v",
-      "OPC UA 客户端与数据映射",
-      "          |",
-      "          v",
-      "OPC UA 服务器 / 网关",
-      "          |",
-      "          v",
-      "PLC 仿真 / 控制逻辑层"
-    ].join("\n"),
     projectLabels: {
+      pitch: "一句话概述",
       problem: "问题",
       solution: "方案",
-      architecture: "架构",
-      technologies: "技术栈",
-      result: "成果"
+      highlights: "技术亮点",
+      result: "结果",
+      systemView: "系统结构",
+      tech: "技术",
+      expand: "展开",
+      collapse: "收起"
     },
     projects: [
       {
-        title: "Unity 数字孪生演示系统",
+        title: "数字孪生评审环境",
+        pitch: "在实物设备到位前，把控制逻辑转化为团队可共同理解的可视化系统。",
         summary:
-          "用于展示设备运行状态、模式切换和报警信息的三维仿真界面，帮助团队在实机到位前完成方案评审。",
+          "该项目的重点不是单纯做展示，而是让控制、软件与非专业相关方能够在同一个评审场景里讨论设备行为。",
         problem:
-          "在现场调试前，项目成员很难直观理解设备逻辑、状态切换以及异常工况的表现。",
+          "团队对同一套系统使用了不同抽象层表达：PLC 逻辑、标签表、口头描述彼此割裂，导致方案评审缓慢且容易出现理解偏差。",
         solution:
-          "我将仿真的控制信号接入 Unity 场景，让控制、软件和项目团队可以实时查看设备状态与动作效果。",
-        architecture:
-          "PLC 仿真通过 OPC UA 发布过程数据，轻量集成层完成标签映射，Unity 客户端负责状态驱动和三维呈现。",
-        technologies: ["Unity", "C#", "OPC UA", "PLC 仿真"],
-        result: [
-          "提升了方案评审和跨团队沟通效率。",
-          "在实机调试前提前暴露顺序逻辑和报警理解偏差。"
-        ]
+          "我把仿真信号、状态映射和可视化层组织成清晰的数据流，让设备行为能够被实时表达出来，从而在正式调试前就形成共同认知。",
+        highlights: [
+          "将控制状态标签映射到可视对象和运行模式。",
+          "把仿真数据、转换逻辑与前端呈现职责拆开。",
+          "把可视化界面作为顺序逻辑与报警逻辑的验证界面来使用。"
+        ],
+        result:
+          "项目显著减少了评审阶段的歧义，也更容易在早期发现预期行为与实际实现之间的不一致。",
+        diagram: [
+          "PLC 仿真",
+          "   |",
+          "   v",
+          "状态 / 标签映射",
+          "   |",
+          "   v",
+          "可视化逻辑层",
+          "   |",
+          "   v",
+          "共享设计评审"
+        ].join("\n"),
+        technologies: ["Simulation", "Unity", "C#", "OPC UA", "State Mapping"]
       },
       {
-        title: "PLC 故障仿真测试系统",
+        title: "故障注入测试系统",
+        pitch: "用可重复的异常场景验证恢复逻辑，而不是等待现场偶发问题。",
         summary:
-          "面向异常工况验证的测试环境，可重复生成 PLC 故障、信号丢失和过程异常场景。",
+          "这是一个面向报警、联锁与异常流程验证的测试系统，目标是在现场前就具备系统化的异常测试能力。",
         problem:
-          "传统联调中故障场景难以稳定复现，导致报警验证和恢复流程测试缺乏一致性。",
+          "很多异常处理逻辑在正常流程下看起来没有问题，但一旦进入边界场景，由于现场难以稳定复现故障，问题往往只能被动暴露。",
         solution:
-          "我设计了一套可控的故障注入流程，把典型异常状态写入仿真逻辑，并同步暴露给上位软件进行验证。",
-        architecture:
-          "仿真 PLC 运行预定义故障案例，OPC UA 统一输出诊断变量，测试界面用于核对报警、联锁和复位路径。",
-        technologies: ["PLC", "故障诊断", "OPC UA", "测试自动化"],
-        result: [
-          "让报警处理和恢复逻辑具备结构化验证手段。",
-          "把部分调试问题前移到现场前阶段解决。"
-        ]
+          "我建立了可控的故障注入路径，通过仿真主动触发异常状态，并将诊断信息暴露给软件界面与测试逻辑进行验证。",
+        highlights: [
+          "把故障测试设计成可复用场景，而不是一次性的人工操作。",
+          "将正常行为与异常注入行为分离，保证测试意图清晰。",
+          "利用诊断输出核对报警时序、联锁响应与复位逻辑。"
+        ],
+        result:
+          "测试方式从被动排错转变为主动验证，使异常处理逻辑在现场启动前就具备更高可信度。",
+        diagram: [
+          "故障场景库",
+          "    |",
+          "    v",
+          "仿真运行层",
+          "    |",
+          "    v",
+          "诊断 / 报警校验",
+          "    |",
+          "    v",
+          "恢复路径验证"
+        ].join("\n"),
+        technologies: ["PLC", "Diagnostics", "Test Design", "OPC UA", "Validation Logic"]
       },
       {
-        title: "自动化工程培训与演示平台",
+        title: "工程培训平台",
+        pitch: "把复杂控制行为压缩成一个可直接学习和讨论的小型系统。",
         summary:
-          "一个紧凑的工程演示平台，用于讲解控制逻辑结构、设备交互方式以及基础排障流程。",
+          "这是一个模块化培训与演示平台，目标是让系统逻辑、信号关系和排障思路能够在更紧凑的环境中被直接理解。",
         problem:
-          "新工程师和培训对象需要一个脱离正式产线、但又足够接近真实工程逻辑的学习环境。",
+          "新成员即使阅读了文档，也很难建立起软件行为、信号流向和控制响应之间的整体模型，导致学习成本高、沟通效率低。",
         solution:
-          "我搭建了模块化培训平台，结合基础顺序控制、状态显示和引导式排障场景，支持教学与演示。",
-        architecture:
-          "平台将控制器逻辑、指示层与培训流程整合在一起，使学习者能够把软件行为和物理信号对应起来理解。",
-        technologies: ["自动化", "培训平台", "HMI", "系统集成"],
-        result: [
-          "提升了控制方向工程师的上手效率。",
-          "形成了可复用的展示与培训载体。"
-        ]
+          "我设计了一套保留关键逻辑关系的小型平台，让更大的工程系统可以通过更易理解的形式被讲解、演示与练习。",
+        highlights: [
+          "将大系统抽象成便于教学的代表性子集。",
+          "让状态切换与操作反馈在每一步都可观察。",
+          "同时将平台作为培训工具和系统结构展示工具使用。"
+        ],
+        result:
+          "该平台缩短了新成员的上手时间，也让技术讨论从零散概念转向围绕系统模型本身展开。",
+        diagram: [
+          "培训输入",
+          "   |",
+          "   v",
+          "控制逻辑核心",
+          "   |",
+          "   v",
+          "指示 / HMI",
+          "   |",
+          "   v",
+          "引导式排障"
+        ].join("\n"),
+        technologies: ["Control Logic", "HMI", "Training Design", "Signal Modeling", "Systems Integration"]
       }
     ],
     domains: [
       {
-        icon: "VC",
-        title: "虚拟调试",
+        mark: "ST",
+        title: "系统思维",
         description:
-          "在实机启动前通过仿真环境验证设备节拍、交互逻辑和异常流程，降低现场调试风险与工期压力。"
+          "把大型技术问题拆解为组件、接口和流向，使团队能够围绕系统本身进行推理与验证。"
       },
       {
-        icon: "PS",
-        title: "PLC 仿真",
+        mark: "SI",
+        title: "仿真与验证",
         description:
-          "对设备状态、工艺事件和故障工况进行建模，用于验证控制逻辑、联锁和异常处理行为。"
+          "把仿真作为前置验证手段，而不是等到后期调试时再被动发现问题。"
       },
       {
-        icon: "OU",
-        title: "OPC UA 集成",
+        mark: "DI",
+        title: "数据与集成",
         description:
-          "通过标准化工业通信模型打通控制系统与软件服务，实现结构化、可扩展的数据交换。"
+          "为控制系统、软件服务和可视化层之间设计清晰的数据交换路径。"
       },
       {
-        icon: "AS",
-        title: "自动化软件工具",
+        mark: "UX",
+        title: "技术表达",
         description:
-          "开发支持测试、可视化、诊断与工程协作的软件工具，提高工程交付效率和系统透明度。"
+          "构建让复杂系统更容易被审阅、解释和对齐的技术表达方式。"
       }
     ]
   }
@@ -313,13 +357,12 @@ const translations = {
 const navToggle = document.querySelector(".nav-toggle");
 const navMenu = document.querySelector(".nav-links");
 const navLinks = document.querySelectorAll(".nav-links a");
-const yearElement = document.getElementById("year");
 const languageToggle = document.querySelector(".language-toggle");
 const translatableNodes = document.querySelectorAll("[data-i18n]");
 const focusList = document.getElementById("focus-list");
-const projectsGrid = document.getElementById("projects-grid");
+const projectsList = document.getElementById("projects-list");
 const domainsGrid = document.getElementById("domains-grid");
-const architectureDiagram = document.getElementById("architecture-diagram");
+const yearElement = document.getElementById("year");
 const revealItems = document.querySelectorAll(".reveal");
 
 let currentLanguage = "en";
@@ -328,7 +371,6 @@ if (yearElement) {
   yearElement.textContent = new Date().getFullYear();
 }
 
-// Render list-based hero focus items from the selected language model.
 function renderFocusItems(items) {
   focusList.innerHTML = "";
 
@@ -339,52 +381,84 @@ function renderFocusItems(items) {
   });
 }
 
-// Project cards are generated from structured recruiter-facing content blocks.
-function createProjectCard(project, labels) {
+function createProjectItem(project, labels, index) {
   const article = document.createElement("article");
-  article.className = "project-card card";
-
-  const resultItems = project.result.map((item) => `<li>${item}</li>`).join("");
-  const technologyItems = project.technologies.map((item) => `<li>${item}</li>`).join("");
-
+  const panelId = `project-panel-${index}`;
+  article.className = "project-item";
   article.innerHTML = `
-    <div class="project-header">
-      <h3>${project.title}</h3>
-      <p class="project-summary">${project.summary}</p>
-    </div>
-    <div class="project-meta">
-      <section class="project-block">
-        <h4>${labels.problem}</h4>
-        <p>${project.problem}</p>
-      </section>
-      <section class="project-block">
-        <h4>${labels.solution}</h4>
-        <p>${project.solution}</p>
-      </section>
-      <section class="project-block">
-        <h4>${labels.architecture}</h4>
-        <p>${project.architecture}</p>
-      </section>
-      <section class="project-block">
-        <h4>${labels.technologies}</h4>
-        <ul class="tag-list">${technologyItems}</ul>
-      </section>
-      <section class="project-block">
-        <h4>${labels.result}</h4>
-        <ul class="project-list">${resultItems}</ul>
-      </section>
+    <button class="project-summary-bar" type="button" aria-expanded="false" aria-controls="${panelId}">
+      <div class="project-header-block">
+        <div class="project-title-row">
+          <h3>${project.title}</h3>
+          <span class="project-pitch">${project.pitch}</span>
+        </div>
+        <p class="project-summary">${project.summary}</p>
+      </div>
+      <span class="toggle-indicator">+</span>
+    </button>
+
+    <div class="project-body" id="${panelId}">
+      <div class="project-body-inner">
+        <div class="project-columns">
+          <section class="project-block problem">
+            <h4>${labels.problem}</h4>
+            <p>${project.problem}</p>
+          </section>
+
+          <section class="project-block solution">
+            <h4>${labels.solution}</h4>
+            <p>${project.solution}</p>
+          </section>
+
+          <section class="project-block">
+            <h4>${labels.highlights}</h4>
+            <ul>${project.highlights.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+
+          <section class="project-block">
+            <h4>${labels.result}</h4>
+            <p>${project.result}</p>
+          </section>
+        </div>
+
+        <aside class="diagram-panel">
+          <section class="project-block">
+            <h4>${labels.pitch}</h4>
+            <p>${project.pitch}</p>
+          </section>
+
+          <section class="project-block">
+            <h4>${labels.systemView}</h4>
+            <pre class="diagram-box">${project.diagram}</pre>
+          </section>
+
+          <section class="project-block">
+            <h4>${labels.tech}</h4>
+            <ul class="tag-list">${project.technologies.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+        </aside>
+      </div>
     </div>
   `;
+
+  const button = article.querySelector(".project-summary-bar");
+  const body = article.querySelector(".project-body");
+
+  button.addEventListener("click", () => {
+    const isExpanded = article.classList.toggle("expanded");
+    button.setAttribute("aria-expanded", String(isExpanded));
+    body.style.maxHeight = isExpanded ? `${body.scrollHeight}px` : "0px";
+  });
 
   return article;
 }
 
 function renderProjects(language) {
   const { projects, projectLabels } = translations[language];
-  projectsGrid.innerHTML = "";
+  projectsList.innerHTML = "";
 
-  projects.forEach((project) => {
-    projectsGrid.appendChild(createProjectCard(project, projectLabels));
+  projects.forEach((project, index) => {
+    projectsList.appendChild(createProjectItem(project, projectLabels, index));
   });
 }
 
@@ -394,9 +468,9 @@ function renderDomains(language) {
 
   domains.forEach((domain) => {
     const article = document.createElement("article");
-    article.className = "domain-card card";
+    article.className = "domain-card";
     article.innerHTML = `
-      <span class="domain-icon">${domain.icon}</span>
+      <span class="domain-mark">${domain.mark}</span>
       <h3>${domain.title}</h3>
       <p>${domain.description}</p>
     `;
@@ -404,7 +478,6 @@ function renderDomains(language) {
   });
 }
 
-// Update static labels, then re-render structured sections for the active language.
 function updateStaticText(language) {
   const dictionary = translations[language];
 
@@ -419,7 +492,6 @@ function updateStaticText(language) {
     }
   });
 
-  architectureDiagram.textContent = dictionary.architectureDiagram;
   renderFocusItems(dictionary.focusItems);
   renderProjects(language);
   renderDomains(language);

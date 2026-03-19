@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta
     name="description"
-    content="Portfolio website for an Industrial Automation and Digital Twin Engineer with bilingual English and Chinese content."
+    content="Bilingual engineering portfolio focused on systems thinking, technical problem solving, and digital project delivery."
   >
-  <title>Industrial Automation & Digital Twin Engineer</title>
+  <title>Systems Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap"
     rel="stylesheet"
   >
   <link rel="stylesheet" href="styles.css">
@@ -20,12 +20,12 @@
   <a class="skip-link" href="#home" data-i18n="skipLink">Skip to content</a>
 
   <header class="site-header">
-    <nav class="navbar container" aria-label="Primary navigation">
+    <nav class="navbar grid-shell" aria-label="Primary navigation">
       <a class="brand" href="#home" aria-label="Homepage">
-        <span class="brand-mark">AE</span>
+        <span class="brand-mark">SP</span>
         <span class="brand-copy">
-          <span class="brand-title">Automation Engineer</span>
-          <span class="brand-subtitle" data-i18n="brandSubtitle">Industrial Systems Portfolio</span>
+          <span class="brand-title">Systems Portfolio</span>
+          <span class="brand-subtitle" data-i18n="brandSubtitle">Problem Solving Through Engineering Systems</span>
         </span>
       </a>
 
@@ -45,7 +45,6 @@
         <div class="nav-links" id="nav-menu">
           <a href="#home" data-i18n="navHome">Home</a>
           <a href="#projects" data-i18n="navProjects">Projects</a>
-          <a href="#architecture" data-i18n="navArchitecture">Architecture</a>
           <a href="#domains" data-i18n="navDomains">Domains</a>
           <a href="#about" data-i18n="navAbout">About</a>
           <a href="#contact" data-i18n="navContact">Contact</a>
@@ -62,88 +61,52 @@
 
   <main>
     <section class="hero section reveal" id="home">
-      <div class="container hero-layout">
+      <div class="grid-shell hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow" data-i18n="heroEyebrow">Industrial Automation Portfolio</p>
+          <p class="eyebrow" data-i18n="heroEyebrow">Engineering Systems Portfolio</p>
           <h1>Your Name</h1>
-          <p class="hero-title" data-i18n="heroTitle">Industrial Automation &amp; Digital Twin Engineer</p>
+          <p class="hero-title" data-i18n="heroTitle">Systems Thinking for Industrial Software, Simulation, and Digital Delivery</p>
           <p class="hero-description" data-i18n="heroDescription">
-            I build engineering systems that connect virtual commissioning, PLC simulation, OPC UA integration,
-            and digital twin visualization into practical workflows for industrial projects.
+            I work on technical problems that sit between control logic, simulation, industrial data exchange, and software representation. My focus is turning complex systems into structures that can be tested, understood, and delivered with less ambiguity.
           </p>
 
           <div class="hero-actions">
-            <a class="button button-primary" href="#projects" data-i18n="heroPrimaryAction">View Projects</a>
-            <a class="button button-secondary" href="#contact" data-i18n="heroSecondaryAction">Contact</a>
+            <a class="button button-primary" href="#projects" data-i18n="heroPrimaryAction">Explore Projects</a>
+            <a class="button button-secondary" href="#about" data-i18n="heroSecondaryAction">Read Profile</a>
           </div>
         </div>
 
-        <aside class="hero-metrics card">
-          <div class="metric-panel">
-            <p class="metric-label" data-i18n="metricsHeading">Engineering Focus</p>
-            <ul class="focus-list" id="focus-list"></ul>
+        <aside class="hero-panel">
+          <div class="panel-header">
+            <span class="panel-badge" data-i18n="panelBadge">Method</span>
+            <span class="panel-line"></span>
           </div>
-
-          <div class="metric-strip">
-            <div class="metric-item">
-              <span class="metric-value">PLC</span>
-              <span class="metric-text" data-i18n="metricOne">Control behavior simulation</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value">OPC UA</span>
-              <span class="metric-text" data-i18n="metricTwo">Industrial data interoperability</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value">3D</span>
-              <span class="metric-text" data-i18n="metricThree">Digital twin visualization</span>
-            </div>
-          </div>
+          <ul class="focus-list" id="focus-list"></ul>
         </aside>
       </div>
     </section>
 
     <section class="section reveal" id="projects">
-      <div class="container">
+      <div class="grid-shell">
         <div class="section-heading">
-          <p class="eyebrow" data-i18n="projectsEyebrow">Selected Work</p>
-          <h2 data-i18n="projectsTitle">Projects</h2>
+          <p class="eyebrow" data-i18n="projectsEyebrow">Selected Projects</p>
+          <h2 data-i18n="projectsTitle">Project Case Studies</h2>
           <p data-i18n="projectsIntro">
-            Project summaries are structured to help recruiters understand the engineering challenge,
-            the system approach, and the delivery impact.
+            Each project is framed around the problem, the system response, and the technical decisions that made the solution work.
           </p>
         </div>
 
-        <div class="projects-grid" id="projects-grid"></div>
+        <div class="project-list" id="projects-list"></div>
       </div>
     </section>
 
-    <section class="section section-alt reveal" id="architecture">
-      <div class="container architecture-layout">
-        <div class="section-heading architecture-heading">
-          <p class="eyebrow" data-i18n="architectureEyebrow">System View</p>
-          <h2 data-i18n="architectureTitle">Architecture</h2>
-          <p data-i18n="architectureIntro">
-            A concise stack view showing how simulation data moves into software services and operator-facing visualization.
-          </p>
-        </div>
-
-        <div class="architecture-card card">
-          <pre class="architecture-diagram" id="architecture-diagram"></pre>
-          <p class="architecture-description" data-i18n="architectureDescription">
-            The PLC simulation produces state, alarms, and fault conditions. OPC UA exposes the data layer,
-            integration services normalize it, and the front-end visualization turns engineering signals into an understandable digital twin.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section reveal" id="domains">
-      <div class="container">
+    <section class="section section-alt reveal" id="domains">
+      <div class="grid-shell">
         <div class="section-heading">
-          <p class="eyebrow" data-i18n="domainsEyebrow">Technical Scope</p>
-          <h2 data-i18n="domainsTitle">Engineering Domains</h2>
+          <p class="eyebrow" data-i18n="domainsEyebrow">Capability Areas</p>
+          <h2 data-i18n="domainsTitle">Domains</h2>
           <p data-i18n="domainsIntro">
-            Core capability areas that are directly relevant to automation engineering, commissioning teams, and digital transformation programs.
+            These are the technical domains where I typically translate unclear requirements into structured systems and testable workflows.
           </p>
         </div>
 
@@ -151,48 +114,49 @@
       </div>
     </section>
 
-    <section class="section section-alt reveal" id="about">
-      <div class="container about-layout">
+    <section class="section reveal" id="about">
+      <div class="grid-shell about-grid">
         <div class="section-heading">
           <p class="eyebrow" data-i18n="aboutEyebrow">Profile</p>
           <h2 data-i18n="aboutTitle">About</h2>
         </div>
 
-        <div class="about-card card">
+        <div class="about-card">
+          <p class="about-lead" data-i18n="aboutLead">
+            My work is centered on technical problem solving rather than a single job title.
+          </p>
           <p data-i18n="aboutParagraphOne">
-            I work at the intersection of automation engineering, software integration, and simulation-driven delivery.
-            My focus is on building systems that allow control logic, industrial communication, and digital representations of equipment to be tested earlier and explained more clearly.
+            I am interested in projects where physical systems, software abstractions, and engineering constraints need to be brought into one coherent operating model. That often means turning unclear interactions into explicit flows, interfaces, and validation paths.
           </p>
           <p data-i18n="aboutParagraphTwo">
-            I am particularly interested in virtual commissioning, PLC behavior modeling, OPC UA-based interoperability,
-            and engineering tools that make complex systems easier to validate, maintain, and scale.
+            Across simulation, system integration, and digital tooling, I focus on reducing uncertainty: making system behavior visible earlier, separating concerns clearly, and structuring implementation so teams can reason about it.
           </p>
         </div>
       </div>
     </section>
 
-    <section class="section reveal" id="contact">
-      <div class="container">
+    <section class="section section-alt reveal" id="contact">
+      <div class="grid-shell">
         <div class="section-heading">
-          <p class="eyebrow" data-i18n="contactEyebrow">Connect</p>
-          <h2 data-i18n="contactTitle">Contact</h2>
+          <p class="eyebrow" data-i18n="contactEyebrow">Contact</p>
+          <h2 data-i18n="contactTitle">Get In Touch</h2>
           <p data-i18n="contactIntro">
             Replace the placeholders below with your public contact details before publishing.
           </p>
         </div>
 
         <div class="contact-grid">
-          <article class="contact-card card">
+          <article class="contact-card">
             <span class="contact-label" data-i18n="contactEmailLabel">Email</span>
             <a href="mailto:your.email@example.com">your.email@example.com</a>
           </article>
-          <article class="contact-card card">
+          <article class="contact-card">
             <span class="contact-label" data-i18n="contactLinkedinLabel">LinkedIn</span>
             <a href="https://www.linkedin.com/in/your-linkedin" target="_blank" rel="noreferrer">
               linkedin.com/in/your-linkedin
             </a>
           </article>
-          <article class="contact-card card">
+          <article class="contact-card">
             <span class="contact-label" data-i18n="contactGithubLabel">GitHub</span>
             <a href="https://github.com/your-github" target="_blank" rel="noreferrer">
               github.com/your-github
@@ -204,10 +168,10 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
+    <div class="grid-shell footer-content">
       <p>
         <span>&copy; <span id="year"></span> Your Name.</span>
-        <span data-i18n="footerText">Industrial Automation &amp; Digital Twin Engineer.</span>
+        <span data-i18n="footerText">Engineering systems portfolio.</span>
       </p>
       <a href="#home" data-i18n="footerAction">Back to top</a>
     </div>
