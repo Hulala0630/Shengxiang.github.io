@@ -1,4 +1,4 @@
-// Bilingual content model for all copy and structured project data.
+// Bilingual content model for static UI copy and domain data.
 const translations = {
   en: {
     pageTitle: "Systems Portfolio",
@@ -57,98 +57,6 @@ const translations = {
       expand: "Open",
       collapse: "Close"
     },
-    projects: [
-      {
-        title: "Digital Twin Review Environment",
-        pitch: "Turn machine logic into a shared visual model before hardware is available.",
-        summary:
-          "A project for making simulated equipment behavior understandable to controls, software, and non-specialist stakeholders in the same review loop.",
-        problem:
-          "Teams were discussing sequences and states in different abstractions: PLC logic, spreadsheet tags, and informal descriptions. That made design reviews slow and error-prone.",
-        solution:
-          "I structured the system so simulated signals could drive a real-time visualization layer. The goal was not just display, but shared understanding of machine behavior before physical commissioning.",
-        highlights: [
-          "Mapped control-state tags to visual objects and operating modes.",
-          "Separated simulation data, translation logic, and front-end rendering responsibilities.",
-          "Used the visualization layer as a validation surface for sequence and alarm logic."
-        ],
-        result:
-          "The project reduced review ambiguity and made it easier to identify mismatches between expected behavior and implemented logic earlier in the lifecycle.",
-        diagram: [
-          "PLC Simulation",
-          "     |",
-          "     v",
-          "Tag / State Mapping",
-          "     |",
-          "     v",
-          "Visualization Logic",
-          "     |",
-          "     v",
-          "Shared Design Review"
-        ].join("\n"),
-        technologies: ["Simulation", "Unity", "C#", "OPC UA", "State Mapping"]
-      },
-      {
-        title: "Fault Injection Test System",
-        pitch: "Create repeatable failure conditions so recovery logic can be validated with intent.",
-        summary:
-          "A structured testing setup for reproducing alarm, interlock, and abnormal-state scenarios without waiting for unpredictable field conditions.",
-        problem:
-          "Error handling logic often looked correct in nominal flows but failed under edge conditions because faults were hard to recreate consistently during commissioning.",
-        solution:
-          "I built a testable fault-injection path that could trigger known abnormal states through simulation, exposing diagnostic behavior to software and operator-facing views.",
-        highlights: [
-          "Defined reusable fault scenarios instead of one-off manual tests.",
-          "Separated normal process behavior from injected abnormal-state behavior.",
-          "Used exposed diagnostics to validate alarm timing, interlock response, and reset handling."
-        ],
-        result:
-          "Testing shifted from reactive troubleshooting to deliberate validation, improving confidence in exception handling before site startup.",
-        diagram: [
-          "Fault Scenario Library",
-          "        |",
-          "        v",
-          "Simulation Runtime",
-          "        |",
-          "        v",
-          "Diagnostics / Alarm Checks",
-          "        |",
-          "        v",
-          "Recovery Validation"
-        ].join("\n"),
-        technologies: ["PLC", "Diagnostics", "Test Design", "OPC UA", "Validation Logic"]
-      },
-      {
-        title: "Engineering Training Platform",
-        pitch: "Package complex control behavior into a compact system people can learn from directly.",
-        summary:
-          "A modular training and demonstration setup designed to explain system behavior, signal relationships, and troubleshooting patterns through a smaller but representative platform.",
-        problem:
-          "New team members could read documentation, but they still lacked a concrete model for how software, signals, and control responses connected in practice.",
-        solution:
-          "I designed a compact system that preserved the logic relationships of a larger environment while making the signal flow and behavior visible enough for guided learning and troubleshooting.",
-        highlights: [
-          "Abstracted a larger engineering workflow into a teachable subset.",
-          "Made state transitions and operator feedback observable at each step.",
-          "Used the platform as both a training tool and a demonstration of system structure."
-        ],
-        result:
-          "The platform reduced onboarding time and improved the quality of technical conversations by giving people a shared operating model instead of isolated diagrams.",
-        diagram: [
-          "Training Inputs",
-          "      |",
-          "      v",
-          "Control Logic Core",
-          "      |",
-          "      v",
-          "Indicators / HMI",
-          "      |",
-          "      v",
-          "Guided Troubleshooting"
-        ].join("\n"),
-        technologies: ["Control Logic", "HMI", "Training Design", "Signal Modeling", "Systems Integration"]
-      }
-    ],
     domains: [
       {
         mark: "ST",
@@ -233,98 +141,6 @@ const translations = {
       expand: "展开",
       collapse: "收起"
     },
-    projects: [
-      {
-        title: "数字孪生评审环境",
-        pitch: "在实物设备到位前，把控制逻辑转化为团队可共同理解的可视化系统。",
-        summary:
-          "该项目的重点不是单纯做展示，而是让控制、软件与非专业相关方能够在同一个评审场景里讨论设备行为。",
-        problem:
-          "团队对同一套系统使用了不同抽象层表达：PLC 逻辑、标签表、口头描述彼此割裂，导致方案评审缓慢且容易出现理解偏差。",
-        solution:
-          "我把仿真信号、状态映射和可视化层组织成清晰的数据流，让设备行为能够被实时表达出来，从而在正式调试前就形成共同认知。",
-        highlights: [
-          "将控制状态标签映射到可视对象和运行模式。",
-          "把仿真数据、转换逻辑与前端呈现职责拆开。",
-          "把可视化界面作为顺序逻辑与报警逻辑的验证界面来使用。"
-        ],
-        result:
-          "项目显著减少了评审阶段的歧义，也更容易在早期发现预期行为与实际实现之间的不一致。",
-        diagram: [
-          "PLC 仿真",
-          "   |",
-          "   v",
-          "状态 / 标签映射",
-          "   |",
-          "   v",
-          "可视化逻辑层",
-          "   |",
-          "   v",
-          "共享设计评审"
-        ].join("\n"),
-        technologies: ["Simulation", "Unity", "C#", "OPC UA", "State Mapping"]
-      },
-      {
-        title: "故障注入测试系统",
-        pitch: "用可重复的异常场景验证恢复逻辑，而不是等待现场偶发问题。",
-        summary:
-          "这是一个面向报警、联锁与异常流程验证的测试系统，目标是在现场前就具备系统化的异常测试能力。",
-        problem:
-          "很多异常处理逻辑在正常流程下看起来没有问题，但一旦进入边界场景，由于现场难以稳定复现故障，问题往往只能被动暴露。",
-        solution:
-          "我建立了可控的故障注入路径，通过仿真主动触发异常状态，并将诊断信息暴露给软件界面与测试逻辑进行验证。",
-        highlights: [
-          "把故障测试设计成可复用场景，而不是一次性的人工操作。",
-          "将正常行为与异常注入行为分离，保证测试意图清晰。",
-          "利用诊断输出核对报警时序、联锁响应与复位逻辑。"
-        ],
-        result:
-          "测试方式从被动排错转变为主动验证，使异常处理逻辑在现场启动前就具备更高可信度。",
-        diagram: [
-          "故障场景库",
-          "    |",
-          "    v",
-          "仿真运行层",
-          "    |",
-          "    v",
-          "诊断 / 报警校验",
-          "    |",
-          "    v",
-          "恢复路径验证"
-        ].join("\n"),
-        technologies: ["PLC", "Diagnostics", "Test Design", "OPC UA", "Validation Logic"]
-      },
-      {
-        title: "工程培训平台",
-        pitch: "把复杂控制行为压缩成一个可直接学习和讨论的小型系统。",
-        summary:
-          "这是一个模块化培训与演示平台，目标是让系统逻辑、信号关系和排障思路能够在更紧凑的环境中被直接理解。",
-        problem:
-          "新成员即使阅读了文档，也很难建立起软件行为、信号流向和控制响应之间的整体模型，导致学习成本高、沟通效率低。",
-        solution:
-          "我设计了一套保留关键逻辑关系的小型平台，让更大的工程系统可以通过更易理解的形式被讲解、演示与练习。",
-        highlights: [
-          "将大系统抽象成便于教学的代表性子集。",
-          "让状态切换与操作反馈在每一步都可观察。",
-          "同时将平台作为培训工具和系统结构展示工具使用。"
-        ],
-        result:
-          "该平台缩短了新成员的上手时间，也让技术讨论从零散概念转向围绕系统模型本身展开。",
-        diagram: [
-          "培训输入",
-          "   |",
-          "   v",
-          "控制逻辑核心",
-          "   |",
-          "   v",
-          "指示 / HMI",
-          "   |",
-          "   v",
-          "引导式排障"
-        ].join("\n"),
-        technologies: ["Control Logic", "HMI", "Training Design", "Signal Modeling", "Systems Integration"]
-      }
-    ],
     domains: [
       {
         mark: "ST",
@@ -384,15 +200,16 @@ function renderFocusItems(items) {
 function createProjectItem(project, labels, index) {
   const article = document.createElement("article");
   const panelId = `project-panel-${index}`;
+  const language = currentLanguage;
   article.className = "project-item";
   article.innerHTML = `
     <button class="project-summary-bar" type="button" aria-expanded="false" aria-controls="${panelId}">
       <div class="project-header-block">
         <div class="project-title-row">
-          <h3>${project.title}</h3>
-          <span class="project-pitch">${project.pitch}</span>
+          <h3>${project.title[language]}</h3>
+          <span class="project-pitch">${project.pitch[language]}</span>
         </div>
-        <p class="project-summary">${project.summary}</p>
+        <p class="project-summary">${project.summary[language]}</p>
       </div>
       <span class="toggle-indicator">+</span>
     </button>
@@ -402,34 +219,34 @@ function createProjectItem(project, labels, index) {
         <div class="project-columns">
           <section class="project-block problem">
             <h4>${labels.problem}</h4>
-            <p>${project.problem}</p>
+            <p>${project.problem[language]}</p>
           </section>
 
           <section class="project-block solution">
             <h4>${labels.solution}</h4>
-            <p>${project.solution}</p>
+            <p>${project.solution[language]}</p>
           </section>
 
           <section class="project-block">
             <h4>${labels.highlights}</h4>
-            <ul>${project.highlights.map((item) => `<li>${item}</li>`).join("")}</ul>
+            <ul>${project.highlights[language].map((item) => `<li>${item}</li>`).join("")}</ul>
           </section>
 
           <section class="project-block">
             <h4>${labels.result}</h4>
-            <p>${project.result}</p>
+            <p>${project.result[language]}</p>
           </section>
         </div>
 
         <aside class="diagram-panel">
           <section class="project-block">
             <h4>${labels.pitch}</h4>
-            <p>${project.pitch}</p>
+            <p>${project.pitch[language]}</p>
           </section>
 
           <section class="project-block">
             <h4>${labels.systemView}</h4>
-            <pre class="diagram-box">${project.diagram}</pre>
+            <pre class="diagram-box">${project.structure[language]}</pre>
           </section>
 
           <section class="project-block">
@@ -454,10 +271,10 @@ function createProjectItem(project, labels, index) {
 }
 
 function renderProjects(language) {
-  const { projects, projectLabels } = translations[language];
+  const { projectLabels } = translations[language];
   projectsList.innerHTML = "";
 
-  projects.forEach((project, index) => {
+  projectsData.forEach((project, index) => {
     projectsList.appendChild(createProjectItem(project, projectLabels, index));
   });
 }
