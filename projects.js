@@ -4,6 +4,14 @@ const projectsData = [
       en: "Industrial Fault Simulation & Training System",
       zh: "工业故障仿真与培训系统"
     },
+    projectType: {
+      en: "Industry Project",
+      zh: "企业项目"
+    },
+    technicalType: {
+      en: "Technical Project",
+      zh: "技术项目"
+    },
     pitch: {
       en: "Turn unpredictable industrial failures into controllable digital training scenarios.",
       zh: "把不可控的工业故障转化为可控、可复现的数字化训练场景。"
@@ -69,6 +77,14 @@ const projectsData = [
     title: {
       en: "Plugin-based System Decoupling",
       zh: "基于插件的系统解耦"
+    },
+    projectType: {
+      en: "Industry Project",
+      zh: "企业项目"
+    },
+    technicalType: {
+      en: "Technical Project",
+      zh: "技术项目"
     },
     pitch: {
       en: "Replace costly external dependencies with a local plugin architecture.",
@@ -143,6 +159,14 @@ const projectsData = [
     title: {
       en: "Vision-based Motion Evaluation & Feedback System",
       zh: "基于视觉的人体动作评估与反馈系统"
+    },
+    projectType: {
+      en: "Personal Project",
+      zh: "个人项目"
+    },
+    technicalType: {
+      en: "Technical Project",
+      zh: "技术项目"
     },
     pitch: {
       en: "Turn human motion into measurable metrics and corrective feedback.",
@@ -224,6 +248,14 @@ const projectsData = [
       en: "Multimodal 3D Navigation System",
       zh: "多模态三维导航系统"
     },
+    projectType: {
+      en: "Personal Project",
+      zh: "个人项目"
+    },
+    technicalType: {
+      en: "Extended Technical Project",
+      zh: "技术延展项目"
+    },
     pitch: {
       en: "Guide people through complex spaces using more than just arrows.",
       zh: "不只依赖箭头，而是用多模态线索引导用户穿越复杂空间。"
@@ -292,6 +324,14 @@ const projectsData = [
       en: "Matrix-based Production Scheduling Model",
       zh: "基于矩阵的生产调度模型"
     },
+    projectType: {
+      en: "Industry Project",
+      zh: "企业项目"
+    },
+    technicalType: {
+      en: "Extended Technical Project",
+      zh: "技术延展项目"
+    },
     pitch: {
       en: "Turn production conflicts into a computable scheduling model.",
       zh: "把生产冲突转化为可计算的调度模型。"
@@ -359,6 +399,14 @@ const projectsData = [
     title: {
       en: "Lean Process Optimization",
       zh: "精益流程优化"
+    },
+    projectType: {
+      en: "Industry Project",
+      zh: "企业项目"
+    },
+    technicalType: {
+      en: "Extended Technical Project",
+      zh: "技术延展项目"
     },
     pitch: {
       en: "Reveal bottlenecks by making process flow visible end to end.",

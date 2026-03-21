@@ -201,12 +201,23 @@ function createProjectItem(project, labels, index) {
   const article = document.createElement("article");
   const panelId = `project-panel-${index}`;
   const language = currentLanguage;
+  const classificationTags = [
+    project.projectType?.[language],
+    project.technicalType?.[language]
+  ]
+    .filter(Boolean)
+    .map((tag) => `<span class="project-class-tag">${tag}</span>`)
+    .join("");
+
   article.className = "project-item";
   article.innerHTML = `
     <button class="project-summary-bar" type="button" aria-expanded="false" aria-controls="${panelId}">
       <div class="project-header-block">
         <div class="project-title-row">
           <h3>${project.title[language]}</h3>
+        </div>
+        <div class="project-meta-row">
+          <div class="project-tag-group">${classificationTags}</div>
           <span class="project-pitch">${project.pitch[language]}</span>
         </div>
         <p class="project-summary">${project.summary[language]}</p>
