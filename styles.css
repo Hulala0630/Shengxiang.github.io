@@ -286,7 +286,14 @@ a {
   font-weight: 700;
   letter-spacing: -0.03em;
 }
+.hero-name {
+  gap: 0.6em;
+}
 
+.name-zh {
+  border-left: 4px solid #111;
+  padding-left: 12px;
+}
 .hero-description,
 .section-heading p,
 .about-card p,
