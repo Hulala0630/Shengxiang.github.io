@@ -33,8 +33,8 @@ const translations = {
       "Across simulation, system integration, and digital tooling, I focus on reducing uncertainty: making system behavior visible earlier, separating concerns clearly, and structuring implementation so teams can reason about it.",
     contactEyebrow: "Contact",
     contactTitle: "Get In Touch",
-    //contactIntro:
-      //"Replace the placeholders below with your public contact details before publishing.",
+    contactIntro:
+      "You can find me here.",
     contactEmailLabel: "Email",
     contactLinkedinLabel: "LinkedIn",
     contactGithubLabel: "GitHub",
