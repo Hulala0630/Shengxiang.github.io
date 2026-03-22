@@ -75,7 +75,7 @@ const projectsData = [
     technologies: ["PLC", "OPC UA", "REST API", "Unity", "C#", "Digital Twin", "Simulation"],
     video: {
       type: "embed",
-      url: "VIDEO_URL_PLACEHOLDER"
+      url: "assets/videos/DemoVideoDigitalTwin.mp4"
     },
     demo: {
       type: "optional",

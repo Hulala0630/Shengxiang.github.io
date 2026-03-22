@@ -3,16 +3,16 @@ const translations = {
   en: {
     pageTitle: "Systems Portfolio",
     skipLink: "Skip to content",
-    brandSubtitle: "Problem Solving Through Engineering Systems",
+    brandSubtitle: "Problem Solving Through Systems Thinking",
     navHome: "Home",
     navDomains: "Capabilities",
     navProjects: "Projects",
     navAbout: "About",
     navContact: "Contact",
-    heroEyebrow: "Engineering Systems Portfolio",
-    heroTitle: "Systems Thinking for Industrial Software, Simulation, and Digital Delivery",
+    heroEyebrow: "Personal Portfolio",
+    heroTitle: "Systems Thinking for Software, Simulation, and Digital Delivery",
     heroDescription:
-      "I work on technical problems that sit between control logic, simulation, industrial data exchange, and software representation. My focus is turning complex systems into structures that can be tested, understood, and delivered with less ambiguity.",
+      "I work on technical problems that sit between control logic, simulation, data exchange, and software representation. My focus is turning complex systems into structures that can be tested, understood, and delivered with less ambiguity.",
     heroPrimaryAction: "Explore Projects",
     heroSecondaryAction: "Read Profile",
     panelBadge: "Method",
@@ -23,7 +23,7 @@ const translations = {
     domainsEyebrow: "Capability Areas",
     domainsTitle: "Capability Areas",
     domainsIntro:
-      "These cards outline the technical lenses I use to frame engineering work, structure delivery, and evaluate system behavior before it becomes expensive to change.",
+      "These are the technical lenses I use to frame engineering work, structure delivery, and evaluate system behavior before it becomes expensive to change.",
     aboutEyebrow: "Profile",
     aboutTitle: "About",
     aboutLead: "My work is centered on technical problem solving rather than a single job title.",
@@ -38,7 +38,7 @@ const translations = {
     contactEmailLabel: "Email",
     contactLinkedinLabel: "LinkedIn",
     contactGithubLabel: "GitHub",
-    footerText: "Engineering systems portfolio.",
+    footerText: "Personal portfolio.",
     footerAction: "Back to top",
     focusItems: [
       "Reduce ambiguity by turning system behavior into explicit flows.",
@@ -104,8 +104,8 @@ const translations = {
         value: "Supports decisions with computable structures instead of relying only on intuition or manual interpretation."
       },
       {
-        mark: "HX",
-        title: "Human-centered Technical Design",
+        mark: "UX",
+        title: "User-centered Technical Design",
         summary: "Translate complex systems into interfaces, guidance, and feedback that users can act on.",
         description:
           "Turning technical systems into interfaces, evaluations, and guidance structures that users can understand and act on.",
@@ -115,18 +115,18 @@ const translations = {
     ]
   },
   zh: {
-    pageTitle: "系统工程作品集",
+    pageTitle: "个人作品集",
     skipLink: "跳转到正文",
-    brandSubtitle: "通过工程系统解决复杂问题",
+    brandSubtitle: "通过系统思维解决复杂问题",
     navHome: "首页",
     navDomains: "能力方向",
     navProjects: "项目",
     navAbout: "关于",
     navContact: "联系",
     heroEyebrow: "工程系统作品集",
-    heroTitle: "面向工业软件、仿真与数字化交付的系统思维",
+    heroTitle: "面向软件、仿真与数字化交付的系统思维",
     heroDescription:
-      "我关注的是控制逻辑、仿真、工业数据交换与软件表达之间的技术问题。核心工作不是堆叠工具，而是把复杂系统整理成可以验证、可以解释、可以交付的清晰结构。",
+      "我关注的是控制逻辑、仿真、数据交换与软件表达之间的技术问题。核心工作不是堆叠工具，而是把复杂系统整理成可验证、可解释、可交付的清晰结构。",
     heroPrimaryAction: "查看项目",
     heroSecondaryAction: "阅读简介",
     panelBadge: "方法",
@@ -137,7 +137,7 @@ const translations = {
     domainsEyebrow: "能力范围",
     domainsTitle: "能力领域",
     domainsIntro:
-      "这些能力卡片描述了我理解工程问题、组织系统结构以及在交付前验证复杂行为的主要技术视角。",
+      "这是我理解工程问题、组织系统结构以及在交付前验证复杂行为的主要技术视角。",
     aboutEyebrow: "简介",
     aboutTitle: "关于我",
     aboutLead: "我更关注技术问题的解决方式，而不是被单一岗位名称定义。",
@@ -148,11 +148,11 @@ const translations = {
     contactEyebrow: "联系",
     contactTitle: "联系方式",
     contactIntro:
-      "正式发布前，请将下面的占位信息替换为你真实可公开的联系方式。",
+      "您可以通过以下方式与我联系。",
     contactEmailLabel: "邮箱",
     contactLinkedinLabel: "领英",
     contactGithubLabel: "GitHub",
-    footerText: "系统工程作品集。",
+    footerText: "个人作品集。",
     footerAction: "返回顶部",
     focusItems: [
       "通过明确系统流向来降低沟通与实现中的歧义。",
@@ -218,8 +218,8 @@ const translations = {
         value: "使决策更依赖可计算结构，而不是仅凭经验判断或手工解释。"
       },
       {
-        mark: "HX",
-        title: "以人为中心的技术设计",
+        mark: "UX",
+        title: "面向用户的技术设计",
         summary: "把复杂系统转换为用户能理解、评估并采取行动的交互与反馈结构。",
         description:
           "把复杂技术系统转化为用户可理解、可评估、可操作的交互与反馈结构。",
