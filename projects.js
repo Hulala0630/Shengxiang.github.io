@@ -1,6 +1,89 @@
 const projectsData = [
   {
     title: {
+      en: "Industrial Digital Twin Demo",
+      zh: "工业数字孪生演示系统"
+    },
+    projectType: {
+      en: "Personal Project",
+      zh: "个人项目"
+    },
+    technicalType: {
+      en: "Technical Project",
+      zh: "技术项目"
+    },
+    pitch: {
+      en: "Connect PLC logic, OPC UA, REST services, and Unity into one readable industrial system.",
+      zh: "把 PLC 逻辑、OPC UA、REST 服务与 Unity 可视化连接成一个可读、可验证的工业系统。"
+    },
+    summary: {
+      en: "A digital twin demonstration project that links simulated industrial control logic to an OPC UA layer, a REST API service, and a Unity front-end to show how physical processes can be mirrored and inspected in software.",
+      zh: "这是一个数字孪生演示项目，通过将工业控制逻辑仿真连接到 OPC UA 数据层、REST API 服务以及 Unity 前端，实现对物理过程的软件映射与可视化检查。"
+    },
+    problem: {
+      en: "Industrial systems are often hard to review before deployment because control data, integration services, and visualization are discussed separately. That makes system behavior difficult to explain and validate as one coherent whole.",
+      zh: "工业系统在部署前往往难以整体评审，因为控制数据、集成服务和可视化通常被分开讨论，导致系统行为难以作为一个完整对象被解释和验证。"
+    },
+    solution: {
+      en: "I built a demonstration stack in which PLC-side simulation exposes process state through OPC UA, a REST layer organizes selected data for application use, and Unity renders the machine state as an interactive digital twin view.",
+      zh: "我搭建了一套演示架构：PLC 侧仿真通过 OPC UA 暴露过程状态，REST 层负责整理和转发关键数据，Unity 则将这些状态渲染成可交互的数字孪生界面。"
+    },
+    highlights: {
+      en: [
+        "Connected PLC simulation data to software-facing interfaces through OPC UA.",
+        "Used a REST service layer to separate industrial communication from front-end consumption.",
+        "Mapped machine states and process changes to real-time Unity visualization logic.",
+        "Designed the demo as an explainable architecture, not only as a visual scene."
+      ],
+      zh: [
+        "通过 OPC UA 将 PLC 仿真数据连接到软件可用的数据接口。",
+        "使用 REST 服务层将工业通信与前端消费逻辑解耦。",
+        "把设备状态与过程变化映射到 Unity 的实时可视化逻辑中。",
+        "将该项目设计为一个可解释的系统架构，而不仅仅是一个三维场景。"
+      ]
+    },
+    structure: {
+      en: [
+        "PLC / Logic Simulation",
+        "         |",
+        "         v",
+        "OPC UA Server",
+        "         |",
+        "         v",
+        "REST API Layer",
+        "         |",
+        "         v",
+        "Unity Digital Twin View"
+      ].join("\n"),
+      zh: [
+        "PLC / 逻辑仿真",
+        "      |",
+        "      v",
+        "OPC UA 服务器",
+        "      |",
+        "      v",
+        "REST API 服务层",
+        "      |",
+        "      v",
+        "Unity 数字孪生界面"
+      ].join("\n")
+    },
+    result: {
+      en: "The demo shows how industrial control behavior can be translated into a software-facing system model, making integration architecture easier to present, test, and discuss with both engineering and non-engineering stakeholders.",
+      zh: "该演示证明了工业控制行为如何转化为面向软件的系统模型，使集成架构更容易被展示、验证，并被工程与非工程角色共同讨论。"
+    },
+    technologies: ["PLC", "OPC UA", "REST API", "Unity", "C#", "Digital Twin", "Simulation"],
+    video: {
+      type: "embed",
+      url: "VIDEO_URL_PLACEHOLDER"
+    },
+    demo: {
+      type: "optional",
+      note: "Future support for WebGL or interactive demo"
+    }
+  },
+  {
+    title: {
       en: "Industrial Fault Simulation & Training System",
       zh: "工业故障仿真与培训系统"
     },
