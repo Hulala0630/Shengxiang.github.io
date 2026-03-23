@@ -1230,15 +1230,65 @@ a {
   }
 
   .domain-summary-bar {
-    padding: 1.1rem 1.1rem 1.15rem 1.75rem;
+    position: relative;
+    padding: 1rem 4.5rem 1.1rem 1.75rem;
   }
 
   .domain-heading-row {
     grid-template-columns: 1fr;
+    gap: 0.7rem;
   }
 
   .domain-body-inner {
     padding: 1rem 1.1rem 1.15rem 1.75rem;
+  }
+
+  .domain-heading-copy {
+    gap: 0.45rem;
+  }
+
+  .domain-card h3 {
+    font-size: 1.08rem;
+    line-height: 1.08;
+  }
+
+  .domain-summary {
+    font-size: 0.86rem;
+    line-height: 1.42;
+  }
+
+  .domain-toggle-indicator {
+    position: absolute;
+    top: 0.95rem;
+    right: 1rem;
+    min-width: 2.35rem;
+    min-height: 2.35rem;
+    font-size: 0.95rem;
+    box-shadow: 3px 3px 0 var(--line);
+    transform: none;
+  }
+
+  .domain-card:hover .domain-toggle-indicator {
+    box-shadow: 3px 3px 0 var(--line);
+  }
+
+  .domain-card.expanded .domain-toggle-indicator {
+    transform: none;
+    background: var(--red);
+  }
+
+  .domain-body,
+  .domain-body-inner,
+  .domain-description,
+  .domain-value,
+  .domain-topics {
+    overflow: visible;
+  }
+
+  .domain-topics li,
+  .domain-value,
+  .domain-description {
+    max-width: 100%;
   }
 
   .project-summary-bar {
