@@ -1,4 +1,4 @@
-# Systems Portfolio | 工程系统作品集
+# Personal Portfolio | 个人项目作品集
 
 > Turning engineering complexity into structured, verifiable, and deliverable systems  
 > 将工程复杂性转化为可验证、可协作、可交付的系统结构  
@@ -13,8 +13,8 @@
 
 ## 🧠 About | 关于
 
-This repository hosts my systems portfolio, focusing on how complex engineering problems are structured, validated, and delivered across industrial software environments.  
-本仓库承载我的工程系统作品集，重点展示我如何在工业软件环境中对复杂问题进行结构化、验证与交付。  
+This repository hosts my personal portfolio, focusing on how complex engineering problems are structured, validated, and delivered across industrial software environments.  
+本仓库承载我的个人作品集，重点展示我如何在工业软件环境中对复杂问题进行结构化、验证与交付。  
 
 Rather than showcasing isolated demos, this portfolio reflects a consistent approach to engineering problem-solving.  
 不同于简单的项目罗列，本作品集强调一种持续一致的工程问题解决方法。  
