@@ -1292,7 +1292,8 @@ a {
   }
 
   .project-summary-bar {
-    padding: 1.25rem 1.2rem 1.25rem 2rem;
+    position: relative;
+    padding: 1rem 4.75rem 1.1rem 2rem;
   }
 
   .project-meta-row {
@@ -1311,9 +1312,59 @@ a {
     min-height: 3rem;
   }
 
+  .toggle-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    min-width: 2.45rem;
+    min-height: 2.45rem;
+    font-size: 0.96rem;
+    box-shadow: 3px 3px 0 var(--line);
+    transform: none;
+  }
+
+  .project-item:hover .toggle-indicator {
+    box-shadow: 3px 3px 0 var(--line);
+  }
+
+  .project-item.expanded .toggle-indicator {
+    transform: none;
+    background: var(--red);
+  }
+
   .project-body-inner {
     padding: 1.25rem 1.2rem 1.35rem 2rem;
     grid-template-columns: 1fr;
+  }
+
+  .project-header-block {
+    min-width: 0;
+    padding-right: 0;
+  }
+
+  .project-title-row h3 {
+    font-size: clamp(1.35rem, 6vw, 1.9rem);
+    line-height: 1;
+  }
+
+  .project-summary {
+    max-width: 100%;
+  }
+
+  .project-columns,
+  .diagram-panel,
+  .project-block,
+  .project-demo-note,
+  .project-video-shell {
+    overflow: visible;
+  }
+
+  .tag-list,
+  .tag-list li,
+  .project-block p,
+  .project-block li {
+    max-width: 100%;
+    word-break: break-word;
   }
 
   .domains-grid,
