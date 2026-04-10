@@ -66,7 +66,7 @@ const projectsData = [
         technologies: ["Unity", "JSON", "Configuration-driven Design", "Scene Interaction", "Fault Simulation"],
         video: {
           type: "embed",
-          url: ""
+          url: "assets/videos/DemoVideoLineAutoBuilder.mp4"
         },
         images: []
       }

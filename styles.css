@@ -1455,13 +1455,26 @@ a {
   }
 
   .collection-item-summary {
+    position: relative;
     grid-template-columns: 1fr;
+    padding: 0.95rem 4.25rem 0.95rem 1rem;
   }
 
   .collection-item-toggle {
-    min-width: 2.35rem;
-    min-height: 2.35rem;
-    font-size: 0.9rem;
+    position: absolute;
+    top: 0.95rem;
+    right: 0.95rem;
+    min-width: 2.3rem;
+    min-height: 2.3rem;
+    font-size: 0.88rem;
+    box-shadow: 3px 3px 0 var(--line);
+    transform: none;
+  }
+
+  .collection-item.expanded .collection-item-toggle {
+    transform: none;
+    background: var(--red);
+    color: #fff;
   }
 
   .project-meta-row {
