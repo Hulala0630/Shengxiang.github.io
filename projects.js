@@ -1,5 +1,78 @@
 const projectsData = [
   {
+    type: "collection",
+    title: {
+      en: "Vibe Coding Demos",
+      zh: "Vibe Coding Demo 集合"
+    },
+    summary: {
+      en: "A growing collection of rapid prototypes that explore configuration-driven building, fast system composition, and engineering abstraction through small interactive demos.",
+      zh: "这是一个持续扩展的快速原型集合，用小型交互 Demo 展示配置驱动建模、快速系统搭建与工程抽象能力。"
+    },
+    items: [
+      {
+        title: {
+          en: "VC Line Auto Builder",
+          zh: "产线自动建模 Demo"
+        },
+        description: {
+          en: "A configuration-driven Unity demo that builds industrial production lines from JSON.",
+          zh: "一个基于 JSON 配置自动生成工业产线结构的 Unity Demo。"
+        },
+        overview: {
+          en: "A Unity-based industrial line auto builder that reads JSON configuration and generates a Line / Station / Device hierarchy.",
+          zh: "这是一个基于 Unity 的工业产线自动建模 Demo，读取 JSON 配置后自动生成 Line / Station / Device 层级结构。"
+        },
+        keyFeatures: {
+          en: [
+            "JSON-driven modeling.",
+            "Automatic hierarchy generation.",
+            "Device types: Conveyor, Sensor, RobotBase.",
+            "Scene interaction with selection and UI panel.",
+            "Fault simulation with conveyor jam.",
+            "Layout switching between simple and complex scenes."
+          ],
+          zh: [
+            "基于 JSON 的配置驱动建模。",
+            "自动生成层级结构。",
+            "支持 Conveyor、Sensor、RobotBase 等设备类型。",
+            "支持场景选择交互与信息面板显示。",
+            "支持传送带卡滞故障模拟。",
+            "支持 simple / complex 两种布局切换。"
+          ]
+        },
+        interaction: {
+          en: [
+            "Camera movement with WASD and mouse.",
+            "Click a device to show its info panel.",
+            "Trigger fault and reset actions.",
+            "Switch between layout presets."
+          ],
+          zh: [
+            "使用 WASD 和鼠标进行相机移动。",
+            "点击设备显示信息面板。",
+            "触发故障与复位操作。",
+            "切换不同布局预设。"
+          ]
+        },
+        systemIdea: {
+          en: "The core idea is configuration → structure → visualization. It focuses on rapid modeling and system expression rather than full industrial simulation fidelity.",
+          zh: "核心思路是 configuration → structure → visualization，重点在于快速建模与系统表达，而不是完整工业仿真精度。"
+        },
+        note: {
+          en: "This is a rapid prototype created as a vibe coding demo, not a full industrial system.",
+          zh: "这是一个面向快速验证的 vibe coding 原型 Demo，并不是完整的工业系统。"
+        },
+        technologies: ["Unity", "JSON", "Configuration-driven Design", "Scene Interaction", "Fault Simulation"],
+        video: {
+          type: "embed",
+          url: ""
+        },
+        images: []
+      }
+    ]
+  },
+  {
     title: {
       en: "Industrial Digital Twin Demo",
       zh: "工业数字孪生演示系统"

@@ -47,6 +47,11 @@ const translations = {
       "Build technical representations that help teams reason, debug, and align."
     ],
     projectLabels: {
+      collectionTag: "Collection",
+      demoTag: "Demo",
+      media: "Media",
+      images: "Images",
+      demoVideo: "Demo Video",
       pitch: "One-line pitch",
       problem: "Problem",
       solution: "Solution",
@@ -54,6 +59,11 @@ const translations = {
       result: "Result",
       systemView: "System View",
       tech: "Tech",
+      overview: "Overview",
+      keyFeatures: "Key Features",
+      interaction: "Interaction",
+      systemIdea: "System Idea",
+      note: "Note",
       expand: "Open",
       collapse: "Close"
     },
@@ -161,6 +171,11 @@ const translations = {
       "构建有助于团队理解、调试和对齐的技术表达方式。"
     ],
     projectLabels: {
+      collectionTag: "集合",
+      demoTag: "Demo",
+      media: "媒体",
+      images: "图片",
+      demoVideo: "演示视频",
       pitch: "一句话概述",
       problem: "问题",
       solution: "方案",
@@ -168,6 +183,11 @@ const translations = {
       result: "结果",
       systemView: "系统结构",
       tech: "技术",
+      overview: "概览",
+      keyFeatures: "主要特性",
+      interaction: "交互方式",
+      systemIdea: "系统思路",
+      note: "说明",
       expand: "展开",
       collapse: "收起"
     },
@@ -337,14 +357,240 @@ function createProjectItem(project, labels, index) {
 
   const button = article.querySelector(".project-summary-bar");
   const body = article.querySelector(".project-body");
+  const bodyInner = article.querySelector(".project-body-inner");
 
   button.addEventListener("click", () => {
     const isExpanded = article.classList.toggle("expanded");
     button.setAttribute("aria-expanded", String(isExpanded));
-    body.style.maxHeight = isExpanded ? `${body.scrollHeight}px` : "0px";
+    setProjectBodyHeight(body, isExpanded);
+  });
+
+  observeExpandableContent(bodyInner);
+
+  return article;
+}
+
+function createCollectionItem(project, labels, index) {
+  const article = document.createElement("article");
+  const panelId = `collection-panel-${index}`;
+  const language = currentLanguage;
+
+  article.className = "project-item collection-card";
+  article.innerHTML = `
+    <button class="project-summary-bar collection-summary-bar" type="button" aria-expanded="false" aria-controls="${panelId}">
+      <div class="project-header-block">
+        <div class="project-title-row">
+          <h3>${project.title[language]}</h3>
+        </div>
+        <div class="project-meta-row">
+          <div class="project-tag-group">
+            <span class="project-class-tag collection-header-tag">${labels.collectionTag}</span>
+          </div>
+        </div>
+        <p class="project-summary">${project.summary[language]}</p>
+      </div>
+      <span class="toggle-indicator">+</span>
+    </button>
+
+    <div class="project-body" id="${panelId}">
+      <div class="collection-body-inner">
+        <div class="collection-list">
+          ${project.items.map((item, itemIndex) => createCollectionDemoMarkup(item, labels, language, index, itemIndex)).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+
+  const button = article.querySelector(".collection-summary-bar");
+  const body = article.querySelector(".project-body");
+  const bodyInner = article.querySelector(".collection-body-inner");
+
+  button.addEventListener("click", () => {
+    const isExpanded = article.classList.toggle("expanded");
+    button.setAttribute("aria-expanded", String(isExpanded));
+    setProjectBodyHeight(body, isExpanded);
+  });
+
+  observeExpandableContent(bodyInner);
+
+  article.querySelectorAll(".collection-item").forEach((collectionItem) => {
+    const itemButton = collectionItem.querySelector(".collection-item-summary");
+    const itemBody = collectionItem.querySelector(".collection-item-body");
+    const itemBodyInner = collectionItem.querySelector(".collection-item-body-inner");
+
+    itemButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const isExpanded = collectionItem.classList.toggle("expanded");
+      itemButton.setAttribute("aria-expanded", String(isExpanded));
+      setCollectionItemBodyHeight(itemBody, isExpanded);
+    });
+
+    observeExpandableContent(itemBodyInner, () => {
+      if (collectionItem.classList.contains("expanded")) {
+        itemBody.style.maxHeight = `${itemBody.scrollHeight}px`;
+        refreshExpandableHeights(collectionItem);
+      }
+    });
   });
 
   return article;
+}
+
+function createCollectionDemoMarkup(item, labels, language, projectIndex, itemIndex) {
+  const panelId = `collection-item-panel-${projectIndex}-${itemIndex}`;
+  const mediaSection = createCollectionVideoMarkup(item, labels, language);
+
+  return `
+    <article class="collection-item">
+      <button class="collection-item-summary" type="button" aria-expanded="false" aria-controls="${panelId}">
+        <div class="collection-item-heading">
+          <div class="collection-item-topline">
+            <span class="collection-item-tag">${labels.demoTag}</span>
+            <h4>${item.title[language]}</h4>
+          </div>
+          <p>${item.description[language]}</p>
+        </div>
+        <span class="collection-item-toggle">+</span>
+      </button>
+
+      <div class="collection-item-body" id="${panelId}">
+        <div class="collection-item-body-inner">
+          <section class="project-block collection-demo-block">
+            <h4>${labels.overview}</h4>
+            <p>${item.overview[language]}</p>
+          </section>
+
+          <section class="project-block collection-demo-block">
+            <h4>${labels.keyFeatures}</h4>
+            <ul>${item.keyFeatures[language].map((feature) => `<li>${feature}</li>`).join("")}</ul>
+          </section>
+
+          ${mediaSection}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function createCollectionMediaMarkup(item, labels, language) {
+  const hasVideo = Boolean(item.video?.url);
+  const hasImages = Array.isArray(item.images) && item.images.length > 0;
+
+  if (!hasVideo && !hasImages) {
+    return "";
+  }
+
+  const modules = [];
+
+  if (hasVideo) {
+    const videoUrl = item.video.url;
+    const isEmbed = item.video.type === "embed";
+    const isMp4 = /\.mp4($|\?)/i.test(videoUrl);
+    const title = labels.demoVideo;
+    let mediaMarkup = `
+      <div class="project-video-placeholder">
+        <span class="project-video-placeholder-title">${title}</span>
+        <span>${language === "zh" ? "替换为可用的视频链接后即可显示演示。" : "Replace with a valid video URL to display the demo."}</span>
+      </div>
+    `;
+
+    if (isMp4) {
+      mediaMarkup = `
+        <video class="project-video-frame" controls preload="metadata">
+          <source src="${videoUrl}" type="video/mp4">
+        </video>
+      `;
+    } else if (isEmbed) {
+      mediaMarkup = `
+        <iframe
+          class="project-video-frame"
+          src="${videoUrl}"
+          title="${title}"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      `;
+    }
+
+    modules.push(`
+      <section class="project-block media-block">
+        <h4>${title}</h4>
+        <div class="project-video-shell">
+          ${mediaMarkup}
+        </div>
+      </section>
+    `);
+  }
+
+  if (hasImages) {
+    modules.push(`
+      <section class="project-block">
+        <h4>${labels.images}</h4>
+        <div class="collection-image-grid">
+          ${item.images
+            .map(
+              (image) => `
+                <figure class="collection-image-card">
+                  <img src="${image.src}" alt="${image.alt?.[language] || item.title[language]}">
+                  ${image.caption ? `<figcaption>${image.caption[language]}</figcaption>` : ""}
+                </figure>
+              `
+            )
+            .join("")}
+        </div>
+      </section>
+    `);
+  }
+
+  return modules.join("");
+}
+
+function createCollectionVideoMarkup(item, labels, language) {
+  if (!item.video?.url) {
+    return "";
+  }
+
+  const videoUrl = item.video.url;
+  const isEmbed = item.video.type === "embed";
+  const isMp4 = /\.mp4($|\?)/i.test(videoUrl);
+  const title = labels.demoVideo;
+  let mediaMarkup = `
+    <div class="project-video-placeholder">
+      <span class="project-video-placeholder-title">${title}</span>
+      <span>${language === "zh" ? "替换为可用的视频链接后即可显示演示。" : "Replace with a valid video URL to display the demo."}</span>
+    </div>
+  `;
+
+  if (isMp4) {
+    mediaMarkup = `
+      <video class="project-video-frame" controls preload="metadata">
+        <source src="${videoUrl}" type="video/mp4">
+      </video>
+    `;
+  } else if (isEmbed) {
+    mediaMarkup = `
+      <iframe
+        class="project-video-frame"
+        src="${videoUrl}"
+        title="${title}"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+    `;
+  }
+
+  return `
+    <section class="project-block media-block collection-demo-block">
+      <h4>${title}</h4>
+      <div class="project-video-shell">
+        ${mediaMarkup}
+      </div>
+    </section>
+  `;
 }
 
 function createProjectVideoSection(project, language) {
@@ -415,8 +661,70 @@ function renderProjects(language) {
   projectsList.innerHTML = "";
 
   projectsData.forEach((project, index) => {
+    if (project.type === "collection") {
+      projectsList.appendChild(createCollectionItem(project, projectLabels, index));
+      return;
+    }
+
     projectsList.appendChild(createProjectItem(project, projectLabels, index));
   });
+}
+
+function refreshExpandableHeights(node) {
+  let current = node.parentElement;
+
+  while (current) {
+    if (current.classList?.contains("project-body")) {
+      const owner = current.parentElement;
+
+      if (owner?.classList.contains("expanded")) {
+        current.style.maxHeight = `${current.scrollHeight}px`;
+      }
+    }
+
+    current = current.parentElement;
+  }
+}
+
+function setProjectBodyHeight(body, isExpanded) {
+  if (!isExpanded) {
+    body.style.maxHeight = "0px";
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    body.style.maxHeight = `${body.scrollHeight}px`;
+  });
+}
+
+function setCollectionItemBodyHeight(body, isExpanded) {
+  if (!isExpanded) {
+    body.style.maxHeight = "0px";
+    refreshExpandableHeights(body);
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    body.style.maxHeight = `${body.scrollHeight}px`;
+    refreshExpandableHeights(body);
+  });
+}
+
+function observeExpandableContent(node, onResize) {
+  if (!node || typeof ResizeObserver === "undefined") {
+    return;
+  }
+
+  const observer = new ResizeObserver(() => {
+    if (typeof onResize === "function") {
+      onResize();
+      return;
+    }
+
+    refreshExpandableHeights(node);
+  });
+
+  observer.observe(node);
 }
 
 function renderDomains(language) {
