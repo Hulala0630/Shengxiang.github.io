@@ -74,6 +74,128 @@ const projectsData = [
   },
   {
     title: {
+      en: "Production Line Diagnostics Agent",
+      zh: "产线状态分析与故障诊断智能助手"
+    },
+    pitch: {
+      en: "A workflow-based industrial agent for production line diagnostics, tool orchestration, and closed-loop reasoning.",
+      zh: "一个面向产线诊断的工作流式工业智能助手，支持工具编排、上下文推理与闭环决策。"
+    },
+    summary: {
+      en: "An industrial agent system designed for production line status analysis and fault diagnosis. The system combines workflow-based reasoning, tool calling, context engineering, and execution trace visualization to support multi-turn diagnosis in manufacturing scenarios.",
+      zh: "这是一个面向产线状态分析与故障诊断的工业智能助手系统，结合工作流式推理、多工具调用、上下文工程和执行路径可视化，支持制造场景下的多轮诊断与分析。"
+    },
+    problem: {
+      en: "Traditional single-turn LLM interactions are weak at structured diagnosis in industrial scenarios because they lack explicit workflow control, tool grounding, memory mechanisms, and execution transparency.",
+      zh: "传统的单轮 LLM 调用在工业诊断场景中能力有限，因为它缺少显式的工作流控制、工具支撑、记忆机制以及执行过程透明度。"
+    },
+    solution: {
+      en: "I designed and implemented a workflow-based production diagnostics agent with a modular Plan–Execute–Review/Replan architecture. The system combines industrial semantic tools, structured memory, and traceable execution to support fault detection, root cause analysis, and next-step recommendations.",
+      zh: "我设计并实现了一套基于工作流的产线诊断智能体，采用模块化的 Plan–Execute–Review/Replan 架构，并结合工业语义工具、结构化记忆与可追踪执行流程，以支持故障检测、原因分析和下一步操作建议。"
+    },
+    highlights: {
+      en: [
+        "Designed a multi-stage Plan–Execute–Review/Replan agent architecture instead of relying on a single LLM call.",
+        "Built modular components: Planner, Executor, Reviewer, and Orchestrator.",
+        "Implemented multi-tool orchestration via function calling.",
+        "Abstracted manufacturing data into structured semantic interfaces: system state, alarms, and production context.",
+        "Designed a full context engineering pipeline including short-term memory, summary memory, and structured memory.",
+        "Enabled multi-turn reasoning with contextual continuity and coreference resolution.",
+        "Logged full execution traces including planning, tool usage, execution results, and observations.",
+        "Developed a Streamlit-based interactive UI with chat interaction, collapsible tool outputs, and a dedicated trace panel.",
+        "Modeled real manufacturing scenarios such as conveyor jams, sensor blocking, and alarm trigger logic.",
+        "Implemented closed-loop reasoning through execution validation and automatic replanning."
+      ],
+      zh: [
+        "自主设计多阶段 Plan–Execute–Review/Replan Agent 架构，而非依赖单次 LLM 调用。",
+        "构建模块化组件：Planner、Executor、Reviewer 和 Orchestrator。",
+        "实现基于 function calling 的多工具调用与编排。",
+        "将制造数据抽象为结构化工业语义接口：system state、alarms、production context。",
+        "设计完整的 Context Engineering 机制，包括 short-term memory、summary memory 和 structured memory。",
+        "支持上下文延续推理与指代解析，实现多轮诊断能力。",
+        "记录完整执行路径，包括规划、工具调用、执行结果与观察信息。",
+        "基于 Streamlit 开发交互式 UI，支持聊天式交互、可折叠工具输出和独立 trace 面板。",
+        "建模真实工业场景，如传送带堵塞、传感器遮挡和报警触发逻辑。",
+        "通过执行校验与自动重规划实现闭环推理能力。"
+      ]
+    },
+    structure: {
+      en: [
+        "User Query",
+        "    |",
+        "   UI",
+        "    |",
+        "    v",
+        "Orchestrator",
+        "    |",
+        "    v",
+        "Planner -> Executor -> Reviewer",
+        "    |         |           |",
+        "    |         |           v",
+        "    |         |       Replan",
+        "    |         v",
+        "    |   Tool Interfaces",
+        "    |",
+        "    v",
+        "Memory Layer",
+        "    |",
+        "    v",
+        "UI + Execution Trace"
+      ].join("\n"),
+      zh: [
+        "用户请求",
+        "   |",
+        "   UI",
+        "   |",
+        "   v",
+        "Orchestrator",
+        "   |",
+        "   v",
+        "Planner -> Executor -> Reviewer",
+        "   |         |           |",
+        "   |         |           v",
+        "   |         |        Replan",
+        "   |         v",
+        "   |     工业语义工具",
+        "   |",
+        "   v",
+        "记忆层",
+        "   |",
+        "   v",
+        "UI 与执行路径展示"
+      ].join("\n")
+    },
+    result: {
+      en: "The project demonstrates an end-to-end industrial agent system that combines workflow reasoning, tool execution, contextual memory, and execution transparency. It extends beyond chat interaction into structured diagnosis, explainability, and closed-loop decision support for manufacturing operations.",
+      zh: "该项目展示了一套端到端的工业智能体系统，融合工作流式推理、工具执行、上下文记忆和执行透明性，使其不再只是简单对话，而是面向制造场景的结构化诊断、可解释分析与闭环决策支持系统。"
+    },
+    technologies: [
+      "Python",
+      "LLM Agent",
+      "Function Calling",
+      "Workflow Orchestration",
+      "Context Engineering",
+      "Memory System",
+      "Explainable AI",
+      "Execution Trace",
+      "Streamlit",
+      "Industrial Diagnostics"
+    ],
+    video: {
+      type: "embed",
+      url: "assets/videos/DemoVideoIndustrialAIAgent.mp4"
+    },
+    projectType: {
+      en: "Personal Project",
+      zh: "个人项目"
+    },
+    technicalType: {
+      en: "Technical Project",
+      zh: "技术项目"
+    }
+  },
+  {
+    title: {
       en: "Industrial Digital Twin Demo",
       zh: "工业数字孪生演示系统"
     },
