@@ -144,7 +144,7 @@ const translations = {
     ]
   },
   zh: {
-    pageTitle: "个人作品集",
+    pageTitle: "这里是胡生翔",
     skipLink: "跳转到正文",
     brandSubtitle: "通过系统思维解决复杂问题",
     navHome: "首页",
