@@ -75,7 +75,7 @@ const projectsData = [
   {
     title: {
       en: "Production Line Diagnostics Agent",
-      zh: "产线状态分析与故障诊断智能助手"
+      zh: "产线状态分析与故障诊断Agent"
     },
     pitch: {
       en: "A workflow-based industrial agent for production line diagnostics, tool orchestration, and closed-loop reasoning.",

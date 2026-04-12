@@ -1,7 +1,7 @@
 // Bilingual content model for static UI copy and domain data.
 const translations = {
   en: {
-    pageTitle: "Systems Portfolio",
+    pageTitle: "This is Shengxiang Hu",
     skipLink: "Skip to content",
     brandSubtitle: "Problem Solving Through Systems Thinking",
     navHome: "Home",
@@ -10,9 +10,9 @@ const translations = {
     navAbout: "About",
     navContact: "Contact",
     heroEyebrow: "Personal Portfolio",
-    heroTitle: "Systems Thinking for Software, Simulation, and Digital Delivery",
+    heroTitle: "Systems Thinking for Simulation, Software, Digitalization and AI-driven Systems",
     heroDescription:
-      "I work on technical problems that sit between control logic, simulation, data exchange, and software representation. My focus is turning complex systems into structures that can be tested, understood, and delivered with less ambiguity.",
+      "I work on technical problems across control logic, simulation, data exchange, and AI- driven systems.My focus is turning complex engineering and reasoning systems into structured, testable, and explainable workflows that can be reliably delivered and evolved.",
     heroPrimaryAction: "Explore Projects",
     heroSecondaryAction: "Read Profile",
     panelBadge: "Method",
@@ -26,11 +26,11 @@ const translations = {
       "These are the technical lenses I use to frame engineering work, structure delivery, and evaluate system behavior before it becomes expensive to change.",
     aboutEyebrow: "Profile",
     aboutTitle: "About",
-    aboutLead: "My work is centered on technical problem solving rather than a single job title.",
+    aboutLead: "My work focuses on structuring complex technical problems across engineering systems and AI applications.",
     aboutParagraphOne:
-      "I am interested in projects where physical systems, software abstractions, and engineering constraints need to be brought into one coherent operating model. That often means turning unclear interactions into explicit flows, interfaces, and validation paths.",
+      "I am particularly interested in systems where physical processes, software abstractions, and AI reasoning need to be integrated into one coherent operating model.This includes designing explicit workflows, interfaces, and reasoning paths that allow both machines and humans to understand system behavior.",
     aboutParagraphTwo:
-      "Across simulation, system integration, and digital tooling, I focus on reducing uncertainty: making system behavior visible earlier, separating concerns clearly, and structuring implementation so teams can reason about it.",
+      "Across simulation, system integration, and AI-driven applications, I focus on reducing uncertainty: making system behavior visible earlier, structuring decision processes, and enabling explainable and iterative reasoning in both engineering and intelligent systems.",
     contactEyebrow: "Contact",
     contactTitle: "Get In Touch",
     contactIntro:
@@ -41,10 +41,10 @@ const translations = {
     footerText: "Personal portfolio.",
     footerAction: "Back to top",
     focusItems: [
-      "Reduce ambiguity by turning system behavior into explicit flows.",
-      "Design interfaces that allow software and physical logic to be tested earlier.",
-      "Use architecture as a problem-solving tool, not as documentation after the fact.",
-      "Build technical representations that help teams reason, debug, and align."
+      "Reduce ambiguity by turning system behavior and reasoning into explicit workflows.",
+      "Design interfaces that allow both physical systems and AI agents to be tested earlier.",
+      "Use architecture and workflow design as tools for problem solving, not just documentation.",
+      "Build systems that support explainability, iteration, and structured decision-making."
     ],
     projectLabels: {
       collectionTag: "Collection",
@@ -85,6 +85,25 @@ const translations = {
           "Using simulation environments and mirrored software views to validate machine behavior before physical systems are available.",
         topics: ["Simulation", "Digital Twin", "Unity", "PLCSim", "3D Visualization", "Scenario-based Validation"],
         value: "Makes sequences, states, and abnormal scenarios visible early enough to change them cheaply."
+      },
+      {
+        mark: "AI",
+        title: "AI Systems & Agent Engineering",
+        summary: "Design workflow-based AI systems that integrate reasoning, tools, and structured context.",
+        description:
+          "Designing AI-driven systems that go beyond single LLM calls, focusing on structured reasoning workflows, tool orchestration, and context-aware decision processes. This includes building agent architectures, memory systems, and explainable execution pipelines.",
+        topics: [
+          "LLM Application",
+          "Agent Architecture",
+          "Plan–Execute–Review",
+          "Tool Calling",
+          "Context Engineering",
+          "Memory Systems",
+          "Execution Trace",
+          "Explainable AI"
+        ],
+        value:
+          "Enables AI systems to operate as structured, explainable, and iterative decision systems rather than black-box responses."
       },
       {
         mark: "DI",
@@ -134,9 +153,9 @@ const translations = {
     navAbout: "关于",
     navContact: "联系",
     heroEyebrow: "工程系统作品集",
-    heroTitle: "面向软件、仿真与数字化交付的系统思维",
+    heroTitle: "面向仿真、软件、数字化与AI驱动的系统思维",
     heroDescription:
-      "我关注的是控制逻辑、仿真、数据交换与软件表达之间的技术问题。核心工作不是堆叠工具，而是把复杂系统整理成可验证、可解释、可交付的清晰结构。",
+      "我关注控制逻辑、仿真、数据交换以及AI驱动系统之间的技术问题。核心工作不是堆叠工具，而是把复杂的工程系统与推理系统整理成可验证、可解释、可演化的结构化流程。",
     heroPrimaryAction: "查看项目",
     heroSecondaryAction: "阅读简介",
     panelBadge: "方法",
@@ -150,11 +169,11 @@ const translations = {
       "这是我理解工程问题、组织系统结构以及在交付前验证复杂行为的主要技术视角。",
     aboutEyebrow: "简介",
     aboutTitle: "关于我",
-    aboutLead: "我更关注技术问题的解决方式，而不是被单一岗位名称定义。",
+    aboutLead: "我专注于工程系统与AI应用中的复杂问题结构化，而不仅仅是某一具体岗位能力。",
     aboutParagraphOne:
-      "我尤其感兴趣的是那些需要把物理系统、软件抽象和工程约束放进同一运行模型中的项目。这通常意味着把模糊的交互关系整理成明确的流程、接口和验证路径。",
+      "我尤其关注那些需要将物理过程、软件抽象以及AI推理能力整合到同一系统中的问题。这通常意味着构建清晰的工作流、接口以及推理路径，使系统行为对人和机器都可理解。",
     aboutParagraphTwo:
-      "无论是在仿真、系统集成还是数字化工具场景中，我的核心目标都是降低不确定性：更早看见系统行为，更清楚地划分责任边界，并让团队能够真正推理和讨论系统本身。",
+      "无论是在仿真、系统集成还是AI驱动应用中，我的核心目标都是降低不确定性：更早暴露系统行为，结构化决策过程，并让工程系统与智能系统都具备可解释与可迭代的能力。",
     contactEyebrow: "联系",
     contactTitle: "联系方式",
     contactIntro:
@@ -165,10 +184,10 @@ const translations = {
     footerText: "个人作品集。",
     footerAction: "返回顶部",
     focusItems: [
-      "通过明确系统流向来降低沟通与实现中的歧义。",
-      "设计能够提前验证的软件与物理逻辑接口。",
-      "把架构当作解决问题的工具，而不是事后补写的文档。",
-      "构建有助于团队理解、调试和对齐的技术表达方式。"
+      "通过结构化系统行为与推理流程，降低沟通与实现中的歧义。",
+      "设计可同时支持物理系统与AI Agent验证的接口与流程。",
+      "把架构与工作流设计作为解决问题的核心工具，而非事后文档。",
+      "构建支持可解释性、迭代优化与结构化决策的系统。"
     ],
     projectLabels: {
       collectionTag: "集合",
@@ -209,6 +228,25 @@ const translations = {
           "通过仿真环境与数字孪生表达，在实机到位前验证控制逻辑、状态变化与场景行为。",
         topics: ["Simulation", "Digital Twin", "Unity", "PLCSim", "3D Visualization", "Scenario-based Validation"],
         value: "让顺序逻辑、状态变化和异常场景更早可见，也让修改成本更低。"
+      },
+      {
+        mark: "AI",
+        title: "AI系统与Agent工程",
+        summary: "构建基于工作流的AI系统，将推理、工具调用与上下文整合为可控结构。",
+        description:
+          "设计超越单次大模型调用的AI系统，重点在于结构化推理流程、工具编排与上下文驱动的决策机制，包括Agent架构、记忆系统以及可解释执行流程的构建。",
+        topics: [
+          "LLM应用",
+          "Agent架构",
+          "Plan–Execute–Review",
+          "工具调用",
+          "上下文工程",
+          "记忆系统",
+          "执行路径",
+          "可解释AI"
+        ],
+        value:
+          "使AI系统从黑盒响应转变为可解释、可迭代、可结构化的决策系统。"
       },
       {
         mark: "DI",

@@ -7,7 +7,7 @@
 
 ## 🌐 Live Site | 在线访问
 
-👉 https://hulala0630.github.io/Shengxiang.github.io/  
+👉 huhuhushengxiang.com
 
 ---
 
@@ -120,7 +120,6 @@ The focus remains on methodology, system design, and technical reasoning.
 
 ## 📬 Contact | 联系方式
 
-- GitHub: https://github.com/Hulala0630  
 - Email: hushengxiang0630@163.com
 - LinkedIn: https://www.linkedin.com/in/shengxiang-hu-269787252/
 
