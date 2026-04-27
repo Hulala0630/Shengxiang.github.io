@@ -288,6 +288,78 @@ const translations = {
   }
 };
 
+translations.en.timelineEyebrow = "Career Path";
+translations.en.timelineScrollPrev = "Scroll timeline left";
+translations.en.timelineScrollNext = "Scroll timeline right";
+translations.en.domainsScrollPrev = "Scroll capabilities left";
+translations.en.domainsScrollNext = "Scroll capabilities right";
+translations.en.careerTimeline = [
+  {
+    period: "2016–2021",
+    title: "Tongji University",
+    subtitle: "B.Eng. Industrial Engineering",
+    description: "Built foundation in industrial engineering, process analysis, and production systems.",
+    status: "past"
+  },
+  {
+    period: "2021–2024",
+    title: "Technical University of Munich",
+    subtitle: "M.Sc. Human Factors Engineering",
+    description: "Focused on human-system interaction, interface design, engineering systems, and data analysis.",
+    status: "past"
+  },
+  {
+    period: "2023–2026",
+    title: "BMW Group Munich",
+    subtitle: "Digital Twin / Virtual Commissioning",
+    description: "Worked on industrial simulation, virtual training, system integration, and digital delivery in manufacturing contexts.",
+    status: "current"
+  },
+  {
+    period: "Future",
+    title: "Next System",
+    subtitle: "",
+    description: "",
+    status: "future"
+  }
+];
+
+translations.zh.timelineEyebrow = "成长路径";
+translations.zh.timelineScrollPrev = "向左滚动时间线";
+translations.zh.timelineScrollNext = "向右滚动时间线";
+translations.zh.domainsScrollPrev = "向左滚动能力卡片";
+translations.zh.domainsScrollNext = "向右滚动能力卡片";
+translations.zh.careerTimeline = [
+  {
+    period: "2016–2021",
+    title: "同济大学",
+    subtitle: "工业工程 本科",
+    description: "建立工业工程、流程分析与生产系统理解基础。",
+    status: "past"
+  },
+  {
+    period: "2021–2024",
+    title: "慕尼黑工业大学",
+    subtitle: "人因工程-系统交互 硕士",
+    description: "聚焦人机交互、界面设计、工程系统与数据分析。",
+    status: "past"
+  },
+  {
+    period: "2023–2026",
+    title: "宝马集团 慕尼黑",
+    subtitle: "数字孪生 / 虚拟调试",
+    description: "参与工业仿真、虚拟培训、系统集成与制造场景下的数字化交付。",
+    status: "current"
+  },
+  {
+    period: "Future",
+    title: "未来",
+    subtitle: "",
+    description: "",
+    status: "future"
+  }
+];
+
 const navToggle = document.querySelector(".nav-toggle");
 const navMenu = document.querySelector(".nav-links");
 const navLinks = document.querySelectorAll(".nav-links a");
@@ -296,6 +368,11 @@ const translatableNodes = document.querySelectorAll("[data-i18n]");
 const focusList = document.getElementById("focus-list");
 const projectsList = document.getElementById("projects-list");
 const domainsGrid = document.getElementById("domains-grid");
+const domainsPrev = document.getElementById("domains-prev");
+const domainsNext = document.getElementById("domains-next");
+const careerTimeline = document.getElementById("career-timeline");
+const timelinePrev = document.getElementById("timeline-prev");
+const timelineNext = document.getElementById("timeline-next");
 const yearElement = document.getElementById("year");
 const revealItems = document.querySelectorAll(".reveal");
 
@@ -810,6 +887,123 @@ function renderDomains(language) {
   });
 }
 
+function renderCareerTimeline(language) {
+  if (!careerTimeline) {
+    return;
+  }
+
+  careerTimeline.innerHTML = translations[language].careerTimeline
+    .map(
+      (item) => `
+        <article class="timeline-item timeline-${item.status}" tabindex="0">
+          <div class="timeline-node" aria-hidden="true"></div>
+          <div class="timeline-card">
+            <p class="timeline-period">${item.period}</p>
+            <h3>${item.title}</h3>
+            ${item.subtitle ? `<p class="timeline-subtitle">${item.subtitle}</p>` : ""}
+            ${item.description ? `<p class="timeline-description">${item.description}</p>` : ""}
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function setupScrollButtons(track, prevButton, nextButton, amount) {
+  if (!track || !prevButton || !nextButton) {
+    return;
+  }
+
+  prevButton.addEventListener("click", () => {
+    track.scrollBy({ left: -amount, behavior: "smooth" });
+  });
+
+  nextButton.addEventListener("click", () => {
+    track.scrollBy({ left: amount, behavior: "smooth" });
+  });
+}
+
+function setupDragScroll(track) {
+  if (!track) {
+    return;
+  }
+
+  let isPointerDown = false;
+  let isDragging = false;
+  let suppressClick = false;
+  let startX = 0;
+  let startScrollLeft = 0;
+  const dragThreshold = 8;
+
+  track.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) {
+      return;
+    }
+
+    isPointerDown = true;
+    isDragging = false;
+    startX = event.clientX;
+    startScrollLeft = track.scrollLeft;
+    track.setPointerCapture?.(event.pointerId);
+  });
+
+  track.addEventListener("pointermove", (event) => {
+    if (!isPointerDown) {
+      return;
+    }
+
+    const deltaX = event.clientX - startX;
+
+     if (!isDragging && Math.abs(deltaX) > dragThreshold) {
+      isDragging = true;
+      track.classList.add("is-dragging");
+    }
+
+    if (!isDragging) {
+      return;
+    }
+
+    event.preventDefault();
+    track.scrollLeft = startScrollLeft - deltaX;
+  });
+
+  const stopDragging = (event) => {
+    if (!isPointerDown) {
+      return;
+    }
+
+    if (isDragging) {
+      suppressClick = true;
+      window.setTimeout(() => {
+        suppressClick = false;
+      }, 0);
+    }
+
+    isPointerDown = false;
+    isDragging = false;
+    track.classList.remove("is-dragging");
+    if (event?.pointerId !== undefined) {
+      track.releasePointerCapture?.(event.pointerId);
+    }
+  };
+
+  track.addEventListener("pointerup", stopDragging);
+  track.addEventListener("pointercancel", stopDragging);
+  track.addEventListener("pointerleave", stopDragging);
+  track.addEventListener(
+    "click",
+    (event) => {
+      if (!suppressClick) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    true
+  );
+}
+
 function updateStaticText(language) {
   const dictionary = translations[language];
 
@@ -827,10 +1021,21 @@ function updateStaticText(language) {
   renderFocusItems(dictionary.focusItems);
   renderProjects(language);
   renderDomains(language);
+  renderCareerTimeline(language);
 
   document.querySelectorAll("[data-lang-option]").forEach((node) => {
     node.classList.toggle("active", node.dataset.langOption === language);
   });
+
+  if (timelinePrev && timelineNext) {
+    timelinePrev.setAttribute("aria-label", dictionary.timelineScrollPrev);
+    timelineNext.setAttribute("aria-label", dictionary.timelineScrollNext);
+  }
+
+  if (domainsPrev && domainsNext) {
+    domainsPrev.setAttribute("aria-label", dictionary.domainsScrollPrev);
+    domainsNext.setAttribute("aria-label", dictionary.domainsScrollNext);
+  }
 }
 
 function setLanguage(language) {
@@ -897,5 +1102,8 @@ const revealObserver = new IntersectionObserver(
 );
 
 revealItems.forEach((item) => revealObserver.observe(item));
+setupScrollButtons(domainsGrid, domainsPrev, domainsNext, 420);
+setupScrollButtons(careerTimeline, timelinePrev, timelineNext, 360);
+setupDragScroll(careerTimeline);
 
 setLanguage(currentLanguage);

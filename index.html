@@ -86,6 +86,21 @@
           </div>
           <ul class="focus-list" id="focus-list"></ul>
         </aside>
+
+        <div class="hero-timeline-block">
+          <div class="hero-timeline-head">
+            <p class="eyebrow" data-i18n="timelineEyebrow">Career Path</p>
+            <div class="timeline-controls">
+              <button class="timeline-nav timeline-nav-prev" type="button" id="timeline-prev" aria-label="Scroll timeline left">&#8592;</button>
+              <button class="timeline-nav timeline-nav-next" type="button" id="timeline-next" aria-label="Scroll timeline right">&#8594;</button>
+            </div>
+          </div>
+          <div class="timeline-shell">
+            <div class="timeline-fade timeline-fade-left" aria-hidden="true"></div>
+            <div class="timeline-fade timeline-fade-right" aria-hidden="true"></div>
+            <div class="career-timeline" id="career-timeline"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -99,7 +114,15 @@
           </p>
         </div>
 
-        <div class="domains-grid" id="domains-grid"></div>
+        <div class="domains-scroller">
+          <button class="domains-nav domains-nav-prev" type="button" id="domains-prev" aria-label="Scroll capabilities left">&#8592;</button>
+          <div class="domains-shell">
+            <div class="domains-fade domains-fade-left" aria-hidden="true"></div>
+            <div class="domains-fade domains-fade-right" aria-hidden="true"></div>
+            <div class="domains-grid" id="domains-grid"></div>
+          </div>
+          <button class="domains-nav domains-nav-next" type="button" id="domains-next" aria-label="Scroll capabilities right">&#8594;</button>
+        </div>
       </div>
     </section>
 
