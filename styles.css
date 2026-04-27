@@ -352,6 +352,7 @@ a {
   grid-column: 1 / -1;
   margin-top: 0.4rem;
   min-width: 0;
+  width: 100%;
 }
 
 .hero-timeline-head,
@@ -438,10 +439,14 @@ a {
   display: flex;
   gap: 2.2rem;
   overflow-x: auto;
+  min-width: 100%;
   padding: 0.5rem 2.4rem 1.1rem 0.2rem;
   scroll-snap-type: x mandatory;
   cursor: grab;
   user-select: none;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 
 .career-timeline.is-dragging {
@@ -685,6 +690,9 @@ a {
   overflow-x: auto;
   padding: 0.35rem 2rem 0.8rem 0.2rem;
   scroll-snap-type: x mandatory;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 
 .domain-card,
@@ -1638,7 +1646,15 @@ a {
   }
 
   .career-timeline {
+    display: flex;
+    min-width: 100%;
     padding-right: 1rem;
+  }
+
+  .timeline-shell,
+  .domains-shell {
+    width: 100%;
+    overflow: hidden;
   }
 
   .timeline-item {

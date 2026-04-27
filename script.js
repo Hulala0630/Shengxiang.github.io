@@ -312,14 +312,14 @@ translations.en.careerTimeline = [
     period: "2023–2026",
     title: "BMW Group Munich",
     subtitle: "Digital Twin / Virtual Commissioning",
-    description: "Worked on industrial simulation, virtual training, system integration, and digital delivery in manufacturing contexts.",
+    description: "Worked on industrial simulation, virtual training, system integration, digital delivery, and early exposure to industrial AI applications in manufacturing contexts.",
     status: "current"
   },
   {
     period: "Future",
-    title: "Next System",
-    subtitle: "",
-    description: "",
+    title: "Future Systems",
+    subtitle: "Open and Creative Technology Horizons",
+    description: "Looking forward to a future where technology becomes more open, more creative, and more capable of enabling meaningful engineering work in new ways.",
     status: "future"
   }
 ];
@@ -348,14 +348,14 @@ translations.zh.careerTimeline = [
     period: "2023–2026",
     title: "宝马集团 慕尼黑",
     subtitle: "数字孪生 / 虚拟调试",
-    description: "参与工业仿真、虚拟培训、系统集成与制造场景下的数字化交付。",
+    description: "参与工业仿真、虚拟培训、系统集成、制造场景下的数字化交付，并接触工业化 AI 在实际工程环境中的应用。",
     status: "current"
   },
   {
     period: "Future",
     title: "未来",
-    subtitle: "",
-    description: "",
+    subtitle: "开放与创造性的技术未来",
+    description: "期待一个技术更加开放、更具创造力，并能以新的方式展示的未来。",
     status: "future"
   }
 ];
@@ -936,7 +936,11 @@ function setupDragScroll(track) {
   const dragThreshold = 8;
 
   track.addEventListener("pointerdown", (event) => {
-    if (event.pointerType === "mouse" && event.button !== 0) {
+    if (event.pointerType !== "mouse") {
+      return;
+    }
+
+    if (event.button !== 0) {
       return;
     }
 
