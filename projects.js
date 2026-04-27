@@ -69,6 +69,96 @@ const projectsData = [
           url: "assets/videos/DemoVideoLineAutoBuilder.mp4"
         },
         images: []
+      },
+      {
+        title: {
+          en: "Aster Desktop Agent",
+          zh: "Aster 桌面智能助手"
+        },
+        description: {
+          en: "A lightweight desktop AI assistant that integrates local memory, offline voice input, and real-time LLM interaction.",
+          zh: "一个集成本地记忆、离线语音输入与实时大模型交互的桌面智能助手。"
+        },
+        overview: {
+          en: "Aster is a vibe-coded desktop assistant built with Electron, React, and TypeScript. Unlike browser-based AI tools, it lives directly on the desktop as an interactive companion, combining chat, reminders, local memory, and AI news aggregation.",
+          zh: "Aster 是一个基于 Electron、React 和 TypeScript 构建的桌面智能助手。不同于网页端 AI 工具，它以桌面交互形式存在，将对话、提醒、本地记忆与 AI 信息整合在一个轻量系统中。"
+        },
+        keyFeatures: {
+          en: [
+            "Desktop-native assistant (not browser-based).",
+            "Draggable \"pet-style\" UI interaction.",
+            "Local memory storage using SQLite.",
+            "Reminder system with desktop notifications.",
+            "Streaming LLM responses via OpenAI API.",
+            "Offline voice transcription (Whisper-based).",
+            "AI news aggregation from model providers and engineering blogs."
+          ],
+          zh: [
+            "桌面原生助手（非浏览器应用）。",
+            "可拖拽的“桌面宠物式”交互。",
+            "基于 SQLite 的本地记忆存储。",
+            "提醒系统与桌面通知。",
+            "基于 OpenAI API 的流式对话。",
+            "离线语音转文本（Whisper）。",
+            "AI 新闻聚合（模型厂商与技术博客）。"
+          ]
+        },
+        interaction: {
+          en: [
+            "Hover to preview panel.",
+            "Click to expand assistant interface.",
+            "Drag to reposition the assistant.",
+            "Right-click to close.",
+            "Voice input via microphone button.",
+            "Text input for reminders and context storage."
+          ],
+          zh: [
+            "悬停预览界面。",
+            "点击展开助手面板。",
+            "拖拽调整位置。",
+            "右键关闭应用。",
+            "麦克风进行语音输入。",
+            "文本输入用于提醒与上下文记录。"
+          ]
+        },
+        systemIdea: {
+          en: "Aster explores how lightweight agent systems can exist outside the browser, combining local state, memory, and multimodal interaction into a persistent desktop experience.",
+          zh: "Aster 探索了轻量级 Agent 系统如何脱离浏览器存在，通过本地状态、记忆与多模态交互构建持续运行的桌面体验。"
+        },
+        note: {
+          en: "This is a vibe coding prototype focused on exploring desktop agent interaction patterns rather than production-level system design.",
+          zh: "该项目为 vibecoding 原型，重点在于探索桌面 Agent 的交互与系统模式，而非生产级系统实现。"
+        },
+        technologies: [
+          "Electron",
+          "React",
+          "TypeScript",
+          "SQLite",
+          "OpenAI API",
+          "Whisper",
+          "Desktop Agent"
+        ],
+        technicalHighlights: {
+          en: [
+            "Local-first memory architecture using SQLite.",
+            "Agent context persistence across sessions.",
+            "Integration of offline voice pipeline with LLM interaction.",
+            "Streaming response handling.",
+            "Electron-based desktop interaction layer."
+          ],
+          zh: [
+            "基于 SQLite 的本地优先记忆架构。",
+            "跨会话的 Agent 上下文保持。",
+            "离线语音输入与 LLM 推理结合。",
+            "流式响应处理机制。",
+            "基于 Electron 的桌面交互层。"
+          ]
+        },
+        video: {
+          type: "embed",
+          url: "assets/videos/DemoDesktopPet.mp4"
+        },
+        images: []
       }
     ]
   },
