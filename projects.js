@@ -159,6 +159,176 @@ const projectsData = [
           url: "assets/videos/DemoDesktopPet.mp4"
         },
         images: []
+      },
+      {
+        title: {
+          en: "PLC Platform Benchmark & Migration Decision Copilot",
+          zh: "PLC平台选型与迁移决策智能助手"
+        },
+        description: {
+          en: "A local-first decision-support workspace for PLC ecosystem selection, weighted benchmarking, migration-risk discussion, and consulting-style report drafting.",
+          zh: "一个本地优先的PLC平台决策工作台，支持生态选型、加权Benchmark、迁移风险分析与咨询式报告生成。"
+        },
+        overview: {
+          en: "This is a vibe-coded industrial decision-support application for PLC platform selection and migration planning. It helps users create decision projects, fill project intake information, register attachment metadata, set platform preferences, run deterministic benchmarks, review AI-assisted analysis, edit report sections, and export consulting-style reports.",
+          zh: "这是一个面向PLC平台选型与迁移规划的 vibe coding 工业决策支持应用。系统支持创建决策项目、填写项目信息、登记附件元信息、设置平台偏好、运行确定性Benchmark、审阅AI辅助分析、编辑报告分区并导出咨询式报告。"
+        },
+        keyFeatures: {
+          en: [
+            "Project-loop workspace for PLC platform decision support.",
+            "Weighted benchmark and deterministic ranking.",
+            "Project readiness scoring and lifecycle status.",
+            "Local SQLite persistence as the project-loop source of truth.",
+            "FastAPI backend with structured API routes.",
+            "AI-assisted analysis through backend-only provider boundary.",
+            "Report drafting and report section rewrite suggestions.",
+            "Markdown / browser PDF / local PowerPoint export.",
+            "Safe product boundary: no PLC programming, no PLC code conversion, no direct PLC connection.",
+            "Attachment metadata registration without file parsing in the current version."
+          ],
+          zh: [
+            "面向PLC平台决策支持的项目闭环工作台。",
+            "加权Benchmark与确定性排序。",
+            "项目成熟度评分与生命周期状态管理。",
+            "以本地SQLite作为项目闭环数据事实来源。",
+            "基于FastAPI的结构化后端接口。",
+            "通过后端Provider边界实现AI辅助分析。",
+            "报告草稿与报告分区改写建议。",
+            "支持Markdown / 浏览器PDF / 本地PowerPoint导出。",
+            "明确产品边界：不做PLC编程、不做PLC代码转换、不直连PLC。",
+            "当前版本附件仅登记元信息，不解析文件内容。"
+          ]
+        },
+        interaction: {
+          en: [
+            "Create a PLC decision project.",
+            "Fill intake information such as industry, goal, I/O scale, existing platform, constraints, and team experience.",
+            "Register attachment metadata.",
+            "Select candidate PLC platforms.",
+            "Set platform preferences and weights.",
+            "Run benchmark analysis.",
+            "Review readiness score, missing inputs, confidence level, and next actions.",
+            "Ask AI or use deterministic baseline analysis.",
+            "Review report suggestions.",
+            "Edit report sections.",
+            "Export or finalize the consulting report."
+          ],
+          zh: [
+            "创建PLC决策项目。",
+            "填写行业、目标、I/O规模、既有平台、约束条件与团队经验等信息。",
+            "登记附件元信息。",
+            "选择候选PLC平台。",
+            "设置平台偏好与权重。",
+            "运行Benchmark分析。",
+            "查看成熟度评分、缺失项、置信等级与下一步建议。",
+            "使用AI辅助分析或确定性基础分析。",
+            "审阅报告建议。",
+            "编辑报告分区。",
+            "导出或定稿咨询报告。"
+          ]
+        },
+        systemIdea: {
+          en: "This demo explores how PLC platform selection can be transformed from informal experience-based discussion into a structured decision workflow. Deterministic benchmark scoring remains the source of truth, while AI is used as an advisory layer for explanation, migration-risk discussion, and report drafting.",
+          zh: "该Demo探索如何把PLC平台选型从经验式讨论转化为结构化决策流程。确定性Benchmark评分作为事实来源，AI作为解释、迁移风险讨论与报告生成的辅助层，而不是替代评分逻辑。"
+        },
+        technicalHighlights: {
+          en: [
+            "FastAPI backend with SQLite local persistence.",
+            "Backend-owned readiness scoring and status lifecycle.",
+            "Deterministic benchmark scoring as immutable source data.",
+            "AI provider boundary with deterministic baseline / OpenAI-compatible routing.",
+            "Backend-only API key handling through local .env configuration.",
+            "Structured project, readiness, benchmark, and report data consumed by frontend.",
+            "Report export workflow supporting Markdown, browser PDF, and local PowerPoint generation.",
+            "Clear boundary between deterministic calculations and AI advisory output."
+          ],
+          zh: [
+            "FastAPI后端与SQLite本地持久化。",
+            "后端负责成熟度评分与项目状态生命周期。",
+            "确定性Benchmark评分作为不可变事实数据。",
+            "通过Provider边界支持确定性基础分析与OpenAI兼容AI路由。",
+            "API Key仅由后端通过本地.env配置管理。",
+            "前端消费结构化项目、成熟度、Benchmark与报告数据。",
+            "报告导出支持Markdown、浏览器PDF与本地PowerPoint生成。",
+            "明确区分确定性计算与AI顾问建议的边界。"
+          ]
+        },
+        structure: {
+          en: [
+            "User Project",
+            "   |",
+            "   v",
+            "Frontend Project Workspace",
+            "   |",
+            "   v",
+            "FastAPI Backend",
+            "   |",
+            "   v",
+            "SQLite Local Source of Truth",
+            "   |",
+            "   +--> Readiness Scoring",
+            "   +--> Platform Benchmark",
+            "   +--> Report Sections",
+            "   +--> Attachment Metadata",
+            "   |",
+            "   v",
+            "Intelligence Provider Boundary",
+            "   |",
+            "   +--> Deterministic Baseline Analysis",
+            "   +--> OpenAI-compatible Provider",
+            "   |",
+            "   v",
+            "Consulting Report Export",
+            "(Markdown / PDF / PowerPoint)"
+          ].join("\n"),
+          zh: [
+            "用户项目",
+            "   |",
+            "   v",
+            "前端项目工作台",
+            "   |",
+            "   v",
+            "FastAPI后端",
+            "   |",
+            "   v",
+            "SQLite本地事实来源",
+            "   |",
+            "   +--> 成熟度评分",
+            "   +--> 平台Benchmark",
+            "   +--> 报告分区",
+            "   +--> 附件元信息",
+            "   |",
+            "   v",
+            "智能Provider边界",
+            "   |",
+            "   +--> 确定性基础分析",
+            "   +--> OpenAI兼容Provider",
+            "   |",
+            "   v",
+            "咨询报告导出",
+            "（Markdown / PDF / PowerPoint）"
+          ].join("\n")
+        },
+        note: {
+          en: "This is a vibe coding prototype focused on PLC platform selection and migration decision support. It is not a PLC programming tool, not a PLC code converter, and does not connect to PLC hardware or control networks.",
+          zh: "该项目是一个面向PLC平台选型与迁移决策支持的 vibe coding 原型。它不是PLC编程工具，不做PLC代码转换，也不直接连接PLC硬件或控制网络。"
+        },
+        technologies: [
+          "FastAPI",
+          "SQLite",
+          "Python",
+          "Frontend Integration",
+          "OpenAI-compatible Provider",
+          "Benchmarking",
+          "Report Export",
+          "Decision Support",
+          "Industrial Automation"
+        ],
+        video: {
+          type: "embed",
+          url: ""
+        },
+        images: []
       }
     ]
   },
