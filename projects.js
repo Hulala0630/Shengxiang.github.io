@@ -326,7 +326,7 @@ const projectsData = [
         ],
         video: {
           type: "embed",
-          url: ""
+          url: "assets/videos/DemoPLCHelper.mp4"
         },
         images: []
       }
