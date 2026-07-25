@@ -1005,5 +1005,130 @@ const projectsData = [
       zh: "该分析提升了流程透明度，也为后续流程优化与资源利用改善建立了更清晰的依据。"
     },
     technologies: ["Lean", "Value Stream Mapping", "Process Analysis", "Workflow Optimization", "Industrial Engineering"]
+  },
+  {
+    title: {
+      en: "Industrial Simulation Data Agent",
+      zh: "工业仿真数据智能 Agent"
+    },
+    projectType: {
+      en: "Personal Project",
+      zh: "个人项目"
+    },
+    technicalType: {
+      en: "Extended Technical Project",
+      zh: "技术延展项目"
+    },
+    pitch: {
+      en: "A configuration-driven industrial simulation framework that turns scene intent into reusable Isaac Sim worlds and synthetic data outputs.",
+      zh: "一个配置驱动的工业仿真框架，将场景意图转化为可复用的 Isaac Sim 环境与合成数据输出。"
+    },
+    summary: {
+      en: "An AI-assisted industrial simulation framework that converts structured scene configurations into reusable Isaac Sim environments, defect scenarios, and synthetic data pipelines.",
+      zh: "一个面向工业场景的 AI 辅助仿真框架，将结构化场景配置自动转换为可复用的 Isaac Sim 环境、缺陷场景与合成数据生成流程。"
+    },
+    problem: {
+      en: "Industrial AI and embodied intelligence systems need large-scale, high-quality simulation data, but traditional industrial simulation workflows still depend heavily on manual USD scene construction, asset placement, parameter tuning, and scenario reproduction. That makes dataset creation expensive, difficult to reproduce, and hard to scale.",
+      zh: "工业 AI 与具身智能系统需要大规模、高质量的仿真数据，但传统工业仿真流程仍然高度依赖人工完成 USD 场景搭建、资产摆放、参数调节与异常场景复现，导致数据集构建成本高、复现困难且难以规模化。"
+    },
+    solution: {
+      en: "I designed a YAML-driven simulation generation workflow that separates scene description, simulation construction, and data export. The pipeline turns configuration into scene intent processing, USD stage generation, and synthetic data export so simulation creation becomes reproducible and reusable rather than purely manual.",
+      zh: "我设计了一套 YAML 驱动的仿真生成流程，将场景描述、仿真构建与数据导出解耦。整个链路从配置出发，经由场景意图解析、USD Stage 自动生成与合成数据导出，把传统依赖手工操作的仿真流程转化为可复用、可复现的工程管线。"
+    },
+    highlights: {
+      en: [
+        "Built configuration-driven scene generation from structured YAML files.",
+        "Supported reusable industrial components such as floor, conveyor, robot, battery module, sensor, storage rack, and camera.",
+        "Modeled configurable defect scenarios including normal state, box misalignment, missing part, and placed-on-table cases.",
+        "Integrated reusable USD assets for industrial environments and custom simulation content.",
+        "Automated export of metadata JSON, scene reports, viewpoint images, camera captures, and stage-to-YAML configuration snapshots.",
+        "Developed an interactive Isaac Sim extension for selecting YAML configurations, generating scenes, switching defect cases, and exporting outputs."
+      ],
+      zh: [
+        "基于结构化 YAML 文件实现配置驱动的场景生成。",
+        "支持地板、传送线、工业机器人、电池模组、传感器、货架与相机等可复用工业组件。",
+        "可配置异常场景建模，包括正常状态、箱体偏移、部件缺失与放置异常等情况。",
+        "集成可复用的 USD 工业资产与自定义仿真资产。",
+        "自动导出 Metadata JSON、场景报告、视角截图、相机图像以及 Stage-to-YAML 配置快照。",
+        "开发交互式 Isaac Sim Extension，支持选择 YAML、生成场景、切换异常场景并导出仿真数据。"
+      ]
+    },
+    structure: {
+      en: [
+        "Extension Layer",
+        "      |",
+        "      v",
+        "Scene Intent Agent",
+        "      |",
+        "      v",
+        "Scene Configuration",
+        "      |",
+        "      v",
+        "Scene Builder",
+        "      |",
+        "      v",
+        "USD Stage",
+        "      |",
+        "      v",
+        "Data Export Pipeline",
+        "",
+        "Core Modules:",
+        "- YAML Loader",
+        "- Scene Intent Agent",
+        "- Scene Builder",
+        "- Asset Manager",
+        "- Material Manager",
+        "- Screenshot Exporter",
+        "- Metadata Exporter",
+        "- Report Exporter"
+      ].join("\n"),
+      zh: [
+        "Extension 交互层",
+        "      |",
+        "      v",
+        "Scene Intent Agent",
+        "      |",
+        "      v",
+        "Scene Configuration",
+        "      |",
+        "      v",
+        "Scene Builder",
+        "      |",
+        "      v",
+        "USD Stage",
+        "      |",
+        "      v",
+        "Data Export Pipeline",
+        "",
+        "核心模块：",
+        "- YAML Loader",
+        "- Scene Intent Agent",
+        "- Scene Builder",
+        "- Asset Manager",
+        "- Material Manager",
+        "- Screenshot Exporter",
+        "- Metadata Exporter",
+        "- Report Exporter"
+      ].join("\n")
+    },
+    result: {
+      en: "The project shows how AI agents can transform industrial simulation from a manual engineering task into a scalable, reusable, and data-oriented generation pipeline. It connects industrial digital twins, simulation engineering, and future embodied AI data production into one coherent workflow.",
+      zh: "该项目展示了 AI Agent 如何将工业仿真从人工工程任务转化为可扩展、可复用、面向数据生成的流程，也把工业数字孪生、仿真工程与未来具身智能数据生产连接成了统一工作流。"
+    },
+    technologies: [
+      "NVIDIA Isaac Sim",
+      "OpenUSD",
+      "YAML",
+      "Synthetic Data Generation",
+      "Industrial Digital Twin",
+      "AI Agent",
+      "Scene Configuration",
+      "USD Asset Composition"
+    ],
+    video: {
+      type: "embed",
+      url: "assets/videos/DemoIsaacSimGenerator.mp4"
+    },
+    images: []
   }
 ];
