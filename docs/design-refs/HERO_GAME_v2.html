@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERO GAME v2 — TWIN CELL · 人形机器人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#17181A; --paper:#F5F5F2; --title:#17181A;
+  --line:#D8D7D2; --steel:#2E3D4D; --muted:#5A5A56; --faint:#8B8B86;
+  --amber:#FF9E00; --nav-bg:rgba(245,245,242,.92);
+  --sheet-bg:#FFFFFF; --sheet-grid:rgba(0,0,0,.05);
+  --draw-ink:#17181A; --draw-dim:#8B8B86; --draw-frame:#17181A;
+  /* SIM 车道（蓝晒幽灵）在两个主题下都存在，只调不透明度 */
+  --sim-ink:#5B7CA8; --sim-bg:rgba(60,100,150,.06);
+  --run:#3DDC84; --alarm:#FF9E00; --ai:#C3A6FF; --ai-deep:#7C5FC9;
+  --fs-hero:clamp(28px,4.4vw,46px); --fs-mono:12px; --fs-micro:10px;
+  --s1:8px; --s2:16px; --s3:24px; --s4:40px; --maxw:1160px;
+}
+[data-theme="dark"]{
+  --ink:#E8E7E2; --paper:#141519; --title:#F4F3EE;
+  --line:#2E2F38; --steel:#8FA5BD; --muted:#A5A4B0; --faint:#6E6D7A;
+  --amber:#FFA51F; --nav-bg:rgba(20,21,25,.92);
+  --sheet-bg:#181A21; --sheet-grid:rgba(150,170,200,.07);
+  --draw-ink:#D8DCE6; --draw-dim:#767E8E; --draw-frame:#3A4050;
+  --sim-ink:#7FA3CF; --sim-bg:rgba(90,140,200,.08);
+  --ai-deep:#C3A6FF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans','Noto Sans SC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;transition:background .35s,color .35s}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--s3)}
+nav.top{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.top .in{max-width:var(--maxw);margin:0 auto;padding:0 var(--s3);display:flex;align-items:center;gap:var(--s3);height:56px}
+nav.top .mark{width:28px;height:28px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.themeswitch{margin-left:auto;display:flex;border:1px solid var(--ink)}
+.themeswitch button{appearance:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;padding:0 12px;height:32px;background:transparent;color:var(--faint);min-width:44px;transition:all .3s}
+.themeswitch button+button{border-left:1px solid var(--ink)}
+.themeswitch button.active{background:var(--ink);color:var(--paper)}
+
+.hero{padding:var(--s4) 0}
+.hero .grid{display:grid;grid-template-columns:.9fr 1.35fr;gap:var(--s4);align-items:start}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:var(--fs-mono);letter-spacing:.14em;color:var(--steel);text-transform:uppercase}
+h1{font-family:'Space Grotesk','Noto Sans SC',sans-serif;font-size:var(--fs-hero);line-height:1.05;margin-top:var(--s2);color:var(--title);letter-spacing:-.015em}
+h1 .zh{display:block;font-size:.42em;font-weight:500;color:var(--steel);letter-spacing:.05em;margin-top:8px}
+.role{margin-top:var(--s3);font-size:16px;font-weight:600}
+.role .dot{display:inline-block;width:10px;height:10px;background:var(--amber);margin-right:10px}
+.method{margin-top:var(--s1);font-size:13px;color:var(--muted);max-width:42ch}
+.gamehint{margin-top:var(--s3);font-family:'IBM Plex Mono',monospace;font-size:var(--fs-micro);color:var(--faint);letter-spacing:.05em;line-height:2.1}
+.gamehint b{color:var(--ai-deep)}
+.gamehint .am{color:var(--alarm)}
+
+.cell{border:1px solid var(--draw-frame);background:var(--sheet-bg);transition:background .35s,border-color .35s}
+.tb{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--draw-frame);font-family:'IBM Plex Mono',monospace;font-size:11px}
+.tb .c{padding:8px 12px;border-right:1px solid var(--draw-frame);color:var(--draw-dim)}
+.tb .c b{color:var(--draw-ink);font-weight:500}
+.tb .state{margin-left:auto;padding:8px 12px;color:var(--run)}
+.tb .state.halt{color:var(--alarm);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.3}}
+.stagewrap{background:
+  linear-gradient(var(--sheet-grid) 1px,transparent 1px),
+  linear-gradient(90deg,var(--sheet-grid) 1px,transparent 1px);
+  background-size:24px 24px;transition:background .35s}
+svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.aistrip{min-height:36px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:9px 14px;border-top:1px dashed var(--draw-frame);color:var(--ai-deep);display:flex;align-items:center;gap:10px}
+.aistrip .chip{border:1px solid var(--ai-deep);padding:1px 7px;font-size:9px;flex:none}
+.aistrip.idle{color:var(--draw-dim)}
+.aistrip.idle .chip{border-color:var(--draw-dim)}
+.controls{border-top:1px solid var(--draw-frame);display:flex;flex-wrap:wrap}
+.controls button{appearance:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;padding:0 12px;min-height:46px;flex:1;background:transparent;color:var(--draw-dim);border-right:1px solid var(--draw-frame);transition:all .25s}
+.controls button:last-child{border-right:none}
+.controls button:hover{color:var(--draw-ink)}
+.controls .bF{color:var(--alarm)}
+.controls .bA.on{background:var(--ai-deep);color:#fff}
+[data-theme="dark"] .controls .bA.on{color:#141519}
+.controls .bR{display:none}
+.controls .bR.show{display:block;color:var(--alarm);animation:blink 1s steps(2) infinite}
+.kpirow{border-top:1px solid var(--draw-frame);display:flex;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:var(--fs-micro);color:var(--draw-dim)}
+.kpirow div{padding:8px 12px;border-right:1px solid var(--draw-frame)}
+.kpirow div:last-child{border-right:none;margin-left:auto}
+.kpirow b{color:var(--draw-ink);font-weight:500}
+.kpirow .g b{color:var(--run)} .kpirow .r b{color:var(--alarm)} .kpirow .p b{color:var(--ai-deep)}
+
+@media (max-width:900px){
+  .hero .grid{grid-template-columns:1fr;gap:var(--s3)}
+  .controls button{font-size:10px;padding:0 6px}
+  .kpirow div:last-child{display:none}
+}
+@media (prefers-reduced-motion:reduce){.state.halt,.bR.show{animation:none!important}}
+</style>
+</head>
+<body>
+
+<nav class="top"><div class="in">
+  <span class="mark">HS</span>
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint)">HERO GAME v2 · TWIN CELL — HUMANOID</span>
+  <span class="themeswitch"><button id="thL" class="active" onclick="setTheme('light')">☀ LIGHT</button><button id="thD" onclick="setTheme('dark')">☾ DARK</button></span>
+</div></nav>
+
+<section class="hero"><div class="wrap"><div class="grid">
+
+  <div>
+    <div class="eyebrow">Industrial AI · Digital Twin · Virtual Commissioning</div>
+    <h1>Hu Shengxiang<span class="zh">胡生翔 — 把复杂系统变成可测试的结构</span></h1>
+    <div class="role"><span class="dot"></span>Industrial AI &amp; Digital Twin Solution Engineer</div>
+    <p class="method">Systems thinking for industrial software, simulation, and digital delivery.</p>
+    <div class="gamehint">
+      ▸ 上层是数字孪生仿真，下层是物理车间，实时同步。<br>
+      ① 点<span class="am">物理车间的地面</span>丢一个障碍物<br>
+      ② <b>AI ON</b>：机器人停下 → 孪生里快速试错（撞上✗→跨越✓）→ 策略下发 → 实体照做<br>
+      ③ <b>AI OFF</b> 再试：物理线直接停机，只能手动 RESET<br>
+      ④ 点传送带上的箱子 = 制造缺陷件（AI 会分拣进 REJECT）
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="tb">
+      <div class="c">CELL <b>T-01</b></div>
+      <div class="c">MODE <b>TWIN SYNC</b></div>
+      <div class="c" id="syncTxt">⇅ <b>60 Hz</b></div>
+      <div class="state" id="stateTxt">● RUNNING</div>
+    </div>
+    <div class="stagewrap">
+      <svg id="stage" viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" aria-label="humanoid twin cell">
+        <!-- ══ SIM 车道 ══ -->
+        <g id="simLane">
+          <rect x="0" y="0" width="640" height="196" fill="var(--sim-bg)"/>
+          <text x="14" y="22" font-family="IBM Plex Mono" font-size="10" fill="var(--sim-ink)" letter-spacing="1">SIMULATION — DIGITAL TWIN</text>
+          <text id="simIterTxt" x="626" y="22" text-anchor="end" font-family="IBM Plex Mono" font-size="10" fill="var(--ai-deep)" opacity="0">SIM ITER 1 — COLLISION ✗</text>
+          <g id="sceneS"></g>
+        </g>
+        <line x1="0" y1="197" x2="640" y2="197" stroke="var(--draw-frame)" stroke-width="1" stroke-dasharray="6 5"/>
+        <!-- 下发动画 -->
+        <g id="deployG" opacity="0">
+          <line id="deployLn" x1="320" y1="200" x2="320" y2="240" stroke="var(--ai-deep)" stroke-width="2" stroke-dasharray="4 4"/>
+          <text id="deployTx" x="320" y="215" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--ai-deep)">▼ DEPLOY POLICY</text>
+        </g>
+        <!-- ══ PHYSICAL 车道 ══ -->
+        <g id="phyLane">
+          <text x="14" y="226" font-family="IBM Plex Mono" font-size="10" fill="var(--draw-dim)" letter-spacing="1">PHYSICAL — SHOPFLOOR</text>
+          <g id="sceneP"></g>
+          <!-- 点击落障热区 -->
+          <rect id="floorHit" x="200" y="300" width="300" height="112" fill="transparent" style="cursor:crosshair"/>
+        </g>
+        <text id="alarmTag" x="0" y="0" font-family="IBM Plex Mono" font-size="9" fill="var(--alarm)" opacity="0">⚠ FAULT</text>
+      </svg>
+    </div>
+    <div class="aistrip idle" id="aistrip"><span class="chip">AI</span><span id="aitext">CONTROL SYSTEM ONLINE — twin sync active, no anomalies</span></div>
+    <div class="controls">
+      <button class="bF" onclick="dropObstacle()">⚠ DROP OBSTACLE</button>
+      <button class="bF" onclick="injectDefect()">◩ DEFECT PART</button>
+      <button class="bA on" id="bA" onclick="toggleAI()">AI: ON</button>
+      <button class="bR" id="bR" onclick="resetLine()">↻ RESET</button>
+    </div>
+    <div class="kpirow">
+      <div class="g">DELIVERED <b id="kG">0</b></div>
+      <div class="r">REJECT <b id="kR">0</b></div>
+      <div class="p">SIM ITER <b id="kS">0</b></div>
+      <div>UPTIME <b id="kU">100%</b></div>
+      <div>TAP FLOOR = OBSTACLE · TAP BOX = DEFECT</div>
+    </div>
+  </div>
+
+</div></div></section>
+
+<script>
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('thL').classList.toggle('active',t==='light');
+  document.getElementById('thD').classList.toggle('active',t==='dark');
+}
+if(matchMedia('(prefers-color-scheme: dark)').matches)setTheme('dark');
+
+/* ═════════ TWIN CELL ═════════
+   世界状态只有一份（物理真值）；SIM 车道默认镜像渲染。
+   故障 + AI ON → SIM 车道脱离镜像播放试错脚本 → DEPLOY → 物理执行新策略
+*/
+const W={
+  running:true, ai:true, t0:performance.now(), downtime:0, haltAt:0,
+  good:0, rej:0, iters:0,
+  boxes:[], nextSpawn:0, id:0,
+  obstacles:[],            // {x, cleared, policy(bool), el:{s,p}}
+  sim:{mode:'mirror', t:0, script:null}, // mirror | test
+  deploy:{t:0,x:0},
+  bot:{x:200, dir:1, state:'toPick', tm:0, carry:null, phase:0, lift:0, pausedBy:null}
+};
+const GROUND_P=392, GROUND_S=176;      // 两车道地面 y
+const CONV_X0=20, CONV_X1=170, PICK_X=185, SHELF_X=560, REJ_X=480;
+const WALK=46;                          // px/s
+const NS='http://www.w3.org/2000/svg';
+const sceneP=document.getElementById('sceneP'), sceneS=document.getElementById('sceneS');
+const aistrip=document.getElementById('aistrip'), aitext=document.getElementById('aitext');
+const stateTxt=document.getElementById('stateTxt');
+const bA=document.getElementById('bA'), bR=document.getElementById('bR');
+const alarmTag=document.getElementById('alarmTag');
+const simIterTxt=document.getElementById('simIterTxt');
+const deployG=document.getElementById('deployG');
+
+/* ── 建静态场景（每车道一份） ── */
+function buildScene(g, gy, ghost){
+  const ink=ghost?'var(--sim-ink)':'var(--draw-ink)';
+  const dim=ghost?'var(--sim-ink)':'var(--draw-dim)';
+  const dash=ghost?' stroke-dasharray="3 3"':'';
+  g.innerHTML=
+   /* 地面 */ '<line x1="14" y1="'+gy+'" x2="626" y2="'+gy+'" stroke="'+ink+'" stroke-width="1.5"'+dash+'/>'
+   /* 传送带 */
+   +'<line x1="'+CONV_X0+'" y1="'+(gy-26)+'" x2="'+CONV_X1+'" y2="'+(gy-26)+'" stroke="'+ink+'" stroke-width="1.5"'+dash+'/>'
+   +'<line x1="'+CONV_X0+'" y1="'+(gy-14)+'" x2="'+CONV_X1+'" y2="'+(gy-14)+'" stroke="'+ink+'" stroke-width="1.5"'+dash+'/>'
+   +'<line x1="'+CONV_X0+'" y1="'+(gy-14)+'" x2="'+CONV_X0+'" y2="'+gy+'" stroke="'+dim+'" stroke-width="1.2"'+dash+'/>'
+   +'<line x1="'+CONV_X1+'" y1="'+(gy-14)+'" x2="'+CONV_X1+'" y2="'+gy+'" stroke="'+dim+'" stroke-width="1.2"'+dash+'/>'
+   +'<text x="'+((CONV_X0+CONV_X1)/2)+'" y="'+(gy-32)+'" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="'+dim+'">IN</text>'
+   /* 货架 */
+   +'<line x1="'+SHELF_X+'" y1="'+(gy-52)+'" x2="'+(SHELF_X+52)+'" y2="'+(gy-52)+'" stroke="'+ink+'" stroke-width="1.5"'+dash+'/>'
+   +'<line x1="'+SHELF_X+'" y1="'+(gy-26)+'" x2="'+(SHELF_X+52)+'" y2="'+(gy-26)+'" stroke="'+ink+'" stroke-width="1.5"'+dash+'/>'
+   +'<line x1="'+SHELF_X+'" y1="'+(gy-52)+'" x2="'+SHELF_X+'" y2="'+gy+'" stroke="'+ink+'" stroke-width="1.5"'+dash+'/>'
+   +'<line x1="'+(SHELF_X+52)+'" y1="'+(gy-52)+'" x2="'+(SHELF_X+52)+'" y2="'+gy+'" stroke="'+ink+'" stroke-width="1.5"'+dash+'/>'
+   +'<text x="'+(SHELF_X+26)+'" y="'+(gy-58)+'" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="'+dim+'">SHELF</text>'
+   /* 废料箱 */
+   +'<path d="M'+(REJ_X-18)+' '+(gy-16)+' h36 v16 h-36 z" fill="none" stroke="'+ink+'" stroke-width="1.2"'+dash+'/>'
+   +'<text x="'+REJ_X+'" y="'+(gy-20)+'" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="'+dim+'">REJECT</text>'
+   /* 动态层 */
+   +'<g class="boxes"></g><g class="obst"></g><g class="stacks"></g><g class="bot"></g>';
+}
+buildScene(sceneP,GROUND_P,false);
+buildScene(sceneS,GROUND_S,true);
+const L={ p:{g:sceneP,gy:GROUND_P,boxes:sceneP.querySelector('.boxes'),obst:sceneP.querySelector('.obst'),stacks:sceneP.querySelector('.stacks'),bot:sceneP.querySelector('.bot')},
+          s:{g:sceneS,gy:GROUND_S,boxes:sceneS.querySelector('.boxes'),obst:sceneS.querySelector('.obst'),stacks:sceneS.querySelector('.stacks'),bot:sceneS.querySelector('.bot')} };
+
+/* ── 人形机器人骨架（每车道预建一次，逐帧改属性） ── */
+function buildBot(layer, ghost){
+  const ink=ghost?'var(--sim-ink)':'var(--draw-ink)';
+  const w=ghost?1.6:2;
+  layer.bot.innerHTML=
+    '<circle class="hd" r="6" fill="none" stroke="'+ink+'" stroke-width="'+w+'"/>'
+   +'<line class="tr" stroke="'+ink+'" stroke-width="'+w+'" stroke-linecap="round"/>'
+   +'<polyline class="aB" fill="none" stroke="'+ink+'" stroke-width="'+(w-0.4)+'" stroke-linecap="round" stroke-linejoin="round"/>'
+   +'<polyline class="lB" fill="none" stroke="'+ink+'" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round"/>'
+   +'<polyline class="lF" fill="none" stroke="'+ink+'" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round"/>'
+   +'<polyline class="aF" fill="none" stroke="'+ink+'" stroke-width="'+(w-0.4)+'" stroke-linecap="round" stroke-linejoin="round"/>'
+   +'<rect class="bx" width="16" height="14" fill="var(--sheet-bg)" stroke="'+ink+'" stroke-width="1.5" opacity="0"/>'
+   +'<circle class="led" r="2.6" fill="var(--run)"/>';
+  return {
+    hd:layer.bot.querySelector('.hd'), tr:layer.bot.querySelector('.tr'),
+    aF:layer.bot.querySelector('.aF'), aB:layer.bot.querySelector('.aB'),
+    lF:layer.bot.querySelector('.lF'), lB:layer.bot.querySelector('.lB'),
+    bx:layer.bot.querySelector('.bx'), led:layer.bot.querySelector('.led')
+  };
+}
+const botP=buildBot(L.p,false), botS=buildBot(L.s,true);
+
+/* 骨架姿态渲染：pose={x,dir,phase,lift,crouch,carry,defect,ledColor} */
+function renderBot(el, gy, pose){
+  const {x,dir,phase,lift,crouch,carry}=pose;
+  const bob=Math.abs(Math.sin(phase))*2 - (crouch||0) - (lift||0)*0.5;
+  const hipY=gy-30+ -bob*-1; /* hip */
+  const hip=gy-30-bob-(lift||0)*0.6+(crouch||0);
+  const sho=hip-20, hed=sho-9;
+  /* 腿 */
+  function leg(ph,amp){
+    const fx=x+Math.sin(ph)*10*(dir?1:1);
+    const flift=Math.max(0,Math.sin(ph))* (6+(lift||0));
+    const fy=gy-flift;
+    const kx=(x+fx)/2+3*dir, ky=(hip+fy)/2+4;
+    return x+','+hip+' '+kx+','+ky+' '+fx+','+fy;
+  }
+  el.lF.setAttribute('points',leg(phase,1));
+  el.lB.setAttribute('points',leg(phase+Math.PI,1));
+  /* 躯干/头 */
+  el.tr.setAttribute('x1',x);el.tr.setAttribute('y1',hip);
+  el.tr.setAttribute('x2',x);el.tr.setAttribute('y2',sho);
+  el.hd.setAttribute('cx',x);el.hd.setAttribute('cy',hed);
+  /* 手臂 */
+  if(carry){
+    const bxX=x+dir*11, bxY=sho+4;
+    el.aF.setAttribute('points',x+','+sho+' '+(x+dir*8)+','+(sho+8)+' '+bxX+','+(bxY+4));
+    el.aB.setAttribute('points',x+','+sho+' '+(x+dir*6)+','+(sho+9)+' '+(bxX-2*dir)+','+(bxY+6));
+    el.bx.setAttribute('x',bxX-8);el.bx.setAttribute('y',bxY-2);
+    el.bx.setAttribute('opacity','1');
+    el.bx.setAttribute('stroke',carry.defect?'var(--alarm)':el.tr.getAttribute('stroke'));
+    el.bx.setAttribute('fill',carry.defect?'rgba(255,158,0,.15)':'var(--sheet-bg)');
+  }else{
+    const sw=Math.sin(phase+Math.PI)*8;
+    el.aF.setAttribute('points',x+','+sho+' '+(x+sw*0.6)+','+(sho+9)+' '+(x+sw)+','+(sho+17));
+    el.aB.setAttribute('points',x+','+sho+' '+(x-sw*0.6)+','+(sho+9)+' '+(x-sw)+','+(sho+17));
+    el.bx.setAttribute('opacity','0');
+  }
+  el.led.setAttribute('cx',x);el.led.setAttribute('cy',hed-9);
+  el.led.setAttribute('fill',pose.ledColor||'var(--run)');
+}
+
+/* ── 箱子 ── */
+function spawnBox(){
+  const id=++W.id;
+  const mk=layer=>{
+    const g=document.createElementNS(NS,'g');
+    g.innerHTML='<rect class="bb" x="-8" y="-14" width="16" height="14" fill="var(--sheet-bg)" stroke="'+(layer===L.s?'var(--sim-ink)':'var(--draw-ink)')+'" stroke-width="1.5"/>'
+               +'<rect x="-14" y="-20" width="28" height="26" fill="transparent" style="cursor:pointer"/>';
+    layer.boxes.appendChild(g);return g;
+  };
+  const b={id,x:CONV_X0+8,defect:false,taken:false,el:{p:mk(L.p),s:mk(L.s)}};
+  b.el.p.addEventListener('pointerdown',e=>{e.stopPropagation();makeDefect(b)});
+  W.boxes.push(b);
+}
+function makeDefect(b){
+  if(b.defect||b.taken)return;
+  b.defect=true;
+  ['p','s'].forEach(k=>{
+    const r=b.el[k].querySelector('.bb');
+    r.setAttribute('stroke','var(--alarm)');
+    r.setAttribute('fill','rgba(255,158,0,.15)');
+  });
+}
+function injectDefect(){
+  const c=W.boxes.filter(b=>!b.defect&&!b.taken);
+  if(c.length)makeDefect(c[c.length-1]); else{spawnBox();makeDefect(W.boxes[W.boxes.length-1])}
+}
+
+/* ── 障碍 ── */
+function dropObstacle(atX){
+  if(W.obstacles.length>=2)return;
+  const x=atX||260+Math.random()*180;
+  const mk=layer=>{
+    const gy=layer.gy;
+    const g=document.createElementNS(NS,'g');
+    g.innerHTML='<path d="M'+(x-9)+' '+gy+' l9 -14 l9 14 z" fill="rgba(255,158,0,.18)" stroke="var(--alarm)" stroke-width="1.5"/>'
+               +'<rect x="'+(x-16)+'" y="'+(gy-22)+'" width="32" height="26" fill="transparent" style="cursor:pointer"/>';
+    layer.obst.appendChild(g);return g;
+  };
+  const o={x,policy:false,el:{p:mk(L.p),s:mk(L.s)}};
+  o.el.p.addEventListener('pointerdown',e=>{e.stopPropagation();clearObstacle(o)});
+  W.obstacles.push(o);
+  if(!W.ai)setAIText('OFFLINE — obstacle on walkway, no recovery available',true);
+}
+function clearObstacle(o){
+  o.el.p.remove();o.el.s.remove();
+  const i=W.obstacles.indexOf(o);if(i>-1)W.obstacles.splice(i,1);
+}
+document.getElementById('floorHit').addEventListener('pointerdown',e=>{
+  const pt=svgPoint(e);if(pt)dropObstacle(Math.max(230,Math.min(520,pt.x)));
+});
+function svgPoint(e){
+  const svg=document.getElementById('stage');
+  const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;
+  const m=svg.getScreenCTM();return m?p.matrixTransform(m.inverse()):null;
+}
+
+/* ── AI / 状态 ── */
+function toggleAI(){
+  W.ai=!W.ai;
+  bA.textContent='AI: '+(W.ai?'ON':'OFF');
+  bA.classList.toggle('on',W.ai);
+  setAIText(W.ai?'CONTROL SYSTEM ONLINE — twin sync active, no anomalies':'OFFLINE — running blind, faults will halt the line',true);
+}
+function setAIText(m,idle){aitext.textContent=m;aistrip.classList.toggle('idle',!!idle)}
+function halt(x,msg){
+  W.running=false;W.haltAt=performance.now();
+  stateTxt.textContent='■ LINE HALTED';stateTxt.classList.add('halt');
+  bR.classList.add('show');
+  alarmTag.setAttribute('x',x-16);alarmTag.setAttribute('y',GROUND_P-58);alarmTag.setAttribute('opacity','1');
+  setAIText(msg,true);
+}
+function resetLine(){
+  if(W.running)return;
+  /* 清掉挡路的故障源 */
+  const b=W.bot;
+  if(b.pausedBy&&b.pausedBy.kind==='obs')clearObstacle(b.pausedBy.o);
+  if(b.pausedBy&&b.pausedBy.kind==='box'){const bx=b.pausedBy.b;removeBox(bx)}
+  b.pausedBy=null;
+  W.downtime+=performance.now()-W.haltAt;
+  W.running=true;stateTxt.textContent='● RUNNING';stateTxt.classList.remove('halt');
+  bR.classList.remove('show');alarmTag.setAttribute('opacity','0');
+  setAIText(W.ai?'CONTROL SYSTEM ONLINE — twin sync active':'OFFLINE — running blind',true);
+}
+function removeBox(b){
+  b.el.p.remove();b.el.s.remove();
+  const i=W.boxes.indexOf(b);if(i>-1)W.boxes.splice(i,1);
+}
+
+/* ── SIM 试错脚本 ── */
+function startSimTest(o){
+  W.sim.mode='test';W.sim.t=0;W.sim.o=o;
+  document.getElementById('syncTxt').innerHTML='⇅ <b style="color:var(--ai-deep)">TESTING</b>';
+  setAIText('ANOMALY: obstacle @ x='+Math.round(o.x)+' — spawning twin test…',false);
+}
+/* 时间轴（秒）: 0-1.1 iter1 撞上 → 1.1-2.3 iter2 跨越 → 2.3-3.0 deploy */
+function runSimTest(dt){
+  const s=W.sim, o=s.o; s.t+=dt;
+  const gy=GROUND_S;
+  let pose;
+  if(s.t<1.1){ /* iter1：径直走 → 撞 */
+    const k=Math.min(1,s.t/1.0);
+    const x=o.x-52+k*46;
+    pose={x,dir:1,phase:s.t*10,lift:0,carry:null,ledColor:'var(--ai)'};
+    if(s.t>0.95){pose.ledColor='var(--alarm)';
+      simIterTxt.textContent='SIM ITER '+(W.iters+1)+' — COLLISION ✗';
+      simIterTxt.setAttribute('fill','var(--alarm)');simIterTxt.setAttribute('opacity','1');}
+  }else if(s.t<2.3){ /* iter2：抬腿跨越 */
+    if(!s.i2){s.i2=true;W.iters++;document.getElementById('kS').textContent=W.iters;}
+    const k=Math.min(1,(s.t-1.1)/1.0);
+    const x=o.x-52+k*104;
+    const nearOb=Math.abs(x-o.x)<16;
+    pose={x,dir:1,phase:s.t*10,lift:nearOb?14:0,carry:null,ledColor:'var(--ai)'};
+    if(s.t>2.1){simIterTxt.textContent='SIM ITER '+(W.iters+1)+' — STEP-OVER ✓';
+      simIterTxt.setAttribute('fill','var(--run)');}
+  }else if(s.t<3.0){ /* deploy */
+    if(!s.dep){s.dep=true;W.iters++;document.getElementById('kS').textContent=W.iters;
+      W.deploy.t=0.7;W.deploy.x=o.x;
+      const dl=document.getElementById('deployLn'),dtx=document.getElementById('deployTx');
+      dl.setAttribute('x1',o.x);dl.setAttribute('x2',o.x);
+      dtx.setAttribute('x',o.x);
+      setAIText('POLICY VERIFIED IN SIM — deploying step-over to physical robot',false);}
+    pose={x:o.x+52,dir:1,phase:0,lift:0,carry:null,ledColor:'var(--run)'};
+  }else{ /* 完成：回到镜像，物理获得策略 */
+    o.policy=true;
+    W.sim.mode='mirror';W.sim.i2=false;W.sim.dep=false;
+    simIterTxt.setAttribute('opacity','0');
+    document.getElementById('syncTxt').innerHTML='⇅ <b>60 Hz</b>';
+    const b=W.bot;if(b.pausedBy&&b.pausedBy.kind==='obs'&&b.pausedBy.o===o)b.pausedBy=null;
+    return;
+  }
+  renderBot(botS,gy,pose);
+}
+
+/* ── 主循环 ── */
+let last=performance.now();
+function frame(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  const b=W.bot;
+
+  if(W.running){
+    /* 传送带 */
+    if(now>W.nextSpawn){spawnBox();W.nextSpawn=now+2600+Math.random()*800}
+    const sorted=W.boxes.filter(x=>!x.taken).sort((a,c)=>c.x-a.x);
+    for(let i=0;i<sorted.length;i++){
+      const bx=sorted[i];
+      let stop=bx.x>=CONV_X1-8;
+      const ah=sorted[i-1];if(ah&&bx.x>ah.x-20)stop=true;
+      if(!stop)bx.x+=30*dt;
+      ['p','s'].forEach(k=>bx.el[k].setAttribute('transform','translate('+bx.x+','+(L[k].gy-14)+')'));
+    }
+
+    /* 机器人状态机 */
+    let mv=0, lift=0, crouch=0, led='var(--run)';
+    if(b.pausedBy){led='var(--ai)'}
+    else if(b.state==='toPick'){
+      b.dir=-1;mv=-WALK*dt;
+      if(b.x<=PICK_X){b.x=PICK_X;const ready=sorted.find(x=>x.x>=CONV_X1-9);
+        if(ready){b.state='pick';b.tm=0.45}else mv=0;}
+    }
+    else if(b.state==='pick'){
+      crouch=5;b.tm-=dt;
+      if(b.tm<=0){
+        const bx=W.boxes.filter(x=>!x.taken&&x.x>=CONV_X1-9)[0];
+        if(bx){bx.taken=true;b.carry=bx;
+          bx.el.p.setAttribute('opacity','0');bx.el.s.setAttribute('opacity','0');
+          if(bx.defect&&W.ai)setAIText('DIAGNOSIS: box #'+bx.id+' surface defect (P=0.9'+Math.floor(Math.random()*9)+') → route REJECT',false);
+          if(bx.defect&&!W.ai){halt(b.x,'OPERATOR ACTION REQUIRED — unknown defect in gripper');b.pausedBy={kind:'box',b:bx};b.state='toPick';}
+          else b.state=bx.defect?'toRej':'toShelf';
+        }else b.state='toPick';
+      }
+    }
+    else if(b.state==='toShelf'||b.state==='toRej'){
+      const tx=b.state==='toShelf'?SHELF_X-14:REJ_X-24;
+      b.dir=1;mv=WALK*dt;
+      /* 障碍检测 */
+      const ob=W.obstacles.find(o=>Math.abs(b.x+14-o.x)<14&&b.x<o.x);
+      if(ob&&!ob.policy){
+        if(W.ai){
+          if(!b.pausedBy){b.pausedBy={kind:'obs',o:ob};startSimTest(ob)}
+          mv=0;
+        }else{halt(ob.x,'OPERATOR ACTION REQUIRED — obstacle blocked the robot');mv=0}
+      }else{
+        const nearOb=W.obstacles.find(o=>o.policy&&Math.abs(b.x-o.x)<15);
+        if(nearOb)lift=13;
+        if(b.x>=tx){b.x=tx;b.state='drop';b.tm=0.45}
+      }
+    }
+    else if(b.state==='drop'){
+      crouch=5;b.tm-=dt;
+      if(b.tm<=0){
+        const bx=b.carry;b.carry=null;
+        if(bx){
+          const rej=bx.defect;
+          if(rej){W.rej++;stack('rej');document.getElementById('kR').textContent=W.rej}
+          else{W.good++;stack('good');document.getElementById('kG').textContent=W.good}
+          removeBox(bx);
+          if(rej&&W.rej%3===0)setAIText('PATTERN: repeated defects — flagging upstream station for review',false);
+        }
+        b.state='toPick';
+      }
+    }
+    if(!b.pausedBy||b.pausedBy.kind!=='obs'){b.x+=mv}
+    if(mv!==0)b.phase+=dt*9;
+    if(!W.running)led='var(--alarm)';
+
+    const poseP={x:b.x,dir:b.dir,phase:b.phase,lift,crouch,carry:b.carry,ledColor:led};
+    renderBot(botP,GROUND_P,poseP);
+    if(W.sim.mode==='mirror')renderBot(botS,GROUND_S,poseP);
+  }else{
+    renderBot(botP,GROUND_P,{x:b.x,dir:b.dir,phase:b.phase,lift:0,crouch:0,carry:b.carry,ledColor:'var(--alarm)'});
+    if(W.sim.mode==='mirror')renderBot(botS,GROUND_S,{x:b.x,dir:b.dir,phase:b.phase,lift:0,crouch:0,carry:b.carry,ledColor:'var(--alarm)'});
+  }
+
+  /* SIM 试错 */
+  if(W.sim.mode==='test')runSimTest(dt);
+
+  /* deploy 动画 */
+  if(W.deploy.t>0){W.deploy.t-=dt;deployG.setAttribute('opacity',Math.max(0,Math.min(1,W.deploy.t/0.35)))}
+
+  /* UPTIME */
+  const total=now-W.t0,down=W.downtime+(W.running?0:now-W.haltAt);
+  document.getElementById('kU').textContent=Math.max(0,Math.round(100*(1-down/total)))+'%';
+
+  requestAnimationFrame(frame);
+}
+
+/* 成品堆叠 */
+const stacks={good:0,rej:0};
+function stack(kind){
+  stacks[kind]++;const n=stacks[kind];
+  ['p','s'].forEach(k=>{
+    const layer=L[k];const gy=layer.gy;
+    const g=layer.stacks;
+    if((n-1)%4===0&&n>1)g.querySelectorAll('.st-'+kind).forEach(e=>e.remove());
+    const m=(n-1)%4;
+    const r=document.createElementNS(NS,'rect');
+    r.setAttribute('class','st-'+kind);
+    const baseX=kind==='good'?SHELF_X+6:REJ_X-14;
+    const baseY=kind==='good'?gy-38:gy-8;
+    r.setAttribute('x',baseX+(m%2)*20);r.setAttribute('y',baseY-Math.floor(m/2)*9);
+    r.setAttribute('width',14);r.setAttribute('height',7);
+    r.setAttribute('fill','none');
+    r.setAttribute('stroke',kind==='good'?'var(--run)':'var(--alarm)');
+    r.setAttribute('stroke-width','1.2');
+    g.appendChild(r);
+  });
+}
+
+document.addEventListener('visibilitychange',()=>{last=performance.now()});
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

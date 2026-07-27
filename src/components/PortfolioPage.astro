@@ -1,0 +1,464 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  capabilities,
+  career,
+  siteCopy,
+  type Locale
+} from "../data/site";
+import ProjectFacts from "./ProjectFacts.astro";
+import {
+  assetPath,
+  otherProjects,
+  projectKind,
+  selectedProjects,
+  text,
+  type Project
+} from "../lib/projects";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const c = siteCopy[locale];
+const alternateHref = locale === "zh" ? "/en/" : "/";
+const alternateLabel = locale === "zh" ? "EN" : "中文";
+
+const selectedLabels = [
+  c.enterpriseSystem,
+  c.simulationSystem,
+  c.researchProject
+];
+
+const projectSummary = (project: Project) =>
+  text(project.pitch, locale) ||
+  text(project.summary, locale) ||
+  text(project.description, locale);
+---
+
+<BaseLayout
+  locale={locale}
+  title={c.metaTitle}
+  description={c.metaDescription}
+>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label={c.profileNav}>
+      <a class="mark" href="#top" aria-label={c.profileNav}>HS</a>
+      <span class="brand">Hu Shengxiang / 胡生翔</span>
+      <div class="theme-switch" aria-label="Theme">
+        <button id="light-theme" type="button">{c.light}</button>
+        <button id="dark-theme" type="button">{c.dark}</button>
+      </div>
+      <a class="language-link" href={alternateHref} hreflang={locale === "zh" ? "en" : "zh"}>
+        {alternateLabel}
+      </a>
+    </nav>
+  </header>
+
+  <aside class="side-nav" id="side-nav" aria-label="Section navigation">
+    <button id="section-up" type="button" aria-label={c.previous}>↑</button>
+    <a href="#top" data-section="top" aria-label={c.profileNav}>01<span>{c.profileNav}</span></a>
+    <a href="#work" data-section="work" aria-label={c.workNav}>02<span>{c.workNav}</span></a>
+    <a href="#projects" data-section="projects" aria-label={c.projectsNav}>03<span>{c.projectsNav}</span></a>
+    <a href="#contact" data-section="contact" aria-label={c.capabilitiesNav}>04<span>{c.capabilitiesNav}</span></a>
+    <button id="section-down" type="button" aria-label={c.next}>↓</button>
+    <button class="side-hide" id="side-hide" type="button" aria-label={c.hideNav}>×</button>
+  </aside>
+  <button class="side-nav-reopen" id="side-show" type="button" aria-label={c.showNav}>›</button>
+
+  <main id="main">
+    <section class="hero section-shell" id="top">
+      <div class="wrap hero-grid">
+        <div class="hero-left">
+          <article class="identity">
+            <p class="eyebrow">{c.profileEyebrow}</p>
+            <h1>{c.name}<span>{c.latinName}</span></h1>
+            <p class="role">{c.role}</p>
+            <p class="intro">{c.intro}</p>
+            <dl class="identity-meta">
+              <dt>{c.current}</dt><dd>{c.currentValue}</dd>
+              <dt>{c.education}</dt><dd>{c.educationValue}</dd>
+              <dt>{c.focus}</dt><dd>{c.focusValue}</dd>
+              <dt>{c.contact}</dt><dd>hushengxiang0630@163.com</dd>
+            </dl>
+            <div class="identity-actions">
+              <a class="button primary" href="#work">{c.selectedWork}</a>
+              <a class="button" href="#projects">{c.projectIndex}</a>
+            </div>
+          </article>
+
+          <article class="history">
+            <div class="panel-head">
+              <span>{c.career} · {c.swipe} →</span>
+              <div class="rail-nav">
+                <button id="history-prev" type="button" aria-label={c.previous}>←</button>
+                <button id="history-next" type="button" aria-label={c.next}>→</button>
+              </div>
+            </div>
+            <div class="history-scroll" id="history-rail">
+              {career.map((item) => (
+                <article class:list={["history-item", { current: item.current }]}>
+                  <span>{item.period}</span>
+                  <h2>{item.title[locale]}</h2>
+                  <b>{item.role[locale]}</b>
+                  <p>{item.body[locale]}</p>
+                </article>
+              ))}
+            </div>
+            <div class="rail-progress" aria-hidden="true"><i id="history-progress"></i></div>
+          </article>
+        </div>
+
+        <article class="hero-game">
+          <div class="game-title">
+            <b>{c.heroLive}</b>
+            <span>{c.heroSystem}</span>
+            <span>● {c.online}</span>
+          </div>
+          <iframe
+            id="hero-frame"
+            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=astro"
+            loading="eager"
+            scrolling="no"
+            title="Interactive assembly digital twin"
+          ></iframe>
+        </article>
+      </div>
+    </section>
+
+    <section class="page-section" id="work">
+      <div class="wrap">
+        <header class="section-head">
+          <span class="section-no">{c.selectedNo}</span>
+          <h2>{c.selectedTitle}</h2>
+          <p>{c.selectedIntro}</p>
+        </header>
+
+        <div class="selected-list">
+          {selectedProjects.map((project, index) => (
+            <article class:list={["selected-project", `selected-${index + 1}`]}>
+              <div class="project-bar">
+                <span>{selectedLabels[index]}</span>
+                <b>{text(project.technicalType, locale) || selectedLabels[index]}</b>
+              </div>
+              <div class="selected-copy">
+                <h3>{text(project.title, locale)}</h3>
+                <p>{projectSummary(project)}</p>
+                <ul>
+                  {(project.technologies ?? []).slice(0, 5).map((technology) => (
+                    <li>{technology}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div class:list={["selected-effect", `effect-${index + 1}`]} aria-hidden="true">
+                {index === 0 && (
+                  <div class="fault-chain">
+                    <span>PLC<i></i></span><b>→</b>
+                    <span>OPC UA<i></i></span><b>→</b>
+                    <span>HMI<i></i></span>
+                  </div>
+                )}
+                {index === 1 && (
+                  <div class="scene-chain">
+                    <span>YAML</span><b>→</b><span>USD</span><b>→</b><span>DATA</span>
+                    <i class="scene-line"></i><i class="scene-robot">R</i><i class="scene-sensor">S</i>
+                  </div>
+                )}
+                {index === 2 && (
+                  <div class="motion-figure">
+                    <i class="head"></i><i class="torso"></i>
+                    <i class="arm left"></i><i class="arm right"></i>
+                    <i class="leg left"></i><i class="leg right"></i>
+                    <span>84</span><span>71</span><span>88</span>
+                  </div>
+                )}
+              </div>
+
+              <details class="selected-details">
+                <summary>{index === 1 ? c.projectVideo : c.projectContext}</summary>
+                <div class="details-grid">
+                  <div><ProjectFacts project={project} locale={locale} group="narrative" /></div>
+                  <div><ProjectFacts project={project} locale={locale} group="lists" /></div>
+                </div>
+                {project.video?.url && (
+                  <video controls preload="none" playsinline>
+                    <source src={assetPath(project.video.url)} type="video/mp4" />
+                  </video>
+                )}
+              </details>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section archive-section" id="projects">
+      <div class="wrap">
+        <header class="section-head">
+          <span class="section-no">{c.archiveNo}</span>
+          <h2>{c.archiveTitle}</h2>
+          <p>{c.archiveIntro}</p>
+        </header>
+        <div class="tabs" role="tablist" aria-label={c.projectsNav}>
+          <button class="active" data-filter="all" type="button">{c.all}</button>
+          <button data-filter="enterprise" type="button">{c.enterprise}</button>
+          <button data-filter="personal" type="button">{c.personal}</button>
+        </div>
+
+        <div class="archive-list">
+          {otherProjects.map((project) => (
+            <details class="archive-item" data-kind={projectKind(project)}>
+              <summary>
+                <span>{text(project.projectType, locale)}</span>
+                <div>
+                  <h3>{text(project.title, locale)}</h3>
+                  <p>{projectSummary(project)}</p>
+                </div>
+                <div class:list={["project-effect", { "no-video": !project.video?.url }]}>
+                  {project.video?.url ? (
+                    <video
+                      muted
+                      loop
+                      playsinline
+                      preload="none"
+                      data-preview-src={assetPath(project.video.url)}
+                    ></video>
+                  ) : (
+                    <span>{(project.technologies ?? []).slice(0, 3).join(" · ")}</span>
+                  )}
+                </div>
+                <b class="plus">+</b>
+              </summary>
+              <div class="archive-detail">
+                <div><ProjectFacts project={project} locale={locale} /></div>
+                <div class="project-media">
+                  {project.video?.url ? (
+                    <video controls preload="none" playsinline>
+                      <source src={assetPath(project.video.url)} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div class="no-media">{c.noMedia}</div>
+                  )}
+                </div>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="contact">
+      <div class="wrap">
+        <header class="section-head">
+          <span class="section-no">{c.capabilityNo}</span>
+          <h2>{c.capabilityTitle}</h2>
+          <p>{c.capabilityIntro}</p>
+        </header>
+        <div class="last-grid">
+          <div class="cap-grid">
+            {capabilities.map((capability) => (
+              <article class="capability">
+                <span>{capability.code}</span>
+                <div>
+                  <h3>{capability.title[locale]}</h3>
+                  <p>{capability.body[locale]}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <aside class="contact-card">
+            <p class="eyebrow">{c.contactLead}</p>
+            <h3>{c.contactTitle.split("\n").map((line) => <>{line}<br /></>)}</h3>
+            <p>{c.contactText}</p>
+            <a href="mailto:hushengxiang0630@163.com">{c.email} · hushengxiang0630@163.com</a>
+            <a href="https://www.linkedin.com/in/shengxiang-hu-269787252/" target="_blank" rel="noreferrer">
+              {c.linkedin} · OPEN PROFILE ↗
+            </a>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>© 2026 HU SHENGXIANG</span>
+      <span>{c.footer}</span>
+    </div>
+  </footer>
+
+  <script>
+    const $ = (selector: string, root: Document | Element = document) =>
+      root.querySelector(selector) as HTMLElement | null;
+    const $$ = (selector: string, root: Document | Element = document) =>
+      [...root.querySelectorAll(selector)] as HTMLElement[];
+
+    const frame = $("#hero-frame") as HTMLIFrameElement | null;
+    const setTheme = (theme: "light" | "dark") => {
+      document.documentElement.dataset.theme = theme;
+      try {
+        localStorage.setItem("bauhaus-theme", theme);
+      } catch {}
+      $("#light-theme")?.classList.toggle("active", theme === "light");
+      $("#dark-theme")?.classList.toggle("active", theme === "dark");
+      frame?.contentWindow?.postMessage({ type: "bauhaus-theme", theme }, "*");
+    };
+
+    $("#light-theme")?.addEventListener("click", () => setTheme("light"));
+    $("#dark-theme")?.addEventListener("click", () => setTheme("dark"));
+
+    const rail = $("#history-rail");
+    const progress = $("#history-progress");
+    const moveHistory = (direction: number) => {
+      const card = $(".history-item", rail ?? document);
+      if (!rail || !card) return;
+      rail.scrollBy({ left: direction * (card.offsetWidth + 1), behavior: "smooth" });
+    };
+    const updateHistoryProgress = () => {
+      if (!rail || !progress) return;
+      const max = Math.max(1, rail.scrollWidth - rail.clientWidth);
+      progress.style.width = `${25 + 75 * Math.min(1, rail.scrollLeft / max)}%`;
+    };
+    $("#history-prev")?.addEventListener("click", () => moveHistory(-1));
+    $("#history-next")?.addEventListener("click", () => moveHistory(1));
+    rail?.addEventListener("scroll", updateHistoryProgress, { passive: true });
+
+    const fitHeroFrame = () => {
+      if (!frame?.contentDocument) return;
+      const contentHeight =
+        frame.contentDocument.querySelector(".cell")?.getBoundingClientRect().height ||
+        frame.contentDocument.body?.scrollHeight ||
+        704;
+      frame.style.height = `${Math.max(520, Math.min(900, Math.ceil(contentHeight)))}px`;
+    };
+    const alignHeroColumns = () => {
+      const left = $(".hero-left");
+      const title = $(".game-title");
+      if (!frame?.contentWindow || !left || !title) return;
+      if (window.innerWidth <= 980) {
+        frame.contentWindow.postMessage({ type: "bauhaus-host-reset" }, "*");
+        window.setTimeout(fitHeroFrame, 0);
+        return;
+      }
+      const target = Math.max(
+        520,
+        Math.ceil(left.getBoundingClientRect().height - title.getBoundingClientRect().height - 4)
+      );
+      frame.style.height = `${target}px`;
+      frame.contentWindow.postMessage({ type: "bauhaus-host-height", height: target }, "*");
+    };
+    const initHero = () => {
+      setTheme((document.documentElement.dataset.theme === "dark" ? "dark" : "light"));
+      fitHeroFrame();
+      requestAnimationFrame(alignHeroColumns);
+    };
+    frame?.addEventListener("load", initHero);
+    window.addEventListener("message", (event) => {
+      if (event.data?.type !== "bauhaus-hero-height" || !frame) return;
+      frame.style.height = `${Math.max(520, Math.min(900, Number(event.data.height) || 704))}px`;
+    });
+    window.addEventListener("resize", () => requestAnimationFrame(alignHeroColumns));
+
+    const nav = $("#side-nav");
+    const navShow = $("#side-show");
+    let userHidNavigation = false;
+    const hideNavigation = (userAction = false) => {
+      if (userAction) userHidNavigation = true;
+      nav?.classList.add("is-hidden");
+      navShow?.classList.add("show");
+    };
+    const showNavigation = () => {
+      userHidNavigation = false;
+      nav?.classList.remove("is-hidden");
+      navShow?.classList.remove("show");
+    };
+    $("#side-hide")?.addEventListener("click", () => hideNavigation(true));
+    navShow?.addEventListener("click", showNavigation);
+
+    const mobileNavigation = window.matchMedia("(max-width:650px)");
+    const syncNavigationForWidth = (mobile: boolean) => {
+      if (mobile) hideNavigation(false);
+      else if (!userHidNavigation) showNavigation();
+    };
+    mobileNavigation.addEventListener("change", (event) =>
+      syncNavigationForWidth(event.matches)
+    );
+    syncNavigationForWidth(mobileNavigation.matches);
+
+    const sectionIds = ["top", "work", "projects", "contact"];
+    const sectionLinks = $$(".side-nav a");
+    let activeSection = 0;
+    const setActiveSection = (index: number) => {
+      activeSection = Math.max(0, Math.min(sectionIds.length - 1, index));
+      sectionLinks.forEach((link, linkIndex) =>
+        link.classList.toggle("active", linkIndex === activeSection)
+      );
+    };
+    const goSection = (delta: number) => {
+      setActiveSection(activeSection + delta);
+      document
+        .getElementById(sectionIds[activeSection])
+        ?.scrollIntoView({ behavior: "smooth" });
+    };
+    $("#section-up")?.addEventListener("click", () => goSection(-1));
+    $("#section-down")?.addEventListener("click", () => goSection(1));
+    sectionLinks.forEach((link, index) =>
+      link.addEventListener("click", () => setActiveSection(index))
+    );
+    window.addEventListener(
+      "scroll",
+      () => {
+        let index = 0;
+        sectionIds.forEach((id, sectionIndex) => {
+          if (
+            (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) <=
+            window.innerHeight * 0.3
+          ) {
+            index = sectionIndex;
+          }
+        });
+        setActiveSection(index);
+      },
+      { passive: true }
+    );
+
+    $$(".tabs button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const filter = button.dataset.filter;
+        $$(".tabs button").forEach((item) =>
+          item.classList.toggle("active", item === button)
+        );
+        $$(".archive-item").forEach((item) => {
+          item.hidden = filter !== "all" && item.dataset.kind !== filter;
+        });
+      });
+    });
+
+    $$(".archive-item").forEach((detail) => {
+      const preview = $("summary video", detail) as HTMLVideoElement | null;
+      // The preview file is only fetched once the visitor actually hovers the card,
+      // so a page load costs no video bytes at all.
+      detail.addEventListener("mouseenter", () => {
+        if (!preview) return;
+        if (!preview.src && preview.dataset.previewSrc) {
+          preview.src = preview.dataset.previewSrc;
+        }
+        preview.play().catch(() => {});
+      });
+      detail.addEventListener("mouseleave", () => {
+        if (!preview) return;
+        preview.pause();
+        preview.currentTime = 0;
+      });
+      detail.addEventListener("toggle", () => {
+        const plus = $(".plus", detail);
+        if (plus) plus.textContent = (detail as HTMLDetailsElement).open ? "−" : "+";
+      });
+    });
+
+    setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+    window.setTimeout(initHero, 0);
+  </script>
+</BaseLayout>

@@ -5,6 +5,25 @@
 
 ---
 
+## Local Astro migration | 本地 Astro 迁移
+
+The `websiteRebuild` branch is being migrated locally to Astro. The current phase includes the Bauhaus page shell, Chinese and English routes, project-data synchronization, and the existing Three.js Hero. The three selected project interactions remain pending joint review.
+
+`websiteRebuild` 分支正在本地渐进迁移到 Astro。当前阶段已包含 Bauhaus 页面壳层、中英文路由、项目数据同步与现有 Three.js Hero；三个重点项目的交互仍保留为用户、Claude 与 Codex 后续逐项审核任务。
+
+```text
+npm install
+npm run dev
+npm run check:content
+npm run build
+```
+
+Current collaboration decisions and responsibilities are recorded in `communication.md`.
+
+当前协作裁决、修改来源与责任记录统一维护在 `communication.md`。
+
+---
+
 ## 🌐 Live Site | 在线访问
 
 👉 huhuhushengxiang.com
@@ -127,8 +146,8 @@ The focus remains on methodology, system design, and technical reasoning.
 
 ## ⭐ Final Statement | 总结
 
-This portfolio is not a collection of tools or isolated projects.  
-本作品集并非工具或项目的简单集合。  
+This portfolio is not a collection of tools or isolated projects.
+本作品集并非工具或项目的简单集合。
 
-It represents how I structure complexity, design systems, and deliver engineering solutions.  
-它表达的是我如何组织复杂性、设计系统并完成工程交付。  
+It represents how I structure complexity, design systems, and deliver engineering solutions.
+它表达的是我如何组织复杂性、设计系统并完成工程交付。

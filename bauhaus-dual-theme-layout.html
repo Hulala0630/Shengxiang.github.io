@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Hu Shengxiang — Industrial AI, digital twin and engineering systems portfolio.">
+  <title>Hu Shengxiang — Bauhaus Dual Theme Layout</title>
+  <link rel="icon" href="data:,">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("bauhaus-theme")||"light"}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --paper:#f3f0e7;--card:#fffdf7;--ink:#151515;--muted:#66635d;--faint:#8f8a80;--line:#bbb6aa;
+      --red:#e94b35;--blue:#2767b2;--yellow:#f3b928;--nav:rgba(243,240,231,.94);--shadow:#151515;
+      --screen:#111318;--sline:#2b2e36;--stext:#edf0f3;--sdim:#9298a2;--run:#3ddc84;--alarm:#ff9e00;--ai:#c3a6ff;
+      --max:1240px;
+    }
+    [data-theme="dark"]{
+      --paper:#121316;--card:#1a1b20;--ink:#eeece4;--muted:#aaa69c;--faint:#77746d;--line:#393a40;
+      --red:#ff614c;--blue:#68a4e5;--yellow:#ffc43d;--nav:rgba(18,19,22,.94);--shadow:#050506;
+      --screen:#090a0e;--sline:#292b34;--stext:#f4f2ec;--sdim:#9898a6;
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 "IBM Plex Sans","Noto Sans SC",sans-serif;transition:background .3s,color .3s}button,select{font:inherit}a{color:inherit}.wrap{width:min(var(--max),calc(100% - 48px));margin:auto}
+    .top{position:sticky;top:0;z-index:40;background:var(--nav);backdrop-filter:blur(10px);border-bottom:2px solid var(--ink)}.nav{height:60px;display:flex;align-items:center;gap:24px}.mark{display:grid;place-items:center;width:32px;height:32px;background:var(--ink);color:var(--paper);font:600 10px "IBM Plex Mono"}.brand{font:600 13px "Space Grotesk";margin-right:auto}.links{display:flex;gap:22px}.links a{text-decoration:none;font:500 9px "IBM Plex Mono";letter-spacing:.05em;text-transform:uppercase}.links a:hover{color:var(--red)}.theme-switch{display:flex;border:1px solid var(--ink)}.theme-switch button{min-height:34px;border:0;background:transparent;color:var(--faint);padding:0 10px;cursor:pointer;font:9px "IBM Plex Mono"}.theme-switch button+button{border-left:1px solid var(--ink)}.theme-switch button.active{background:var(--ink);color:var(--paper)}.lang{min-height:34px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:0 10px;cursor:pointer;font:9px "IBM Plex Mono"}
+    .links{display:none}.side-nav{position:fixed;z-index:60;left:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;border:1px solid var(--ink);background:var(--nav);backdrop-filter:blur(12px);box-shadow:4px 4px 0 var(--shadow);transition:transform .25s}.side-nav.is-hidden{transform:translate(calc(-100% - 14px),-50%)}.side-nav button,.side-nav a{width:42px;min-height:42px;display:grid;place-items:center;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);text-decoration:none;cursor:pointer;font:600 9px "IBM Plex Mono"}.side-nav button:hover,.side-nav a:hover,.side-nav a.active{background:var(--ink);color:var(--paper)}.side-nav a{position:relative}.side-nav a span{position:absolute;left:48px;white-space:nowrap;padding:5px 8px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);opacity:0;pointer-events:none;transform:translateX(-5px);transition:.18s;font:500 8px "IBM Plex Mono"}.side-nav a:hover span,.side-nav a:focus-visible span{opacity:1;transform:none}.side-nav .side-hide{border-bottom:0;color:var(--red)}.side-nav-reopen{position:fixed;z-index:59;left:0;top:50%;transform:translateY(-50%);width:18px;height:62px;border:1px solid var(--ink);border-left:0;background:var(--nav);color:var(--ink);cursor:pointer;font:600 10px "IBM Plex Mono";opacity:0;pointer-events:none;transition:.2s}.side-nav-reopen.show{opacity:1;pointer-events:auto}
+    .hero{padding:34px 0 42px;border-bottom:2px solid var(--ink)}.hero-grid{display:grid;grid-template-columns:minmax(290px,.38fr) minmax(0,.62fr);gap:28px;align-items:stretch}.hero-left{display:grid;grid-template-rows:auto minmax(0,1fr);gap:18px;min-height:760px}.identity{position:relative;overflow:hidden;border:2px solid var(--ink);background:var(--card);box-shadow:7px 7px 0 var(--shadow);padding:25px}.identity::after{content:"";position:absolute;right:-50px;top:-50px;width:150px;height:150px;border-radius:50%;background:var(--yellow);opacity:.95}.identity::before{content:"";position:absolute;right:35px;bottom:20px;width:100px;height:15px;background:var(--red);transform:rotate(-8deg)}.eyebrow{position:relative;z-index:2;font:500 9px "IBM Plex Mono";letter-spacing:.12em;text-transform:uppercase}.identity h1{position:relative;z-index:2;margin:22px 0 12px;font:700 clamp(42px,5vw,67px)/.88 "Space Grotesk","Noto Sans SC";letter-spacing:-.065em}.identity h1 span{display:block;color:var(--blue);font-size:.54em;letter-spacing:.02em;margin-top:9px}.role{position:relative;z-index:2;margin:0;max-width:430px;font:600 17px/1.25 "Space Grotesk","Noto Sans SC"}.intro{position:relative;z-index:2;color:var(--muted);font-size:12px;max-width:42ch}.identity-meta{position:relative;z-index:2;display:grid;grid-template-columns:75px 1fr;margin-top:18px;border-top:1px solid var(--ink)}.identity-meta span,.identity-meta b{padding:6px 0;border-bottom:1px solid var(--line);font-size:9px}.identity-meta span{font-family:"IBM Plex Mono";color:var(--faint)}.identity-meta b{font-weight:500}.identity-actions{position:relative;z-index:2;display:flex;gap:8px;margin-top:18px}.btn{min-height:39px;display:inline-flex;align-items:center;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:0 12px;text-decoration:none;font:600 9px "IBM Plex Mono"}.btn.primary{background:var(--ink);color:var(--paper)}
+    .history{min-height:0;border:2px solid var(--ink);background:var(--card);box-shadow:7px 7px 0 var(--blue);display:flex;flex-direction:column}.panel-head{display:flex;align-items:center;justify-content:space-between;min-height:38px;padding:0 12px;border-bottom:1px solid var(--ink);font:500 9px "IBM Plex Mono";letter-spacing:.07em}.panel-head b{color:var(--red);font-weight:500}.history-scroll{overflow:auto;scrollbar-width:thin;max-height:340px}.history-item{position:relative;padding:18px 18px 18px 43px;border-bottom:1px solid var(--line)}.history-item::before{content:"";position:absolute;left:20px;top:24px;width:8px;height:8px;border-radius:50%;background:var(--blue)}.history-item.now::before{background:var(--run);box-shadow:0 0 8px var(--run)}.history-item span{font:9px "IBM Plex Mono";color:var(--faint)}.history-item h3{margin:5px 0 2px;font:600 15px/1.2 "Space Grotesk"}.history-item b{color:var(--blue);font:500 9px "IBM Plex Mono"}.history-item p{margin:7px 0 0;color:var(--muted);font-size:10px}
+    .hero-game{min-width:0;border:2px solid var(--ink);background:var(--card);box-shadow:9px 9px 0 var(--red);display:flex;flex-direction:column}.game-title{display:flex;align-items:center;gap:12px;min-height:42px;padding:0 13px;border-bottom:2px solid var(--ink);font:500 9px "IBM Plex Mono"}.game-title b{color:var(--red)}.game-title span:last-child{margin-left:auto;color:var(--run)}.hero-game iframe{display:block;width:100%;height:716px;border:0;background:#f5f5f2}
+    .section{padding:76px 0;border-bottom:2px solid var(--ink)}.section-head{display:grid;grid-template-columns:125px minmax(0,760px);margin-bottom:38px}.section-no{font:600 9px "IBM Plex Mono";letter-spacing:.1em;color:var(--red)}.section-head h2{margin:0;font:700 clamp(34px,4.7vw,58px)/.98 "Space Grotesk","Noto Sans SC";letter-spacing:-.045em}.section-head p{grid-column:2;margin:12px 0 0;color:var(--muted)}
+    .demo-grid{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid var(--ink)}.demo{min-width:0;display:flex;flex-direction:column;min-height:620px;border-right:2px solid var(--ink);background:var(--card)}.demo:last-child{border:0}.demo-top{display:flex;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--ink);font:8px "IBM Plex Mono"}.demo-top b{color:var(--red)}.demo:nth-child(2) .demo-top b{color:var(--blue)}.demo:nth-child(3) .demo-top b{color:var(--yellow)}.demo-copy{padding:20px}.demo h3{margin:0 0 9px;font:600 22px/1.12 "Space Grotesk"}.demo-copy p{min-height:64px;color:var(--muted);font-size:11px}.demo-copy ul{padding-left:15px;font-size:10px}.demo-stage{position:relative;min-height:300px;margin-top:auto;border-top:1px solid var(--ink);background:var(--screen);color:var(--stext)}
+    .trainer{display:grid;grid-template-rows:1fr auto;height:300px}.line-map{position:relative;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;gap:18px;padding:28px;background:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:22px 22px}.line-map::before{content:"";position:absolute;left:20%;right:20%;top:50%;height:1px;background:var(--run)}.node{position:relative;z-index:2;padding:14px 4px;border:1px solid #555a66;background:var(--screen);text-align:center;font:8px "IBM Plex Mono"}.node i{position:absolute;right:4px;top:4px;width:5px;height:5px;border-radius:50%;background:var(--run)}.trainer-controls{display:grid;grid-template-columns:1fr auto;border-top:1px solid var(--sline)}.trainer-controls select{min-width:0;border:0;background:#1c1f26;color:var(--stext);padding:10px;font-size:9px}.trainer-controls button,.builder-controls button,.motion-controls button{border:0;background:var(--red);color:#fff;padding:0 12px;cursor:pointer;font:600 9px "IBM Plex Mono"}.fault .node{border-color:var(--alarm);color:var(--alarm)}.fault .node i{background:var(--alarm)}.fault.line-map::before{background:var(--alarm)}
+    .builder{height:300px;display:grid;grid-template-rows:auto 1fr}.builder-controls{display:flex;border-bottom:1px solid var(--sline)}.builder-controls button{flex:1;min-height:40px;background:transparent;color:var(--sdim);border-right:1px solid var(--sline)}.builder-controls button.active{background:var(--blue);color:#fff}.builder-scene{position:relative;background:linear-gradient(rgba(80,130,190,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(80,130,190,.13) 1px,transparent 1px),#15202d;background-size:22px 22px;overflow:hidden}.builder-node{position:absolute;border:1px solid #82acd9;background:#15202d;color:#c5def7;padding:9px;font:8px "IBM Plex Mono";transition:.3s}.bn1{left:12%;right:12%;bottom:20%;text-align:center}.bn2{left:16%;top:24%}.bn3{right:16%;top:35%;border-radius:50%}.builder-scene.large .bn2{left:43%}.builder-scene.large .bn3{right:5%}.builder-scene::after{content:"CONFIG → STRUCTURE";position:absolute;right:8px;bottom:7px;color:#6e8ba9;font:7px "IBM Plex Mono"}
+    .motion{height:300px;display:grid;grid-template-columns:1.2fr .8fr}.skeleton{position:relative;border-right:1px solid var(--sline);background:linear-gradient(rgba(195,166,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(195,166,255,.08) 1px,transparent 1px);background-size:22px 22px}.bone,.joint{position:absolute;display:block;background:#81909e;transform-origin:top center}.joint{width:9px;height:9px;border:2px solid var(--ai);border-radius:50%;background:var(--screen)}.head{left:calc(50% - 12px);top:22px;width:24px;height:24px}.torso{left:50%;top:48px;width:3px;height:78px}.al,.ar{top:61px;width:3px;height:75px}.al{left:48%;transform:rotate(52deg)}.ar{left:52%;transform:rotate(-52deg)}.ll,.lr{top:123px;width:3px;height:95px}.ll{left:49%;transform:rotate(16deg)}.lr{left:51%;transform:rotate(-16deg)}.jl{left:26%;top:112px}.jr{right:26%;top:112px}.kl{left:42%;top:175px}.kr{right:42%;top:175px}.evaluated .joint{background:var(--run);border-color:var(--run)}.evaluated .kr{background:var(--alarm);border-color:var(--alarm)}.motion-controls{display:flex;flex-direction:column;padding:14px}.motion-controls p{display:flex;justify-content:space-between;margin:0;padding:8px 0;border-bottom:1px solid var(--sline);color:var(--sdim);font:8px "IBM Plex Mono"}.motion-controls b{color:var(--stext)}.motion-controls button{min-height:38px;margin-top:auto;background:var(--ai);color:#18131f}
+    .demo-result{min-height:55px;padding:11px 13px;border-top:1px solid var(--ink);color:var(--muted);font:9px/1.55 "IBM Plex Mono"}.demo-result b{color:var(--ink)}
+    .archive-section{background:var(--card)}.tabs{display:flex;border-bottom:2px solid var(--ink)}.tabs button{min-height:41px;border:0;background:transparent;color:var(--muted);padding:0 16px;cursor:pointer;font:9px "IBM Plex Mono"}.tabs button.active{background:var(--ink);color:var(--paper)}.archive details{border-bottom:1px solid var(--line)}.archive summary{list-style:none;display:grid;grid-template-columns:100px 1fr 28px;gap:18px;padding:21px 8px;cursor:pointer}.archive summary::-webkit-details-marker{display:none}.archive summary>span{color:var(--faint);font:8px "IBM Plex Mono"}.archive h3{margin:0;font:600 18px "Space Grotesk"}.archive summary p{margin:5px 0 0;color:var(--muted);font-size:11px}.plus{font:20px "IBM Plex Mono"}.project-detail{display:grid;grid-template-columns:1fr 1fr;gap:35px;padding:8px 38px 34px 126px;background:var(--paper)}.project-detail h4{font:600 8px "IBM Plex Mono";letter-spacing:.1em;color:var(--red)}.project-detail p,.project-detail li{color:var(--muted);font-size:11px}.tags{display:flex;flex-wrap:wrap;gap:5px;padding:0;list-style:none}.tags li{border:1px solid var(--line);padding:3px 6px;font:8px "IBM Plex Mono"}
+    .last-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:28px}.cap-grid{display:grid;grid-template-columns:repeat(2,1fr);border:2px solid var(--ink)}.cap{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:17px 10px;border-bottom:1px solid var(--ink)}.cap:nth-child(odd){border-right:1px solid var(--ink)}.cap>span{width:30px;height:30px;display:grid;place-items:center;background:var(--yellow);color:#161616;font:600 9px "IBM Plex Mono"}.cap h3{margin:0 0 4px;font:600 14px "Space Grotesk"}.cap p{margin:0;color:var(--muted);font:8px "IBM Plex Mono"}.contact-card{border:2px solid var(--ink);background:var(--card);box-shadow:7px 7px 0 var(--red);padding:24px}.contact-card h3{font:600 29px/1.05 "Space Grotesk";margin:18px 0}.contact-card p{color:var(--muted);font-size:12px}.contact-card a{display:block;border-top:1px solid var(--line);padding:10px 0;font:9px "IBM Plex Mono"}
+    footer{padding:28px 0 50px}.foot{display:flex;justify-content:space-between;color:var(--faint);font:8px "IBM Plex Mono"}
+
+    /* Validation 02 — native horizontal history, integrated hero and landscape case studies */
+    .hero-left{min-width:0;min-height:0;grid-template-rows:auto auto}.history{min-width:0;min-height:222px}
+    .panel-head{gap:12px}.rail-nav{display:flex;align-items:center;gap:5px;margin-left:auto}.rail-nav button{width:28px;height:28px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;font:600 12px "IBM Plex Mono"}.rail-nav button:hover{background:var(--ink);color:var(--paper)}.rail-progress{height:3px;background:var(--line)}.rail-progress i{display:block;width:25%;height:100%;background:var(--blue);transform-origin:left;transition:width .2s}
+    .history-scroll{display:flex;width:100%;max-height:none;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-inline:contain}.history-scroll::-webkit-scrollbar{display:none}.history-item{flex:0 0 315px;min-height:180px;padding:24px 22px 20px;border-right:1px solid var(--line);border-bottom:0;scroll-snap-align:start}.history-item::before{left:auto;right:18px;top:20px}.history-item h3{font-size:18px}
+    .hero-game{align-self:start;overflow:hidden}.hero-game iframe{height:704px;background:var(--card);transition:height .2s}.game-title{background:var(--ink);color:var(--paper)}.game-title b{color:var(--yellow)}.game-title span:last-child{color:var(--run)}
+
+    .demo-grid{display:flex;flex-direction:column;gap:30px;border:0}.demo{min-height:0;border:2px solid var(--ink);box-shadow:9px 9px 0 var(--shadow);display:grid;grid-template-columns:minmax(260px,.38fr) minmax(0,.62fr);grid-template-rows:auto auto auto auto;background:var(--card)}.demo:last-child{border:2px solid var(--ink)}.demo:nth-child(1){box-shadow:9px 9px 0 var(--red)}.demo:nth-child(2){box-shadow:9px 9px 0 var(--blue)}.demo:nth-child(3){box-shadow:9px 9px 0 var(--yellow)}.demo-top{grid-column:1/-1}.demo-copy{grid-column:1;grid-row:2;padding:28px;border-right:1px solid var(--ink)}.demo h3{font-size:clamp(25px,3vw,38px)}.demo-copy p{min-height:0;font-size:13px}.demo-copy ul{font-size:11px}.demo-stage{grid-column:2;grid-row:2;min-height:390px;margin:0;border-top:0}.trainer,.builder,.motion{height:390px}.demo-result{display:none;grid-column:1/-1;grid-row:3;border-top:1px solid var(--ink);padding:14px 16px}.demo-result.is-visible{display:block}.demo-detail{grid-column:1/-1;grid-row:4;border-top:1px solid var(--ink)}.demo-detail summary{list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:55px;padding:0 28px;cursor:pointer;font:600 9px "IBM Plex Mono";letter-spacing:.08em}.demo-detail summary::-webkit-details-marker{display:none}.demo-detail summary::after{content:"↓";font-size:17px}.demo-detail[open] summary::after{content:"↑"}.demo-detail-body{padding:25px 28px;border-top:1px solid var(--line);background:var(--paper)}.demo-detail-body h4{margin:0 0 8px;color:var(--red);font:600 9px "IBM Plex Mono";letter-spacing:.08em}.demo-detail-body p{margin:0;color:var(--muted);font-size:12px}.demo-detail-body ul{margin:9px 0 0;padding-left:17px;color:var(--muted);font-size:11px}.demo-detail-body video{display:block;width:100%;max-height:430px;margin-top:20px;border:1px solid var(--ink);background:#050608}
+
+    .archive details{background:var(--card)}.archive summary{grid-template-columns:100px minmax(0,1fr) minmax(210px,32%) 28px;align-items:center;padding:15px 8px}.archive summary p{max-width:70ch}.project-effect{height:112px;border:1px solid var(--ink);background:var(--screen);overflow:hidden;position:relative}.project-effect video{width:100%;height:100%;object-fit:cover;pointer-events:none;opacity:.78}.project-effect.no-video{display:flex;align-items:flex-end;padding:11px;color:var(--stext);background:linear-gradient(135deg,rgba(39,103,178,.35),transparent 55%),repeating-linear-gradient(90deg,transparent 0 23px,rgba(255,255,255,.08) 24px),var(--screen);font:8px/1.5 "IBM Plex Mono"}.project-effect::after{content:"EFFECT PREVIEW";position:absolute;top:7px;left:8px;padding:2px 5px;background:var(--yellow);color:#151515;font:600 7px "IBM Plex Mono"}.project-detail{grid-template-columns:minmax(0,1fr) minmax(280px,.9fr);padding:25px 38px 34px 126px}.project-media video{display:block;width:100%;max-height:330px;border:1px solid var(--ink);background:#050608}.project-media .no-media{min-height:170px;display:grid;place-items:center;border:1px solid var(--line);color:var(--faint);font:9px "IBM Plex Mono"}
+
+    @media(max-width:980px){.hero-grid{grid-template-columns:1fr}.hero-left{grid-template-columns:1fr}.hero-game iframe{height:704px}.demo{grid-template-columns:1fr}.demo-copy{grid-column:1;grid-row:2;border-right:0;border-bottom:1px solid var(--ink)}.demo-stage{grid-column:1;grid-row:3}.demo-result{grid-column:1;grid-row:4}.demo-detail{grid-column:1;grid-row:5}.archive summary{grid-template-columns:90px 1fr 28px}.archive summary .project-effect{grid-column:2}.last-grid{grid-template-columns:1fr}.links{display:none}}
+    @media(max-width:650px){.wrap{width:calc(100% - 28px)}.brand{display:none}.hero{padding-top:20px}.identity h1{font-size:49px}.identity-actions{flex-direction:column}.btn{justify-content:center}.hero-game iframe{height:620px}.section{padding:60px 0}.section-head{grid-template-columns:1fr}.section-head h2,.section-head p{grid-column:1}.section-no{margin-bottom:12px}.history-item{flex-basis:82vw}.panel-head>span{font-size:8px}.demo{display:grid}.demo-stage{min-height:330px}.trainer,.builder{height:330px}.motion{height:auto;grid-template-columns:1fr}.skeleton{min-height:240px;border-right:0;border-bottom:1px solid var(--sline)}.motion-controls{min-height:180px}.demo-detail-body{padding:20px 18px}.archive summary{grid-template-columns:1fr 24px}.archive summary>span,.archive summary>div{grid-column:1}.archive summary .project-effect{grid-column:1;height:150px}.project-detail{grid-template-columns:1fr;padding:20px 14px 28px}.cap-grid{grid-template-columns:1fr}.cap:nth-child(odd){border-right:0}.theme-switch button{padding:0 7px}.foot{flex-direction:column;gap:8px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <nav class="wrap nav">
+      <span class="mark">HS</span><span class="brand">Hu Shengxiang / 胡生翔</span>
+      <div class="links"><a href="#top">Profile</a><a href="#demos">Selected Work</a><a href="#archive">Projects</a><a href="#contact">Capabilities</a></div>
+      <div class="theme-switch"><button id="light">LIGHT</button><button id="dark">DARK</button></div>
+      <button class="lang" id="lang">中文</button>
+    </nav>
+  </header>
+  <aside class="side-nav" id="side-nav" aria-label="Section navigation">
+    <button id="section-up" type="button" aria-label="Previous section">↑</button>
+    <a href="#top" data-section="top" aria-label="Profile">01<span>PROFILE</span></a>
+    <a href="#demos" data-section="demos" aria-label="Selected work">02<span>SELECTED WORK</span></a>
+    <a href="#archive" data-section="archive" aria-label="Projects">03<span>PROJECTS</span></a>
+    <a href="#contact" data-section="contact" aria-label="Capabilities and contact">04<span>CAPABILITIES</span></a>
+    <button id="section-down" type="button" aria-label="Next section">↓</button>
+    <button class="side-hide" id="side-hide" type="button" aria-label="Hide navigation">×</button>
+  </aside>
+  <button class="side-nav-reopen" id="side-show" type="button" aria-label="Show navigation">›</button>
+  <main>
+    <section class="hero" id="top">
+      <div class="wrap hero-grid">
+        <div class="hero-left">
+          <article class="identity">
+            <p class="eyebrow">PROFILE / MUNICH / INDUSTRIAL SYSTEMS</p>
+            <h1>Hu Shengxiang<span>胡生翔</span></h1>
+            <p class="role" data-en="Industrial AI & Digital Twin Solution Engineer" data-zh="工业 AI 与数字孪生解决方案工程师">Industrial AI & Digital Twin Solution Engineer</p>
+            <p class="intro" data-en="I connect automation, simulation, software and AI—turning complex physical processes into systems that can be modeled, tested, explained and delivered." data-zh="我连接自动化、仿真、软件与 AI，把复杂物理过程转化为可建模、可测试、可解释、可交付的系统。">I connect automation, simulation, software and AI—turning complex physical processes into systems that can be modeled, tested, explained and delivered.</p>
+            <div class="identity-meta"><span>Current</span><b>BMW Munich · Digital Twin / VC</b><span>Education</span><b>TUM M.Sc. · Tongji B.Eng.</b><span>Focus</span><b>Simulation · Tooling · Industrial AI</b><span>Contact</span><b>hushengxiang0630@163.com</b></div>
+            <div class="identity-actions"><a class="btn primary" href="#demos">SELECTED WORK</a><a class="btn" href="#archive">PROJECT INDEX</a></div>
+          </article>
+          <article class="history">
+            <div class="panel-head"><span>EDUCATION + EXPERIENCE · SWIPE →</span><div class="rail-nav"><button id="history-prev" type="button" aria-label="Previous experience">←</button><button id="history-next" type="button" aria-label="Next experience">→</button></div></div>
+            <div class="history-scroll" id="history-rail">
+              <div class="history-item"><span>2016–2021</span><h3>Tongji University</h3><b>B.Eng. Industrial Engineering</b><p>Production systems, process analysis and industrial engineering foundations.</p></div>
+              <div class="history-item"><span>2021–2024</span><h3>Technical University of Munich</h3><b>M.Sc. Human Factors Engineering</b><p>Human-system interaction, interface design, engineering systems and data analysis.</p></div>
+              <div class="history-item now"><span>2023–2026</span><h3>BMW Group · Munich</h3><b>Digital Twin / Virtual Commissioning</b><p>Industrial simulation, virtual training, system integration and digital delivery.</p></div>
+              <div class="history-item"><span>NEXT</span><h3>Industrial AI Systems</h3><b>Current direction</b><p>Connecting simulation tools, industrial data and explainable intelligent systems.</p></div>
+            </div>
+            <div class="rail-progress" aria-hidden="true"><i id="history-progress"></i></div>
+          </article>
+        </div>
+        <article class="hero-game">
+          <div class="game-title"><b>LIVE / ASM-A01</b><span>THREE.JS · FLUID SIM v2.0</span><span>● ONLINE</span></div>
+          <iframe id="hero-frame" src="assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=2" loading="eager" scrolling="no" title="Interactive assembly digital twin"></iframe>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="demos">
+      <div class="wrap">
+        <header class="section-head"><span class="section-no">02 / SELECTED WORK</span><h2>Three selected systems.</h2><p>Industrial training, simulation generation and motion evaluation presented as focused project cases.</p></header>
+        <div class="demo-grid">
+          <article class="demo">
+            <div class="demo-top"><span>ENTERPRISE SYSTEM</span><b>TRAINING PLATFORM</b></div>
+            <div class="demo-copy"><h3>Industrial Fault Simulation & Training</h3><p>A repeatable training environment that turns production-line faults into safe, observable exercises across PLC, simulation and HMI layers.</p><ul><li>Select one fault scenario</li><li>Observe propagation across the chain</li><li>Reset and repeat without production risk</li></ul></div>
+            <div class="demo-stage trainer"><div class="line-map" id="line-map"><span class="node">PLC<i></i></span><span class="node">OPC UA<i></i></span><span class="node">HMI<i></i></span></div><div class="trainer-controls"><select id="fault-select"><option>SENSOR BLOCKED</option><option>CONVEYOR JAM</option><option>DRIVE OVERLOAD</option></select><button id="fault-run">INJECT</button></div></div>
+            <div class="demo-result" id="fault-result" aria-live="polite"></div>
+            <details class="demo-detail"><summary>PROJECT CONTEXT</summary><div class="demo-detail-body"><h4>WHY IT MATTERS</h4><p>Real production equipment is too costly and risky for repeated fault training. I helped structure abnormal states as reusable exercises so operators can understand symptoms, signal paths and recovery logic before touching the line.</p><ul><li>Layered fault behavior across automation, simulation and interface states.</li><li>Designed for repeatable training, onboarding and engineering communication.</li><li>BMW-related figures and confidential implementation details remain deliberately generalized.</li></ul></div></details>
+          </article>
+          <article class="demo">
+            <div class="demo-top"><span>SIMULATION SYSTEM</span><b>AUTO MODELING</b></div>
+            <div class="demo-copy"><h3>Isaac Sim Generator / Data Agent</h3><p>A configuration-driven pipeline for generating reusable industrial scenes, defect variants and synthetic-data outputs instead of rebuilding every USD stage manually.</p><ul><li>YAML scene intent</li><li>Reusable USD asset composition</li><li>Defect cases and data export</li></ul></div>
+            <div class="demo-stage builder"><div class="builder-controls"><button class="active" data-scene="compact">COMPACT</button><button data-scene="assembly">ASSEMBLY</button></div><div class="builder-scene" id="builder-scene"><span class="builder-node bn1">CONVEYOR</span><span class="builder-node bn2">SENSOR</span><span class="builder-node bn3">ROBOT</span></div></div>
+            <div class="demo-result" id="builder-result" aria-live="polite"></div>
+            <details class="demo-detail"><summary>PROJECT + VIDEO</summary><div class="demo-detail-body"><h4>CONFIGURATION → USD STAGE → DATA</h4><p>The tool separates scene description, construction and export. A small configuration can place reusable components, switch abnormal cases and generate screenshots, metadata and configuration snapshots through an Isaac Sim extension.</p><ul><li>Components include conveyors, robots, sensors, racks, cameras and battery modules.</li><li>Defect presets include misalignment, missing-part and placement anomalies.</li><li>The current implementation proves the generator workflow; natural-language closed-loop orchestration remains a future extension.</li></ul><video controls preload="metadata" playsinline><source src="assets/videos/DemoIsaacSimGenerator.mp4" type="video/mp4"></video></div></details>
+          </article>
+          <article class="demo">
+            <div class="demo-top"><span>RESEARCH PROJECT</span><b>MOTION EVALUATION</b></div>
+            <div class="demo-copy"><h3>Vision-based Motion Evaluation</h3><p>A completed university research project that turns skeleton tracking into joint-level metrics, scores and understandable feedback against an expert reference.</p><ul><li>≈30 fps skeleton data</li><li>Angles, velocity and acceleration</li><li>Joint-level scoring and feedback</li></ul></div>
+            <div class="demo-stage motion"><div class="skeleton" id="skeleton"><i class="joint head"></i><i class="bone torso"></i><i class="bone al"></i><i class="bone ar"></i><i class="bone ll"></i><i class="bone lr"></i><i class="joint jl"></i><i class="joint jr"></i><i class="joint kl"></i><i class="joint kr"></i></div><div class="motion-controls"><p>SHOULDER <b id="shoulder">—</b></p><p>KNEE <b id="knee">—</b></p><p>STABILITY <b id="stability">—</b></p><button id="motion-run">EVALUATE</button></div></div>
+            <div class="demo-result" id="motion-result" aria-live="polite"></div>
+            <details class="demo-detail"><summary>RESEARCH METHOD</summary><div class="demo-detail-body"><h4>FROM MOTION TO ACTIONABLE FEEDBACK</h4><p>The evaluation pipeline extracts joint angles and temporal features from supplier-provided skeleton estimates, compares them with a reference motion and converts the difference into a multi-dimensional score.</p><ul><li>Shoulder, elbow, wrist, waist, knee and ankle features.</li><li>Frame-level signals combined into interpretable movement dimensions.</li><li>Feedback is phrased as a concrete correction instead of a single opaque score.</li></ul></div></details>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section archive-section" id="archive">
+      <div class="wrap">
+        <header class="section-head"><span class="section-no">03 / OTHER PROJECTS</span><h2>The rest stays available, not dominant.</h2><p>Other enterprise and personal work remains concise by default and expands when the visitor asks for detail.</p></header>
+        <div class="tabs"><button class="active" data-filter="all">ALL</button><button data-filter="enterprise">ENTERPRISE</button><button data-filter="personal">PERSONAL</button></div>
+        <div class="archive" id="archive-list"></div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="wrap">
+        <header class="section-head"><span class="section-no">04 / CAPABILITY + CONTACT</span><h2>Technical range after the evidence.</h2><p>Capabilities, education and contact information close the page rather than competing with the personal introduction.</p></header>
+        <div class="last-grid">
+          <div class="cap-grid" id="cap-grid"></div>
+          <aside class="contact-card"><p class="eyebrow">LET'S BUILD TESTABLE SYSTEMS</p><h3>Automation.<br>Simulation.<br>Industrial AI.</h3><p>Available for conversations around digital twins, industrial software and engineering-facing AI systems.</p><a href="mailto:hushengxiang0630@163.com">EMAIL · hushengxiang0630@163.com</a><a href="https://www.linkedin.com/in/shengxiang-hu-269787252/">LINKEDIN · OPEN PROFILE ↗</a></aside>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap foot"><span>© 2026 HU SHENGXIANG · BAUHAUS DUAL THEME / LAYOUT STUDY 01</span><span>LIGHT = PRINT · DARK = INDUSTRIAL DRAWING BOARD</span></div></footer>
+
+  <script src="projects.js"></script>
+  <script>
+    const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+    let language="en",filter="all";
+    const caps=[["ST","System Architecture","System Thinking · Interface Design · Fault Modeling"],["DT","Simulation & Digital Twin","Unity · PLCSim · Isaac Sim · OpenUSD"],["AI","AI Systems","Workflow · Tool Calling · Explainability"],["DI","Industrial Integration","OPC UA · REST API · State Synchronization"],["SW","Software & Tooling","C# · .NET · Python · Plugin Architecture"],["DA","Data & Computation","MATLAB · Feature Engineering · Motion Analysis"],["UX","Technical UX","NASA-TLX · Feedback Design · Human-system Interaction"]];
+    function flat(){const out=[];projectsData.forEach(p=>p.type==="collection"?p.items.forEach(i=>out.push({...i,projectType:{en:"Personal Project",zh:"个人项目"}})):out.push(p));return out}
+    const excluded=/Fault Simulation|Industrial Digital Twin Demo|Motion Evaluation|Simulation Data Agent/i;
+    const projects=flat().filter(p=>!excluded.test(p.title?.en||""));
+    function val(x){return x?.[language]||x?.en||x?.zh||""}
+    function kind(p){return /Industry Project|企业项目/i.test(`${p.projectType?.en||""}${p.projectType?.zh||""}`)?"enterprise":"personal"}
+    function videoUrl(p){const url=p.video?.url;return typeof url==="string"&&url.trim()?url.trim():""}
+    function effectMarkup(p){
+      const url=videoUrl(p);
+      if(url)return `<div class="project-effect"><video class="effect-video" muted loop playsinline preload="metadata"><source src="${url}" type="video/mp4"></video></div>`;
+      const labels=(p.technologies||[]).slice(0,3).join(" · ")||"SYSTEM / PROCESS / RESULT";
+      return `<div class="project-effect no-video">${labels}</div>`;
+    }
+    function mediaMarkup(p){
+      const url=videoUrl(p);
+      return url?`<div class="project-media"><video controls preload="metadata" playsinline><source src="${url}" type="video/mp4"></video></div>`:`<div class="project-media"><div class="no-media">DETAILS / DIAGRAM / PROJECT EVIDENCE</div></div>`;
+    }
+    function render(){
+      document.documentElement.lang=language;
+      $$("[data-en]").forEach(n=>n.textContent=n.dataset[language]);
+      $("#lang").textContent=language==="en"?"中文":"EN";
+      $("#cap-grid").innerHTML=caps.map(c=>`<article class="cap"><span>${c[0]}</span><div><h3>${c[1]}</h3><p>${c[2]}</p></div></article>`).join("");
+      $("#archive-list").innerHTML=projects.filter(p=>filter==="all"||kind(p)===filter).map(p=>`<details><summary><span>${val(p.projectType)||"PROJECT"}</span><div><h3>${val(p.title)}</h3><p>${val(p.pitch)||val(p.summary)||val(p.description)}</p></div>${effectMarkup(p)}<b class="plus">+</b></summary><div class="project-detail"><div><h4>PROBLEM / OVERVIEW</h4><p>${val(p.problem)||val(p.overview)||val(p.systemIdea)||val(p.description)}</p><h4>SOLUTION</h4><p>${val(p.solution)||val(p.systemIdea)||val(p.note)}</p><h4>RESULT / DETAIL</h4><p>${val(p.result)||val(p.note)||val(p.overview)}</p><ul class="tags">${(p.technologies||[]).map(t=>`<li>${t}</li>`).join("")}</ul></div>${mediaMarkup(p)}</div></details>`).join("");
+      $$(".archive details").forEach(detail=>{
+        const preview=$(".effect-video",detail);
+        detail.addEventListener("mouseenter",()=>preview?.play().catch(()=>{}));
+        detail.addEventListener("mouseleave",()=>{if(preview){preview.pause();preview.currentTime=0}});
+        detail.addEventListener("toggle",()=>{$(".plus",detail).textContent=detail.open?"−":"+"});
+      });
+    }
+    function syncHeroTheme(t){$("#hero-frame")?.contentWindow?.postMessage({type:"bauhaus-theme",theme:t},"*")}
+    function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem("bauhaus-theme",t)}catch(e){}$("#light").classList.toggle("active",t==="light");$("#dark").classList.toggle("active",t==="dark");syncHeroTheme(t)}
+    $("#light").onclick=()=>setTheme("light");$("#dark").onclick=()=>setTheme("dark");$("#lang").onclick=()=>{language=language==="en"?"zh":"en";render()};
+    $$(".tabs button").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$$(".tabs button").forEach(x=>x.classList.toggle("active",x===b));render()});
+    function showResult(id,html){const result=$(id);result.innerHTML=html;result.classList.add("is-visible")}
+    $("#fault-run").onclick=()=>{$("#line-map").classList.add("fault");showResult("#fault-result",`<b>FAULT CAPTURED</b> · ${$("#fault-select").value} propagated through PLC → OPC UA → HMI.`)};
+    $$(".builder-controls button").forEach(b=>b.onclick=()=>{$$(".builder-controls button").forEach(x=>x.classList.toggle("active",x===b));const large=b.dataset.scene==="assembly";$("#builder-scene").classList.toggle("large",large);showResult("#builder-result",large?"<b>8 NODES</b> · Assembly line generated and USD export prepared.":"<b>3 NODES</b> · Compact cell generated from configuration.")});
+    $("#motion-run").onclick=()=>{$("#skeleton").classList.add("evaluated");$("#shoulder").textContent="84";$("#knee").textContent="71";$("#stability").textContent="88";showResult("#motion-result","<b>SCORE 81 / 100</b> · Increase right-knee flexion during descent.")};
+    const historyRail=$("#history-rail"),historyProgress=$("#history-progress");
+    function moveHistory(direction){const card=$(".history-item",historyRail);historyRail.scrollBy({left:direction*(card.offsetWidth+1),behavior:"smooth"})}
+    function updateHistoryProgress(){const max=Math.max(1,historyRail.scrollWidth-historyRail.clientWidth);historyProgress.style.width=`${25+75*Math.min(1,historyRail.scrollLeft/max)}%`}
+    $("#history-prev").onclick=()=>moveHistory(-1);$("#history-next").onclick=()=>moveHistory(1);historyRail.addEventListener("scroll",updateHistoryProgress,{passive:true});
+    function fitHeroFrame(){
+      const frame=$("#hero-frame"),doc=frame.contentDocument;
+      if(!doc)return;
+      const contentHeight=doc.querySelector(".cell")?.getBoundingClientRect().height||doc.body?.scrollHeight||704;
+      frame.style.height=`${Math.max(520,Math.min(900,Math.ceil(contentHeight)))}px`;
+    }
+    function alignHeroColumns(){
+      const frame=$("#hero-frame"),left=$(".hero-left"),title=$(".game-title");
+      if(!frame.contentWindow)return;
+      if(innerWidth<=980){
+        frame.contentWindow.postMessage({type:"bauhaus-host-reset"},"*");
+        setTimeout(fitHeroFrame,0);
+        return;
+      }
+      const target=Math.max(520,Math.ceil(left.getBoundingClientRect().height-title.getBoundingClientRect().height-4));
+      frame.style.height=`${target}px`;
+      frame.contentWindow.postMessage({type:"bauhaus-host-height",height:target},"*");
+    }
+    function initHeroFrame(){
+      syncHeroTheme(document.documentElement.dataset.theme);
+      fitHeroFrame();
+      const cell=$("#hero-frame").contentDocument?.querySelector(".cell");
+      if(cell&&!cell.dataset.observing){cell.dataset.observing="true";new ResizeObserver(()=>{if(innerWidth<=980)fitHeroFrame()}).observe(cell)}
+      requestAnimationFrame(alignHeroColumns);
+    }
+    $("#hero-frame").addEventListener("load",initHeroFrame);
+    addEventListener("message",event=>{if(event.data?.type==="bauhaus-hero-height"){const height=Math.max(520,Math.min(900,Number(event.data.height)||704));$("#hero-frame").style.height=`${height}px`}});
+    let activeSection=0;
+    const sectionIds=["top","demos","archive","contact"],sectionLinks=$$(".side-nav a");
+    function setActiveSection(index){activeSection=Math.max(0,Math.min(sectionIds.length-1,index));sectionLinks.forEach((link,i)=>link.classList.toggle("active",i===activeSection))}
+    function goSection(delta){setActiveSection(activeSection+delta);document.getElementById(sectionIds[activeSection]).scrollIntoView({behavior:"smooth"})}
+    $("#section-up").onclick=()=>goSection(-1);$("#section-down").onclick=()=>goSection(1);
+    $("#side-hide").onclick=()=>{$("#side-nav").classList.add("is-hidden");$("#side-show").classList.add("show")};
+    $("#side-show").onclick=()=>{$("#side-nav").classList.remove("is-hidden");$("#side-show").classList.remove("show")};
+    sectionLinks.forEach((link,index)=>link.onclick=()=>setActiveSection(index));
+    const sectionObserver=new IntersectionObserver(entries=>{const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(visible)setActiveSection(sectionIds.indexOf(visible.target.id))},{rootMargin:"-20% 0px -65%",threshold:[0,.1,.3]});
+    sectionIds.forEach(id=>sectionObserver.observe(document.getElementById(id)));
+    addEventListener("scroll",()=>{let index=0;sectionIds.forEach((id,i)=>{if(document.getElementById(id).getBoundingClientRect().top<=innerHeight*.3)index=i});setActiveSection(index)},{passive:true});
+    addEventListener("resize",()=>requestAnimationFrame(alignHeroColumns));
+    if(matchMedia("(max-width:650px)").matches){$("#side-nav").classList.add("is-hidden");$("#side-show").classList.add("show")}
+    setTheme(document.documentElement.dataset.theme);render();setTimeout(initHeroFrame,0);
+  </script>
+</body>
+</html>
