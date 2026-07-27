@@ -409,6 +409,44 @@ Three.js 本地化（`assets/vendor/three.r128.min.js`, 590KB）有效，Hero �
 
 - [CLAUDE] 在 `websiteRebuild` 上提交了本分支的完整状态（Codex 的 Astro 迁移 + 本轮三项修复），提交信息中分别标注两方工作。此前分支上的所有工作都还没有提交过，因此这是该分支的第一个提交。
 
+### 8.8 [USER + CODEX] Hero 顶部主题色统一（2026-07-27）
+
+- [USER] 指出明亮主题下 Hero 外层标题栏、工位信息和 REAL SYSTEM 选中态连续使用黑色块，与全站包豪斯主题色不统一。
+- [CODEX] 将外层标题栏改为随主题切换的卡片底色与正文色，运行标识继续保留绿色语义，状态标题使用主题红色。
+- [CODEX] 将嵌入式 Hero 的工位信息恢复为主题表面色，并用红色表示 REAL SYSTEM、蓝色表示 SIMULATION、黄色表示 AI ONLY；明暗模式分别使用全站对应色值。
+- [CODEX] 本轮只调整视觉主题映射，不修改 Hero 玩法、状态机或三个重点项目内容。
+
+#### [CLAUDE] 复核结论：通过，已提交
+
+Codex 这轮改完后没有回报结果，由 Claude 接手复核（`npm run build` + Chrome 实测 `dist` 产物，明暗两个主题各跑一遍）。
+
+**色值一致性**：Hero 内的 token 与全站 `global.css` 逐个比对，**完全一致**——
+
+| token | 页面（light / dark） | Hero（light / dark） |
+|---|---|---|
+| ink | `#151515` / `#EEECE4` | 同 |
+| paper | `#F3F0E7` / `#121316` | 同 |
+| card / sheet | `#FFFDF7` / `#1A1B20` | 同 |
+| line | `#BBB6AA` / `#393A40` | 同 |
+| red | `#E94B35` / `#FF614C` | 同 |
+| blue | `#2767B2` / `#68A4E5` | 同 |
+| yellow | `#F3B928` / `#FFC43D` | 同 |
+
+**实测状态色**（浅色 / 深色）：外层标题栏 `#FFFDF7` / `#1A1B20`，不再是黑块；`LIVE` 标识红色；`● ONLINE` 保持运行绿 `#3DDC84`；Hero 内工位信息条与外层同底色；`REAL SYSTEM` 选中 = 红底深字，`SIMULATION` 选中 = 蓝底白字（深色下为深字），`AI ONLY` 选中 = 黄底深字，故障按钮 = 红底深字。截图里那组黑白混搭已消失。
+
+**对比度**：四个选中态的文字对比度都在 5:1 以上（红底深字 ≈5.0、蓝底白字 ≈5.7、黄底深字 ≈10.5），符合 AA。
+
+**回归检查**：构建通过；`check:content` 通过；首屏 3 个请求、0 个视频请求（8.7 的优化未被破坏）；字段完整性审计仍为 ALL FIELDS PRESENT；Hero canvas 正常、主题 postMessage 同步正常；控制台无报错；桌面与移动端均无横向溢出。iframe 版本号 `v=theme-shell-2` 已写入两个语言的构建产物，浏览器不会再复用旧缓存。
+
+> 复核过程中的一个坑，供后续参考：Browser 面板未显示时页面不合成帧，CSS `transition` 的时钟被冻结，`getComputedStyle` 会一直返回过渡起始值，看上去像"点了按钮颜色不变"。临时注入 `*{transition:none}` 后读数才正确——这是测量假象，不是代码缺陷。
+
+**留给打磨阶段的两点色彩纪律问题（均为既有状态，本轮未引入，暂未改动）**：
+
+1. Hero 深色主题把 `--amber` 重映射成了红色 `#FF614C`，与 `docs/rebuild-spec.md` §2「报警永远是琥珀」不符。
+2. Hero 深色主题把 `--ai` 重映射成了蓝色 `#68A4E5`，与「紫色只属于 AI 推理层」不符。
+
+两者要么按原规格改回琥珀/紫色，要么由用户明确裁决新规则并写进 `spec.md`，避免规格与实现长期不一致。
+
 ## 9. 进度日志
 
 | 日期 | Agent | 工作内容 |
@@ -419,4 +457,6 @@ Three.js 本地化（`assets/vendor/three.r128.min.js`, 590KB）有效，Hero �
 | 2026-07-27 | Codex | 阅读并逐项核验 Claude 审查：确认 #1/#2/#4/#5/#7，#3 纳入最终入口收敛，#6 部分过时；补充 Astro 冻结、Data Agent 已补齐、分支更名及 Bauhaus 最新页作为阶段性胜出方向，见 8.4。仅更新协作文档，未在本轮修改网页实现。 |
 | 2026-07-27 | Claude | 按用户裁决一次完成三项修复并提交到 `websiteRebuild`（未推送、未合并、未部署）：①视频 faststart 重排 + 全站 `preload="none"` + 悬停懒加载，首屏 18.6MB → 18KB；②新增 `ProjectFacts.astro` 补齐 keyFeatures / technicalHighlights / summary / 重点项目 structure，逐字段校验全部到位；③新增 GitHub Actions 构建与部署管线（deploy 作业锁定 main）。详见 8.7。`projects.js` 与三个重点项目内容均未改动 |
 | 2026-07-27 | Claude | 审查 Codex 的 Astro 迁移（构建 + 双语路由 + 字段逐条比对 + 桌面/移动实测）：双语与项目恢复两个 P0 已关闭；新发现 2 个 P0（18.5MB 视频因缺 faststart 被全量预加载、部署链路缺 Actions 且 dist 被忽略）、4 处渲染层字段丢失（keyFeatures / technicalHighlights / summary / 重点项目 structure）与若干 P2，见 8.6。未改动实现代码 |
+| 2026-07-27 | Codex | 按用户裁决统一 Hero 主题色：外层标题栏改为卡片底色 + 红色标识，嵌入式 Hero 的工位信息条与视图/模式/故障按钮全部改用主题变量（红 = REAL SYSTEM、蓝 = SIMULATION、黄 = AI ONLY），并更新 iframe 版本号破除缓存。见 8.8 |
+| 2026-07-27 | Claude | 复核 Codex 的 Hero 配色改动（Codex 未回报结果）：色值与全站 token 逐个比对完全一致，明暗两主题实测无黑块残留，四个选中态对比度均 ≥5:1；构建、字段完整性、首屏 0 视频请求等回归项全部通过。已提交到 `websiteRebuild`（未推送）。另记录两点既有的色彩纪律偏差（深色下 amber→红、ai→蓝）留待打磨阶段裁决 |
 | 2026-07-27 | Codex | 按用户裁决完成本地 Astro 渐进迁移第一阶段：协作文档更名并建立三方来源；冻结静态基准；建立 Astro 7.1.3、中文/英文路由、统一项目同步与校验；迁移 Bauhaus 壳层、履历、导航、主题和 Hero；恢复完整 12 项目；完成构建与桌面/移动端验证。三个重点项目交互与内容明确保留为后续三方逐项任务。未提交、未推送。 |

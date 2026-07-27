@@ -524,15 +524,15 @@ summary:focus-visible {
   gap: 12px;
   padding: 0 13px;
   border-bottom: 2px solid var(--ink);
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--card);
+  color: var(--ink);
   letter-spacing: 0.04em;
   font: 500 9px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
 .game-title b {
-  color: var(--yellow);
+  color: var(--red);
 }
 
 .game-title span:last-child {

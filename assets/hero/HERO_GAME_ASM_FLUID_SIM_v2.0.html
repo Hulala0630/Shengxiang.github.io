@@ -13,12 +13,14 @@ document.documentElement.dataset.theme=heroQuery.get("theme")==="dark"?"dark":"l
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#17181A; --paper:#F5F5F2; --line:#D8D7D2; --muted:#5A5A56; --faint:#8B8B86;
+  --ink:#151515; --paper:#F3F0E7; --line:#BBB6AA; --muted:#66635D; --faint:#8F8A80;
+  --red:#E94B35; --blue:#2767B2; --yellow:#F3B928; --blue-ink:#FFFFFF;
   --amber:#FF9E00; --run:#3DDC84; --ai:#C3A6FF; --ai-deep:#7C5FC9;
-  --sim:#5B7CA8; --sheet:#FFFFFF; --frame:#17181A;
+  --sim:#2767B2; --sheet:#FFFDF7; --frame:#151515;
 }
 [data-theme="dark"]{
   --ink:#EEECE4;--paper:#121316;--line:#393A40;--muted:#AAA69C;--faint:#77746D;
+  --red:#FF614C;--blue:#68A4E5;--yellow:#FFC43D;--blue-ink:#151515;
   --amber:#FF614C;--run:#3DDC84;--ai:#68A4E5;--ai-deep:#68A4E5;
   --sim:#2767B2;--sheet:#1A1B20;--frame:#EEECE4;
 }
@@ -27,13 +29,17 @@ body{font-family:'IBM Plex Mono','Noto Sans SC',monospace;background:var(--paper
 .cell{max-width:1040px;margin:24px auto;border:1px solid var(--frame);background:var(--sheet)}
 [data-embed="bauhaus"] body{overflow:hidden}
 [data-embed="bauhaus"] .cell{max-width:none;margin:0;border:0}
-[data-embed="bauhaus"] .tb{border-bottom-width:2px}
-[data-embed="bauhaus"] .tb .c:first-child{background:var(--ink);color:var(--paper)}
-[data-embed="bauhaus"] .tb .c:first-child b{color:var(--paper)}
-[data-embed="bauhaus"] .vswitch button.simActive{background:#2767B2;color:#fff}
-[data-embed="bauhaus"] .modes button.m1.on{background:#F3B928;color:#151515}
-[data-embed="bauhaus"] .modes button.m2.on{background:#2767B2;color:#fff}
-[data-embed="bauhaus"] .controls .bF{background:#E94B35;color:#fff}
+[data-embed="bauhaus"] .tb{border-bottom-width:2px;background:var(--sheet)}
+[data-embed="bauhaus"] .tb .c{background:var(--sheet)}
+[data-embed="bauhaus"] .tb .c:first-child{background:var(--sheet);color:var(--ink);box-shadow:inset 4px 0 0 var(--red)}
+[data-embed="bauhaus"] .tb .c:first-child b{color:var(--ink)}
+[data-embed="bauhaus"] .vswitch button{background:var(--sheet);color:var(--muted)}
+[data-embed="bauhaus"] .vswitch button:hover{background:var(--paper);color:var(--ink)}
+[data-embed="bauhaus"] .vswitch button.simActive{background:var(--blue);color:var(--blue-ink)}
+[data-embed="bauhaus"] .vswitch button.active{background:var(--red);color:#151515}
+[data-embed="bauhaus"] .modes button.m1.on{background:var(--yellow);color:#151515}
+[data-embed="bauhaus"] .modes button.m2.on{background:var(--blue);color:var(--blue-ink)}
+[data-embed="bauhaus"] .controls .bF{background:var(--red);color:#151515}
 [data-theme="dark"][data-embed="bauhaus"] .controls .bF{background:#FF614C;color:#151515}
 [data-embed="bauhaus"] .hud,[data-embed="bauhaus"] .guide{display:none}
 [data-embed="bauhaus"] .flow{grid-template-columns:auto 1fr}
