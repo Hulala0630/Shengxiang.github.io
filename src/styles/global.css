@@ -117,12 +117,12 @@ summary:focus-visible {
   background: var(--ink);
   color: var(--paper);
   text-decoration: none;
-  font: 600 10px "IBM Plex Mono", monospace;
+  font: 600 11px "IBM Plex Mono", monospace;
 }
 
 .brand {
   margin-right: auto;
-  font: 600 13px "Space Grotesk", "Noto Sans SC", sans-serif;
+  font: 600 15px "Space Grotesk", "Noto Sans SC", sans-serif;
 }
 
 .theme-switch {
@@ -137,7 +137,7 @@ summary:focus-visible {
   background: transparent;
   color: var(--faint);
   cursor: pointer;
-  font: 9px "IBM Plex Mono", monospace;
+  font: 11px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -157,7 +157,7 @@ summary:focus-visible {
   place-items: center;
   border: 1px solid var(--line);
   text-decoration: none;
-  font: 9px "IBM Plex Mono", monospace;
+  font: 11px "IBM Plex Mono", monospace;
 }
 
 .side-nav {
@@ -192,7 +192,7 @@ summary:focus-visible {
   color: var(--ink);
   cursor: pointer;
   text-decoration: none;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 11px "IBM Plex Mono", monospace;
 }
 
 .side-nav button:hover,
@@ -214,7 +214,7 @@ summary:focus-visible {
   white-space: nowrap;
   transform: translateX(-5px);
   transition: 0.18s;
-  font: 500 8px "IBM Plex Mono", monospace;
+  font: 500 10px "IBM Plex Mono", monospace;
 }
 
 .side-nav a:hover span,
@@ -308,7 +308,7 @@ summary:focus-visible {
   margin: 0;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font: 500 9px "IBM Plex Mono", monospace;
+  font: 500 11px "IBM Plex Mono", monospace;
 }
 
 .identity h1 {
@@ -340,7 +340,7 @@ summary:focus-visible {
   z-index: 2;
   max-width: 43ch;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .identity-meta {
@@ -357,7 +357,7 @@ summary:focus-visible {
   margin: 0;
   padding: 6px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .identity-meta dt {
@@ -384,7 +384,7 @@ summary:focus-visible {
   padding: 0 12px;
   border: 1px solid var(--ink);
   text-decoration: none;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 11px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -411,7 +411,7 @@ summary:focus-visible {
   padding: 0 12px;
   border-bottom: 1px solid var(--ink);
   letter-spacing: 0.07em;
-  font: 500 9px "IBM Plex Mono", monospace;
+  font: 500 11px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -477,7 +477,7 @@ summary:focus-visible {
 
 .history-item > span {
   color: var(--faint);
-  font: 9px "IBM Plex Mono", monospace;
+  font: 11px "IBM Plex Mono", monospace;
 }
 
 .history-item h2 {
@@ -487,13 +487,13 @@ summary:focus-visible {
 
 .history-item b {
   color: var(--blue);
-  font: 500 9px "IBM Plex Mono", monospace;
+  font: 500 11px "IBM Plex Mono", monospace;
 }
 
 .history-item p {
   margin: 10px 0 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .rail-progress {
@@ -527,7 +527,7 @@ summary:focus-visible {
   background: var(--card);
   color: var(--ink);
   letter-spacing: 0.04em;
-  font: 500 9px "IBM Plex Mono", monospace;
+  font: 500 11px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -562,7 +562,7 @@ summary:focus-visible {
 .section-no {
   color: var(--red);
   letter-spacing: 0.1em;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 11px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -612,7 +612,7 @@ summary:focus-visible {
   padding: 0 12px;
   border-bottom: 1px solid var(--ink);
   grid-column: 1 / -1;
-  font: 500 8px "IBM Plex Mono", monospace;
+  font: 500 10px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -647,13 +647,13 @@ summary:focus-visible {
 
 .selected-copy p {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .selected-copy ul {
   margin: 20px 0 0;
   padding-left: 17px;
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .fault-flow-summary {
@@ -667,7 +667,7 @@ summary:focus-visible {
   color: var(--red) !important;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font: 600 8px "IBM Plex Mono", monospace !important;
+  font: 600 11px "IBM Plex Mono", monospace !important;
 }
 
 .fault-flow-summary ol {
@@ -695,7 +695,7 @@ summary:focus-visible {
   place-items: center;
   background: var(--yellow);
   color: #151515;
-  font: 600 8px "IBM Plex Mono", monospace;
+  font: 600 10px "IBM Plex Mono", monospace;
 }
 
 .fault-flow-summary li span,
@@ -706,13 +706,13 @@ summary:focus-visible {
 
 .fault-flow-summary li strong {
   color: var(--ink);
-  font: 600 10px "Space Grotesk", "Noto Sans SC", sans-serif;
+  font: 600 13px "Space Grotesk", "Noto Sans SC", sans-serif;
 }
 
 .fault-flow-summary li small {
   margin-top: 3px;
   color: var(--muted);
-  font: 8px/1.45 "IBM Plex Mono", monospace;
+  font: 11px/1.5 "IBM Plex Mono", monospace;
 }
 
 .concept-note {
@@ -720,7 +720,7 @@ summary:focus-visible {
   padding: 9px;
   border: 1px solid var(--line);
   color: var(--faint) !important;
-  font: 8px/1.45 "IBM Plex Mono", monospace !important;
+  font: 10px/1.5 "IBM Plex Mono", monospace !important;
 }
 
 .selected-effect {
@@ -770,7 +770,7 @@ summary:focus-visible {
   border: 1px solid #59606c;
   background: var(--screen);
   text-align: center;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 11px "IBM Plex Mono", monospace;
 }
 
 .fault-chain span i {
@@ -820,7 +820,7 @@ summary:focus-visible {
   border: 1px solid #82acd9;
   border-radius: 50%;
   color: #c5def7;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 11px "IBM Plex Mono", monospace;
 }
 
 .scene-robot {
@@ -923,7 +923,7 @@ summary:focus-visible {
   cursor: pointer;
   list-style: none;
   letter-spacing: 0.08em;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 12px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -964,7 +964,7 @@ summary:focus-visible {
   margin: 18px 0 7px;
   color: var(--red);
   letter-spacing: 0.08em;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 12px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -978,7 +978,7 @@ summary:focus-visible {
 .archive-detail p,
 .archive-detail li {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .details-grid ul,
@@ -997,7 +997,7 @@ summary:focus-visible {
 .tags li {
   padding: 3px 6px;
   border: 1px solid var(--line);
-  font: 8px "IBM Plex Mono", monospace;
+  font: 10px "IBM Plex Mono", monospace;
 }
 
 .archive-section {
@@ -1016,7 +1016,7 @@ summary:focus-visible {
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  font: 9px "IBM Plex Mono", monospace;
+  font: 11px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -1046,7 +1046,7 @@ summary:focus-visible {
 
 .archive-item summary > span {
   color: var(--faint);
-  font: 8px "IBM Plex Mono", monospace;
+  font: 10px "IBM Plex Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -1059,7 +1059,7 @@ summary:focus-visible {
   max-width: 70ch;
   margin: 5px 0 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .project-effect {
@@ -1087,7 +1087,7 @@ summary:focus-visible {
     repeating-linear-gradient(90deg, transparent 0 23px, rgba(255, 255, 255, 0.08) 24px),
     var(--screen);
   color: var(--stext);
-  font: 8px/1.5 "IBM Plex Mono", monospace;
+  font: 10px/1.5 "IBM Plex Mono", monospace;
 }
 
 .project-effect::after {
@@ -1098,7 +1098,7 @@ summary:focus-visible {
   background: var(--yellow);
   color: #151515;
   content: "EFFECT";
-  font: 600 7px "IBM Plex Mono", monospace;
+  font: 600 9px "IBM Plex Mono", monospace;
 }
 
 .plus {
@@ -1121,7 +1121,7 @@ summary:focus-visible {
   border: 1px solid var(--line);
   color: var(--muted);
   white-space: pre-wrap;
-  font: 9px/1.5 "IBM Plex Mono", monospace;
+  font: 11px/1.5 "IBM Plex Mono", monospace;
 }
 
 .project-media video {
@@ -1140,7 +1140,7 @@ summary:focus-visible {
   border: 1px solid var(--line);
   color: var(--faint);
   text-align: center;
-  font: 9px "IBM Plex Mono", monospace;
+  font: 11px "IBM Plex Mono", monospace;
 }
 
 .last-grid {
@@ -1174,7 +1174,7 @@ summary:focus-visible {
   place-items: center;
   background: var(--yellow);
   color: #161616;
-  font: 600 9px "IBM Plex Mono", monospace;
+  font: 600 11px "IBM Plex Mono", monospace;
 }
 
 .capability h3 {
@@ -1185,7 +1185,7 @@ summary:focus-visible {
 .capability p {
   margin: 0;
   color: var(--muted);
-  font: 8px "IBM Plex Mono", monospace;
+  font: 11px "IBM Plex Mono", monospace;
 }
 
 .contact-card {
@@ -1202,14 +1202,14 @@ summary:focus-visible {
 
 .contact-card > p:not(.eyebrow) {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .contact-card a {
   display: block;
   padding: 10px 0;
   border-top: 1px solid var(--line);
-  font: 9px "IBM Plex Mono", monospace;
+  font: 11px "IBM Plex Mono", monospace;
 }
 
 footer {
@@ -1220,7 +1220,7 @@ footer {
   display: flex;
   justify-content: space-between;
   color: var(--faint);
-  font: 8px "IBM Plex Mono", monospace;
+  font: 10px "IBM Plex Mono", monospace;
 }
 
 @media (max-width: 980px) {
@@ -1301,7 +1301,7 @@ footer {
   }
 
   .panel-head > span {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .hero-game iframe {
@@ -1350,7 +1350,7 @@ footer {
   .fault-chain span,
   .scene-chain span {
     padding: 15px 3px;
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .details-grid {

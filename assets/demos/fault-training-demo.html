@@ -103,17 +103,20 @@
     .step {
       min-height: 38px;
       padding: 0 8px;
+      border: 0;
       border-right: 1px solid var(--line);
       background: var(--card);
       color: var(--faint);
       display: flex;
       align-items: center;
       gap: 7px;
+      cursor: pointer;
       font-size: 11px;
       text-transform: uppercase;
     }
 
     .step:last-child { border-right: 0; }
+    .step:hover { background: var(--paper); color: var(--ink); }
     .step b {
       display: grid;
       width: 19px;
@@ -617,10 +620,10 @@
     </header>
 
     <nav class="steps" aria-label="Training steps">
-      <div class="step active" data-step="0"><b>1</b><span data-t="stepLogin">登录连接</span></div>
-      <div class="step" data-step="1"><b>2</b><span data-t="stepLibrary">故障配置</span></div>
-      <div class="step" data-step="2"><b>3</b><span data-t="stepTraining">模拟验证</span></div>
-      <div class="step" data-step="3"><b>4</b><span data-t="stepReport">培训报告</span></div>
+      <button class="step active" type="button" data-step="0" aria-current="step"><b>1</b><span data-t="stepLogin">登录连接</span></button>
+      <button class="step" type="button" data-step="1"><b>2</b><span data-t="stepLibrary">故障配置</span></button>
+      <button class="step" type="button" data-step="2"><b>3</b><span data-t="stepTraining">模拟验证</span></button>
+      <button class="step" type="button" data-step="3"><b>4</b><span data-t="stepReport">培训报告</span></button>
     </nav>
 
     <section class="connections" aria-label="System connections">
@@ -824,7 +827,8 @@
         correct: "诊断正确：PLC、HMI 与仿真模型已执行恢复逻辑。", partial: "答案未完全匹配：请结合报警和 PLC 信号修正判断。",
         reportUser: "培训用户", reportStation: "训练站点", reportScenario: "故障场景", reportCause: "根因判断",
         reportAction: "恢复操作", reportDuration: "响应时间", reportResult: "验证结果", passed: "通过", review: "需要复训",
-        trace: "链路记录", noMatch: "未找到匹配场景"
+        trace: "链路记录", noMatch: "未找到匹配场景", loginRequired: "请先登录并连接训练站点",
+        trainingRequired: "请先选择一个故障场景", reportRequired: "完成一次答案验证后即可查看报告"
       },
       en: {
         systemName: "Fault Simulation Training Platform", offline: "● SIGNED OUT", online: "● TRAINING SESSION ONLINE",
@@ -853,7 +857,8 @@
         partial: "The answer is incomplete. Recheck the alarm and PLC signals.",
         reportUser: "Trainee", reportStation: "Station", reportScenario: "Fault scenario", reportCause: "Cause answer",
         reportAction: "Recovery action", reportDuration: "Response time", reportResult: "Validation", passed: "Passed", review: "Retraining required",
-        trace: "Execution trace", noMatch: "No matching scenario"
+        trace: "Execution trace", noMatch: "No matching scenario", loginRequired: "Log in and connect a training station first",
+        trainingRequired: "Select a fault scenario first", reportRequired: "Verify an answer before opening the report"
       }
     };
     const t = (key) => copy[lang][key] || key;
@@ -961,12 +966,10 @@
     function reportHeight() {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          const appHeight = $(".app")?.scrollHeight || 0;
+          const activeScreen = $(".screen:not([hidden])");
           const height = Math.max(
             620,
-            appHeight,
-            document.body.scrollHeight,
-            document.documentElement.scrollHeight
+            Math.ceil((activeScreen?.offsetTop || 0) + (activeScreen?.scrollHeight || 0))
           );
           parent.postMessage({ type: "fault-training-height", height }, "*");
         });
@@ -987,6 +990,7 @@
         const step = $(`[data-step="${index}"]`);
         step.classList.toggle("active", screen === name);
         step.classList.toggle("done", index < screens.indexOf(name));
+        step.setAttribute("aria-current", screen === name ? "step" : "false");
       });
       reportHeight();
     }
@@ -1080,22 +1084,33 @@
         saveFaults();
         renderFaults();
         $("#fault-detail").hidden = true;
+        reportHeight();
         toast(t("deleted"));
       }
     });
 
     function showFault(fault) {
       const detail = $("#fault-detail");
+      if (!detail.hidden && detail.dataset.faultId === fault.id) {
+        detail.hidden = true;
+        detail.dataset.faultId = "";
+        reportHeight();
+        return;
+      }
+      closeEditor();
       detail.innerHTML = `<div class="detail-grid">
         <div><span>${t("detailCause")}</span><b>${escapeHtml(local(fault.cause))}</b></div>
         <div><span>${t("detailAction")}</span><b>${escapeHtml(local(fault.action))}</b></div>
         <div><span>${t("detailHmi")}</span><b>${escapeHtml(local(fault.hmi))}</b></div>
       </div>`;
+      detail.dataset.faultId = fault.id;
       detail.hidden = false;
       reportHeight();
     }
 
     function openEditor(fault = null) {
+      $("#fault-detail").hidden = true;
+      $("#fault-detail").dataset.faultId = "";
       editingId = fault?.id || null;
       $("#editor-title").textContent = fault ? t("editTitle") : t("customTitle");
       $("#edit-code").value = fault?.id || `${station}-F${500 + faults.length + 1}`;
@@ -1292,6 +1307,25 @@
     $("#finish-training").addEventListener("click", () => setScreen("library"));
     $("#retry-training").addEventListener("click", () => activeFault && startTraining(activeFault));
     $("#print-report").addEventListener("click", () => print());
+
+    $$(".step").forEach((step) => {
+      step.addEventListener("click", () => {
+        const index = Number(step.dataset.step);
+        if (index === 0) return setScreen("login");
+        if (!faults.length) return toast(t("loginRequired"));
+        if (index === 1) {
+          closeEditor();
+          $("#fault-detail").hidden = true;
+          return setScreen("library");
+        }
+        if (index === 2) {
+          if (activeFault) return setScreen("training");
+          const fault = faults.find((item) => item.id === selectedFaultId);
+          return fault ? startTraining(fault) : toast(t("trainingRequired"));
+        }
+        if (index === 3) return report ? renderReport() : toast(t("reportRequired"));
+      });
+    });
 
     addEventListener("message", (event) => {
       if (event.data?.type === "bauhaus-theme") {
