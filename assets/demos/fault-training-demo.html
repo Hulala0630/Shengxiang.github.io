@@ -57,7 +57,7 @@
       margin: 0;
       background: var(--card);
       color: var(--ink);
-      font: 12px/1.45 "IBM Plex Mono", "Noto Sans SC", ui-monospace, monospace;
+      font: 14px/1.5 "IBM Plex Mono", "Noto Sans SC", ui-monospace, monospace;
     }
 
     button, input, select, textarea { font: inherit; }
@@ -88,7 +88,7 @@
       color: var(--paper);
       letter-spacing: .06em;
       text-transform: uppercase;
-      font-size: 9px;
+      font-size: 11px;
     }
 
     .topbar strong { color: var(--yellow); }
@@ -109,7 +109,7 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      font-size: 8px;
+      font-size: 11px;
       text-transform: uppercase;
     }
 
@@ -120,7 +120,7 @@
       height: 19px;
       place-items: center;
       border: 1px solid currentColor;
-      font-size: 8px;
+      font-size: 11px;
     }
     .step.active { background: var(--blue); color: #fff; }
     [data-theme="dark"] .step.active { color: #151515; }
@@ -139,7 +139,7 @@
       align-items: center;
       padding: 8px 10px;
       border-right: 1px solid var(--line);
-      font-size: 8px;
+      font-size: 11px;
     }
 
     .connections > span { color: var(--faint); text-transform: uppercase; }
@@ -172,7 +172,7 @@
       color: var(--red);
       letter-spacing: .1em;
       text-transform: uppercase;
-      font-size: 8px;
+      font-size: 11px;
     }
 
     h1, h2, h3, p { margin-top: 0; }
@@ -204,13 +204,13 @@
       color: var(--muted);
       letter-spacing: .08em;
       text-transform: uppercase;
-      font-size: 8px;
+      font-size: 11px;
     }
 
     .panel-body { padding: 15px; }
 
     .field { display: grid; gap: 5px; margin-bottom: 12px; }
-    .field label { color: var(--muted); font-size: 9px; }
+    .field label { color: var(--muted); font-size: 12px; }
     .field input,
     .field select,
     .field textarea {
@@ -235,7 +235,7 @@
       cursor: pointer;
       letter-spacing: .04em;
       text-transform: uppercase;
-      font-size: 8px;
+      font-size: 11px;
     }
 
     .btn:hover { background: var(--paper); }
@@ -259,9 +259,9 @@
       place-items: center;
       background: var(--yellow);
       color: #151515;
-      font-size: 9px;
+      font-size: 11px;
     }
-    .process-item p { margin: 1px 0 0; color: var(--muted); font-size: 9px; }
+    .process-item p { margin: 2px 0 0; color: var(--muted); font-size: 11px; }
 
     .library-tools {
       display: flex;
@@ -286,7 +286,7 @@
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       text-align: left;
-      font-size: 8px;
+      font-size: 11px;
       vertical-align: middle;
     }
     th { background: var(--paper); color: var(--muted); text-transform: uppercase; }
@@ -309,7 +309,7 @@
       border: 1px solid var(--line);
       background: var(--card);
       cursor: pointer;
-      font-size: 7px;
+      font-size: 10px;
     }
 
     .detail-strip,
@@ -324,8 +324,8 @@
       gap: 9px;
       grid-template-columns: repeat(3, 1fr);
     }
-    .detail-grid span { display: block; color: var(--faint); font-size: 7px; text-transform: uppercase; }
-    .detail-grid b { font-size: 9px; font-weight: 500; }
+    .detail-grid span { display: block; color: var(--faint); font-size: 10px; text-transform: uppercase; }
+    .detail-grid b { font-size: 11px; font-weight: 500; }
 
     .editor-grid {
       display: grid;
@@ -358,7 +358,7 @@
       top: 9px;
       left: 10px;
       color: #9da4ae;
-      font-size: 8px;
+      font-size: 10px;
     }
 
     .conveyor {
@@ -443,7 +443,7 @@
       place-items: center;
       border: 2px solid var(--run);
       border-radius: 50%;
-      font-size: 9px;
+      font-size: 10px;
     }
     .station.drive-fault .motor { border-color: var(--red); color: var(--red); animation: shake .25s infinite; }
 
@@ -471,7 +471,7 @@
       opacity: 0;
       transform: translateY(-5px);
       transition: .2s;
-      font-size: 8px;
+      font-size: 10px;
     }
     .station.fault .fault-banner { opacity: 1; transform: none; }
     .station.recovered .fault-banner { border-color: var(--run); color: var(--run); opacity: 1; }
@@ -483,7 +483,7 @@
       padding: 7px 8px;
       border-bottom: 1px solid var(--line);
       color: var(--muted);
-      font-size: 8px;
+      font-size: 11px;
     }
     .io-list { list-style: none; margin: 0; padding: 0; }
     .io-list li {
@@ -492,7 +492,7 @@
       gap: 6px;
       padding: 5px 7px;
       border-bottom: 1px solid var(--line);
-      font-size: 7px;
+      font-size: 10px;
     }
     .io-list li:last-child { border-bottom: 0; }
     .io-list b { color: var(--run); }
@@ -504,7 +504,7 @@
       border: 1px solid var(--screen-line);
       background: var(--screen);
       color: var(--screen-text);
-      font-size: 8px;
+      font-size: 11px;
     }
     .hmi strong { display: block; margin-bottom: 5px; color: var(--alarm); }
     .hmi p { margin: 0; color: #aeb4be; }
@@ -515,7 +515,7 @@
       padding: 10px;
       border: 1px solid var(--line);
       color: var(--muted);
-      font-size: 9px;
+      font-size: 11px;
     }
     .feedback.good { border-color: var(--run); color: var(--run); }
     .feedback.bad { border-color: var(--red); color: var(--red); }
@@ -535,7 +535,7 @@
       text-align: center;
     }
     .score-card strong { display: block; font-size: 48px; line-height: 1; }
-    .score-card span { font-size: 8px; text-transform: uppercase; }
+    .score-card span { font-size: 11px; text-transform: uppercase; }
     .report-table { border: 1px solid var(--ink); }
     .report-row {
       display: grid;
@@ -543,7 +543,7 @@
       border-bottom: 1px solid var(--line);
     }
     .report-row:last-child { border-bottom: 0; }
-    .report-row span, .report-row b { padding: 8px 9px; font-size: 8px; }
+    .report-row span, .report-row b { padding: 8px 9px; font-size: 11px; }
     .report-row span { border-right: 1px solid var(--line); color: var(--faint); }
     .report-row b { font-weight: 500; }
     .trace {
@@ -552,7 +552,7 @@
       border: 1px solid var(--screen-line);
       background: var(--screen);
       color: #aeb4be;
-      font-size: 8px;
+      font-size: 11px;
     }
     .trace b { color: var(--run); }
 
@@ -570,7 +570,7 @@
       pointer-events: none;
       transform: translateY(8px);
       transition: .2s;
-      font-size: 8px;
+      font-size: 11px;
     }
     .toast.show { opacity: 1; transform: none; }
 
@@ -640,7 +640,7 @@
             <p class="muted" data-t="loginBody">登录后平台会自动连接 PLC、HMI 与仿真模型，并载入该站点的故障模板。</p>
             <div class="field">
               <label for="user-name" data-t="userLabel">培训用户</label>
-              <input id="user-name" required value="trainee.hu" autocomplete="off" />
+              <input id="user-name" value="trainee.hu" autocomplete="off" />
             </div>
             <div class="field">
               <label for="station-select" data-t="stationLabel">训练站点</label>
@@ -703,12 +703,12 @@
       <form class="editor" id="fault-editor" hidden>
         <div class="panel-title"><span id="editor-title"></span><button class="mini" id="close-editor" type="button">×</button></div>
         <div class="editor-grid">
-          <div class="field"><label for="edit-code" data-t="faultId">编号</label><input id="edit-code" required /></div>
-          <div class="field"><label for="edit-name" data-t="faultName">错误场景</label><input id="edit-name" required /></div>
-          <div class="field"><label for="edit-tag" data-t="plcTag">PLC 标签</label><input id="edit-tag" required /></div>
-          <div class="field"><label for="edit-hmi" data-t="hmiAlarm">HMI 报警</label><input id="edit-hmi" required /></div>
-          <div class="field"><label for="edit-cause" data-t="rootCause">正确根因</label><input id="edit-cause" required /></div>
-          <div class="field"><label for="edit-action" data-t="recoveryAction">正确处置</label><input id="edit-action" required /></div>
+          <div class="field"><label for="edit-code" data-t="faultId">编号</label><input id="edit-code" /></div>
+          <div class="field"><label for="edit-name" data-t="faultName">错误场景</label><input id="edit-name" /></div>
+          <div class="field"><label for="edit-tag" data-t="plcTag">PLC 标签</label><input id="edit-tag" /></div>
+          <div class="field"><label for="edit-hmi" data-t="hmiAlarm">HMI 报警</label><input id="edit-hmi" /></div>
+          <div class="field"><label for="edit-cause" data-t="rootCause">正确根因</label><input id="edit-cause" /></div>
+          <div class="field"><label for="edit-action" data-t="recoveryAction">正确处置</label><input id="edit-action" /></div>
         </div>
         <div class="button-row">
           <button class="btn primary" type="submit" data-t="save">保存场景</button>
@@ -753,11 +753,11 @@
           <form class="answer-panel" id="answer-form">
             <div class="field">
               <label for="cause-answer" data-t="causeQuestion">根因是什么？</label>
-              <select id="cause-answer" required></select>
+              <select id="cause-answer"></select>
             </div>
             <div class="field">
               <label for="action-answer" data-t="actionQuestion">输入你的恢复操作</label>
-              <textarea id="action-answer" required data-placeholder="actionPlaceholder" placeholder="例如：检查传感器并复位信号"></textarea>
+              <textarea id="action-answer" data-placeholder="actionPlaceholder" placeholder="例如：检查传感器并复位信号"></textarea>
             </div>
             <div class="button-row">
               <button class="btn red" id="verify-answer" type="submit" data-t="verifyAnswer">验证答案</button>
@@ -956,7 +956,22 @@
       "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
     })[character]);
     const cloneTemplates = (key) => templates[key].map((fault) => ({ ...fault }));
-    const storeKey = () => `fault-training-${station}`;
+    const storeKey = () => `fault-training-${lang}-${station}`;
+
+    function reportHeight() {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const appHeight = $(".app")?.scrollHeight || 0;
+          const height = Math.max(
+            620,
+            appHeight,
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
+          );
+          parent.postMessage({ type: "fault-training-height", height }, "*");
+        });
+      });
+    }
 
     function toast(message) {
       const box = $("#toast");
@@ -973,7 +988,7 @@
         step.classList.toggle("active", screen === name);
         step.classList.toggle("done", index < screens.indexOf(name));
       });
-      parent.postMessage({ type: "fault-training-height", height: document.body.scrollHeight }, "*");
+      reportHeight();
     }
 
     function loadFaults() {
@@ -1008,7 +1023,7 @@
 
     $("#login-form").addEventListener("submit", async (event) => {
       event.preventDefault();
-      user = $("#user-name").value.trim();
+      user = $("#user-name").value.trim() || (lang === "en" ? "Trainee" : "培训员");
       station = $("#station-select").value;
       $("#session-status").textContent = t("online");
       await Promise.all([
@@ -1042,7 +1057,7 @@
             <button class="mini" type="button" data-action="delete" data-id="${escapeHtml(fault.id)}">${t("remove")}</button>
           </div></td>
         </tr>`).join("") : `<tr><td colspan="6">${t("noMatch")}</td></tr>`;
-      parent.postMessage({ type: "fault-training-height", height: document.body.scrollHeight }, "*");
+      reportHeight();
     }
 
     $("#fault-search").addEventListener("input", renderFaults);
@@ -1077,6 +1092,7 @@
         <div><span>${t("detailHmi")}</span><b>${escapeHtml(local(fault.hmi))}</b></div>
       </div>`;
       detail.hidden = false;
+      reportHeight();
     }
 
     function openEditor(fault = null) {
@@ -1089,11 +1105,13 @@
       $("#edit-cause").value = fault ? local(fault.cause) : "";
       $("#edit-action").value = fault ? local(fault.action) : "";
       $("#fault-editor").hidden = false;
+      reportHeight();
     }
 
     function closeEditor() {
       editingId = null;
       $("#fault-editor").hidden = true;
+      reportHeight();
     }
 
     $("#add-fault").addEventListener("click", () => openEditor());
@@ -1101,16 +1119,24 @@
     $("#cancel-editor").addEventListener("click", closeEditor);
     $("#fault-editor").addEventListener("submit", (event) => {
       event.preventDefault();
-      const action = $("#edit-action").value.trim();
+      let code = $("#edit-code").value.trim() || `${station}-F${500 + faults.length + 1}`;
+      let suffix = 2;
+      while (faults.some((fault) => fault.id === code && fault.id !== editingId)) {
+        code = `${station}-F${500 + faults.length + suffix}`;
+        suffix += 1;
+      }
+      const action = $("#edit-action").value.trim() ||
+        (lang === "en" ? "Follow the station SOP and reset" : "按现场 SOP 检查并复位");
+      const keywords = action.toLowerCase().split(/[\s,，。;；]+/).filter((word) => word.length > 1);
       const next = {
-        id: $("#edit-code").value.trim(),
-        name: $("#edit-name").value.trim(),
+        id: code,
+        name: $("#edit-name").value.trim() || (lang === "en" ? "Custom fault" : "自定义故障"),
         severity: "medium",
-        plcTag: $("#edit-tag").value.trim(),
-        hmi: $("#edit-hmi").value.trim(),
-        cause: $("#edit-cause").value.trim(),
+        plcTag: $("#edit-tag").value.trim() || "CUSTOM_TAG",
+        hmi: $("#edit-hmi").value.trim() || "CUSTOM ALARM",
+        cause: $("#edit-cause").value.trim() || (lang === "en" ? "Cause to be configured" : "待配置根因"),
         action,
-        keywords: action.toLowerCase().split(/[\s,，。;；]+/).filter((word) => word.length > 1),
+        keywords: keywords.length ? keywords : ["reset", "复位"],
         simKey: "sensor"
       };
       const index = faults.findIndex((fault) => fault.id === editingId);
@@ -1228,6 +1254,7 @@
       feedback.className = `feedback ${passed ? "good" : "bad"}`;
       feedback.textContent = passed ? t("correct") : t("partial");
       $("#open-report").hidden = false;
+      reportHeight();
 
       if (passed) {
         $("#station-model").className = "station-panel station recovered";
@@ -1272,8 +1299,12 @@
       }
     });
     addEventListener("resize", () => {
-      parent.postMessage({ type: "fault-training-height", height: document.body.scrollHeight }, "*");
+      reportHeight();
     });
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(reportHeight).observe($(".app"));
+    }
+    reportHeight();
   </script>
 </body>
 </html>

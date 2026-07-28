@@ -64,7 +64,13 @@ const projectSummary = (project: Project) =>
         <button id="light-theme" type="button">{c.light}</button>
         <button id="dark-theme" type="button">{c.dark}</button>
       </div>
-      <a class="language-link" href={alternateHref} hreflang={locale === "zh" ? "en" : "zh"}>
+      <a
+        class="language-link"
+        id="language-link"
+        href={alternateHref}
+        data-base-href={alternateHref}
+        hreflang={locale === "zh" ? "en" : "zh"}
+      >
         {alternateLabel}
       </a>
     </nav>
@@ -196,7 +202,7 @@ const projectSummary = (project: Project) =>
                     id="fault-training-frame"
                     class="fault-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-1`}
+                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-2`}
                     loading="lazy"
                     scrolling="no"
                     title={locale === "zh"
@@ -423,7 +429,7 @@ const projectSummary = (project: Project) =>
         faultFrame &&
         event.source === faultFrame.contentWindow
       ) {
-        faultFrame.style.height = `${Math.max(620, Math.min(980, Number(event.data.height) || 620))}px`;
+        faultFrame.style.height = `${Math.max(620, Math.min(1400, Number(event.data.height) || 620))}px`;
       }
     });
     window.addEventListener("resize", () => requestAnimationFrame(alignHeroColumns));
@@ -456,6 +462,15 @@ const projectSummary = (project: Project) =>
 
     const sectionIds = ["top", "work", "projects", "contact"];
     const sectionLinks = $$(".side-nav a");
+    const languageLink = $("#language-link") as HTMLAnchorElement | null;
+    const syncLanguageHref = () => {
+      if (!languageLink) return;
+      const baseHref = languageLink.dataset.baseHref || languageLink.getAttribute("href") || "/";
+      languageLink.href = `${baseHref}${window.location.hash}`;
+    };
+    syncLanguageHref();
+    window.addEventListener("hashchange", syncLanguageHref);
+
     let activeSection = 0;
     const setActiveSection = (index: number) => {
       activeSection = Math.max(0, Math.min(sectionIds.length - 1, index));
@@ -474,22 +489,21 @@ const projectSummary = (project: Project) =>
     sectionLinks.forEach((link, index) =>
       link.addEventListener("click", () => setActiveSection(index))
     );
-    window.addEventListener(
-      "scroll",
-      () => {
-        let index = 0;
-        sectionIds.forEach((id, sectionIndex) => {
-          if (
-            (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) <=
-            window.innerHeight * 0.3
-          ) {
-            index = sectionIndex;
-          }
-        });
-        setActiveSection(index);
-      },
-      { passive: true }
-    );
+    const syncActiveSection = () => {
+      let index = 0;
+      sectionIds.forEach((id, sectionIndex) => {
+        if (
+          (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) <=
+          window.innerHeight * 0.3
+        ) {
+          index = sectionIndex;
+        }
+      });
+      setActiveSection(index);
+    };
+    window.addEventListener("scroll", syncActiveSection, { passive: true });
+    window.addEventListener("hashchange", () => requestAnimationFrame(syncActiveSection));
+    requestAnimationFrame(syncActiveSection);
 
     $$(".tabs button").forEach((button) => {
       button.addEventListener("click", () => {
