@@ -656,6 +656,73 @@ summary:focus-visible {
   font-size: 10px;
 }
 
+.fault-flow-summary {
+  margin-top: 34px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ink);
+}
+
+.fault-flow-label {
+  margin: 0 0 10px !important;
+  color: var(--red) !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font: 600 8px "IBM Plex Mono", monospace !important;
+}
+
+.fault-flow-summary ol {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fault-flow-summary li {
+  display: grid;
+  min-height: 62px;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+  grid-template-columns: 28px 1fr;
+}
+
+.fault-flow-summary li b {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  background: var(--yellow);
+  color: #151515;
+  font: 600 8px "IBM Plex Mono", monospace;
+}
+
+.fault-flow-summary li span,
+.fault-flow-summary li strong,
+.fault-flow-summary li small {
+  display: block;
+}
+
+.fault-flow-summary li strong {
+  color: var(--ink);
+  font: 600 10px "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
+.fault-flow-summary li small {
+  margin-top: 3px;
+  color: var(--muted);
+  font: 8px/1.45 "IBM Plex Mono", monospace;
+}
+
+.concept-note {
+  margin: 14px 0 0 !important;
+  padding: 9px;
+  border: 1px solid var(--line);
+  color: var(--faint) !important;
+  font: 8px/1.45 "IBM Plex Mono", monospace !important;
+}
+
 .selected-effect {
   position: relative;
   display: grid;
@@ -668,6 +735,20 @@ summary:focus-visible {
     var(--screen);
   background-size: 24px 24px;
   color: var(--stext);
+}
+
+.selected-1 .selected-effect {
+  display: block;
+  min-height: 620px;
+  background: var(--card);
+}
+
+.fault-demo-frame {
+  display: block;
+  width: 100%;
+  height: 620px;
+  border: 0;
+  background: var(--card);
 }
 
 .fault-chain,
@@ -1250,6 +1331,14 @@ footer {
 
   .selected-effect {
     min-height: 330px;
+  }
+
+  .selected-1 .selected-effect {
+    min-height: 760px;
+  }
+
+  .fault-demo-frame {
+    height: 760px;
   }
 
   .fault-chain,

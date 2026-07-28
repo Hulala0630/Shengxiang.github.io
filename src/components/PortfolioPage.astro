@@ -31,6 +31,20 @@ const selectedLabels = [
   c.researchProject
 ];
 
+const faultTrainingFlow = locale === "zh"
+  ? [
+      ["01", "登录连接", "选择站点，自动连接 PLC、HMI 与仿真模型。"],
+      ["02", "故障配置", "生成并维护站点故障场景，支持增删查改。"],
+      ["03", "模拟验证", "同一故障同步驱动 PLC 信号、HMI 报警与二维模型。"],
+      ["04", "培训报告", "验证诊断和恢复答案，记录得分与完整执行链路。"]
+    ]
+  : [
+      ["01", "Login & link", "Select a station and link the PLC, HMI and simulation model."],
+      ["02", "Fault config", "Generate and maintain station scenarios with full CRUD controls."],
+      ["03", "Sim & verify", "One fault drives PLC signals, HMI alarms and the 2D model together."],
+      ["04", "Training report", "Validate diagnosis and recovery answers and retain the execution trace."]
+    ];
+
 const projectSummary = (project: Project) =>
   text(project.pitch, locale) ||
   text(project.summary, locale) ||
@@ -118,6 +132,7 @@ const projectSummary = (project: Project) =>
           </div>
           <iframe
             id="hero-frame"
+            data-theme-frame
             src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=theme-shell-2"
             loading="eager"
             scrolling="no"
@@ -150,15 +165,44 @@ const projectSummary = (project: Project) =>
                     <li>{technology}</li>
                   ))}
                 </ul>
+                {index === 0 && (
+                  <div class="fault-flow-summary">
+                    <p class="fault-flow-label">
+                      {locale === "zh" ? "当前交互原型 / 训练闭环" : "Current prototype / training loop"}
+                    </p>
+                    <ol>
+                      {faultTrainingFlow.map(([number, title, body]) => (
+                        <li>
+                          <b>{number}</b>
+                          <span><strong>{title}</strong><small>{body}</small></span>
+                        </li>
+                      ))}
+                    </ol>
+                    <p class="concept-note">
+                      {locale === "zh"
+                        ? "CONCEPT PREVIEW · 浏览器中的确定性逻辑仿真，不连接生产 PLC。"
+                        : "CONCEPT PREVIEW · Deterministic browser simulation; no production PLC connection."}
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div class:list={["selected-effect", `effect-${index + 1}`]} aria-hidden="true">
+              <div
+                class:list={["selected-effect", `effect-${index + 1}`]}
+                aria-hidden={index === 0 ? undefined : "true"}
+              >
                 {index === 0 && (
-                  <div class="fault-chain">
-                    <span>PLC<i></i></span><b>→</b>
-                    <span>OPC UA<i></i></span><b>→</b>
-                    <span>HMI<i></i></span>
-                  </div>
+                  <iframe
+                    id="fault-training-frame"
+                    class="fault-demo-frame"
+                    data-theme-frame
+                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-1`}
+                    loading="lazy"
+                    scrolling="no"
+                    title={locale === "zh"
+                      ? "工业故障仿真培训平台交互演示"
+                      : "Interactive industrial fault simulation training demo"}
+                  ></iframe>
                 )}
                 {index === 1 && (
                   <div class="scene-chain">
@@ -296,6 +340,8 @@ const projectSummary = (project: Project) =>
       [...root.querySelectorAll(selector)] as HTMLElement[];
 
     const frame = $("#hero-frame") as HTMLIFrameElement | null;
+    const faultFrame = $("#fault-training-frame") as HTMLIFrameElement | null;
+    const themeFrames = $$("iframe[data-theme-frame]") as HTMLIFrameElement[];
     const setTheme = (theme: "light" | "dark") => {
       document.documentElement.dataset.theme = theme;
       try {
@@ -303,11 +349,24 @@ const projectSummary = (project: Project) =>
       } catch {}
       $("#light-theme")?.classList.toggle("active", theme === "light");
       $("#dark-theme")?.classList.toggle("active", theme === "dark");
-      frame?.contentWindow?.postMessage({ type: "bauhaus-theme", theme }, "*");
+      themeFrames.forEach((themeFrame) =>
+        themeFrame.contentWindow?.postMessage({ type: "bauhaus-theme", theme }, "*")
+      );
     };
 
     $("#light-theme")?.addEventListener("click", () => setTheme("light"));
     $("#dark-theme")?.addEventListener("click", () => setTheme("dark"));
+    themeFrames.forEach((themeFrame) =>
+      themeFrame.addEventListener("load", () =>
+        themeFrame.contentWindow?.postMessage(
+          {
+            type: "bauhaus-theme",
+            theme: document.documentElement.dataset.theme === "dark" ? "dark" : "light"
+          },
+          "*"
+        )
+      )
+    );
 
     const rail = $("#history-rail");
     const progress = $("#history-progress");
@@ -356,8 +415,16 @@ const projectSummary = (project: Project) =>
     };
     frame?.addEventListener("load", initHero);
     window.addEventListener("message", (event) => {
-      if (event.data?.type !== "bauhaus-hero-height" || !frame) return;
-      frame.style.height = `${Math.max(520, Math.min(900, Number(event.data.height) || 704))}px`;
+      if (event.data?.type === "bauhaus-hero-height" && frame) {
+        frame.style.height = `${Math.max(520, Math.min(900, Number(event.data.height) || 704))}px`;
+      }
+      if (
+        event.data?.type === "fault-training-height" &&
+        faultFrame &&
+        event.source === faultFrame.contentWindow
+      ) {
+        faultFrame.style.height = `${Math.max(620, Math.min(980, Number(event.data.height) || 620))}px`;
+      }
     });
     window.addEventListener("resize", () => requestAnimationFrame(alignHeroColumns));
 
