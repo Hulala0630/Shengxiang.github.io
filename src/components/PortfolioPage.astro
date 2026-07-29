@@ -60,6 +60,11 @@ const projectSummary = (project: Project) =>
     <nav class="wrap nav" aria-label={c.profileNav}>
       <a class="mark" href="#top" aria-label={c.profileNav}>HS</a>
       <span class="brand">Hu Shengxiang / 胡生翔</span>
+      <div class="reading-signal" aria-hidden="true">
+        <span id="reading-section">01 · {c.profileNav}</span>
+        <i><b id="reading-progress"></b></i>
+        <strong id="reading-percent">00%</strong>
+      </div>
       <div class="theme-switch" aria-label="Theme">
         <button id="light-theme" type="button">{c.light}</button>
         <button id="dark-theme" type="button">{c.dark}</button>
@@ -91,7 +96,7 @@ const projectSummary = (project: Project) =>
     <section class="hero section-shell" id="top">
       <div class="wrap hero-grid">
         <div class="hero-left">
-          <article class="identity">
+          <article class="identity" data-reveal>
             <p class="eyebrow">{c.profileEyebrow}</p>
             <h1>{c.name}<span>{c.latinName}</span></h1>
             <p class="role">{c.role}</p>
@@ -108,7 +113,7 @@ const projectSummary = (project: Project) =>
             </div>
           </article>
 
-          <article class="history">
+          <article class="history" data-reveal>
             <div class="panel-head">
               <span>{c.career} · {c.swipe} →</span>
               <div class="rail-nav">
@@ -130,7 +135,7 @@ const projectSummary = (project: Project) =>
           </article>
         </div>
 
-        <article class="hero-game">
+        <article class="hero-game" data-reveal>
           <div class="game-title">
             <b>{c.heroLive}</b>
             <span>{c.heroSystem}</span>
@@ -150,7 +155,7 @@ const projectSummary = (project: Project) =>
 
     <section class="page-section" id="work">
       <div class="wrap">
-        <header class="section-head">
+        <header class="section-head" data-reveal>
           <span class="section-no">{c.selectedNo}</span>
           <h2>{c.selectedTitle}</h2>
           <p>{c.selectedIntro}</p>
@@ -158,10 +163,17 @@ const projectSummary = (project: Project) =>
 
         <div class="selected-list">
           {selectedProjects.map((project, index) => (
-            <article class:list={["selected-project", `selected-${index + 1}`]}>
+            <article
+              id={`selected-project-${index + 1}`}
+              class:list={["selected-project", `selected-${index + 1}`]}
+              data-reveal
+              data-proof-target={index + 1}
+              tabindex="-1"
+            >
               <div class="project-bar">
                 <span>{selectedLabels[index]}</span>
                 <b>{text(project.technicalType, locale) || selectedLabels[index]}</b>
+                <i class="project-locator" aria-hidden="true"></i>
               </div>
               <div class="selected-copy">
                 <h3>{text(project.title, locale)}</h3>
@@ -246,7 +258,7 @@ const projectSummary = (project: Project) =>
 
     <section class="page-section archive-section" id="projects">
       <div class="wrap">
-        <header class="section-head">
+        <header class="section-head" data-reveal>
           <span class="section-no">{c.archiveNo}</span>
           <h2>{c.archiveTitle}</h2>
           <p>{c.archiveIntro}</p>
@@ -259,7 +271,7 @@ const projectSummary = (project: Project) =>
 
         <div class="archive-list">
           {otherProjects.map((project) => (
-            <details class="archive-item" data-kind={projectKind(project)}>
+            <details class="archive-item" data-kind={projectKind(project)} data-reveal>
               <summary>
                 <span>{text(project.projectType, locale)}</span>
                 <div>
@@ -301,7 +313,7 @@ const projectSummary = (project: Project) =>
 
     <section class="page-section" id="contact">
       <div class="wrap">
-        <header class="section-head">
+        <header class="section-head" data-reveal>
           <span class="section-no">{c.capabilityNo}</span>
           <h2>{c.capabilityTitle}</h2>
           <p>{c.capabilityIntro}</p>
@@ -309,16 +321,28 @@ const projectSummary = (project: Project) =>
         <div class="last-grid">
           <div class="cap-grid">
             {capabilities.map((capability) => (
-              <article class="capability">
+              <article class="capability" data-reveal>
                 <span>{capability.code}</span>
                 <div>
                   <h3>{capability.title[locale]}</h3>
                   <p>{capability.body[locale]}</p>
+                  <div class="capability-evidence">
+                    <small>{c.evidenceLabel}</small>
+                    {capability.evidence.map((projectNumber) => (
+                      <a
+                        href={`#selected-project-${projectNumber}`}
+                        data-proof-link={projectNumber}
+                        aria-label={`${c.evidenceHint}: ${projectNumber}`}
+                      >
+                        {String(projectNumber).padStart(2, "0")}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </article>
             ))}
           </div>
-          <aside class="contact-card">
+          <aside class="contact-card" data-reveal>
             <p class="eyebrow">{c.contactLead}</p>
             <h3>{c.contactTitle.split("\n").map((line) => <>{line}<br /></>)}</h3>
             <p>{c.contactText}</p>
@@ -340,6 +364,9 @@ const projectSummary = (project: Project) =>
   </footer>
 
   <script>
+    import { animate } from "animejs/animation";
+    import { stagger } from "animejs/utils";
+
     const $ = (selector: string, root: Document | Element = document) =>
       root.querySelector(selector) as HTMLElement | null;
     const $$ = (selector: string, root: Document | Element = document) =>
@@ -462,6 +489,10 @@ const projectSummary = (project: Project) =>
 
     const sectionIds = ["top", "work", "projects", "contact"];
     const sectionLinks = $$(".side-nav a");
+    const readingSection = $("#reading-section");
+    const readingProgress = $("#reading-progress");
+    const readingPercent = $("#reading-percent");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const languageLink = $("#language-link") as HTMLAnchorElement | null;
     const syncLanguageHref = () => {
       if (!languageLink) return;
@@ -473,10 +504,24 @@ const projectSummary = (project: Project) =>
 
     let activeSection = 0;
     const setActiveSection = (index: number) => {
-      activeSection = Math.max(0, Math.min(sectionIds.length - 1, index));
+      const nextSection = Math.max(0, Math.min(sectionIds.length - 1, index));
+      const sectionChanged = activeSection !== nextSection;
+      activeSection = nextSection;
       sectionLinks.forEach((link, linkIndex) =>
         link.classList.toggle("active", linkIndex === activeSection)
       );
+      if (readingSection) {
+        readingSection.textContent =
+          `${String(activeSection + 1).padStart(2, "0")} · ${sectionLinks[activeSection]?.querySelector("span")?.textContent ?? ""}`;
+        if (sectionChanged && !reducedMotion.matches) {
+          animate(readingSection, {
+            opacity: [0.25, 1],
+            x: [8, 0],
+            duration: 320,
+            ease: "out(3)"
+          });
+        }
+      }
     };
     const goSection = (delta: number) => {
       setActiveSection(activeSection + delta);
@@ -489,6 +534,15 @@ const projectSummary = (project: Project) =>
     sectionLinks.forEach((link, index) =>
       link.addEventListener("click", () => setActiveSection(index))
     );
+    let scrollTicking = false;
+    const syncPageSignal = () => {
+      const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const ratio = Math.max(0, Math.min(1, window.scrollY / scrollRange));
+      const percent = Math.round(ratio * 100);
+      if (readingProgress) readingProgress.style.transform = `scaleX(${ratio})`;
+      if (readingPercent) readingPercent.textContent = `${String(percent).padStart(2, "0")}%`;
+      document.documentElement.style.setProperty("--page-progress", `${ratio}`);
+    };
     const syncActiveSection = () => {
       let index = 0;
       sectionIds.forEach((id, sectionIndex) => {
@@ -500,10 +554,72 @@ const projectSummary = (project: Project) =>
         }
       });
       setActiveSection(index);
+      syncPageSignal();
+      scrollTicking = false;
     };
-    window.addEventListener("scroll", syncActiveSection, { passive: true });
+    window.addEventListener("scroll", () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(syncActiveSection);
+    }, { passive: true });
     window.addEventListener("hashchange", () => requestAnimationFrame(syncActiveSection));
     requestAnimationFrame(syncActiveSection);
+
+    const revealItems = $$("[data-reveal]");
+    if (!reducedMotion.matches && "IntersectionObserver" in window) {
+      revealItems.forEach((item) => {
+        item.style.opacity = "0";
+      });
+      const revealObserver = new IntersectionObserver((entries) => {
+        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
+        visibleEntries.forEach((entry, index) => {
+          const item = entry.target as HTMLElement;
+          animate(item, {
+            opacity: [0, 1],
+            y: [16, 0],
+            duration: 480,
+            delay: Math.min(index * 45, 180),
+            ease: "out(3)",
+            onComplete: () => {
+              item.style.removeProperty("opacity");
+              item.style.removeProperty("transform");
+            }
+          });
+          revealObserver.unobserve(item);
+        });
+      }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
+      revealItems.forEach((item) => revealObserver.observe(item));
+    }
+
+    const locateEvidence = (projectNumber: string) => {
+      const target = $(`[data-proof-target="${projectNumber}"]`);
+      if (!target) return;
+      target.classList.add("is-evidence-target");
+      target.focus({ preventScroll: true });
+      const locator = $(".project-locator", target);
+      if (locator && !reducedMotion.matches) {
+        animate(locator, {
+          opacity: [1, 1, 0],
+          scaleX: [0, 1],
+          duration: 760,
+          ease: "out(3)"
+        });
+      }
+      window.setTimeout(() => target.classList.remove("is-evidence-target"), 1100);
+    };
+
+    $$("[data-proof-link]").forEach((link) => {
+      link.addEventListener("click", () => {
+        const projectNumber = link.dataset.proofLink;
+        if (projectNumber) window.setTimeout(() => locateEvidence(projectNumber), 520);
+      });
+    });
+    const locateHashEvidence = () => {
+      const match = window.location.hash.match(/^#selected-project-(\d)$/);
+      if (match) window.setTimeout(() => locateEvidence(match[1]), 120);
+    };
+    window.addEventListener("hashchange", locateHashEvidence);
+    locateHashEvidence();
 
     $$(".tabs button").forEach((button) => {
       button.addEventListener("click", () => {
@@ -514,6 +630,16 @@ const projectSummary = (project: Project) =>
         $$(".archive-item").forEach((item) => {
           item.hidden = filter !== "all" && item.dataset.kind !== filter;
         });
+        if (!reducedMotion.matches) {
+          const visibleItems = $$(".archive-item").filter((item) => !item.hidden);
+          animate(visibleItems.slice(0, 8), {
+            opacity: [0, 1],
+            y: [8, 0],
+            duration: 320,
+            delay: stagger(28),
+            ease: "out(3)"
+          });
+        }
       });
     });
 

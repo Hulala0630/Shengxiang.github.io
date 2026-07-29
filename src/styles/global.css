@@ -18,6 +18,7 @@
   --alarm: #ff9e00;
   --ai: #c3a6ff;
   --max: 1240px;
+  --page-progress: 0;
 }
 
 [data-theme="dark"] {
@@ -102,6 +103,19 @@ summary:focus-visible {
   backdrop-filter: blur(10px);
 }
 
+.topbar::after {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  background: var(--red);
+  content: "";
+  pointer-events: none;
+  transform: scaleX(var(--page-progress));
+  transform-origin: left center;
+}
+
 .nav {
   display: flex;
   align-items: center;
@@ -123,6 +137,43 @@ summary:focus-visible {
 .brand {
   margin-right: auto;
   font: 600 15px "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
+.reading-signal {
+  display: grid;
+  width: min(31vw, 310px);
+  align-items: center;
+  gap: 9px;
+  grid-template-columns: minmax(92px, auto) minmax(55px, 1fr) 34px;
+  color: var(--faint);
+  font: 600 10px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.reading-signal > span {
+  overflow: hidden;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reading-signal > i {
+  height: 1px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.reading-signal > i b {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.reading-signal > strong {
+  text-align: right;
 }
 
 .theme-switch {
@@ -592,6 +643,15 @@ summary:focus-visible {
   grid-template-columns: minmax(280px, 0.38fr) minmax(0, 0.62fr);
 }
 
+.selected-project:focus {
+  outline: none;
+}
+
+.selected-project.is-evidence-target {
+  outline: 3px solid var(--yellow);
+  outline-offset: 6px;
+}
+
 .selected-1 {
   box-shadow: 9px 9px 0 var(--red);
 }
@@ -605,6 +665,7 @@ summary:focus-visible {
 }
 
 .project-bar {
+  position: relative;
   display: flex;
   min-height: 31px;
   align-items: center;
@@ -614,6 +675,19 @@ summary:focus-visible {
   grid-column: 1 / -1;
   font: 500 10px "IBM Plex Mono", monospace;
   text-transform: uppercase;
+}
+
+.project-locator {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: 3px;
+  background: var(--yellow);
+  opacity: 0;
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 
 .project-bar b {
@@ -1163,6 +1237,23 @@ summary:focus-visible {
   grid-template-columns: 42px 1fr;
 }
 
+.capability {
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+
+.capability:hover,
+.capability:focus-within {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.capability:hover p,
+.capability:focus-within p {
+  color: var(--paper);
+}
+
 .capability:nth-child(odd) {
   border-right: 1px solid var(--ink);
 }
@@ -1186,6 +1277,42 @@ summary:focus-visible {
   margin: 0;
   color: var(--muted);
   font: 11px "IBM Plex Mono", monospace;
+}
+
+.capability-evidence {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 11px;
+}
+
+.capability-evidence small {
+  margin-right: 3px;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+  font: 600 9px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.capability-evidence a {
+  display: grid;
+  min-width: 28px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid currentColor;
+  text-decoration: none;
+  font: 600 10px "IBM Plex Mono", monospace;
+  transition:
+    background 0.16s,
+    color 0.16s,
+    transform 0.16s;
+}
+
+.capability-evidence a:hover,
+.capability-evidence a:focus-visible {
+  background: var(--yellow);
+  color: #151515;
+  transform: translateY(-2px);
 }
 
 .contact-card {
@@ -1224,6 +1351,15 @@ footer {
 }
 
 @media (max-width: 980px) {
+  .reading-signal {
+    width: min(28vw, 220px);
+    grid-template-columns: 1fr 32px;
+  }
+
+  .reading-signal > i {
+    display: none;
+  }
+
   .hero-grid {
     grid-template-columns: 1fr;
   }
@@ -1261,6 +1397,10 @@ footer {
   }
 
   .brand {
+    display: none;
+  }
+
+  .reading-signal {
     display: none;
   }
 

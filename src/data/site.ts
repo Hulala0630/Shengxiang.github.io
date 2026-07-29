@@ -58,6 +58,8 @@ export const siteCopy = {
     capabilityTitle: "项目证据之后，再看能力范围。",
     capabilityIntro:
       "能力、教育和联系方式位于项目之后，不与首屏个人定位竞争。",
+    evidenceLabel: "项目证据",
+    evidenceHint: "点击编号回到对应重点项目",
     contactLead: "一起构建可测试的系统",
     contactTitle: "自动化。\n仿真。\n工业 AI。",
     contactText:
@@ -133,6 +135,8 @@ export const siteCopy = {
     capabilityTitle: "Technical range after the evidence.",
     capabilityIntro:
       "Capabilities, education and contact follow the project evidence instead of competing with the personal introduction.",
+    evidenceLabel: "Project evidence",
+    evidenceHint: "Open the selected project behind this capability",
     contactLead: "LET'S BUILD TESTABLE SYSTEMS",
     contactTitle: "Automation.\nSimulation.\nIndustrial AI.",
     contactText:
@@ -205,6 +209,7 @@ export const career = [
 export const capabilities = [
   {
     code: "ST",
+    evidence: [1, 2, 3],
     title: { zh: "系统架构", en: "System Architecture" },
     body: {
       zh: "系统思维 · 接口设计 · 故障建模",
@@ -213,6 +218,7 @@ export const capabilities = [
   },
   {
     code: "DT",
+    evidence: [1, 2],
     title: { zh: "仿真与数字孪生", en: "Simulation & Digital Twin" },
     body: {
       zh: "Unity · PLCSim · Isaac Sim · OpenUSD",
@@ -221,6 +227,7 @@ export const capabilities = [
   },
   {
     code: "AI",
+    evidence: [2],
     title: { zh: "AI 系统", en: "AI Systems" },
     body: {
       zh: "工作流 · 工具调用 · 可解释性",
@@ -229,6 +236,7 @@ export const capabilities = [
   },
   {
     code: "DI",
+    evidence: [1, 2],
     title: { zh: "工业集成", en: "Industrial Integration" },
     body: {
       zh: "OPC UA · REST API · 状态同步",
@@ -237,6 +245,7 @@ export const capabilities = [
   },
   {
     code: "SW",
+    evidence: [1, 2],
     title: { zh: "软件与工具", en: "Software & Tooling" },
     body: {
       zh: "C# · .NET · Python · 插件架构",
@@ -245,6 +254,7 @@ export const capabilities = [
   },
   {
     code: "DA",
+    evidence: [2, 3],
     title: { zh: "数据与计算", en: "Data & Computation" },
     body: {
       zh: "MATLAB · 特征工程 · 动作分析",
@@ -253,6 +263,7 @@ export const capabilities = [
   },
   {
     code: "UX",
+    evidence: [1, 3],
     title: { zh: "技术体验", en: "Technical UX" },
     body: {
       zh: "NASA-TLX · 反馈设计 · 人机交互",
