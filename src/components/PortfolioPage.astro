@@ -118,13 +118,16 @@ const projectSummary = (project: Project) =>
 
           <article class="history" data-reveal>
             <div class="panel-head">
-              <span>{c.career} · {c.swipe} →</span>
-              <div class="rail-nav">
-                <button id="history-prev" type="button" aria-label={c.previous}>←</button>
-                <button id="history-next" type="button" aria-label={c.next}>→</button>
-              </div>
+              <span>{c.career}</span>
+              <span class="drag-guide" aria-hidden="true"><i>↔</i>{c.swipe}</span>
             </div>
-            <div class="history-scroll" id="history-rail">
+            <div
+              class="history-scroll"
+              id="history-rail"
+              role="region"
+              aria-label={`${c.career} · ${c.swipe}`}
+              tabindex="0"
+            >
               {career.map((item) => (
                 <article class:list={["history-item", { current: item.current }]}>
                   <span>{item.period}</span>
@@ -408,18 +411,22 @@ const projectSummary = (project: Project) =>
 
     const rail = $("#history-rail");
     const progress = $("#history-progress");
+    const historyPanel = $(".history");
     let historyAnimation: ReturnType<typeof animate> | null = null;
     const stopHistoryAnimation = () => {
       historyAnimation?.pause();
       historyAnimation = null;
       rail?.classList.remove("is-programmatic-scroll");
     };
-    const moveHistory = (direction: number) => {
+    const snapHistory = (direction = 0) => {
       const card = $(".history-item", rail ?? document);
       if (!rail || !card) return;
       const step = card.offsetWidth + 1;
       const max = Math.max(0, rail.scrollWidth - rail.clientWidth);
-      const target = Math.max(0, Math.min(max, Math.round((rail.scrollLeft + direction * step) / step) * step));
+      const target = Math.max(
+        0,
+        Math.min(max, Math.round((rail.scrollLeft + direction * step) / step) * step)
+      );
       stopHistoryAnimation();
       if (reducedMotion.matches) {
         rail.scrollLeft = target;
@@ -428,8 +435,8 @@ const projectSummary = (project: Project) =>
       rail.classList.add("is-programmatic-scroll");
       historyAnimation = animate(rail, {
         scrollLeft: target,
-        duration: 620,
-        ease: "out(4)",
+        duration: 280,
+        ease: "out(3)",
         onComplete: () => {
           rail.classList.remove("is-programmatic-scroll");
           historyAnimation = null;
@@ -440,12 +447,52 @@ const projectSummary = (project: Project) =>
       if (!rail || !progress) return;
       const max = Math.max(1, rail.scrollWidth - rail.clientWidth);
       progress.style.width = `${25 + 75 * Math.min(1, rail.scrollLeft / max)}%`;
+      if (rail.scrollLeft > 2) historyPanel?.classList.add("has-interacted");
     };
-    $("#history-prev")?.addEventListener("click", () => moveHistory(-1));
-    $("#history-next")?.addEventListener("click", () => moveHistory(1));
     rail?.addEventListener("scroll", updateHistoryProgress, { passive: true });
-    rail?.addEventListener("pointerdown", stopHistoryAnimation, { passive: true });
     rail?.addEventListener("wheel", stopHistoryAnimation, { passive: true });
+    rail?.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      historyPanel?.classList.add("has-interacted");
+      snapHistory(event.key === "ArrowRight" ? 1 : -1);
+    });
+
+    let dragPointerId: number | null = null;
+    let dragStartX = 0;
+    let dragStartScroll = 0;
+    let dragMoved = false;
+    const endHistoryDrag = (event: PointerEvent) => {
+      if (!rail || dragPointerId !== event.pointerId) return;
+      if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId);
+      rail.classList.remove("is-dragging");
+      dragPointerId = null;
+      if (dragMoved) snapHistory();
+    };
+    rail?.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      stopHistoryAnimation();
+      dragPointerId = event.pointerId;
+      dragStartX = event.clientX;
+      dragStartScroll = rail.scrollLeft;
+      dragMoved = false;
+      rail.setPointerCapture(event.pointerId);
+      rail.classList.add("is-dragging");
+      historyPanel?.classList.add("has-interacted");
+    });
+    rail?.addEventListener("pointermove", (event) => {
+      if (dragPointerId !== event.pointerId) return;
+      const distance = event.clientX - dragStartX;
+      if (Math.abs(distance) > 3) dragMoved = true;
+      if (!dragMoved) return;
+      event.preventDefault();
+      rail.scrollLeft = dragStartScroll - distance;
+    });
+    rail?.addEventListener("pointerup", endHistoryDrag);
+    rail?.addEventListener("pointercancel", endHistoryDrag);
+    rail?.addEventListener("lostpointercapture", (event) => {
+      if (dragPointerId === event.pointerId) endHistoryDrag(event);
+    });
 
     const fitHeroFrame = () => {
       if (!frame?.contentDocument) return;
@@ -718,7 +765,7 @@ const projectSummary = (project: Project) =>
       }));
     };
     const motionControls = $$(
-      ".button, .language-link, .theme-switch button, .side-nav button, .rail-nav button, .tabs button, .capability-evidence a"
+      ".button, .language-link, .theme-switch button, .side-nav button, .tabs button, .capability-evidence a"
     );
     motionControls.forEach((control) => {
       control.classList.add("motion-control");
@@ -745,10 +792,9 @@ const projectSummary = (project: Project) =>
     });
 
     const cleanupDetailsContent = (content: HTMLElement) => {
-      content.style.removeProperty("height");
       content.style.removeProperty("opacity");
-      content.style.removeProperty("overflow");
       content.style.removeProperty("transform");
+      content.style.removeProperty("clip-path");
     };
     $$("details").forEach((detail) => {
       const details = detail as HTMLDetailsElement;
@@ -765,28 +811,24 @@ const projectSummary = (project: Project) =>
         details.dataset.animating = "true";
         if (!details.open) {
           details.open = true;
-          const targetHeight = content.scrollHeight;
-          content.style.overflow = "hidden";
           animate(content, {
-            height: ["0px", `${targetHeight}px`],
             opacity: [0, 1],
-            y: [-8, 0],
-            duration: 430,
-            ease: "out(4)",
+            y: [8, 0],
+            clipPath: ["inset(0 0 10% 0)", "inset(0 0 0% 0)"],
+            duration: 240,
+            ease: "out(3)",
             onComplete: () => {
               cleanupDetailsContent(content);
               delete details.dataset.animating;
             }
           });
         } else {
-          const startHeight = content.getBoundingClientRect().height;
-          content.style.overflow = "hidden";
           animate(content, {
-            height: [`${startHeight}px`, "0px"],
             opacity: [1, 0],
-            y: [0, -6],
-            duration: 330,
-            ease: "inOut(3)",
+            y: [0, -5],
+            clipPath: ["inset(0 0 0% 0)", "inset(0 0 8% 0)"],
+            duration: 150,
+            ease: "in(2)",
             onComplete: () => {
               details.open = false;
               cleanupDetailsContent(content);

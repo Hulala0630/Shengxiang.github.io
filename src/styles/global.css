@@ -220,8 +220,12 @@ summary:focus-visible {
   align-items: center;
   flex-direction: column;
   gap: 7px;
+  opacity: 1;
+  pointer-events: auto;
   transform: translateY(-50%);
-  transition: transform 0.25s;
+  transition:
+    opacity 0.18s,
+    transform 0.25s;
 }
 
 .side-nav-cursor {
@@ -240,7 +244,9 @@ summary:focus-visible {
 }
 
 .side-nav.is-hidden {
-  transform: translate(calc(-100% - 18px), -50%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-150px, -50%);
 }
 
 .side-nav-track {
@@ -306,13 +312,13 @@ summary:focus-visible {
 }
 
 .side-nav a:hover span,
-.side-nav a:focus-visible span,
-.side-nav a.active span {
+.side-nav a:focus-visible span {
   opacity: 1;
   transform: none;
 }
 
-.side-nav a.active span {
+.side-nav a:hover span,
+.side-nav a:focus-visible span {
   border-color: var(--ink);
   background: var(--ink);
   color: var(--paper);
@@ -520,25 +526,24 @@ summary:focus-visible {
   text-transform: uppercase;
 }
 
-.rail-nav {
+.drag-guide {
   display: flex;
-  gap: 5px;
+  align-items: center;
+  gap: 7px;
   margin-left: auto;
+  color: var(--blue);
+  font: 600 10px "IBM Plex Mono", monospace;
 }
 
-.rail-nav button {
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--ink);
-  background: transparent;
+.drag-guide i {
+  display: inline-block;
   color: var(--ink);
-  cursor: pointer;
-  font: 600 12px "IBM Plex Mono", monospace;
+  font-style: normal;
+  animation: drag-guide 1.5s ease-in-out infinite;
 }
 
-.rail-nav button:hover {
-  background: var(--ink);
-  color: var(--paper);
+.history.has-interacted .drag-guide i {
+  animation: none;
 }
 
 .history-scroll {
@@ -547,12 +552,28 @@ summary:focus-visible {
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-inline: contain;
-  scroll-snap-type: x mandatory;
+  cursor: grab;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 18px,
+    #000 calc(100% - 32px),
+    transparent 100%
+  );
 }
 
-.history-scroll.is-programmatic-scroll {
+.history-scroll.is-programmatic-scroll,
+.history-scroll.is-dragging {
   scroll-snap-type: none;
+}
+
+.history-scroll.is-dragging {
+  cursor: grabbing;
+  user-select: none;
 }
 
 .history-scroll::-webkit-scrollbar {
@@ -1054,7 +1075,18 @@ summary:focus-visible {
 .selected-detail-content,
 .archive-detail {
   transform-origin: top center;
-  will-change: height, opacity, transform;
+  will-change: opacity, transform, clip-path;
+}
+
+@keyframes drag-guide {
+  0%,
+  100% {
+    transform: translateX(-2px);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
 }
 
 .selected-details summary {
@@ -1523,10 +1555,6 @@ footer {
   }
 
   .reading-signal {
-    display: none;
-  }
-
-  .side-nav a.active span {
     display: none;
   }
 
