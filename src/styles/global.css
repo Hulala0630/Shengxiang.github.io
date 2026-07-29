@@ -226,6 +226,19 @@ summary:focus-visible {
   transition: transform 0.25s;
 }
 
+.side-nav-cursor {
+  position: absolute;
+  z-index: 0;
+  top: 42px;
+  left: 0;
+  width: 42px;
+  height: 42px;
+  background: var(--ink);
+  pointer-events: none;
+  transform: translateY(0);
+  will-change: transform;
+}
+
 .side-nav.is-hidden {
   transform: translate(calc(-100% - 14px), -50%);
 }
@@ -233,6 +246,7 @@ summary:focus-visible {
 .side-nav button,
 .side-nav a {
   position: relative;
+  z-index: 1;
   display: grid;
   width: 42px;
   min-height: 42px;
@@ -247,9 +261,13 @@ summary:focus-visible {
 }
 
 .side-nav button:hover,
-.side-nav a:hover,
-.side-nav a.active {
+.side-nav a:hover {
   background: var(--ink);
+  color: var(--paper);
+}
+
+.side-nav a.active {
+  background: transparent;
   color: var(--paper);
 }
 
@@ -497,6 +515,10 @@ summary:focus-visible {
   scrollbar-width: none;
 }
 
+.history-scroll.is-programmatic-scroll {
+  scroll-snap-type: none;
+}
+
 .history-scroll::-webkit-scrollbar {
   display: none;
 }
@@ -557,7 +579,7 @@ summary:focus-visible {
   width: 25%;
   height: 100%;
   background: var(--blue);
-  transition: width 0.2s;
+  will-change: width;
 }
 
 .hero-game {
@@ -986,6 +1008,12 @@ summary:focus-visible {
 .selected-details {
   border-top: 1px solid var(--ink);
   grid-column: 1 / -1;
+}
+
+.selected-detail-content,
+.archive-detail {
+  transform-origin: top center;
+  will-change: height, opacity, transform;
 }
 
 .selected-details summary {
