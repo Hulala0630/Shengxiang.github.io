@@ -841,6 +841,31 @@ summary:focus-visible {
   font-size: 15px;
 }
 
+.selected-copy .selected-outcome {
+  margin: 18px 0 0;
+  padding: 13px 14px;
+  border-left: 4px solid var(--red);
+  background: color-mix(in srgb, var(--red) 7%, var(--card));
+}
+
+.selected-outcome span,
+.selected-outcome strong {
+  display: block;
+}
+
+.selected-outcome span {
+  margin-bottom: 5px;
+  color: var(--red);
+  letter-spacing: 0.08em;
+  font: 600 10px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.selected-outcome strong {
+  color: var(--ink);
+  font: 600 13px/1.55 "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
 .selected-copy ul {
   margin: 20px 0 0;
   padding-left: 17px;
@@ -904,14 +929,6 @@ summary:focus-visible {
   margin-top: 3px;
   color: var(--muted);
   font: 11px/1.5 "IBM Plex Mono", monospace;
-}
-
-.concept-note {
-  margin: 14px 0 0 !important;
-  padding: 9px;
-  border: 1px solid var(--line);
-  color: var(--faint) !important;
-  font: 10px/1.5 "IBM Plex Mono", monospace !important;
 }
 
 .selected-effect {
@@ -1232,6 +1249,66 @@ summary:focus-visible {
   background: var(--card);
 }
 
+.fault-detail-lead {
+  display: grid;
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+}
+
+.fault-detail-lead > div {
+  padding: 28px 32px;
+  border-right: 1px solid var(--line);
+}
+
+.fault-detail-lead > div > span,
+.fault-architecture header > span {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--red);
+  letter-spacing: 0.09em;
+  font: 600 11px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.fault-detail-lead p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--ink);
+  font: 500 17px/1.65 "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
+.fault-detail-lead ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.fault-detail-lead li {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 22px 16px;
+  border-right: 1px solid var(--line);
+}
+
+.fault-detail-lead li:last-child {
+  border-right: 0;
+}
+
+.fault-detail-lead li strong {
+  color: var(--red);
+  font: 700 clamp(24px, 2.8vw, 38px) / 1 "Space Grotesk", sans-serif;
+}
+
+.fault-detail-lead li span {
+  margin-top: 7px;
+  color: var(--muted);
+  font: 10px/1.4 "IBM Plex Mono", monospace;
+}
+
 .details-grid {
   display: grid;
   gap: 0;
@@ -1248,6 +1325,127 @@ summary:focus-visible {
   padding-left: 32px;
   padding-right: 0;
   border-left: 1px solid var(--line);
+}
+
+.fault-architecture {
+  margin: 0 32px 34px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.fault-architecture header {
+  display: grid;
+  margin-bottom: 20px;
+  grid-template-columns: 180px minmax(0, 680px);
+}
+
+.fault-architecture header > span {
+  margin: 0;
+}
+
+.fault-architecture header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.fault-architecture ol {
+  display: grid;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.fault-architecture ol li {
+  position: relative;
+  min-width: 0;
+  padding: 18px 18px 19px;
+  border: 1px solid var(--ink);
+  background: var(--card);
+}
+
+.fault-architecture ol li:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 1px);
+  width: 28px;
+  height: 1px;
+  background: var(--red);
+  content: "";
+}
+
+.fault-architecture ol b,
+.fault-architecture ol strong,
+.fault-architecture ol small,
+.fault-architecture-branches strong,
+.fault-architecture-branches small {
+  display: block;
+}
+
+.fault-architecture ol b {
+  margin-bottom: 22px;
+  color: var(--red);
+  font: 600 10px "IBM Plex Mono", monospace;
+}
+
+.fault-architecture ol strong,
+.fault-architecture-branches strong {
+  font: 600 14px "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
+.fault-architecture ol small,
+.fault-architecture-branches small {
+  margin-top: 5px;
+  color: var(--muted);
+  font: 10px/1.5 "IBM Plex Mono", monospace;
+}
+
+.fault-architecture-branches {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  margin-top: 32px;
+  padding-top: 24px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.fault-architecture-branches::before {
+  position: absolute;
+  top: 0;
+  right: 16.66%;
+  left: 16.66%;
+  height: 1px;
+  background: var(--red);
+  content: "";
+}
+
+.fault-architecture-branches::after {
+  position: absolute;
+  top: -32px;
+  left: 83.33%;
+  width: 1px;
+  height: 32px;
+  background: var(--red);
+  content: "";
+}
+
+.fault-architecture-branches article {
+  position: relative;
+  padding: 15px 16px;
+  border-top: 3px solid var(--red);
+  background: var(--paper);
+}
+
+.fault-architecture-branches article::before {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 1px;
+  height: 24px;
+  background: var(--red);
+  content: "";
 }
 
 .selected-details video {
@@ -1833,6 +2031,24 @@ footer {
     grid-template-columns: 1fr;
   }
 
+  .fault-detail-lead {
+    grid-template-columns: 1fr;
+  }
+
+  .fault-detail-lead > div {
+    padding: 22px 18px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fault-detail-lead ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .fault-detail-lead li {
+    padding: 18px 10px;
+  }
+
   .detail-column {
     padding-right: 0;
   }
@@ -1855,6 +2071,48 @@ footer {
   .selected-details video {
     width: calc(100% - 36px);
     margin: 0 18px 18px;
+  }
+
+  .fault-architecture {
+    margin: 0 18px 24px;
+    padding-top: 22px;
+  }
+
+  .fault-architecture header {
+    grid-template-columns: 1fr;
+  }
+
+  .fault-architecture header > span {
+    margin-bottom: 8px;
+  }
+
+  .fault-architecture ol {
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .fault-architecture ol li:not(:last-child)::after {
+    top: 100%;
+    left: 24px;
+    width: 1px;
+    height: 12px;
+  }
+
+  .fault-architecture ol b {
+    margin-bottom: 10px;
+  }
+
+  .fault-architecture-branches {
+    gap: 8px;
+    margin-top: 22px;
+    padding-top: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .fault-architecture-branches::before,
+  .fault-architecture-branches::after,
+  .fault-architecture-branches article::before {
+    display: none;
   }
 
   .archive-item summary {

@@ -7,9 +7,17 @@ interface Props {
   locale: Locale;
   /** "narrative" and "lists" split the same blocks across a two-column layout. */
   group?: "narrative" | "lists" | "all";
+  hideSummary?: boolean;
+  hideStructure?: boolean;
 }
 
-const { project, locale, group = "all" } = Astro.props;
+const {
+  project,
+  locale,
+  group = "all",
+  hideSummary = false,
+  hideStructure = false
+} = Astro.props;
 const c = siteCopy[locale];
 
 const overview =
@@ -40,10 +48,10 @@ const once = (value: string) => {
 
 const narrative: [string, string][] = (
   [
+    [c.summary, hideSummary ? "" : once(text(project.summary, locale))],
     [c.overview, overview],
     [c.solution, solution],
     [c.result, result],
-    [c.summary, once(text(project.summary, locale))],
     [c.systemIdea, once(text(project.systemIdea, locale))],
     [c.note, once(text(project.note, locale))]
   ] as [string, string][]
@@ -81,7 +89,7 @@ const showLists = group !== "narrative";
         <ul>{items.map((item) => <li>{item}</li>)}</ul>
       </>
     ))}
-    {structure && (
+    {structure && !hideStructure && (
       <>
         <h4>{c.structure}</h4>
         <pre>{structure}</pre>

@@ -608,6 +608,29 @@ const projectsData = [
       en: "The system enabled 200+ fault scenarios, supported 1000+ training users, and improved troubleshooting capability by 25% through scalable digital training.",
       zh: "该系统支持 200+ 故障场景，覆盖 1000+ 培训用户，并通过可规模化的数字训练将故障排除能力提升了 25%。"
     },
+    metrics: [
+      {
+        value: "200+",
+        label: {
+          en: "reusable fault scenarios",
+          zh: "可复用故障场景"
+        }
+      },
+      {
+        value: "1000+",
+        label: {
+          en: "training users supported",
+          zh: "培训用户覆盖"
+        }
+      },
+      {
+        value: "25%",
+        label: {
+          en: "troubleshooting improvement",
+          zh: "故障排除能力提升"
+        }
+      }
+    ],
     technologies: ["C#", ".NET", "PLCSim", "OPC UA", "Fault Injection", "Simulation", "HMI"]
   },
 

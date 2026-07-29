@@ -263,23 +263,106 @@
     .btn.red { background: var(--red); color: #151515; border-color: var(--red); }
     .btn:disabled { cursor: not-allowed; opacity: .4; }
 
-    .process-list { display: grid; gap: 9px; }
-    .process-item {
+    .login-actions {
       display: grid;
-      grid-template-columns: 27px 1fr;
-      gap: 9px;
-      align-items: start;
+      gap: 7px;
+      grid-template-columns: 1fr 1fr;
     }
-    .process-item b {
-      display: grid;
-      width: 27px;
-      height: 27px;
-      place-items: center;
-      background: var(--yellow);
-      color: #151515;
+
+    .role-profile {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .role-profile span,
+    .role-profile strong {
+      display: block;
+    }
+
+    .role-profile span {
+      margin-bottom: 5px;
+      color: var(--faint);
+      letter-spacing: .08em;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .role-profile strong {
+      font: 600 15px "Space Grotesk", "Noto Sans SC", sans-serif;
+    }
+
+    .role-profile p {
+      margin: 5px 0 0;
+      color: var(--muted);
       font-size: 11px;
     }
-    .process-item p { margin: 2px 0 0; color: var(--muted); font-size: 11px; }
+
+    .readiness-list {
+      display: grid;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .readiness-item {
+      display: grid;
+      min-height: 46px;
+      gap: 9px;
+      align-items: center;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--line);
+      grid-template-columns: 9px 1fr auto;
+    }
+
+    .readiness-item i {
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--faint);
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .readiness-item span {
+      font-size: 11px;
+    }
+
+    .readiness-item small {
+      color: var(--faint);
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+
+    .readiness-item[data-state="checking"] i {
+      border-color: var(--yellow);
+      background: var(--yellow);
+      animation: pulse .65s infinite;
+    }
+
+    .readiness-item[data-state="checking"] small {
+      color: var(--alarm);
+    }
+
+    .readiness-item[data-state="ready"] i {
+      border-color: var(--run);
+      background: var(--run);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--run) 15%, transparent);
+    }
+
+    .readiness-item[data-state="ready"] small {
+      color: var(--run);
+    }
+
+    .readiness-summary {
+      margin: 0;
+      padding: 11px 12px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .readiness-summary.ready {
+      color: var(--run);
+    }
 
     .library-tools {
       display: flex;
@@ -606,6 +689,7 @@
       .connections { grid-template-columns: repeat(3, 1fr); }
       .connections > span { display: none; }
       .login-grid, .training-grid, .report-grid { grid-template-columns: 1fr; }
+      .login-actions { grid-template-columns: 1fr; }
       .detail-grid { grid-template-columns: 1fr; }
       .editor-grid { grid-template-columns: 1fr; }
       .score-card { min-height: 105px; }
@@ -664,6 +748,14 @@
               <input id="user-name" value="trainee.hu" autocomplete="off" />
             </div>
             <div class="field">
+              <label for="role-select" data-t="roleLabel">会话角色</label>
+              <select id="role-select">
+                <option value="trainee" data-t="roleTrainee">受训人员</option>
+                <option value="instructor" data-t="roleInstructor">培训管理员</option>
+                <option value="maintenance" data-t="roleMaintenance">维护工程师</option>
+              </select>
+            </div>
+            <div class="field">
               <label for="station-select" data-t="stationLabel">训练站点</label>
               <select id="station-select">
                 <option value="A01">A01 · Assembly / 装配</option>
@@ -671,18 +763,27 @@
                 <option value="C03">C03 · Packaging / 包装</option>
               </select>
             </div>
-            <button class="btn primary" type="submit" data-t="loginButton">登录并自动连接 →</button>
+            <div class="login-actions">
+              <button class="btn" id="check-environment" type="button" data-t="checkEnvironment">检查模拟环境</button>
+              <button class="btn primary" id="login-submit" type="submit" data-t="loginButton" disabled>登录并自动连接 →</button>
+            </div>
           </div>
         </form>
 
         <aside class="panel">
-          <div class="panel-title"><span data-t="flowTitle">训练流程</span><span>04 STEPS</span></div>
-          <div class="panel-body process-list">
-            <div class="process-item"><b>1</b><div><strong data-t="flow1Title">连接真实控制逻辑</strong><p data-t="flow1Body">同步 PLC 标签、HMI 报警和二维仿真状态。</p></div></div>
-            <div class="process-item"><b>2</b><div><strong data-t="flow2Title">配置站点故障库</strong><p data-t="flow2Body">自动生成场景，并支持新增、查看、编辑和删除。</p></div></div>
-            <div class="process-item"><b>3</b><div><strong data-t="flow3Title">运行故障训练</strong><p data-t="flow3Body">模型和 PLC 根据故障同步停机、报警或改变信号。</p></div></div>
-            <div class="process-item"><b>4</b><div><strong data-t="flow4Title">验证并生成报告</strong><p data-t="flow4Body">检查根因与处置答案，保留完整训练轨迹。</p></div></div>
+          <div class="panel-title"><span data-t="readinessTitle">会话准备</span><span id="readiness-count">0 / 4 READY</span></div>
+          <div class="role-profile">
+            <span data-t="roleScope">当前角色权限</span>
+            <strong id="role-profile-name"></strong>
+            <p id="role-profile-body"></p>
           </div>
+          <ul class="readiness-list">
+            <li class="readiness-item" data-check="runtime" data-state="pending"><i></i><span data-t="checkRuntime">浏览器仿真运行时</span><small data-t="pending">待检查</small></li>
+            <li class="readiness-item" data-check="package" data-state="pending"><i></i><span data-t="checkPackage">站点故障场景包</span><small data-t="pending">待检查</small></li>
+            <li class="readiness-item" data-check="plc" data-state="pending"><i></i><span data-t="checkPlc">PLC 信号沙箱</span><small data-t="pending">待检查</small></li>
+            <li class="readiness-item" data-check="hmi" data-state="pending"><i></i><span data-t="checkHmi">HMI / OPC UA 模拟通道</span><small data-t="pending">待检查</small></li>
+          </ul>
+          <p class="readiness-summary" id="readiness-summary" data-t="readinessPending">先检查所选站点的模拟环境，再建立培训会话。</p>
         </aside>
       </div>
     </section>
@@ -824,12 +925,18 @@
         systemName: "故障仿真培训平台", offline: "● 未登录", online: "● 培训会话在线",
         stepLogin: "登录连接", stepLibrary: "故障配置", stepTraining: "模拟验证", stepReport: "培训报告",
         connection: "系统连接", loginTitle: "培训员登录", stepOne: "步骤 01", loginHeading: "进入站点训练环境",
-        loginBody: "登录后平台会自动连接 PLC、HMI 与仿真模型，并载入该站点的故障模板。",
-        userLabel: "培训用户", stationLabel: "训练站点", loginButton: "登录并自动连接 →",
-        flowTitle: "训练流程", flow1Title: "连接真实控制逻辑", flow1Body: "同步 PLC 标签、HMI 报警和二维仿真状态。",
-        flow2Title: "配置站点故障库", flow2Body: "自动生成场景，并支持新增、查看、编辑和删除。",
-        flow3Title: "运行故障训练", flow3Body: "模型和 PLC 根据故障同步停机、报警或改变信号。",
-        flow4Title: "验证并生成报告", flow4Body: "检查根因与处置答案，保留完整训练轨迹。",
+        loginBody: "选择角色与站点，确认模拟环境就绪后，平台会连接 PLC、HMI 与仿真模型并载入站点故障模板。",
+        userLabel: "培训用户", roleLabel: "会话角色", stationLabel: "训练站点", loginButton: "登录并自动连接 →",
+        roleTrainee: "受训人员", roleInstructor: "培训管理员", roleMaintenance: "维护工程师",
+        roleScope: "当前角色权限", traineeScope: "运行已发布场景、提交诊断并生成个人报告。",
+        instructorScope: "维护场景库、组织培训并查看完整执行记录。",
+        maintenanceScope: "检查 PLC / HMI 信号、验证恢复步骤与设备状态。",
+        readinessTitle: "会话准备", checkEnvironment: "检查模拟环境", pending: "待检查", checking: "检查中", ready: "就绪",
+        checkRuntime: "浏览器仿真运行时", checkPackage: "站点故障场景包", checkPlc: "PLC 信号沙箱",
+        checkHmi: "HMI / OPC UA 模拟通道", readinessPending: "先检查所选站点的模拟环境，再建立培训会话。",
+        readinessRunning: "正在验证站点模板、信号沙箱与 HMI 通道…",
+        readinessReady: "模拟环境已就绪，可以登录并建立系统连接。",
+        environmentRequired: "请先完成模拟环境检查",
         stepTwo: "步骤 02", libraryHeading: "站点故障场景库", startTraining: "使用所选故障开始培训 →",
         searchPlaceholder: "搜索故障编号、名称或 PLC 标签", generateFault: "＋ 自动生成", addFault: "＋ 新增场景",
         select: "选择", faultId: "编号", faultName: "错误场景", severity: "等级", plcTag: "PLC 标签", actions: "操作",
@@ -844,7 +951,7 @@
         editTitle: "修改故障场景", detailCause: "根因", detailAction: "处置", detailHmi: "HMI 报警",
         chooseCause: "请选择根因", genericDistractor: "PLC 主程序损坏", inject: "正在注入故障…",
         correct: "诊断正确：PLC、HMI 与仿真模型已执行恢复逻辑。", partial: "答案未完全匹配：请结合报警和 PLC 信号修正判断。",
-        reportUser: "培训用户", reportStation: "训练站点", reportScenario: "故障场景", reportCause: "根因判断",
+        reportUser: "培训用户", reportRole: "会话角色", reportStation: "训练站点", reportScenario: "故障场景", reportCause: "根因判断",
         reportAction: "恢复操作", reportDuration: "响应时间", reportResult: "验证结果", passed: "通过", review: "需要复训",
         trace: "链路记录", noMatch: "未找到匹配场景", loginRequired: "请先登录并连接训练站点",
         trainingRequired: "请先选择一个故障场景", reportRequired: "完成一次答案验证后即可查看报告"
@@ -853,12 +960,18 @@
         systemName: "Fault Simulation Training Platform", offline: "● SIGNED OUT", online: "● TRAINING SESSION ONLINE",
         stepLogin: "Login & link", stepLibrary: "Fault config", stepTraining: "Sim & verify", stepReport: "Report",
         connection: "Connections", loginTitle: "Trainee login", stepOne: "Step 01", loginHeading: "Enter the station training environment",
-        loginBody: "After login, the platform links the PLC, HMI and simulation model and loads station-specific fault templates.",
-        userLabel: "Trainee", stationLabel: "Training station", loginButton: "Login and auto-connect →",
-        flowTitle: "Training flow", flow1Title: "Link control logic", flow1Body: "Synchronise PLC tags, HMI alarms and the 2D simulation state.",
-        flow2Title: "Configure fault library", flow2Body: "Generate scenarios and create, read, update or delete them.",
-        flow3Title: "Run fault training", flow3Body: "The model and PLC stop, alarm or switch signals according to the fault.",
-        flow4Title: "Verify and report", flow4Body: "Validate the diagnosis and recovery answer and retain the full trace.",
+        loginBody: "Choose a role and station, verify the sandbox, then link the PLC, HMI and simulation model with station-specific fault templates.",
+        userLabel: "Trainee", roleLabel: "Session role", stationLabel: "Training station", loginButton: "Login and auto-connect →",
+        roleTrainee: "Trainee", roleInstructor: "Training administrator", roleMaintenance: "Maintenance engineer",
+        roleScope: "Current role scope", traineeScope: "Run published scenarios, submit a diagnosis and generate a personal report.",
+        instructorScope: "Maintain the scenario library, organize training and inspect the full execution trace.",
+        maintenanceScope: "Inspect PLC / HMI signals, validate recovery steps and verify equipment state.",
+        readinessTitle: "Session readiness", checkEnvironment: "Check simulation environment", pending: "Pending", checking: "Checking", ready: "Ready",
+        checkRuntime: "Browser simulation runtime", checkPackage: "Station fault scenario package", checkPlc: "PLC signal sandbox",
+        checkHmi: "HMI / OPC UA simulated channel", readinessPending: "Check the selected station sandbox before starting a training session.",
+        readinessRunning: "Validating station templates, signal sandbox and the HMI channel…",
+        readinessReady: "The simulation environment is ready. Login can now establish the system links.",
+        environmentRequired: "Complete the simulation environment check first",
         stepTwo: "Step 02", libraryHeading: "Station fault scenario library", startTraining: "Train with selected fault →",
         searchPlaceholder: "Search code, name or PLC tag", generateFault: "＋ Auto-generate", addFault: "＋ Add scenario",
         select: "Select", faultId: "Code", faultName: "Fault scenario", severity: "Level", plcTag: "PLC tag", actions: "Actions",
@@ -874,7 +987,7 @@
         chooseCause: "Select a cause", genericDistractor: "PLC main program corrupted", inject: "Injecting fault…",
         correct: "Correct diagnosis: the PLC, HMI and simulation model have executed the recovery logic.",
         partial: "The answer is incomplete. Recheck the alarm and PLC signals.",
-        reportUser: "Trainee", reportStation: "Station", reportScenario: "Fault scenario", reportCause: "Cause answer",
+        reportUser: "Trainee", reportRole: "Session role", reportStation: "Station", reportScenario: "Fault scenario", reportCause: "Cause answer",
         reportAction: "Recovery action", reportDuration: "Response time", reportResult: "Validation", passed: "Passed", review: "Retraining required",
         trace: "Execution trace", noMatch: "No matching scenario", loginRequired: "Log in and connect a training station first",
         trainingRequired: "Select a fault scenario first", reportRequired: "Verify an answer before opening the report"
@@ -965,6 +1078,7 @@
 
     const screens = ["login", "library", "training", "report"];
     let user = "";
+    let role = "trainee";
     let station = "A01";
     let faults = [];
     let selectedFaultId = "";
@@ -973,6 +1087,8 @@
     let trainingStartedAt = 0;
     let report = null;
     let toastTimer = 0;
+    let environmentReady = false;
+    let environmentRunId = 0;
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -995,6 +1111,26 @@
     })[character]);
     const cloneTemplates = (key) => templates[key].map((fault) => ({ ...fault }));
     const storeKey = () => `fault-training-${lang}-${station}`;
+    const roleProfiles = {
+      trainee: {
+        label: bilingual("受训人员", "Trainee"),
+        scope: bilingual(copy.zh.traineeScope, copy.en.traineeScope)
+      },
+      instructor: {
+        label: bilingual("培训管理员", "Training administrator"),
+        scope: bilingual(copy.zh.instructorScope, copy.en.instructorScope)
+      },
+      maintenance: {
+        label: bilingual("维护工程师", "Maintenance engineer"),
+        scope: bilingual(copy.zh.maintenanceScope, copy.en.maintenanceScope)
+      }
+    };
+    const environmentChecks = [
+      ["runtime", () => typeof Promise === "function" && typeof requestAnimationFrame === "function"],
+      ["package", () => Array.isArray(templates[station]) && templates[station].length >= 3],
+      ["plc", () => ["A01", "B02", "C03"].includes(station)],
+      ["hmi", () => typeof parent?.postMessage === "function"]
+    ];
 
     function reportHeight() {
       requestAnimationFrame(() => {
@@ -1053,6 +1189,71 @@
       try { localStorage.setItem(storeKey(), JSON.stringify(value)); } catch {}
     }
 
+    function renderRoleProfile() {
+      const profile = roleProfiles[$("#role-select").value] || roleProfiles.trainee;
+      $("#role-profile-name").textContent = local(profile.label);
+      $("#role-profile-body").textContent = local(profile.scope);
+      reportHeight();
+    }
+
+    function setReadinessItem(key, state) {
+      const item = $(`[data-check="${key}"]`);
+      if (!item) return;
+      item.dataset.state = state;
+      item.querySelector("small").textContent = t(state);
+    }
+
+    function resetEnvironmentCheck() {
+      environmentRunId += 1;
+      environmentReady = false;
+      $("#login-submit").disabled = true;
+      $("#check-environment").disabled = false;
+      $("#readiness-count").textContent = "0 / 4 READY";
+      $("#readiness-summary").textContent = t("readinessPending");
+      $("#readiness-summary").classList.remove("ready");
+      environmentChecks.forEach(([key]) => setReadinessItem(key, "pending"));
+      reportHeight();
+    }
+
+    async function runEnvironmentCheck() {
+      const runId = ++environmentRunId;
+      environmentReady = false;
+      $("#login-submit").disabled = true;
+      $("#check-environment").disabled = true;
+      $("#readiness-summary").textContent = t("readinessRunning");
+      $("#readiness-summary").classList.remove("ready");
+      let readyCount = 0;
+
+      for (const [key, validate] of environmentChecks) {
+        setReadinessItem(key, "checking");
+        await new Promise((resolve) => setTimeout(resolve, reducedMotion.matches ? 25 : 220));
+        if (runId !== environmentRunId) return;
+        const passed = Boolean(validate());
+        setReadinessItem(key, passed ? "ready" : "pending");
+        if (!passed) {
+          $("#check-environment").disabled = false;
+          $("#readiness-count").textContent = `${readyCount} / 4 READY`;
+          return;
+        }
+        readyCount += 1;
+        $("#readiness-count").textContent = `${readyCount} / 4 READY`;
+      }
+
+      environmentReady = true;
+      $("#login-submit").disabled = false;
+      $("#check-environment").disabled = false;
+      $("#readiness-summary").textContent = t("readinessReady");
+      $("#readiness-summary").classList.add("ready");
+      runMotion([".readiness-item", "#login-submit"], {
+        opacity: [0.72, 1],
+        x: [-3, 0],
+        duration: 220,
+        delay: window.anime?.stagger?.(34),
+        ease: "out(3)"
+      });
+      reportHeight();
+    }
+
     function connectNode(id, delay) {
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -1082,7 +1283,9 @@
 
     $("#login-form").addEventListener("submit", async (event) => {
       event.preventDefault();
+      if (!environmentReady) return toast(t("environmentRequired"));
       user = $("#user-name").value.trim() || (lang === "en" ? "Trainee" : "培训员");
+      role = $("#role-select").value;
       station = $("#station-select").value;
       $("#session-status").textContent = t("online");
       await Promise.all([
@@ -1092,7 +1295,8 @@
       ]);
       faults = loadFaults();
       selectedFaultId = faults[0]?.id || "";
-      $("#library-subtitle").textContent = `${station} · ${user} · PLC / SIM / HMI ${t("connected")}`;
+      $("#library-subtitle").textContent =
+        `${station} · ${user} · ${local(roleProfiles[role].label)} · PLC / SIM / HMI ${t("connected")}`;
       renderFaults();
       setScreen("library");
     });
@@ -1384,6 +1588,7 @@
       scoreTarget.textContent = reducedMotion.matches ? report.score : "0";
       const rows = [
         [t("reportUser"), user],
+        [t("reportRole"), local(roleProfiles[role].label)],
         [t("reportStation"), station],
         [t("reportScenario"), `${activeFault.id} · ${local(activeFault.name)}`],
         [t("reportCause"), report.causeCorrect ? local(activeFault.cause) : t("review")],
@@ -1394,7 +1599,7 @@
       $("#report-table").innerHTML = rows.map(([label, value]) =>
         `<div class="report-row"><span>${escapeHtml(label)}</span><b>${escapeHtml(value)}</b></div>`).join("");
       $("#report-trace").innerHTML =
-        `<b>${t("trace")}</b><br>LOGIN → PLC/HMI/SIM LINKED → ${escapeHtml(activeFault.id)} INJECTED → ` +
+        `<b>${t("trace")}</b><br>LOGIN [${escapeHtml(role.toUpperCase())}] → ENVIRONMENT READY → PLC/HMI/SIM LINKED → ${escapeHtml(activeFault.id)} INJECTED → ` +
         `PLC ${escapeHtml(activeFault.plcTag)} REACTED → HMI ALARM → ANSWER VERIFIED → ${report.passed ? "RECOVERY DEPLOYED" : "RETRAINING REQUIRED"}`;
       setScreen("report");
       if (!reducedMotion.matches) {
@@ -1421,6 +1626,17 @@
     $("#finish-training").addEventListener("click", () => setScreen("library"));
     $("#retry-training").addEventListener("click", () => activeFault && startTraining(activeFault));
     $("#print-report").addEventListener("click", () => print());
+    $("#role-select").addEventListener("change", renderRoleProfile);
+    $("#station-select").addEventListener("change", () => {
+      station = $("#station-select").value;
+      $("#session-status").textContent = t("offline");
+      $$(".node").forEach((node) => {
+        node.classList.remove("connecting", "online");
+        node.querySelector("small").textContent = "OFFLINE";
+      });
+      resetEnvironmentCheck();
+    });
+    $("#check-environment").addEventListener("click", runEnvironmentCheck);
 
     $$(".step").forEach((step) => {
       step.addEventListener("click", () => {
@@ -1452,6 +1668,8 @@
     if ("ResizeObserver" in window) {
       new ResizeObserver(reportHeight).observe($(".app"));
     }
+    renderRoleProfile();
+    resetEnvironmentCheck();
     reportHeight();
   </script>
 </body>
