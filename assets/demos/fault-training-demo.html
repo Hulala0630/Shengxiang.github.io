@@ -147,6 +147,21 @@
 
     .connections > span { color: var(--faint); text-transform: uppercase; }
     .node:last-child { border-right: 0; }
+    .node { position: relative; overflow: hidden; }
+    .node::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--run);
+      content: "";
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .2s ease-out;
+    }
+    .node.connecting::after { background: var(--yellow); transform: scaleX(.55); }
+    .node.online::after { transform: scaleX(1); }
     .node i {
       width: 7px;
       height: 7px;
@@ -523,6 +538,9 @@
     .feedback.good { border-color: var(--run); color: var(--run); }
     .feedback.bad { border-color: var(--red); color: var(--red); }
 
+    .screen-motion-part { will-change: transform, opacity; }
+    .signal-hit { position: relative; z-index: 1; }
+
     .report-grid {
       display: grid;
       gap: 16px;
@@ -798,6 +816,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="/assets/vendor/anime.umd.min.js"></script>
   <script>
     const lang = document.documentElement.lang === "en" ? "en" : "zh";
     const copy = {
@@ -957,6 +976,20 @@
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const runMotion = (targets, options) => {
+      if (reducedMotion.matches || !window.anime?.animate) return null;
+      const resolvedTargets = Array.isArray(targets)
+        ? targets.flatMap((target) => typeof target === "string" ? $$(target) : target)
+        : targets;
+      return window.anime.animate(resolvedTargets, options);
+    };
+    const clearMotionStyles = (targets) => {
+      (Array.isArray(targets) ? targets : [targets]).forEach((target) => {
+        target?.style?.removeProperty("opacity");
+        target?.style?.removeProperty("transform");
+      });
+    };
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
     })[character]);
@@ -992,6 +1025,17 @@
         step.classList.toggle("done", index < screens.indexOf(name));
         step.setAttribute("aria-current", screen === name ? "step" : "false");
       });
+      const activeScreen = $(`#${name}-screen`);
+      const screenParts = activeScreen ? [...activeScreen.children] : [];
+      screenParts.forEach((part) => part.classList.add("screen-motion-part"));
+      runMotion(screenParts, {
+        opacity: [0, 1],
+        y: [7, 0],
+        duration: 220,
+        delay: window.anime?.stagger?.(32),
+        ease: "out(3)",
+        onComplete: () => clearMotionStyles(screenParts)
+      });
       reportHeight();
     }
 
@@ -1015,10 +1059,21 @@
           const node = $(id);
           node.classList.add("connecting");
           node.querySelector("small").textContent = "LINKING";
+          runMotion(node, {
+            opacity: [0.58, 1],
+            x: [-5, 0],
+            duration: 210,
+            ease: "out(3)"
+          });
           setTimeout(() => {
             node.classList.remove("connecting");
             node.classList.add("online");
             node.querySelector("small").textContent = "ONLINE";
+            runMotion(node.querySelector("i"), {
+              scale: [.45, 1.65, 1],
+              duration: 330,
+              ease: "out(4)"
+            });
             resolve();
           }, 260);
         }, delay);
@@ -1224,6 +1279,13 @@
       $("#action-answer").value = "";
       renderNormalIo();
       setScreen("training");
+      runMotion(["#station-model", ".io-panel", ".hmi"], {
+        opacity: [0, 1],
+        y: [8, 0],
+        duration: 280,
+        delay: window.anime?.stagger?.(45),
+        ease: "out(3)"
+      });
       setTimeout(() => applyFault(fault), 650);
     }
 
@@ -1250,6 +1312,25 @@
         ioRow("DB20 DRIVE", fault.simKey === "drive" ? "FAULT" : "READY", fault.simKey === "drive"),
         ioRow("DB99 ALARM", fault.id, true)
       ].join("");
+      const signalTargets = [
+        "#fault-banner",
+        ...$$(".io-list li.bad"),
+        "#hmi-title",
+        "#hmi-message"
+      ].flatMap((target) => typeof target === "string" ? $$(target) : target);
+      signalTargets.forEach((target) => target?.classList.add("signal-hit"));
+      runMotion(signalTargets, {
+        opacity: [0.25, 1],
+        x: [-8, 0],
+        duration: 260,
+        delay: window.anime?.stagger?.(48),
+        ease: "out(4)"
+      });
+      runMotion("#station-model", {
+        scale: [1, 1.012, 1],
+        duration: 360,
+        ease: "out(3)"
+      });
     }
 
     $("#answer-form").addEventListener("submit", (event) => {
@@ -1269,6 +1350,13 @@
       feedback.className = `feedback ${passed ? "good" : "bad"}`;
       feedback.textContent = passed ? t("correct") : t("partial");
       $("#open-report").hidden = false;
+      runMotion(["#feedback", "#open-report"], {
+        opacity: [0, 1],
+        y: [6, 0],
+        duration: 240,
+        delay: window.anime?.stagger?.(45),
+        ease: "out(3)"
+      });
       reportHeight();
 
       if (passed) {
@@ -1277,6 +1365,13 @@
         $("#hmi-title").textContent = "HMI · ALARM ACKNOWLEDGED";
         $("#hmi-message").textContent = "PLC RESET COMPLETE · AUTO CYCLE READY";
         renderNormalIo();
+        runMotion(["#station-model", "#hmi-title", "#hmi-message"], {
+          opacity: [.42, 1],
+          scale: [.99, 1],
+          duration: 330,
+          delay: window.anime?.stagger?.(45),
+          ease: "out(4)"
+        });
       }
     });
 
@@ -1285,7 +1380,8 @@
       if (!report || !activeFault) return;
       const id = `TR-${station}-${Date.now().toString().slice(-6)}`;
       $("#report-id").textContent = `${id} · ${new Date().toLocaleString(lang === "en" ? "en-GB" : "zh-CN")}`;
-      $("#report-score").textContent = report.score;
+      const scoreTarget = $("#report-score");
+      scoreTarget.textContent = reducedMotion.matches ? report.score : "0";
       const rows = [
         [t("reportUser"), user],
         [t("reportStation"), station],
@@ -1301,6 +1397,24 @@
         `<b>${t("trace")}</b><br>LOGIN → PLC/HMI/SIM LINKED → ${escapeHtml(activeFault.id)} INJECTED → ` +
         `PLC ${escapeHtml(activeFault.plcTag)} REACTED → HMI ALARM → ANSWER VERIFIED → ${report.passed ? "RECOVERY DEPLOYED" : "RETRAINING REQUIRED"}`;
       setScreen("report");
+      if (!reducedMotion.matches) {
+        const scoreCounter = { value: 0 };
+        runMotion(scoreCounter, {
+          value: report.score,
+          duration: 680,
+          ease: "out(4)",
+          onUpdate: () => {
+            scoreTarget.textContent = String(Math.round(scoreCounter.value));
+          }
+        });
+        runMotion([".score-card", ".report-row", "#report-trace"], {
+          opacity: [0, 1],
+          y: [8, 0],
+          duration: 300,
+          delay: window.anime?.stagger?.(38),
+          ease: "out(3)"
+        });
+      }
     }
 
     $("#abort-training").addEventListener("click", () => setScreen("library"));

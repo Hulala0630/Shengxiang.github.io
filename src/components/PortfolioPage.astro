@@ -119,7 +119,7 @@ const projectSummary = (project: Project) =>
           <article class="history" data-reveal>
             <div class="panel-head">
               <span>{c.career}</span>
-              <span class="drag-guide" aria-hidden="true"><i>↔</i>{c.swipe}</span>
+              <span class="drag-guide" aria-hidden="true"><i></i></span>
             </div>
             <div
               class="history-scroll"
@@ -150,7 +150,7 @@ const projectSummary = (project: Project) =>
           <iframe
             id="hero-frame"
             data-theme-frame
-            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=theme-shell-2"
+            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=theme-shell-3"
             loading="eager"
             scrolling="no"
             title="Interactive assembly digital twin"
@@ -220,7 +220,7 @@ const projectSummary = (project: Project) =>
                     id="fault-training-frame"
                     class="fault-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-2`}
+                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-3`}
                     loading="lazy"
                     scrolling="no"
                     title={locale === "zh"
@@ -245,11 +245,22 @@ const projectSummary = (project: Project) =>
               </div>
 
               <details class="selected-details">
-                <summary>{index === 1 ? c.projectVideo : c.projectContext}</summary>
+                <summary>
+                  <span>
+                    <small>{String(index + 1).padStart(2, "0")} / CASE FILE</small>
+                    <b>{index === 1 ? c.projectVideo : c.projectContext}</b>
+                  </span>
+                  <span class="details-trigger-signal" aria-hidden="true"><i></i><b>+</b></span>
+                </summary>
                 <div class="selected-detail-content">
+                  <header class="detail-dossier-head">
+                    <span>{selectedLabels[index]}</span>
+                    <b>{text(project.title, locale)}</b>
+                    <small>{(project.technologies ?? []).length} SYSTEM LAYERS</small>
+                  </header>
                   <div class="details-grid">
-                    <div><ProjectFacts project={project} locale={locale} group="narrative" /></div>
-                    <div><ProjectFacts project={project} locale={locale} group="lists" /></div>
+                    <div class="detail-column narrative"><ProjectFacts project={project} locale={locale} group="narrative" /></div>
+                    <div class="detail-column evidence"><ProjectFacts project={project} locale={locale} group="lists" /></div>
                   </div>
                   {project.video?.url && (
                     <video controls preload="none" playsinline>
@@ -302,6 +313,11 @@ const projectSummary = (project: Project) =>
                 <b class="plus">+</b>
               </summary>
               <div class="archive-detail">
+                <header class="archive-detail-head">
+                  <span>{text(project.projectType, locale)}</span>
+                  <b>{text(project.title, locale)}</b>
+                  <small>{(project.technologies ?? []).slice(0, 3).join(" / ")}</small>
+                </header>
                 <div><ProjectFacts project={project} locale={locale} /></div>
                 <div class="project-media">
                   {project.video?.url ? (
@@ -612,33 +628,10 @@ const projectSummary = (project: Project) =>
         }
       }
     };
-    let scrollCompletionTimer = 0;
-    let pendingScrollFinish: (() => void) | null = null;
     const scrollToTarget = (target: HTMLElement, onComplete?: () => void) => {
-      window.clearTimeout(scrollCompletionTimer);
-      if (pendingScrollFinish) {
-        window.removeEventListener("scrollend", pendingScrollFinish);
-      }
-      let completed = false;
-      const finish = () => {
-        if (completed) return;
-        completed = true;
-        window.clearTimeout(scrollCompletionTimer);
-        window.removeEventListener("scrollend", finish);
-        pendingScrollFinish = null;
-        onComplete?.();
-      };
-      if (reducedMotion.matches) {
-        if (target.id === "top") window.scrollTo(0, 0);
-        else target.scrollIntoView({ block: "start" });
-        finish();
-        return;
-      }
-      pendingScrollFinish = finish;
-      window.addEventListener("scrollend", finish, { once: true });
-      if (target.id === "top") window.scrollTo({ top: 0, behavior: "smooth" });
-      else target.scrollIntoView({ block: "start", behavior: "smooth" });
-      scrollCompletionTimer = window.setTimeout(finish, 700);
+      if (target.id === "top") window.scrollTo(0, 0);
+      else target.scrollIntoView({ block: "start" });
+      onComplete?.();
     };
     const navigateToSection = (sectionId: string, onComplete?: () => void) => {
       const target = document.getElementById(sectionId);
@@ -811,23 +804,38 @@ const projectSummary = (project: Project) =>
         details.dataset.animating = "true";
         if (!details.open) {
           details.open = true;
+          details.classList.add("is-opening");
           animate(content, {
             opacity: [0, 1],
-            y: [8, 0],
-            clipPath: ["inset(0 0 10% 0)", "inset(0 0 0% 0)"],
-            duration: 240,
+            y: [5, 0],
+            clipPath: ["inset(0 0 5% 0)", "inset(0 0 0% 0)"],
+            duration: 180,
             ease: "out(3)",
             onComplete: () => {
               cleanupDetailsContent(content);
+              details.classList.remove("is-opening");
               delete details.dataset.animating;
             }
           });
+          const detailParts = $$(
+            ".detail-dossier-head > *, .details-grid .detail-column, .archive-detail-head > *, .archive-detail > div",
+            content
+          );
+          if (detailParts.length) {
+            animate(detailParts, {
+              opacity: [0, 1],
+              y: [7, 0],
+              duration: 220,
+              delay: stagger(24),
+              ease: "out(3)"
+            });
+          }
         } else {
           animate(content, {
             opacity: [1, 0],
-            y: [0, -5],
-            clipPath: ["inset(0 0 0% 0)", "inset(0 0 8% 0)"],
-            duration: 150,
+            y: [0, -3],
+            clipPath: ["inset(0 0 0% 0)", "inset(0 0 4% 0)"],
+            duration: 110,
             ease: "in(2)",
             onComplete: () => {
               details.open = false;
