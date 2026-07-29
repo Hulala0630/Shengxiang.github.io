@@ -848,6 +848,11 @@ summary:focus-visible {
   background: color-mix(in srgb, var(--red) 7%, var(--card));
 }
 
+.selected-2 .selected-copy .selected-outcome {
+  border-left-color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 8%, var(--card));
+}
+
 .selected-outcome span,
 .selected-outcome strong {
   display: block;
@@ -859,6 +864,10 @@ summary:focus-visible {
   letter-spacing: 0.08em;
   font: 600 10px "IBM Plex Mono", monospace;
   text-transform: uppercase;
+}
+
+.selected-2 .selected-outcome span {
+  color: var(--blue);
 }
 
 .selected-outcome strong {
@@ -884,6 +893,10 @@ summary:focus-visible {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font: 600 11px "IBM Plex Mono", monospace !important;
+}
+
+.selected-2 .fault-flow-label {
+  color: var(--blue) !important;
 }
 
 .fault-flow-summary ol {
@@ -912,6 +925,11 @@ summary:focus-visible {
   background: var(--yellow);
   color: #151515;
   font: 600 10px "IBM Plex Mono", monospace;
+}
+
+.selected-2 .fault-flow-summary li b {
+  background: var(--blue);
+  color: #fff;
 }
 
 .fault-flow-summary li span,
@@ -951,10 +969,24 @@ summary:focus-visible {
   background: var(--card);
 }
 
+.selected-2 .selected-effect {
+  display: block;
+  min-height: 680px;
+  background: var(--card);
+}
+
 .fault-demo-frame {
   display: block;
   width: 100%;
   height: 620px;
+  border: 0;
+  background: var(--card);
+}
+
+.isaac-demo-frame {
+  display: block;
+  width: 100%;
+  height: 680px;
   border: 0;
   background: var(--card);
 }
@@ -1264,7 +1296,7 @@ summary:focus-visible {
 .fault-architecture header > span {
   display: block;
   margin-bottom: 9px;
-  color: var(--red);
+  color: var(--project-accent);
   letter-spacing: 0.09em;
   font: 600 11px "IBM Plex Mono", monospace;
   text-transform: uppercase;
@@ -1299,7 +1331,7 @@ summary:focus-visible {
 }
 
 .fault-detail-lead li strong {
-  color: var(--red);
+  color: var(--project-accent);
   font: 700 clamp(24px, 2.8vw, 38px) / 1 "Space Grotesk", sans-serif;
 }
 
@@ -1455,6 +1487,50 @@ summary:focus-visible {
   margin: 0 28px 28px;
   border: 1px solid var(--ink);
   background: #050608;
+}
+
+.project-video-card {
+  width: min(62%, 760px);
+  margin: 0 32px 34px auto;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+
+.project-video-card figcaption {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 12px 0 14px;
+  border-bottom: 1px solid var(--ink);
+  font: 600 10px "IBM Plex Mono", monospace;
+}
+
+.project-video-card button {
+  min-height: 27px;
+  padding: 0 9px;
+  border: 1px solid var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  font: 600 9px "IBM Plex Mono", monospace;
+}
+
+.project-video-card button:hover,
+.project-video-card button:focus-visible {
+  background: var(--blue);
+  color: #fff;
+}
+
+.selected-details .project-video-card video {
+  display: block;
+  width: 100%;
+  max-height: none;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  border: 0;
+  object-fit: contain;
 }
 
 .details-grid h4,
@@ -2014,6 +2090,14 @@ footer {
     height: 760px;
   }
 
+  .selected-2 .selected-effect {
+    min-height: 900px;
+  }
+
+  .isaac-demo-frame {
+    height: 900px;
+  }
+
   .fault-chain,
   .scene-chain {
     width: 92%;
@@ -2071,6 +2155,16 @@ footer {
   .selected-details video {
     width: calc(100% - 36px);
     margin: 0 18px 18px;
+  }
+
+  .project-video-card {
+    width: calc(100% - 36px);
+    margin: 0 18px 22px;
+  }
+
+  .selected-details .project-video-card video {
+    width: 100%;
+    margin: 0;
   }
 
   .fault-architecture {

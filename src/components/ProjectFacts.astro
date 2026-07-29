@@ -9,7 +9,6 @@ interface Props {
   group?: "narrative" | "lists" | "all";
   hideSummary?: boolean;
   hideStructure?: boolean;
-  hideHighlights?: boolean;
 }
 
 const {
@@ -17,8 +16,7 @@ const {
   locale,
   group = "all",
   hideSummary = false,
-  hideStructure = false,
-  hideHighlights = false
+  hideStructure = false
 } = Astro.props;
 const c = siteCopy[locale];
 
@@ -61,7 +59,7 @@ const narrative: [string, string][] = (
 
 const bullets: [string, string[]][] = (
   [
-    [c.highlights, hideHighlights ? [] : list(project.highlights, locale)],
+    [c.highlights, list(project.highlights, locale)],
     [c.keyFeatures, list(project.keyFeatures, locale)],
     [c.technicalHighlights, list(project.technicalHighlights, locale)],
     [c.interaction, list(project.interaction, locale)]

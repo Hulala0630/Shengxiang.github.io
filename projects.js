@@ -543,8 +543,8 @@ const projectsData = [
       zh: "工业故障仿真与培训系统"
     },
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "BMW Group · Enterprise System",
+      zh: "BMW Group · 企业系统"
     },
     technicalType: {
       en: "Technical Project",
@@ -607,6 +607,10 @@ const projectsData = [
         "v  v             v",
         "PLCSim 仿真系统  OPC UA HMI"
       ].join("\n")
+    },
+    cardResult: {
+      en: "The global rollout supported 1000+ training users, standardized 200+ reusable fault scenarios and improved troubleshooting capability by 25%.",
+      zh: "全球部署覆盖 1000+ 培训用户，沉淀 200+ 可复用故障场景，并将故障排除能力提升了 25%。"
     },
     result: {
       en: "The platform was deployed across five factories in Germany, Hungary, Mexico, China and the United States, including development and training use cases for next-generation battery production. The global rollout supported 1000+ training users, standardized 200+ reusable fault scenarios and improved troubleshooting capability by 25%.",
@@ -1047,20 +1051,20 @@ const projectsData = [
       zh: "技术延展项目"
     },
     pitch: {
-      en: "A configuration-driven industrial simulation framework that turns scene intent into reusable Isaac Sim worlds and synthetic data outputs.",
-      zh: "一个配置驱动的工业仿真框架，将场景意图转化为可复用的 Isaac Sim 环境与合成数据输出。"
+      en: "A configuration-driven Isaac Sim pipeline that keeps YAML scene definitions, 3D placement and reusable data outputs in one engineering loop.",
+      zh: "一个配置驱动的 Isaac Sim 工程管线，让 YAML 场景定义、三维对象布局与可复用数据输出保持在同一闭环中。"
     },
     summary: {
-      en: "An AI-assisted industrial simulation framework that converts structured scene configurations into reusable Isaac Sim environments, defect scenarios, and synthetic data pipelines.",
-      zh: "一个面向工业场景的 AI 辅助仿真框架，将结构化场景配置自动转换为可复用的 Isaac Sim 环境、缺陷场景与合成数据生成流程。"
+      en: "A YAML-driven industrial scene generator that converts structured configurations into reusable Isaac Sim environments, deterministic defect cases and synthetic-data preparation workflows.",
+      zh: "一个 YAML 驱动的工业场景生成器，将结构化配置转换为可复用的 Isaac Sim 环境、确定性的缺陷场景与合成数据准备流程。"
     },
     problem: {
       en: "Industrial AI and embodied intelligence systems need large-scale, high-quality simulation data, but traditional industrial simulation workflows still depend heavily on manual USD scene construction, asset placement, parameter tuning, and scenario reproduction. That makes dataset creation expensive, difficult to reproduce, and hard to scale.",
       zh: "工业 AI 与具身智能系统需要大规模、高质量的仿真数据，但传统工业仿真流程仍然高度依赖人工完成 USD 场景搭建、资产摆放、参数调节与异常场景复现，导致数据集构建成本高、复现困难且难以规模化。"
     },
     solution: {
-      en: "I designed a YAML-driven simulation generation workflow that separates scene description, simulation construction, and data export. The pipeline turns configuration into scene intent processing, USD stage generation, and synthetic data export so simulation creation becomes reproducible and reusable rather than purely manual.",
-      zh: "我设计了一套 YAML 驱动的仿真生成流程，将场景描述、仿真构建与数据导出解耦。整个链路从配置出发，经由场景意图解析、USD Stage 自动生成与合成数据导出，把传统依赖手工操作的仿真流程转化为可复用、可复现的工程管线。"
+      en: "The completed pipeline separates scene description, simulation construction and data export. Structured YAML is parsed into scene intent, reusable assets are composed into a USD stage, object transformations can be written back to configuration, and deterministic defect cases can be regenerated with the same parameters. Metadata, reports, viewpoints and camera captures then share the resulting scene state. A natural-language scene agent remains a future extension rather than a production claim.",
+      zh: "已完成的管线将场景描述、仿真构建与数据导出解耦：结构化 YAML 被解析为场景意图，可复用资产被组合到 USD Stage，对象位姿能够回写配置，确定性的缺陷场景也可以通过同一组参数重复生成；Metadata、报告、视角截图与相机图像随后共享同一场景状态。自然语言场景 Agent 仍属于后续扩展方向，不作为当前已完成能力。"
     },
     highlights: {
       en: [
@@ -1139,9 +1143,36 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "The project shows how AI agents can transform industrial simulation from a manual engineering task into a scalable, reusable, and data-oriented generation pipeline. It connects industrial digital twins, simulation engineering, and future embodied AI data production into one coherent workflow.",
-      zh: "该项目展示了 AI Agent 如何将工业仿真从人工工程任务转化为可扩展、可复用、面向数据生成的流程，也把工业数字孪生、仿真工程与未来具身智能数据生产连接成了统一工作流。"
+      en: "The configuration pipeline turns repeatable scene construction, defect reproduction and data preparation into one reusable workflow. It provides an engineering foundation that connects industrial digital twins and simulation data production, while leaving natural-language generation and closed-loop agents as clearly separated future work.",
+      zh: "配置管线把可重复的场景搭建、缺陷复现和数据准备合并为一条可复用工作流，为工业数字孪生与仿真数据生产建立了统一工程基础，同时将自然语言生成和闭环 Agent 明确保留为后续工作。"
     },
+    cardResult: {
+      en: "Structured YAML and 3D transforms stay synchronized across four reproducible defect cases, with USD, metadata and camera outputs prepared from one scene state.",
+      zh: "结构化 YAML 与三维位姿在四类可复现缺陷场景中保持同步，并从同一场景状态准备 USD、Metadata 与相机输出。"
+    },
+    metrics: [
+      {
+        value: "YAML ↔ 3D",
+        label: {
+          en: "bidirectional scene mapping",
+          zh: "场景双向映射"
+        }
+      },
+      {
+        value: "04",
+        label: {
+          en: "reproducible defect cases",
+          zh: "可复现缺陷场景"
+        }
+      },
+      {
+        value: "USD + JSON",
+        label: {
+          en: "shared output state",
+          zh: "统一输出状态"
+        }
+      }
+    ],
     technologies: [
       "NVIDIA Isaac Sim",
       "OpenUSD",

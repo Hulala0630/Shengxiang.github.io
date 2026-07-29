@@ -45,6 +45,20 @@ const faultTrainingFlow = locale === "zh"
       ["04", "Training report", "Validate diagnosis and recovery answers and retain the execution trace."]
     ];
 
+const sceneBuilderFlow = locale === "zh"
+  ? [
+      ["01", "编辑 YAML", "修改场景尺寸、对象位置与缺陷参数，三维视图即时重建。"],
+      ["02", "拖动三维对象", "直接拖动机器人、相机或工件，新的位姿自动回写 YAML。"],
+      ["03", "切换缺陷场景", "在四类异常配置之间切换，检查场景对象与参数差异。"],
+      ["04", "准备输出", "从统一场景状态示意生成 USD、Metadata 与相机输出。"]
+    ]
+  : [
+      ["01", "Edit YAML", "Change scene dimensions, object positions and defect parameters to rebuild the 3D view."],
+      ["02", "Drag 3D objects", "Move the robot, camera or workpiece directly and write new transforms back to YAML."],
+      ["03", "Switch defect cases", "Compare scene objects and parameters across four deterministic fault configurations."],
+      ["04", "Prepare outputs", "Use one scene state to illustrate USD, metadata and camera-output preparation."]
+    ];
+
 const faultArchitecture = locale === "zh"
   ? {
       title: "系统拓扑",
@@ -207,17 +221,17 @@ const projectSummary = (project: Project) =>
               tabindex="-1"
             >
               <div class="project-bar">
-                <span>{selectedLabels[index]}</span>
+                <span>{index === 0 ? text(project.projectType, locale) : selectedLabels[index]}</span>
                 <b>{text(project.technicalType, locale) || selectedLabels[index]}</b>
                 <i class="project-locator" aria-hidden="true"></i>
               </div>
               <div class="selected-copy">
                 <h3>{text(project.title, locale)}</h3>
                 <p>{projectSummary(project)}</p>
-                {index === 0 && (
+                {index <= 1 && text(project.cardResult, locale) && (
                   <p class="selected-outcome">
                     <span>{locale === "zh" ? "成果" : "Outcome"}</span>
-                    <strong>{text(project.result, locale)}</strong>
+                    <strong>{text(project.cardResult, locale) || text(project.result, locale)}</strong>
                   </p>
                 )}
                 <ul>
@@ -225,13 +239,15 @@ const projectSummary = (project: Project) =>
                     <li>{technology}</li>
                   ))}
                 </ul>
-                {index === 0 && (
+                {index <= 1 && (
                   <div class="fault-flow-summary">
                     <p class="fault-flow-label">
-                      {locale === "zh" ? "操作步骤" : "Operation steps"}
+                      {index === 0
+                        ? (locale === "zh" ? "操作步骤" : "Operation steps")
+                        : (locale === "zh" ? "交互路径" : "Interaction path")}
                     </p>
                     <ol>
-                      {faultTrainingFlow.map(([number, title, body]) => (
+                      {(index === 0 ? faultTrainingFlow : sceneBuilderFlow).map(([number, title, body]) => (
                         <li>
                           <b>{number}</b>
                           <span><strong>{title}</strong><small>{body}</small></span>
@@ -244,7 +260,7 @@ const projectSummary = (project: Project) =>
 
               <div
                 class:list={["selected-effect", `effect-${index + 1}`]}
-                aria-hidden={index === 0 ? undefined : "true"}
+                aria-hidden={index <= 1 ? undefined : "true"}
               >
                 {index === 0 && (
                   <iframe
@@ -260,10 +276,17 @@ const projectSummary = (project: Project) =>
                   ></iframe>
                 )}
                 {index === 1 && (
-                  <div class="scene-chain">
-                    <span>YAML</span><b>→</b><span>USD</span><b>→</b><span>DATA</span>
-                    <i class="scene-line"></i><i class="scene-robot">R</i><i class="scene-sensor">S</i>
-                  </div>
+                  <iframe
+                    id="isaac-builder-frame"
+                    class="isaac-demo-frame"
+                    data-theme-frame
+                    src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-1`}
+                    loading="lazy"
+                    scrolling="no"
+                    title={locale === "zh"
+                      ? "YAML 与 Three.js 双向工业场景生成器"
+                      : "Bidirectional YAML and Three.js industrial scene builder"}
+                  ></iframe>
                 )}
                 {index === 2 && (
                   <div class="motion-figure">
@@ -277,11 +300,11 @@ const projectSummary = (project: Project) =>
 
               <details class="selected-details">
                 <summary>
-                  <b>{index === 1 ? c.projectVideo : c.projectContext}</b>
+                  <b>{c.projectContext}</b>
                   <span class="details-trigger-signal" aria-hidden="true"><i></i><b></b></span>
                 </summary>
                 <div class="selected-detail-content">
-                  {index === 0 && (
+                  {index <= 1 && (
                     <section class="fault-detail-lead">
                       <div>
                         <span>{c.summary}</span>
@@ -303,7 +326,7 @@ const projectSummary = (project: Project) =>
                         project={project}
                         locale={locale}
                         group="narrative"
-                        hideSummary={index === 0}
+                        hideSummary={index <= 1}
                       />
                     </div>
                     <div class="detail-column evidence">
@@ -312,7 +335,6 @@ const projectSummary = (project: Project) =>
                         locale={locale}
                         group="lists"
                         hideStructure={index === 0}
-                        hideHighlights={index === 0}
                       />
                     </div>
                   </div>
@@ -341,11 +363,23 @@ const projectSummary = (project: Project) =>
                       </div>
                     </section>
                   )}
-                  {project.video?.url && (
+                  {project.video?.url && index === 1 ? (
+                    <figure class="project-video-card">
+                      <figcaption>
+                        <span>{locale === "zh" ? "ISAAC SIM 生成流程实录" : "ISAAC SIM GENERATION RECORDING"}</span>
+                        <button type="button" data-video-expand>
+                          {locale === "zh" ? "放大 / 全屏 ↗" : "Expand / fullscreen ↗"}
+                        </button>
+                      </figcaption>
+                      <video controls preload="none" playsinline>
+                        <source src={assetPath(project.video.url)} type="video/mp4" />
+                      </video>
+                    </figure>
+                  ) : project.video?.url ? (
                     <video controls preload="none" playsinline>
                       <source src={assetPath(project.video.url)} type="video/mp4" />
                     </video>
-                  )}
+                  ) : null}
                 </div>
               </details>
             </article>
@@ -472,6 +506,7 @@ const projectSummary = (project: Project) =>
 
     const frame = $("#hero-frame") as HTMLIFrameElement | null;
     const faultFrame = $("#fault-training-frame") as HTMLIFrameElement | null;
+    const isaacFrame = $("#isaac-builder-frame") as HTMLIFrameElement | null;
     const themeFrames = $$("iframe[data-theme-frame]") as HTMLIFrameElement[];
     const setTheme = (theme: "light" | "dark") => {
       document.documentElement.dataset.theme = theme;
@@ -625,6 +660,23 @@ const projectSummary = (project: Project) =>
       ) {
         faultFrame.style.height = `${Math.max(620, Math.min(1400, Number(event.data.height) || 620))}px`;
       }
+      if (
+        event.data?.type === "isaac-builder-height" &&
+        isaacFrame &&
+        event.source === isaacFrame.contentWindow
+      ) {
+        isaacFrame.style.height = `${Math.max(640, Math.min(980, Number(event.data.height) || 680))}px`;
+      }
+    });
+
+    $$("[data-video-expand]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const video = button.closest(".project-video-card")?.querySelector("video");
+        if (!video) return;
+        try {
+          if (video.requestFullscreen) await video.requestFullscreen();
+        } catch {}
+      });
     });
     window.addEventListener("resize", () => requestAnimationFrame(alignHeroColumns));
 

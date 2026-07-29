@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YAML Scene Builder</title>
+  <script>
+    (() => {
+      const query = new URLSearchParams(location.search);
+      document.documentElement.lang = query.get("lang") === "en" ? "en" : "zh";
+      document.documentElement.dataset.theme = query.get("theme") === "dark" ? "dark" : "light";
+    })();
+  </script>
+  <style>
+    :root {
+      --paper: #f2f0e7;
+      --card: #fffdf6;
+      --ink: #15171b;
+      --muted: #686b70;
+      --line: #c8c5ba;
+      --blue: #416fb8;
+      --blue-soft: #dce8f8;
+      --yellow: #efc34f;
+      --red: #e75e48;
+      --green: #4f9d69;
+      --screen: #10141b;
+      --screen-line: #2f3846;
+      --screen-text: #d8e4f3;
+    }
+
+    [data-theme="dark"] {
+      --paper: #111318;
+      --card: #1a1d23;
+      --ink: #f0eee6;
+      --muted: #a7a9ad;
+      --line: #3b3f47;
+      --blue: #78a4e7;
+      --blue-soft: #263650;
+      --yellow: #efc34f;
+      --red: #f06d56;
+      --green: #6ed18c;
+      --screen: #090c11;
+      --screen-line: #303846;
+      --screen-text: #e1e9f4;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--card); color: var(--ink); }
+    body { font-family: "Space Grotesk", "Noto Sans SC", Arial, sans-serif; }
+    button, textarea { font: inherit; }
+    button:focus-visible, textarea:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .app {
+      min-height: 674px;
+      border: 1px solid var(--ink);
+      background: var(--card);
+    }
+
+    .topbar {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--card);
+      font: 600 10px "IBM Plex Mono", Consolas, monospace;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .topbar b { color: var(--yellow); }
+    .topbar span:last-child { color: var(--green); }
+
+    .builder {
+      display: grid;
+      min-height: 555px;
+      grid-template-columns: minmax(245px, .38fr) minmax(0, .62fr);
+    }
+
+    .yaml-panel {
+      min-width: 0;
+      border-right: 1px solid var(--ink);
+      background: var(--card);
+    }
+
+    .panel-head {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--ink);
+      font: 600 10px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+
+    .panel-head small { color: var(--blue); font-size: 9px; }
+
+    .yaml-intro {
+      margin: 0;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    #yaml-editor {
+      display: block;
+      width: 100%;
+      height: 303px;
+      resize: none;
+      padding: 14px;
+      border: 0;
+      border-bottom: 1px solid var(--ink);
+      border-radius: 0;
+      background:
+        linear-gradient(90deg, color-mix(in srgb, var(--blue) 8%, transparent) 1px, transparent 1px),
+        var(--paper);
+      background-size: 22px 100%;
+      color: var(--ink);
+      caret-color: var(--blue);
+      font: 11px/1.65 "IBM Plex Mono", Consolas, monospace;
+      tab-size: 2;
+    }
+
+    .sync-row {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line);
+      font: 600 9px "IBM Plex Mono", Consolas, monospace;
+    }
+
+    #sync-direction { color: var(--blue); }
+    #sync-state { color: var(--green); }
+    #sync-state.bad { color: var(--red); }
+
+    .faults { padding: 12px; }
+    .faults > span {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font: 600 9px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+
+    .fault-grid {
+      display: grid;
+      gap: 6px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .fault-grid button,
+    .normal-button,
+    .output-button {
+      min-height: 34px;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      font: 600 9px/1.35 "IBM Plex Mono", Consolas, monospace;
+    }
+
+    .fault-grid button:hover,
+    .fault-grid button:focus-visible,
+    .fault-grid button.active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .normal-button {
+      width: 100%;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    .normal-button:hover { border-color: var(--green); color: var(--green); }
+
+    .viewport-panel {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      background: var(--screen);
+    }
+
+    .viewport-head {
+      position: absolute;
+      z-index: 4;
+      top: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 12px;
+      border-bottom: 1px solid #3b4553;
+      background: rgba(11, 15, 22, .9);
+      color: var(--screen-text);
+      pointer-events: none;
+      font: 600 9px "IBM Plex Mono", Consolas, monospace;
+    }
+
+    .viewport-head b { color: #93baf2; }
+    .viewport-head span:last-child { color: var(--green); }
+    #viewport { position: absolute; inset: 42px 0 0; cursor: grab; touch-action: none; }
+    #viewport.dragging { cursor: grabbing; }
+    #viewport canvas { display: block; width: 100%; height: 100%; }
+
+    .view-guide {
+      position: absolute;
+      z-index: 4;
+      right: 10px;
+      bottom: 10px;
+      max-width: 240px;
+      padding: 6px 8px;
+      border: 1px solid #4a5666;
+      background: rgba(9, 12, 17, .82);
+      color: #aab7c8;
+      pointer-events: none;
+      font: 8px/1.45 "IBM Plex Mono", Consolas, monospace;
+      text-align: right;
+    }
+
+    .selection-readout {
+      position: absolute;
+      z-index: 4;
+      bottom: 10px;
+      left: 10px;
+      padding: 6px 8px;
+      border-left: 3px solid var(--blue);
+      background: rgba(9, 12, 17, .82);
+      color: var(--screen-text);
+      pointer-events: none;
+      font: 9px "IBM Plex Mono", Consolas, monospace;
+    }
+
+    .outputs {
+      display: grid;
+      min-height: 74px;
+      border-top: 1px solid var(--ink);
+      grid-template-columns: minmax(190px, .42fr) 1fr;
+    }
+
+    .output-copy {
+      padding: 12px 14px;
+      border-right: 1px solid var(--ink);
+    }
+
+    .output-copy strong,
+    .output-copy small { display: block; }
+    .output-copy strong { font-size: 12px; }
+    .output-copy small { margin-top: 5px; color: var(--muted); font-size: 9px; }
+
+    .output-actions {
+      display: grid;
+      gap: 7px;
+      padding: 10px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .output-button {
+      position: relative;
+      text-align: center;
+    }
+
+    .output-button::after {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--blue);
+      content: "";
+    }
+
+    .output-button:hover { border-color: var(--blue); }
+
+    .toast {
+      position: fixed;
+      z-index: 20;
+      right: 12px;
+      bottom: 12px;
+      max-width: 300px;
+      padding: 9px 11px;
+      border: 1px solid var(--blue);
+      background: var(--ink);
+      color: var(--card);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: .18s;
+      font: 9px/1.4 "IBM Plex Mono", Consolas, monospace;
+    }
+
+    .toast.show { opacity: 1; transform: none; }
+
+    @media (max-width: 720px) {
+      .app { min-height: 890px; }
+      .builder { grid-template-columns: 1fr; }
+      .yaml-panel { border-right: 0; border-bottom: 1px solid var(--ink); }
+      #yaml-editor { height: 215px; }
+      .viewport-panel { min-height: 370px; }
+      .outputs { grid-template-columns: 1fr; }
+      .output-copy { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .output-actions { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <span><b>ISAAC / CONFIG-02</b> · <span data-copy="system">YAML SCENE BUILDER</span></span>
+      <span>● <span data-copy="runtime">LOCAL 3D RUNTIME</span></span>
+    </header>
+
+    <main class="builder">
+      <section class="yaml-panel">
+        <header class="panel-head">
+          <span data-copy="yamlTitle">场景配置 / scene.yaml</span>
+          <small>AUTO APPLY</small>
+        </header>
+        <p class="yaml-intro" data-copy="yamlIntro">修改参数会直接重建三维场景；拖动三维对象会把新的 X / Z 位姿写回此文档。</p>
+        <textarea id="yaml-editor" spellcheck="false" aria-label="YAML scene configuration"></textarea>
+        <div class="sync-row">
+          <span id="sync-direction">YAML → 3D</span>
+          <span id="sync-state">SYNCED</span>
+        </div>
+        <div class="faults">
+          <span data-copy="faultTitle">四类缺陷配置</span>
+          <div class="fault-grid">
+            <button type="button" data-fault="box_offset" data-copy="faultOffset">01 · 箱体偏移</button>
+            <button type="button" data-fault="missing_module" data-copy="faultMissing">02 · 模组缺失</button>
+            <button type="button" data-fault="sensor_shift" data-copy="faultSensor">03 · 传感器错位</button>
+            <button type="button" data-fault="misplaced_part" data-copy="faultPlaced">04 · 部件误放</button>
+          </div>
+          <button class="normal-button" type="button" data-fault="normal" data-copy="faultNormal">恢复正常场景</button>
+        </div>
+      </section>
+
+      <section class="viewport-panel">
+        <header class="viewport-head">
+          <span><b data-copy="viewTitle">三维场景 / CONFIG PREVIEW</b></span>
+          <span id="node-count">● 7 OBJECT GROUPS</span>
+        </header>
+        <div id="viewport" aria-label="Interactive 3D industrial scene"></div>
+        <div class="selection-readout" id="selection-readout" data-copy="nothingSelected">选择或拖动场景对象</div>
+        <div class="view-guide" data-copy="viewGuide">拖动对象 = 回写 YAML · 拖动空白 = 环绕视图 · 滚轮 = 缩放</div>
+      </section>
+    </main>
+
+    <footer class="outputs">
+      <div class="output-copy">
+        <strong data-copy="outputTitle">输出信息 / 示意</strong>
+        <small id="output-status" data-copy="outputReady">统一场景状态已准备，可生成下游文件。</small>
+      </div>
+      <div class="output-actions">
+        <button class="output-button" type="button" data-output="USD Stage">USD STAGE</button>
+        <button class="output-button" type="button" data-output="Metadata JSON">METADATA JSON</button>
+        <button class="output-button" type="button" data-output="Camera Preview">CAMERA PREVIEW</button>
+      </div>
+    </footer>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="../vendor/three.r128.min.js"></script>
+  <script>
+    (() => {
+      const lang = document.documentElement.lang === "en" ? "en" : "zh";
+      const copy = {
+        zh: {
+          system: "YAML 场景生成器", runtime: "本地三维运行时", yamlTitle: "场景配置 / scene.yaml",
+          yamlIntro: "修改参数会直接重建三维场景；拖动三维对象会把新的 X / Z 位姿写回此文档。",
+          faultTitle: "四类缺陷配置", faultOffset: "01 · 箱体偏移", faultMissing: "02 · 模组缺失",
+          faultSensor: "03 · 传感器错位", faultPlaced: "04 · 部件误放", faultNormal: "恢复正常场景",
+          viewTitle: "三维场景 / CONFIG PREVIEW", nothingSelected: "选择或拖动场景对象",
+          viewGuide: "拖动对象 = 回写 YAML · 拖动空白 = 环绕视图 · 滚轮 = 缩放",
+          outputTitle: "输出信息 / 示意", outputReady: "统一场景状态已准备，可生成下游文件。",
+          synced: "已同步", yamlTo3d: "YAML → 3D", threeToYaml: "3D → YAML", invalid: "配置值无效",
+          selected: "已选择", preview: "示意输出已准备", fault: "当前缺陷"
+        },
+        en: {
+          system: "YAML SCENE BUILDER", runtime: "LOCAL 3D RUNTIME", yamlTitle: "SCENE CONFIG / scene.yaml",
+          yamlIntro: "Parameter edits rebuild the 3D scene; dragging an object writes its new X / Z transform back into this document.",
+          faultTitle: "FOUR DEFECT CONFIGS", faultOffset: "01 · BOX OFFSET", faultMissing: "02 · MISSING MODULE",
+          faultSensor: "03 · SENSOR SHIFT", faultPlaced: "04 · MISPLACED PART", faultNormal: "RESTORE NORMAL SCENE",
+          viewTitle: "3D SCENE / CONFIG PREVIEW", nothingSelected: "Select or drag a scene object",
+          viewGuide: "Drag object = write YAML · Drag empty space = orbit · Wheel = zoom",
+          outputTitle: "OUTPUTS / PREVIEW", outputReady: "One scene state is ready for downstream file generation.",
+          synced: "SYNCED", yamlTo3d: "YAML → 3D", threeToYaml: "3D → YAML", invalid: "INVALID CONFIG VALUE",
+          selected: "SELECTED", preview: "PREVIEW OUTPUT READY", fault: "ACTIVE DEFECT"
+        }
+      };
+      const t = (key) => copy[lang][key] || key;
+      document.querySelectorAll("[data-copy]").forEach((node) => {
+        node.textContent = t(node.dataset.copy);
+      });
+
+      const editor = document.querySelector("#yaml-editor");
+      const syncDirection = document.querySelector("#sync-direction");
+      const syncState = document.querySelector("#sync-state");
+      const selectionReadout = document.querySelector("#selection-readout");
+      const outputStatus = document.querySelector("#output-status");
+      const toast = document.querySelector("#toast");
+      const viewport = document.querySelector("#viewport");
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+      const config = {
+        scene_id: "battery_cell_01",
+        conveyor_length: 5.2,
+        robot_x: -1.55,
+        robot_z: 0.55,
+        camera_x: 1.95,
+        camera_z: 1.45,
+        camera_height: 2.8,
+        box_x: 0.35,
+        box_z: -0.05,
+        fault: "box_offset"
+      };
+      const numericKeys = [
+        "conveyor_length", "robot_x", "robot_z", "camera_x",
+        "camera_z", "camera_height", "box_x", "box_z"
+      ];
+      const faults = ["normal", "box_offset", "missing_module", "sensor_shift", "misplaced_part"];
+      let editorTimer = 0;
+      let toastTimer = 0;
+
+      function yamlText() {
+        return [
+          `scene_id: ${config.scene_id}`,
+          `conveyor_length: ${Number(config.conveyor_length).toFixed(2)}`,
+          `robot_x: ${Number(config.robot_x).toFixed(2)}`,
+          `robot_z: ${Number(config.robot_z).toFixed(2)}`,
+          `camera_x: ${Number(config.camera_x).toFixed(2)}`,
+          `camera_z: ${Number(config.camera_z).toFixed(2)}`,
+          `camera_height: ${Number(config.camera_height).toFixed(2)}`,
+          `box_x: ${Number(config.box_x).toFixed(2)}`,
+          `box_z: ${Number(config.box_z).toFixed(2)}`,
+          `fault: ${config.fault}`
+        ].join("\n");
+      }
+
+      function parseYaml(value) {
+        const parsed = {};
+        value.split(/\r?\n/).forEach((line) => {
+          const match = line.match(/^\s*([a-zA-Z_][\w-]*)\s*:\s*(.*?)\s*$/);
+          if (match) parsed[match[1]] = match[2];
+        });
+        const next = { ...config };
+        numericKeys.forEach((key) => {
+          if (!(key in parsed)) return;
+          const number = Number(parsed[key]);
+          if (!Number.isFinite(number)) throw new Error(key);
+          next[key] = number;
+        });
+        if (parsed.scene_id) next.scene_id = parsed.scene_id;
+        if (parsed.fault) next.fault = faults.includes(parsed.fault) ? parsed.fault : "normal";
+        return next;
+      }
+
+      function setSync(direction, ok = true) {
+        syncDirection.textContent = direction;
+        syncState.textContent = ok ? t("synced") : t("invalid");
+        syncState.classList.toggle("bad", !ok);
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 1400);
+      }
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      viewport.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(42, 1, .1, 50);
+      const hemi = new THREE.HemisphereLight(0xe8f1ff, 0x202834, 1.1);
+      scene.add(hemi);
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.05);
+      keyLight.position.set(4, 8, 5);
+      scene.add(keyLight);
+      const rimLight = new THREE.DirectionalLight(0x6da2e8, .55);
+      rimLight.position.set(-4, 4, -5);
+      scene.add(rimLight);
+
+      const world = new THREE.Group();
+      scene.add(world);
+      const grid = new THREE.GridHelper(12, 24, 0x5578a8, 0x2f3947);
+      world.add(grid);
+
+      const mat = {
+        frame: new THREE.MeshStandardMaterial({ color: 0x394454, metalness: .65, roughness: .38 }),
+        panel: new THREE.MeshStandardMaterial({ color: 0xcfd6df, metalness: .15, roughness: .72 }),
+        belt: new THREE.MeshStandardMaterial({ color: 0x181e27, metalness: .15, roughness: .82 }),
+        blue: new THREE.MeshStandardMaterial({ color: 0x416fb8, metalness: .2, roughness: .55 }),
+        yellow: new THREE.MeshStandardMaterial({ color: 0xefc34f, metalness: .1, roughness: .62 }),
+        green: new THREE.MeshStandardMaterial({ color: 0x4f9d69, metalness: .05, roughness: .7 }),
+        red: new THREE.MeshStandardMaterial({ color: 0xe75e48, emissive: 0x3b0904, roughness: .55 }),
+        glass: new THREE.MeshStandardMaterial({ color: 0x8fb9e8, transparent: true, opacity: .42, roughness: .2 })
+      };
+
+      function box(w, h, d, material, x = 0, y = h / 2, z = 0) {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+        mesh.position.set(x, y, z);
+        const edges = new THREE.LineSegments(
+          new THREE.EdgesGeometry(mesh.geometry, 34),
+          new THREE.LineBasicMaterial({ color: 0x1f2935, transparent: true, opacity: .72 })
+        );
+        mesh.add(edges);
+        return mesh;
+      }
+
+      const floor = box(9, .08, 6, mat.panel, 0, -.04, 0);
+      world.add(floor);
+
+      const conveyor = new THREE.Group();
+      conveyor.name = "CONVEYOR";
+      const conveyorBed = box(5.2, .18, 1.05, mat.frame, 0, .62, 0);
+      const belt = box(5.05, .07, .82, mat.belt, 0, .75, 0);
+      conveyor.add(conveyorBed, belt);
+      [-2.3, 2.3].forEach((x) => [-.42, .42].forEach((z) => conveyor.add(box(.12, .62, .12, mat.frame, x, .31, z))));
+      world.add(conveyor);
+
+      const robot = new THREE.Group();
+      robot.name = "ROBOT";
+      robot.add(box(.72, .18, .72, mat.frame, 0, .09, 0));
+      const robotBase = new THREE.Mesh(new THREE.CylinderGeometry(.28, .36, .48, 18), mat.blue);
+      robotBase.position.y = .42;
+      robot.add(robotBase);
+      const armA = box(.18, 1.25, .18, mat.panel, 0, 1.15, 0);
+      armA.rotation.z = -.42;
+      robot.add(armA);
+      const armB = box(.16, 1.05, .16, mat.panel, .42, 1.93, 0);
+      armB.rotation.z = .78;
+      robot.add(armB);
+      const tool = box(.32, .16, .32, mat.yellow, .78, 2.27, 0);
+      robot.add(tool);
+      world.add(robot);
+
+      const product = new THREE.Group();
+      product.name = "BATTERY_BOX";
+      const crate = box(1.15, .28, .7, mat.yellow, 0, .95, 0);
+      product.add(crate);
+      const modules = [];
+      [-.36, -.12, .12, .36].forEach((x) => {
+        const module = box(.18, .18, .5, mat.panel, x, 1.18, 0);
+        modules.push(module);
+        product.add(module);
+      });
+      world.add(product);
+
+      const sensor = new THREE.Group();
+      sensor.name = "SENSOR";
+      sensor.add(box(.16, .8, .16, mat.frame, 0, .4, 0));
+      const sensorHead = box(.28, .18, .28, mat.green, 0, .86, 0);
+      sensor.add(sensorHead);
+      sensor.position.set(.9, 0, -.88);
+      world.add(sensor);
+
+      const cameraRig = new THREE.Group();
+      cameraRig.name = "CAMERA";
+      cameraRig.add(box(.12, 2.7, .12, mat.frame, 0, 1.35, 0));
+      const cameraBody = box(.52, .3, .36, mat.blue, 0, 2.68, 0);
+      cameraRig.add(cameraBody);
+      const lens = new THREE.Mesh(new THREE.CylinderGeometry(.1, .1, .18, 18), mat.glass);
+      lens.rotation.x = Math.PI / 2;
+      lens.position.set(0, 2.68, -.27);
+      cameraRig.add(lens);
+      world.add(cameraRig);
+
+      const sideTable = new THREE.Group();
+      sideTable.name = "SIDE_TABLE";
+      sideTable.add(box(1.4, .12, 1.1, mat.frame, 0, .74, 0));
+      [-.55, .55].forEach((x) => [-.4, .4].forEach((z) => sideTable.add(box(.1, .7, .1, mat.frame, x, .35, z))));
+      sideTable.position.set(2.25, 0, -1.45);
+      world.add(sideTable);
+
+      const misplacedPart = box(.44, .2, .32, mat.red, 2.25, .91, -1.45);
+      misplacedPart.visible = false;
+      world.add(misplacedPart);
+
+      const warningRing = new THREE.Mesh(
+        new THREE.TorusGeometry(.88, .035, 8, 40),
+        new THREE.MeshBasicMaterial({ color: 0xe75e48 })
+      );
+      warningRing.rotation.x = Math.PI / 2;
+      warningRing.position.y = .81;
+      world.add(warningRing);
+
+      const draggableMeshes = [];
+      function registerDraggable(root, keys) {
+        root.userData.yamlKeys = keys;
+        root.traverse((child) => {
+          if (!child.isMesh) return;
+          child.userData.draggableRoot = root;
+          draggableMeshes.push(child);
+        });
+      }
+      registerDraggable(robot, ["robot_x", "robot_z"]);
+      registerDraggable(product, ["box_x", "box_z"]);
+      registerDraggable(cameraRig, ["camera_x", "camera_z"]);
+
+      const selectionBox = new THREE.BoxHelper(product, 0x78a4e7);
+      selectionBox.visible = false;
+      scene.add(selectionBox);
+
+      function updateFaultButtons() {
+        document.querySelectorAll("[data-fault]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.fault === config.fault);
+        });
+      }
+
+      function updateOutputStatus(label = "") {
+        const prefix = label ? `${label} · ` : "";
+        outputStatus.textContent = `${prefix}${config.scene_id} · ${config.fault}`;
+      }
+
+      function applyScene() {
+        conveyor.scale.x = Math.max(.55, Math.min(1.45, config.conveyor_length / 5.2));
+        robot.position.set(config.robot_x, 0, config.robot_z);
+        cameraRig.position.set(config.camera_x, 0, config.camera_z);
+        cameraRig.scale.y = Math.max(.72, Math.min(1.22, config.camera_height / 2.8));
+        product.position.set(config.box_x, 0, config.box_z);
+        product.rotation.y = 0;
+        modules.forEach((module) => { module.visible = true; });
+        sensor.position.set(.9, 0, -.88);
+        sensorHead.material = mat.green;
+        misplacedPart.visible = false;
+        warningRing.visible = config.fault !== "normal";
+        warningRing.position.set(product.position.x, .81, product.position.z);
+
+        if (config.fault === "box_offset") {
+          product.rotation.y = .34;
+          warningRing.position.set(product.position.x, .81, product.position.z);
+        }
+        if (config.fault === "missing_module") modules[2].visible = false;
+        if (config.fault === "sensor_shift") {
+          sensor.position.z = -.28;
+          sensorHead.material = mat.red;
+          warningRing.position.set(sensor.position.x, .05, sensor.position.z);
+        }
+        if (config.fault === "misplaced_part") {
+          misplacedPart.visible = true;
+          warningRing.position.set(2.25, .05, -1.45);
+        }
+        updateFaultButtons();
+        updateOutputStatus();
+        selectionBox.update();
+      }
+
+      function writeYaml(direction) {
+        editor.value = yamlText();
+        setSync(direction);
+      }
+
+      editor.value = yamlText();
+      editor.addEventListener("input", () => {
+        clearTimeout(editorTimer);
+        editorTimer = setTimeout(() => {
+          try {
+            Object.assign(config, parseYaml(editor.value));
+            applyScene();
+            setSync(t("yamlTo3d"));
+          } catch {
+            setSync(t("yamlTo3d"), false);
+          }
+        }, 150);
+      });
+
+      document.querySelectorAll("[data-fault]").forEach((button) => {
+        button.addEventListener("click", () => {
+          config.fault = button.dataset.fault;
+          writeYaml(t("yamlTo3d"));
+          applyScene();
+          selectionReadout.textContent = `${t("fault")}: ${config.fault}`;
+        });
+      });
+
+      document.querySelectorAll("[data-output]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const label = button.dataset.output;
+          updateOutputStatus(label);
+          showToast(`${t("preview")}: ${label}`);
+        });
+      });
+
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
+      const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      const groundHit = new THREE.Vector3();
+      const dragOffset = new THREE.Vector3();
+      let selectedRoot = null;
+      let draggingRoot = null;
+      let orbiting = false;
+      let lastPointer = { x: 0, y: 0 };
+      let yaw = .72;
+      let pitch = .66;
+      let distance = 8.2;
+      const target = new THREE.Vector3(0, .8, 0);
+
+      function updateCamera() {
+        const horizontal = Math.cos(pitch) * distance;
+        camera.position.set(
+          target.x + Math.sin(yaw) * horizontal,
+          target.y + Math.sin(pitch) * distance,
+          target.z + Math.cos(yaw) * horizontal
+        );
+        camera.lookAt(target);
+      }
+
+      function updatePointer(event) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+      }
+
+      function selectRoot(root) {
+        selectedRoot = root;
+        selectionBox.setFromObject(root || product);
+        selectionBox.visible = Boolean(root);
+        if (root) selectionReadout.textContent = `${t("selected")}: ${root.name}`;
+        else selectionReadout.textContent = t("nothingSelected");
+      }
+
+      renderer.domElement.addEventListener("pointerdown", (event) => {
+        updatePointer(event);
+        const hit = raycaster.intersectObjects(draggableMeshes, false)[0];
+        lastPointer = { x: event.clientX, y: event.clientY };
+        renderer.domElement.setPointerCapture(event.pointerId);
+        viewport.classList.add("dragging");
+        if (hit?.object?.userData?.draggableRoot) {
+          draggingRoot = hit.object.userData.draggableRoot;
+          selectRoot(draggingRoot);
+          if (raycaster.ray.intersectPlane(groundPlane, groundHit)) {
+            dragOffset.copy(draggingRoot.position).sub(groundHit);
+          }
+        } else {
+          orbiting = true;
+          selectRoot(null);
+        }
+      });
+
+      renderer.domElement.addEventListener("pointermove", (event) => {
+        if (!draggingRoot && !orbiting) return;
+        if (draggingRoot) {
+          updatePointer(event);
+          if (!raycaster.ray.intersectPlane(groundPlane, groundHit)) return;
+          draggingRoot.position.x = THREE.MathUtils.clamp(groundHit.x + dragOffset.x, -3.2, 3.2);
+          draggingRoot.position.z = THREE.MathUtils.clamp(groundHit.z + dragOffset.z, -2.25, 2.25);
+          const [xKey, zKey] = draggingRoot.userData.yamlKeys;
+          config[xKey] = draggingRoot.position.x;
+          config[zKey] = draggingRoot.position.z;
+          if (draggingRoot === product && config.fault === "box_offset") {
+            warningRing.position.set(product.position.x, .81, product.position.z);
+          }
+          writeYaml(t("threeToYaml"));
+          selectionBox.update();
+        } else if (orbiting) {
+          yaw -= (event.clientX - lastPointer.x) * .006;
+          pitch = THREE.MathUtils.clamp(pitch + (event.clientY - lastPointer.y) * .004, .25, 1.15);
+          updateCamera();
+        }
+        lastPointer = { x: event.clientX, y: event.clientY };
+      });
+
+      function stopPointer(event) {
+        draggingRoot = null;
+        orbiting = false;
+        viewport.classList.remove("dragging");
+        if (renderer.domElement.hasPointerCapture(event.pointerId)) {
+          renderer.domElement.releasePointerCapture(event.pointerId);
+        }
+      }
+      renderer.domElement.addEventListener("pointerup", stopPointer);
+      renderer.domElement.addEventListener("pointercancel", stopPointer);
+      renderer.domElement.addEventListener("wheel", (event) => {
+        event.preventDefault();
+        distance = THREE.MathUtils.clamp(distance + event.deltaY * .008, 5, 12);
+        updateCamera();
+      }, { passive: false });
+
+      function applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        scene.background = new THREE.Color(theme === "dark" ? 0x090c11 : 0x111720);
+        grid.material.opacity = theme === "dark" ? .55 : .42;
+        grid.material.transparent = true;
+      }
+
+      function resize() {
+        const width = Math.max(1, viewport.clientWidth);
+        const height = Math.max(1, viewport.clientHeight);
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        parent.postMessage({
+          type: "isaac-builder-height",
+          height: document.documentElement.scrollHeight
+        }, "*");
+      }
+
+      addEventListener("message", (event) => {
+        if (event.data?.type === "bauhaus-theme") {
+          applyTheme(event.data.theme === "dark" ? "dark" : "light");
+        }
+      });
+      new ResizeObserver(resize).observe(viewport);
+
+      applyTheme(document.documentElement.dataset.theme);
+      updateCamera();
+      applyScene();
+      selectRoot(product);
+      resize();
+
+      function render() {
+        if (!reducedMotion.matches && warningRing.visible) {
+          warningRing.scale.setScalar(1 + Math.sin(performance.now() * .004) * .045);
+        }
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>
