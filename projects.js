@@ -551,28 +551,32 @@ const projectsData = [
       zh: "技术项目"
     },
     pitch: {
-      en: "Turn unpredictable industrial failures into controllable digital training scenarios.",
-      zh: "把不可控的工业故障转化为可控、可复现的数字化训练场景。"
+      en: "Extend virtual-commissioning assets into a digital-twin training platform with automated station recognition and standardized fault inheritance.",
+      zh: "复用虚拟调试资产，自动识别站点并继承标准故障库，构建覆盖设备生命周期的数字孪生培训平台。"
     },
     summary: {
-      en: "A multi-layer training system for simulating industrial faults through software, allowing troubleshooting capabilities to be trained without relying on real equipment or accidental site failures.",
-      zh: "这是一个面向工业故障排除训练的多层级仿真系统，通过纯软件方式模拟异常场景，使培训不再依赖真实设备或现场偶发故障。"
+      en: "A digital-twin training platform that reuses models and control logic created for virtual commissioning, then extends them into reproducible fault training and verification throughout the production-system lifecycle.",
+      zh: "这是一个基于数字孪生的工业培训平台：复用虚拟调试阶段建立的模型与控制逻辑，并将其拓展为贯穿生产系统生命周期的可复现故障培训与验证能力。"
     },
     problem: {
-      en: "Industrial troubleshooting training was expensive, risky, and difficult to scale because it depended on real hardware and non-reproducible failures.",
-      zh: "工业故障排除培训长期依赖真实硬件和不可稳定复现的故障，导致培训成本高、风险大，也难以规模化。"
+      en: "Industrial troubleshooting training depended on real equipment and non-reproducible failures, making it expensive, risky and difficult to scale. Building a separate digital twin would add substantial modeling cost, while models already created for virtual commissioning were often underused after launch. The opportunity was to extend those assets across the production-system lifecycle, reduce duplicate engineering effort and establish a new training service.",
+      zh: "工业故障排除培训长期依赖真实设备和难以稳定复现的现场故障，成本高、风险大，也难以规模化；如果为培训单独重建数字孪生，又会带来可观的建模成本。与此同时，虚拟调试阶段已经完成的模型与控制逻辑在投产后往往没有被持续利用，因此需要把既有资产拓展到生产系统全生命周期，减少重复工程投入，并形成新的培训业务。"
     },
     solution: {
-      en: "I designed a multi-layer fault injection system that could trigger abnormal conditions through PLC variables, simulation object properties, and HMI interactions, making fault scenarios testable and reusable.",
-      zh: "我设计了一套多层级故障注入系统，通过 PLC 变量、仿真对象属性和 HMI 交互层主动触发异常状态，使故障场景变得可测试、可复用。"
+      en: "The platform connects the virtual-commissioning model, PLCSim and the OPC UA-based HMI through a shared interface layer. It identifies station equipment, signal points and training objects, inherits applicable scenarios from a standardized fault catalog, and automatically generates the station-level training configuration. Multi-layer fault injection then synchronizes PLC variables, digital-twin object behavior and HMI alarms, allowing users to configure, reproduce, diagnose and verify the complete fault-and-recovery workflow without disrupting production equipment.",
+      zh: "平台通过统一接口层连接虚拟调试模型、PLCSim 与基于 OPC UA 的 HMI：系统自动识别站点设备、信号点和训练对象，从标准化故障库继承适用场景并生成站点级培训配置，再通过多层级故障注入同步驱动 PLC 变量、数字孪生对象行为和 HMI 报警，使用户能够在不影响生产设备的情况下完成故障配置、复现、诊断与恢复验证的完整流程。"
     },
     highlights: {
       en: [
+        "Identified station equipment, signal points and training objects to reduce manual modeling and configuration work.",
+        "Inherited applicable scenarios from a standardized fault catalog to generate station-level fault libraries and training configurations.",
         "Injected faults across signal level, simulation object level, and HMI interaction level.",
         "Used an interface layer to bridge simulation runtime, PLCSim, and OPC UA-based HMI control.",
         "Built scenario-based fault logic so training could move from passive troubleshooting to deliberate validation."
       ],
       zh: [
+        "自动识别站点设备、信号点和训练对象，减少手动建模与配置工作。",
+        "从标准化故障列表继承适用场景，自动形成站点级故障库和训练配置。",
         "在信号层、仿真对象层和 HMI 交互层进行多层级故障注入。",
         "通过接口层连接仿真运行环境、PLCSim 和基于 OPC UA 的 HMI 控制。",
         "将故障逻辑构造成基于场景的训练机制，使测试从被动排障转向主动验证。"
@@ -605,8 +609,8 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "The system enabled 200+ fault scenarios, supported 1000+ training users, and improved troubleshooting capability by 25% through scalable digital training.",
-      zh: "该系统支持 200+ 故障场景，覆盖 1000+ 培训用户，并通过可规模化的数字训练将故障排除能力提升了 25%。"
+      en: "The platform was deployed across five factories in Germany, Hungary, Mexico, China and the United States, including development and training use cases for next-generation battery production. The global rollout supported 1000+ training users, standardized 200+ reusable fault scenarios and improved troubleshooting capability by 25%.",
+      zh: "平台已在德国、匈牙利、墨西哥、中国和美国的五座工厂落地，并支持新一代电池生产相关的开发与培训场景。全球部署覆盖 1000+ 培训用户，沉淀 200+ 可复用故障场景，并将故障排除能力提升了 25%。"
     },
     metrics: [
       {

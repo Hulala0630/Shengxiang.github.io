@@ -33,14 +33,14 @@ const selectedLabels = [
 
 const faultTrainingFlow = locale === "zh"
   ? [
-      ["01", "登录与环境检查", "选择角色和站点，确认模拟环境后连接 PLC、HMI 与仿真模型。"],
-      ["02", "故障配置", "生成并维护站点故障场景，支持增删查改。"],
+      ["01", "站点识别与环境检查", "选择角色和站点，识别设备、信号点与训练对象并确认模拟环境。"],
+      ["02", "标准故障继承", "从标准化故障列表生成站点场景，并支持增删查改。"],
       ["03", "模拟验证", "同一故障同步驱动 PLC 信号、HMI 报警与二维模型。"],
       ["04", "培训报告", "验证诊断和恢复答案，记录得分与完整执行链路。"]
     ]
   : [
-      ["01", "Login & readiness", "Choose a role and station, verify the sandbox, then link PLC, HMI and simulation."],
-      ["02", "Fault config", "Generate and maintain station scenarios with full CRUD controls."],
+      ["01", "Station scan & readiness", "Choose a role and station, identify equipment, signals and training objects, then verify the sandbox."],
+      ["02", "Standard fault inheritance", "Generate station scenarios from a standardized fault catalog, with full CRUD controls."],
       ["03", "Sim & verify", "One fault drives PLC signals, HMI alarms and the 2D model together."],
       ["04", "Training report", "Validate diagnosis and recovery answers and retain the execution trace."]
     ];
@@ -48,11 +48,11 @@ const faultTrainingFlow = locale === "zh"
 const faultArchitecture = locale === "zh"
   ? {
       title: "系统拓扑",
-      intro: "培训操作先被转换为可复用的故障场景，再由接口层同步驱动三个验证对象。",
+      intro: "站点内容经识别后继承标准化故障列表，形成站点训练配置，再同步驱动三个验证对象。",
       flow: [
-        ["01", "培训平台", "用户、角色、站点与答案"],
-        ["02", "故障注入引擎", "场景规则、触发与恢复逻辑"],
-        ["03", "接口层", "统一映射状态、信号与命令"]
+        ["01", "站点识别", "设备、信号点与训练对象"],
+        ["02", "标准故障继承", "生成站点级场景与训练配置"],
+        ["03", "同步执行接口", "统一映射状态、信号与命令"]
       ],
       outputs: [
         ["PLC / PLCSim", "输入、输出与安全互锁"],
@@ -62,11 +62,11 @@ const faultArchitecture = locale === "zh"
     }
   : {
       title: "System topology",
-      intro: "Training actions become reusable fault scenarios before one interface layer drives three synchronized verification targets.",
+      intro: "Recognized station content inherits the standardized fault catalog to form a station training configuration before three verification targets are driven in sync.",
       flow: [
-        ["01", "Training platform", "User, role, station and answers"],
-        ["02", "Fault injection engine", "Scenario rules, triggers and recovery"],
-        ["03", "Interface layer", "Unified state, signal and command mapping"]
+        ["01", "Station recognition", "Equipment, signal points and training objects"],
+        ["02", "Standard fault inheritance", "Station scenarios and training configuration"],
+        ["03", "Synchronized interface", "Unified state, signal and command mapping"]
       ],
       outputs: [
         ["PLC / PLCSim", "Inputs, outputs and safety interlocks"],
@@ -251,7 +251,7 @@ const projectSummary = (project: Project) =>
                     id="fault-training-frame"
                     class="fault-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-4`}
+                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-6`}
                     loading="lazy"
                     scrolling="no"
                     title={locale === "zh"
@@ -312,6 +312,7 @@ const projectSummary = (project: Project) =>
                         locale={locale}
                         group="lists"
                         hideStructure={index === 0}
+                        hideHighlights={index === 0}
                       />
                     </div>
                   </div>

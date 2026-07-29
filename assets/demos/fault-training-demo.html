@@ -460,6 +460,33 @@
       left: 10px;
       color: #9da4ae;
       font-size: 10px;
+      letter-spacing: .04em;
+    }
+
+    .station-process {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      left: 10px;
+      color: #8d96a3;
+      font-size: 8px;
+      letter-spacing: .035em;
+      text-align: center;
+    }
+
+    .component-tag {
+      position: absolute;
+      z-index: 2;
+      width: max-content;
+      max-width: 120px;
+      padding: 2px 4px;
+      border: 1px solid #596474;
+      background: #11161e;
+      color: #c7cdd6;
+      font-size: 8px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
     }
 
     .conveyor {
@@ -480,6 +507,7 @@
       content: "";
       animation: belt 1.1s linear infinite;
     }
+    .conveyor .component-tag { bottom: 13px; left: 6px; }
     .station.fault .conveyor::after { animation-play-state: paused; opacity: .45; }
 
     .part {
@@ -494,6 +522,7 @@
     }
     .station.fault .part { animation-play-state: paused; }
     .station.sensor-fault .part { left: 49%; box-shadow: 0 0 0 3px var(--red); }
+    .part .component-tag { top: 29px; left: -4px; border-color: var(--yellow); color: var(--yellow); }
 
     .clamp {
       position: absolute;
@@ -513,6 +542,7 @@
       background: var(--blue);
       content: "";
     }
+    .clamp .component-tag { top: -22px; right: -2px; border-color: var(--blue); color: #8bb6ff; }
     .station.pressure-fault .clamp { border-color: var(--red); animation: shake .3s infinite; }
 
     .sensor {
@@ -531,6 +561,7 @@
       border-top: 1px dashed var(--run);
       content: "";
     }
+    .sensor .component-tag { top: -3px; right: 17px; border-color: var(--run); color: var(--run); }
     .station.sensor-fault .sensor { border-color: var(--red); }
     .station.sensor-fault .sensor::after { border-color: var(--red); opacity: .25; }
 
@@ -546,6 +577,7 @@
       border-radius: 50%;
       font-size: 10px;
     }
+    .motor .component-tag { right: -3px; bottom: 49px; border-color: var(--run); color: var(--run); }
     .station.drive-fault .motor { border-color: var(--red); color: var(--red); animation: shake .25s infinite; }
 
     .safety-door {
@@ -558,6 +590,7 @@
       transform-origin: right center;
       transition: transform .3s;
     }
+    .safety-door .component-tag { top: -22px; right: 0; }
     .station.safety-fault .safety-door { border-color: var(--red); transform: perspective(120px) rotateY(-35deg); }
 
     .fault-banner {
@@ -742,7 +775,7 @@
           <div class="panel-body">
             <p class="kicker" data-t="stepOne">步骤 01</p>
             <h1 data-t="loginHeading">进入站点训练环境</h1>
-            <p class="muted" data-t="loginBody">登录后平台会自动连接 PLC、HMI 与仿真模型，并载入该站点的故障模板。</p>
+            <p class="muted" data-t="loginBody">选择角色与站点后，系统识别站点内容并继承标准化故障列表；环境检查通过后再连接 PLC、HMI 与仿真模型。</p>
             <div class="field">
               <label for="user-name" data-t="userLabel">培训用户</label>
               <input id="user-name" value="trainee.hu" autocomplete="off" />
@@ -779,7 +812,7 @@
           </div>
           <ul class="readiness-list">
             <li class="readiness-item" data-check="runtime" data-state="pending"><i></i><span data-t="checkRuntime">浏览器仿真运行时</span><small data-t="pending">待检查</small></li>
-            <li class="readiness-item" data-check="package" data-state="pending"><i></i><span data-t="checkPackage">站点故障场景包</span><small data-t="pending">待检查</small></li>
+            <li class="readiness-item" data-check="package" data-state="pending"><i></i><span data-t="checkPackage">标准故障列表继承</span><small data-t="pending">待检查</small></li>
             <li class="readiness-item" data-check="plc" data-state="pending"><i></i><span data-t="checkPlc">PLC 信号沙箱</span><small data-t="pending">待检查</small></li>
             <li class="readiness-item" data-check="hmi" data-state="pending"><i></i><span data-t="checkHmi">HMI / OPC UA 模拟通道</span><small data-t="pending">待检查</small></li>
           </ul>
@@ -854,12 +887,13 @@
           <div class="station-panel station" id="station-model">
             <span class="station-label" id="station-label"></span>
             <div class="fault-banner" id="fault-banner"></div>
-            <div class="conveyor"></div>
-            <div class="part"></div>
-            <div class="clamp"></div>
-            <div class="sensor"></div>
-            <div class="motor">M1</div>
-            <div class="safety-door"></div>
+            <div class="conveyor"><span class="component-tag" id="label-conveyor"></span></div>
+            <div class="part"><span class="component-tag" id="label-part"></span></div>
+            <div class="clamp"><span class="component-tag" id="label-clamp"></span></div>
+            <div class="sensor"><span class="component-tag" id="label-sensor"></span></div>
+            <div class="motor"><b id="motor-code">M1</b><span class="component-tag" id="label-motor"></span></div>
+            <div class="safety-door"><span class="component-tag" id="label-guard"></span></div>
+            <div class="station-process" id="station-process"></div>
           </div>
           <div class="hmi">
             <strong id="hmi-title">HMI · WAITING FOR FAULT</strong>
@@ -925,16 +959,16 @@
         systemName: "故障仿真培训平台", offline: "● 未登录", online: "● 培训会话在线",
         stepLogin: "登录连接", stepLibrary: "故障配置", stepTraining: "模拟验证", stepReport: "培训报告",
         connection: "系统连接", loginTitle: "培训员登录", stepOne: "步骤 01", loginHeading: "进入站点训练环境",
-        loginBody: "选择角色与站点，确认模拟环境就绪后，平台会连接 PLC、HMI 与仿真模型并载入站点故障模板。",
+        loginBody: "选择角色与站点后，系统识别设备、信号点和训练对象，从标准化故障列表继承适用场景；环境检查通过后再连接 PLC、HMI 与仿真模型。",
         userLabel: "培训用户", roleLabel: "会话角色", stationLabel: "训练站点", loginButton: "登录并自动连接 →",
         roleTrainee: "受训人员", roleInstructor: "培训管理员", roleMaintenance: "维护工程师",
         roleScope: "当前角色权限", traineeScope: "运行已发布场景、提交诊断并生成个人报告。",
         instructorScope: "维护场景库、组织培训并查看完整执行记录。",
         maintenanceScope: "检查 PLC / HMI 信号、验证恢复步骤与设备状态。",
         readinessTitle: "会话准备", checkEnvironment: "检查模拟环境", pending: "待检查", checking: "检查中", ready: "就绪",
-        checkRuntime: "浏览器仿真运行时", checkPackage: "站点故障场景包", checkPlc: "PLC 信号沙箱",
+        checkRuntime: "浏览器仿真运行时", checkPackage: "标准故障列表继承", checkPlc: "PLC 信号沙箱",
         checkHmi: "HMI / OPC UA 模拟通道", readinessPending: "先检查所选站点的模拟环境，再建立培训会话。",
-        readinessRunning: "正在验证站点模板、信号沙箱与 HMI 通道…",
+        readinessRunning: "正在识别站点内容、继承标准故障列表并验证信号通道…",
         readinessReady: "模拟环境已就绪，可以登录并建立系统连接。",
         environmentRequired: "请先完成模拟环境检查",
         stepTwo: "步骤 02", libraryHeading: "站点故障场景库", startTraining: "使用所选故障开始培训 →",
@@ -960,16 +994,16 @@
         systemName: "Fault Simulation Training Platform", offline: "● SIGNED OUT", online: "● TRAINING SESSION ONLINE",
         stepLogin: "Login & link", stepLibrary: "Fault config", stepTraining: "Sim & verify", stepReport: "Report",
         connection: "Connections", loginTitle: "Trainee login", stepOne: "Step 01", loginHeading: "Enter the station training environment",
-        loginBody: "Choose a role and station, verify the sandbox, then link the PLC, HMI and simulation model with station-specific fault templates.",
+        loginBody: "Choose a role and station; the system identifies equipment, signal points and training objects, then inherits applicable scenarios from a standardized fault catalog. PLC, HMI and simulation are linked after the readiness check.",
         userLabel: "Trainee", roleLabel: "Session role", stationLabel: "Training station", loginButton: "Login and auto-connect →",
         roleTrainee: "Trainee", roleInstructor: "Training administrator", roleMaintenance: "Maintenance engineer",
         roleScope: "Current role scope", traineeScope: "Run published scenarios, submit a diagnosis and generate a personal report.",
         instructorScope: "Maintain the scenario library, organize training and inspect the full execution trace.",
         maintenanceScope: "Inspect PLC / HMI signals, validate recovery steps and verify equipment state.",
         readinessTitle: "Session readiness", checkEnvironment: "Check simulation environment", pending: "Pending", checking: "Checking", ready: "Ready",
-        checkRuntime: "Browser simulation runtime", checkPackage: "Station fault scenario package", checkPlc: "PLC signal sandbox",
+        checkRuntime: "Browser simulation runtime", checkPackage: "Standard fault catalog inheritance", checkPlc: "PLC signal sandbox",
         checkHmi: "HMI / OPC UA simulated channel", readinessPending: "Check the selected station sandbox before starting a training session.",
-        readinessRunning: "Validating station templates, signal sandbox and the HMI channel…",
+        readinessRunning: "Identifying station content, inheriting the standard fault catalog and validating signal channels…",
         readinessReady: "The simulation environment is ready. Login can now establish the system links.",
         environmentRequired: "Complete the simulation environment check first",
         stepTwo: "Step 02", libraryHeading: "Station fault scenario library", startTraining: "Train with selected fault →",
@@ -1131,6 +1165,38 @@
       ["plc", () => ["A01", "B02", "C03"].includes(station)],
       ["hmi", () => typeof parent?.postMessage === "function"]
     ];
+    const stationVisuals = {
+      A01: {
+        title: bilingual("A01 · 装配数字孪生", "A01 · ASSEMBLY DIGITAL TWIN"),
+        conveyor: bilingual("CV-01 · 输送带", "CV-01 · CONVEYOR"),
+        part: bilingual("工件", "WORKPIECE"),
+        clamp: bilingual("CY-01 · 夹具", "CY-01 · CLAMP"),
+        sensor: bilingual("S12 · 到位传感器", "S12 · POSITION SENSOR"),
+        motor: bilingual("M1 · 输送驱动", "M1 · CONVEYOR DRIVE"),
+        guard: bilingual("SG-01 · 防护门", "SG-01 · SAFETY GUARD"),
+        process: bilingual("上料 → S12 到位检测 → CY-01 夹紧 → 下料", "INFEED → S12 POSITION CHECK → CY-01 CLAMP → OUTFEED")
+      },
+      B02: {
+        title: bilingual("B02 · 检测数字孪生", "B02 · INSPECTION DIGITAL TWIN"),
+        conveyor: bilingual("CV-02 · 检测输送", "CV-02 · INSPECTION CONVEYOR"),
+        part: bilingual("待检工件", "PART UNDER TEST"),
+        clamp: bilingual("RJ-01 · 剔除机构", "RJ-01 · REJECT UNIT"),
+        sensor: bilingual("CAM · 视觉触发", "CAM · VISION TRIGGER"),
+        motor: bilingual("M2 · 输送驱动", "M2 · CONVEYOR DRIVE"),
+        guard: bilingual("SG-02 · 检测区门", "SG-02 · CELL GUARD"),
+        process: bilingual("进料 → 视觉触发 → 质量判定 → 放行 / 剔除", "INFEED → VISION TRIGGER → QUALITY CHECK → PASS / REJECT")
+      },
+      C03: {
+        title: bilingual("C03 · 包装数字孪生", "C03 · PACKAGING DIGITAL TWIN"),
+        conveyor: bilingual("CV-03 · 包装输送", "CV-03 · PACKAGING CONVEYOR"),
+        part: bilingual("包装件", "PACKAGE"),
+        clamp: bilingual("CS-01 · 封箱机构", "CS-01 · CASE SEALER"),
+        sensor: bilingual("PE · 包装光电", "PE · PACKAGE PHOTOEYE"),
+        motor: bilingual("M3 · 封箱驱动", "M3 · SEALER DRIVE"),
+        guard: bilingual("SG-03 · 包装区门", "SG-03 · AREA GUARD"),
+        process: bilingual("包装到位 → 光电确认 → 封箱 → 出料", "PACKAGE ARRIVAL → PHOTOEYE CHECK → SEAL → OUTFEED")
+      }
+    };
 
     function reportHeight() {
       requestAnimationFrame(() => {
@@ -1211,6 +1277,10 @@
       $("#readiness-count").textContent = "0 / 4 READY";
       $("#readiness-summary").textContent = t("readinessPending");
       $("#readiness-summary").classList.remove("ready");
+      clearMotionStyles([
+        $("#login-submit"),
+        ...$$(".readiness-item")
+      ]);
       environmentChecks.forEach(([key]) => setReadinessItem(key, "pending"));
       reportHeight();
     }
@@ -1249,9 +1319,26 @@
         x: [-3, 0],
         duration: 220,
         delay: window.anime?.stagger?.(34),
-        ease: "out(3)"
+        ease: "out(3)",
+        onComplete: () => clearMotionStyles([
+          $("#login-submit"),
+          ...$$(".readiness-item")
+        ])
       });
       reportHeight();
+    }
+
+    function renderStationDiagram() {
+      const visual = stationVisuals[station] || stationVisuals.A01;
+      $("#station-label").textContent = local(visual.title);
+      $("#label-conveyor").textContent = local(visual.conveyor);
+      $("#label-part").textContent = local(visual.part);
+      $("#label-clamp").textContent = local(visual.clamp);
+      $("#label-sensor").textContent = local(visual.sensor);
+      $("#label-motor").textContent = local(visual.motor);
+      $("#label-guard").textContent = local(visual.guard);
+      $("#motor-code").textContent = station === "B02" ? "M2" : station === "C03" ? "M3" : "M1";
+      $("#station-process").textContent = local(visual.process);
     }
 
     function connectNode(id, delay) {
@@ -1463,8 +1550,8 @@
       trainingStartedAt = Date.now();
       report = null;
       $("#training-title").textContent = `${fault.id} · ${local(fault.name)}`;
-      $("#station-label").textContent = `${station} · SIMULATION MODEL`;
       $("#station-model").className = "station-panel station";
+      renderStationDiagram();
       $("#fault-banner").textContent = t("inject");
       $("#hmi-title").textContent = "HMI · SYSTEM RUNNING";
       $("#hmi-message").textContent = "AUTO MODE · NO ACTIVE ALARM";
@@ -1629,6 +1716,7 @@
     $("#role-select").addEventListener("change", renderRoleProfile);
     $("#station-select").addEventListener("change", () => {
       station = $("#station-select").value;
+      renderStationDiagram();
       $("#session-status").textContent = t("offline");
       $$(".node").forEach((node) => {
         node.classList.remove("connecting", "online");
@@ -1669,6 +1757,7 @@
       new ResizeObserver(reportHeight).observe($(".app"));
     }
     renderRoleProfile();
+    renderStationDiagram();
     resetEnvironmentCheck();
     reportHeight();
   </script>
