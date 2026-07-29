@@ -150,7 +150,7 @@ const projectSummary = (project: Project) =>
           <iframe
             id="hero-frame"
             data-theme-frame
-            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=theme-shell-3"
+            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=theme-shell-4"
             loading="eager"
             scrolling="no"
             title="Interactive assembly digital twin"
@@ -246,18 +246,10 @@ const projectSummary = (project: Project) =>
 
               <details class="selected-details">
                 <summary>
-                  <span>
-                    <small>{String(index + 1).padStart(2, "0")} / CASE FILE</small>
-                    <b>{index === 1 ? c.projectVideo : c.projectContext}</b>
-                  </span>
-                  <span class="details-trigger-signal" aria-hidden="true"><i></i><b>+</b></span>
+                  <b>{index === 1 ? c.projectVideo : c.projectContext}</b>
+                  <span class="details-trigger-signal" aria-hidden="true"><i></i><b></b></span>
                 </summary>
                 <div class="selected-detail-content">
-                  <header class="detail-dossier-head">
-                    <span>{selectedLabels[index]}</span>
-                    <b>{text(project.title, locale)}</b>
-                    <small>{(project.technologies ?? []).length} SYSTEM LAYERS</small>
-                  </header>
                   <div class="details-grid">
                     <div class="detail-column narrative"><ProjectFacts project={project} locale={locale} group="narrative" /></div>
                     <div class="detail-column evidence"><ProjectFacts project={project} locale={locale} group="lists" /></div>
@@ -313,11 +305,6 @@ const projectSummary = (project: Project) =>
                 <b class="plus">+</b>
               </summary>
               <div class="archive-detail">
-                <header class="archive-detail-head">
-                  <span>{text(project.projectType, locale)}</span>
-                  <b>{text(project.title, locale)}</b>
-                  <small>{(project.technologies ?? []).slice(0, 3).join(" / ")}</small>
-                </header>
                 <div><ProjectFacts project={project} locale={locale} /></div>
                 <div class="project-media">
                   {project.video?.url ? (
@@ -818,7 +805,7 @@ const projectSummary = (project: Project) =>
             }
           });
           const detailParts = $$(
-            ".detail-dossier-head > *, .details-grid .detail-column, .archive-detail-head > *, .archive-detail > div",
+            ".details-grid .detail-column, .archive-detail > div",
             content
           );
           if (detailParts.length) {
