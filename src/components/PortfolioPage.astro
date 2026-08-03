@@ -7,6 +7,7 @@ import {
   type Locale
 } from "../data/site";
 import ProjectFacts from "./ProjectFacts.astro";
+import ProjectArchitecture from "./ProjectArchitecture.astro";
 import {
   assetPath,
   otherProjects,
@@ -47,16 +48,16 @@ const faultTrainingFlow = locale === "zh"
 
 const sceneBuilderFlow = locale === "zh"
   ? [
-      ["01", "编辑 YAML", "修改场景尺寸、对象位置与缺陷参数，三维视图即时重建。"],
-      ["02", "拖动三维对象", "直接拖动机器人、相机或工件，新的位姿自动回写 YAML。"],
-      ["03", "切换缺陷场景", "在四类异常配置之间切换，检查场景对象与参数差异。"],
-      ["04", "准备输出", "从统一场景状态示意生成 USD、Metadata 与相机输出。"]
+      ["01", "识别意图并配置", "将场景需求映射为结构化文档、资产引用和参数规则。"],
+      ["02", "生成数字孪生", "根据文档自动组合工业组件、对象关系与 USD 场景树。"],
+      ["03", "模拟缺陷与错误", "复用同一场景定义切换正常状态与四类参数化异常。"],
+      ["04", "按需组织输出", "从统一场景状态生成结构树、报告、Metadata 与场景截图。"]
     ]
   : [
-      ["01", "Edit YAML", "Change scene dimensions, object positions and defect parameters to rebuild the 3D view."],
-      ["02", "Drag 3D objects", "Move the robot, camera or workpiece directly and write new transforms back to YAML."],
-      ["03", "Switch defect cases", "Compare scene objects and parameters across four deterministic fault configurations."],
-      ["04", "Prepare outputs", "Use one scene state to illustrate USD, metadata and camera-output preparation."]
+      ["01", "Interpret & configure", "Map scene requirements to structured documents, asset references and parameter rules."],
+      ["02", "Generate the digital twin", "Assemble industrial components, relationships and the USD scene tree from the document."],
+      ["03", "Simulate defects & errors", "Reuse one scene definition across normal operation and four parameterized anomalies."],
+      ["04", "Compose outputs on demand", "Generate hierarchy trees, reports, metadata and scene captures from one scene state."]
     ];
 
 const faultArchitecture = locale === "zh"
@@ -86,6 +87,38 @@ const faultArchitecture = locale === "zh"
         ["PLC / PLCSim", "Inputs, outputs and safety interlocks"],
         ["Simulation Model", "Object behavior and visual response"],
         ["HMI / OPC UA", "Alarms, state and operator feedback"]
+      ]
+    };
+
+const sceneArchitecture = locale === "zh"
+  ? {
+      title: "配置驱动的应用闭环",
+      intro: "场景需求先被识别并写入结构化文档，文档驱动数字孪生场景与层级树自动生成；三维编辑和缺陷模拟持续更新统一场景状态，报告、结构树与场景截图再从该状态按需输出。",
+      flow: [
+        ["01", "场景意图", "将任务需求解析为配置目标与规则"],
+        ["02", "结构化描述", "YAML 定义资产、参数、关系与缺陷"],
+        ["03", "数字孪生运行时", "自动构建 USD Stage 并维护统一状态"],
+        ["04", "按需输出", "从场景树生成资料与工程证据"]
+      ],
+      outputs: [
+        ["文档 ↔ 三维", "结构参数与对象位姿双向同步"],
+        ["缺陷与错误模拟", "正常状态和参数化异常共享同一场景"],
+        ["结构树与可视证据", "层级树、报告、Metadata 和场景截图"]
+      ]
+    }
+  : {
+      title: "Configuration-driven application loop",
+      intro: "Scene requirements are interpreted into structured documents that automatically generate the digital-twin scene and hierarchy. Direct 3D edits and defect simulation keep one scene state current, while reports, hierarchy trees and scene captures are produced from it on demand.",
+      flow: [
+        ["01", "Scene intent", "Interpret task requirements into configuration goals and rules"],
+        ["02", "Structured description", "YAML defines assets, parameters, relations and defects"],
+        ["03", "Digital-twin runtime", "Build the USD Stage and maintain one shared state"],
+        ["04", "On-demand outputs", "Generate engineering evidence from the scene tree"]
+      ],
+      outputs: [
+        ["Document ↔ 3D", "Bidirectional structure and transform synchronization"],
+        ["Defect & error simulation", "Normal and parameterized abnormal states share one scene"],
+        ["Hierarchy & visual evidence", "Scene trees, reports, metadata and captures"]
       ]
     };
 
@@ -221,7 +254,7 @@ const projectSummary = (project: Project) =>
               tabindex="-1"
             >
               <div class="project-bar">
-                <span>{index === 0 ? text(project.projectType, locale) : selectedLabels[index]}</span>
+                <span>{index <= 1 ? text(project.projectType, locale) : selectedLabels[index]}</span>
                 <b>{text(project.technicalType, locale) || selectedLabels[index]}</b>
                 <i class="project-locator" aria-hidden="true"></i>
               </div>
@@ -328,54 +361,36 @@ const projectSummary = (project: Project) =>
                         group="narrative"
                         hideSummary={index <= 1}
                       />
+                      {index === 1 && project.video?.url && (
+                        <figure class="project-video-card project-video-inline">
+                          <figcaption>
+                            <span>{locale === "zh" ? "ISAAC SIM 应用闭环实录" : "ISAAC SIM APPLICATION LOOP"}</span>
+                            <button type="button" data-video-expand>
+                              {locale === "zh" ? "放大 / 全屏 ↗" : "Expand / fullscreen ↗"}
+                            </button>
+                          </figcaption>
+                          <video controls preload="none" playsinline>
+                            <source src={assetPath(project.video.url)} type="video/mp4" />
+                          </video>
+                        </figure>
+                      )}
                     </div>
                     <div class="detail-column evidence">
                       <ProjectFacts
                         project={project}
                         locale={locale}
                         group="lists"
-                        hideStructure={index === 0}
+                        hideStructure={index <= 1}
                       />
                     </div>
                   </div>
                   {index === 0 && (
-                    <section class="fault-architecture">
-                      <header>
-                        <span>{faultArchitecture.title}</span>
-                        <p>{faultArchitecture.intro}</p>
-                      </header>
-                      <ol>
-                        {faultArchitecture.flow.map(([number, title, body]) => (
-                          <li>
-                            <b>{number}</b>
-                            <strong>{title}</strong>
-                            <small>{body}</small>
-                          </li>
-                        ))}
-                      </ol>
-                      <div class="fault-architecture-branches">
-                        {faultArchitecture.outputs.map(([title, body]) => (
-                          <article>
-                            <strong>{title}</strong>
-                            <small>{body}</small>
-                          </article>
-                        ))}
-                      </div>
-                    </section>
+                    <ProjectArchitecture architecture={faultArchitecture} />
                   )}
-                  {project.video?.url && index === 1 ? (
-                    <figure class="project-video-card">
-                      <figcaption>
-                        <span>{locale === "zh" ? "ISAAC SIM 生成流程实录" : "ISAAC SIM GENERATION RECORDING"}</span>
-                        <button type="button" data-video-expand>
-                          {locale === "zh" ? "放大 / 全屏 ↗" : "Expand / fullscreen ↗"}
-                        </button>
-                      </figcaption>
-                      <video controls preload="none" playsinline>
-                        <source src={assetPath(project.video.url)} type="video/mp4" />
-                      </video>
-                    </figure>
-                  ) : project.video?.url ? (
+                  {index === 1 && (
+                    <ProjectArchitecture architecture={sceneArchitecture} />
+                  )}
+                  {project.video?.url && index !== 1 ? (
                     <video controls preload="none" playsinline>
                       <source src={assetPath(project.video.url)} type="video/mp4" />
                     </video>

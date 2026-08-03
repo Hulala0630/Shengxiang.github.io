@@ -1043,45 +1043,45 @@ const projectsData = [
       zh: "工业仿真数据智能 Agent"
     },
     projectType: {
-      en: "Personal Project",
-      zh: "个人项目"
+      en: "S.Hu · Personal Project",
+      zh: "S.Hu · 个人项目"
     },
     technicalType: {
       en: "Extended Technical Project",
       zh: "技术延展项目"
     },
     pitch: {
-      en: "A configuration-driven Isaac Sim pipeline that keeps YAML scene definitions, 3D placement and reusable data outputs in one engineering loop.",
-      zh: "一个配置驱动的 Isaac Sim 工程管线，让 YAML 场景定义、三维对象布局与可复用数据输出保持在同一闭环中。"
+      en: "A reusable industrial simulation framework that turns scene intent and structured documents into digital-twin environments, defect simulations and on-demand engineering outputs.",
+      zh: "一个可复用的工业仿真应用框架，将场景意图与结构化文档转换为数字孪生环境、缺陷模拟和按需工程输出。"
     },
     summary: {
-      en: "A YAML-driven industrial scene generator that converts structured configurations into reusable Isaac Sim environments, deterministic defect cases and synthetic-data preparation workflows.",
-      zh: "一个 YAML 驱动的工业场景生成器，将结构化配置转换为可复用的 Isaac Sim 环境、确定性的缺陷场景与合成数据准备流程。"
+      en: "Structured documents define the scene, generate the digital twin, and drive defect simulation and on-demand outputs from one shared state.",
+      zh: "以结构化文档描述场景、自动生成数字孪生，并基于统一状态完成缺陷模拟与按需输出。"
     },
     problem: {
-      en: "Industrial AI and embodied intelligence systems need large-scale, high-quality simulation data, but traditional industrial simulation workflows still depend heavily on manual USD scene construction, asset placement, parameter tuning, and scenario reproduction. That makes dataset creation expensive, difficult to reproduce, and hard to scale.",
-      zh: "工业 AI 与具身智能系统需要大规模、高质量的仿真数据，但传统工业仿真流程仍然高度依赖人工完成 USD 场景搭建、资产摆放、参数调节与异常场景复现，导致数据集构建成本高、复现困难且难以规模化。"
+      en: "Industrial digital twins, industrial AI and embodied-intelligence systems all depend on reliable simulation environments and high-quality scene data. Traditional workflows still require engineers to build USD scenes, place assets, tune parameters and reproduce defects manually. Scene knowledge remains trapped in individual projects, while digital-twin variants, error cases and output packages are expensive to rebuild, difficult to reproduce and hard to scale across applications.",
+      zh: "工业数字孪生、工业 AI 与具身智能系统都依赖可靠的仿真环境和高质量场景数据，但传统流程仍高度依赖工程师手工搭建 USD 场景、摆放资产、调节参数并复现缺陷。场景知识容易被固化在单个项目中，数字孪生变体、错误场景和输出资料需要重复制作，导致建模成本高、复现困难，也难以跨应用扩展。"
     },
     solution: {
-      en: "The completed pipeline separates scene description, simulation construction and data export. Structured YAML is parsed into scene intent, reusable assets are composed into a USD stage, object transformations can be written back to configuration, and deterministic defect cases can be regenerated with the same parameters. Metadata, reports, viewpoints and camera captures then share the resulting scene state. A natural-language scene agent remains a future extension rather than a production claim.",
-      zh: "已完成的管线将场景描述、仿真构建与数据导出解耦：结构化 YAML 被解析为场景意图，可复用资产被组合到 USD Stage，对象位姿能够回写配置，确定性的缺陷场景也可以通过同一组参数重复生成；Metadata、报告、视角截图与相机图像随后共享同一场景状态。自然语言场景 Agent 仍属于后续扩展方向，不作为当前已完成能力。"
+      en: "The framework separates intent interpretation, scene description, digital-twin construction and output generation. Scene requirements are mapped to structured YAML configurations; reusable assets, materials and relationships are then composed automatically into a USD Stage and scene tree. Direct 3D edits write transformations back to the document, while parameterized defect and error states reuse the same scene definition. Reports, hierarchy trees, metadata, viewpoints and scene captures are generated on demand from this shared state through modular output adapters.",
+      zh: "该框架将意图识别、场景描述、数字孪生构建与输出生成解耦：场景需求先被映射为结构化 YAML 配置，再由可复用资产、材质和对象关系自动组合为 USD Stage 与场景树；三维对象的直接编辑能够将位姿回写文档，参数化的缺陷与错误状态则复用同一份场景定义。报告、层级结构树、Metadata、视角图和场景截图通过模块化输出适配器按需生成。"
     },
     highlights: {
       en: [
-        "Built configuration-driven scene generation from structured YAML files.",
-        "Supported reusable industrial components such as floor, conveyor, robot, battery module, sensor, storage rack, and camera.",
-        "Modeled configurable defect scenarios including normal state, box misalignment, missing part, and placed-on-table cases.",
-        "Integrated reusable USD assets for industrial environments and custom simulation content.",
-        "Automated export of metadata JSON, scene reports, viewpoint images, camera captures, and stage-to-YAML configuration snapshots.",
-        "Developed an interactive Isaac Sim extension for selecting YAML configurations, generating scenes, switching defect cases, and exporting outputs."
+        "Treats structured documents as an executable scene contract rather than a one-time import format.",
+        "Uses intent recognition and configuration rules to translate scene requirements into assets, parameters and relationships.",
+        "Generates digital-twin scenes from reusable industrial components and a modular USD asset library.",
+        "Models defects and errors as parameterized scene states so normal and abnormal conditions share one definition.",
+        "Keeps YAML, the 3D scene and the USD hierarchy synchronized around a single source of scene truth.",
+        "Exposes reusable extension points for new assets, defect rules and on-demand outputs such as hierarchy trees, reports and scene captures."
       ],
       zh: [
-        "基于结构化 YAML 文件实现配置驱动的场景生成。",
-        "支持地板、传送线、工业机器人、电池模组、传感器、货架与相机等可复用工业组件。",
-        "可配置异常场景建模，包括正常状态、箱体偏移、部件缺失与放置异常等情况。",
-        "集成可复用的 USD 工业资产与自定义仿真资产。",
-        "自动导出 Metadata JSON、场景报告、视角截图、相机图像以及 Stage-to-YAML 配置快照。",
-        "开发交互式 Isaac Sim Extension，支持选择 YAML、生成场景、切换异常场景并导出仿真数据。"
+        "将结构化文档视为可执行的场景契约，而不是一次性的导入格式。",
+        "通过意图识别与配置规则，将场景需求转换为资产、参数和对象关系。",
+        "基于可复用工业组件与模块化 USD 资产库自动生成数字孪生场景。",
+        "把缺陷与错误建模为参数化场景状态，使正常与异常工况共享同一份定义。",
+        "让 YAML、三维场景与 USD 层级结构围绕统一场景数据源保持同步。",
+        "通过可扩展模块接入新资产、缺陷规则，以及结构树、报告和场景截图等按需输出。"
       ]
     },
     structure: {
@@ -1143,8 +1143,8 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "The configuration pipeline turns repeatable scene construction, defect reproduction and data preparation into one reusable workflow. It provides an engineering foundation that connects industrial digital twins and simulation data production, while leaving natural-language generation and closed-loop agents as clearly separated future work.",
-      zh: "配置管线把可重复的场景搭建、缺陷复现和数据准备合并为一条可复用工作流，为工业数字孪生与仿真数据生产建立了统一工程基础，同时将自然语言生成和闭环 Agent 明确保留为后续工作。"
+      en: "The framework consolidates scene knowledge into a reusable application structure: one structured description can generate a digital-twin scene, reproduce parameterized defects and supply multiple engineering outputs without rebuilding the environment for every task. Its modular architecture allows assets, intent rules, fault models and output adapters to evolve independently, improving reproducibility while making the same framework transferable across stations, projects and data-production scenarios.",
+      zh: "该框架把场景知识沉淀为可复用的应用结构：同一份结构化描述可以生成数字孪生场景、复现参数化缺陷，并为不同工程任务提供多种输出，无需反复重建环境。模块化架构使资产、意图规则、故障模型和输出适配器能够独立扩展，在提升复现性的同时，也让同一框架可以迁移到不同站点、项目和仿真数据生产场景。"
     },
     cardResult: {
       en: "Structured YAML and 3D transforms stay synchronized across four reproducible defect cases, with USD, metadata and camera outputs prepared from one scene state.",

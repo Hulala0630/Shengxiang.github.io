@@ -1293,7 +1293,7 @@ summary:focus-visible {
 }
 
 .fault-detail-lead > div > span,
-.fault-architecture header > span {
+.project-architecture header > span {
   display: block;
   margin-bottom: 9px;
   color: var(--project-accent);
@@ -1359,38 +1359,38 @@ summary:focus-visible {
   border-left: 1px solid var(--line);
 }
 
-.fault-architecture {
+.project-architecture {
   margin: 0 32px 34px;
   padding-top: 28px;
   border-top: 1px solid var(--line);
 }
 
-.fault-architecture header {
+.project-architecture header {
   display: grid;
   margin-bottom: 20px;
-  grid-template-columns: 180px minmax(0, 680px);
+  grid-template-columns: 180px minmax(0, 1fr);
 }
 
-.fault-architecture header > span {
+.project-architecture header > span {
   margin: 0;
 }
 
-.fault-architecture header p {
+.project-architecture header p {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
 }
 
-.fault-architecture ol {
+.project-architecture ol {
   display: grid;
   gap: 28px;
   margin: 0;
   padding: 0;
   list-style: none;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--architecture-columns, 3), 1fr);
 }
 
-.fault-architecture ol li {
+.project-architecture ol li {
   position: relative;
   min-width: 0;
   padding: 18px 18px 19px;
@@ -1398,43 +1398,43 @@ summary:focus-visible {
   background: var(--card);
 }
 
-.fault-architecture ol li:not(:last-child)::after {
+.project-architecture ol li:not(:last-child)::after {
   position: absolute;
   top: 50%;
   left: calc(100% + 1px);
   width: 28px;
   height: 1px;
-  background: var(--red);
+  background: var(--project-accent);
   content: "";
 }
 
-.fault-architecture ol b,
-.fault-architecture ol strong,
-.fault-architecture ol small,
-.fault-architecture-branches strong,
-.fault-architecture-branches small {
+.project-architecture ol b,
+.project-architecture ol strong,
+.project-architecture ol small,
+.project-architecture-branches strong,
+.project-architecture-branches small {
   display: block;
 }
 
-.fault-architecture ol b {
+.project-architecture ol b {
   margin-bottom: 22px;
-  color: var(--red);
+  color: var(--project-accent);
   font: 600 10px "IBM Plex Mono", monospace;
 }
 
-.fault-architecture ol strong,
-.fault-architecture-branches strong {
+.project-architecture ol strong,
+.project-architecture-branches strong {
   font: 600 14px "Space Grotesk", "Noto Sans SC", sans-serif;
 }
 
-.fault-architecture ol small,
-.fault-architecture-branches small {
+.project-architecture ol small,
+.project-architecture-branches small {
   margin-top: 5px;
   color: var(--muted);
   font: 10px/1.5 "IBM Plex Mono", monospace;
 }
 
-.fault-architecture-branches {
+.project-architecture-branches {
   position: relative;
   display: grid;
   gap: 14px;
@@ -1443,40 +1443,40 @@ summary:focus-visible {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.fault-architecture-branches::before {
+.project-architecture-branches::before {
   position: absolute;
   top: 0;
   right: 16.66%;
   left: 16.66%;
   height: 1px;
-  background: var(--red);
+  background: var(--project-accent);
   content: "";
 }
 
-.fault-architecture-branches::after {
+.project-architecture-branches::after {
   position: absolute;
   top: -32px;
   left: 83.33%;
   width: 1px;
   height: 32px;
-  background: var(--red);
+  background: var(--project-accent);
   content: "";
 }
 
-.fault-architecture-branches article {
+.project-architecture-branches article {
   position: relative;
   padding: 15px 16px;
-  border-top: 3px solid var(--red);
+  border-top: 3px solid var(--project-accent);
   background: var(--paper);
 }
 
-.fault-architecture-branches article::before {
+.project-architecture-branches article::before {
   position: absolute;
   bottom: 100%;
   left: 50%;
   width: 1px;
   height: 24px;
-  background: var(--red);
+  background: var(--project-accent);
   content: "";
 }
 
@@ -1490,8 +1490,8 @@ summary:focus-visible {
 }
 
 .project-video-card {
-  width: min(62%, 760px);
-  margin: 0 32px 34px auto;
+  width: 100%;
+  margin: 30px 0 0;
   border: 1px solid var(--ink);
   background: var(--paper);
 }
@@ -2158,8 +2158,8 @@ footer {
   }
 
   .project-video-card {
-    width: calc(100% - 36px);
-    margin: 0 18px 22px;
+    width: 100%;
+    margin: 22px 0 0;
   }
 
   .selected-details .project-video-card video {
@@ -2167,45 +2167,45 @@ footer {
     margin: 0;
   }
 
-  .fault-architecture {
+  .project-architecture {
     margin: 0 18px 24px;
     padding-top: 22px;
   }
 
-  .fault-architecture header {
+  .project-architecture header {
     grid-template-columns: 1fr;
   }
 
-  .fault-architecture header > span {
+  .project-architecture header > span {
     margin-bottom: 8px;
   }
 
-  .fault-architecture ol {
+  .project-architecture ol {
     gap: 12px;
     grid-template-columns: 1fr;
   }
 
-  .fault-architecture ol li:not(:last-child)::after {
+  .project-architecture ol li:not(:last-child)::after {
     top: 100%;
     left: 24px;
     width: 1px;
     height: 12px;
   }
 
-  .fault-architecture ol b {
+  .project-architecture ol b {
     margin-bottom: 10px;
   }
 
-  .fault-architecture-branches {
+  .project-architecture-branches {
     gap: 8px;
     margin-top: 22px;
     padding-top: 0;
     grid-template-columns: 1fr;
   }
 
-  .fault-architecture-branches::before,
-  .fault-architecture-branches::after,
-  .fault-architecture-branches article::before {
+  .project-architecture-branches::before,
+  .project-architecture-branches::after,
+  .project-architecture-branches article::before {
     display: none;
   }
 
