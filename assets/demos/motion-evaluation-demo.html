@@ -78,6 +78,31 @@
     .status { display: inline-flex; align-items: center; gap: 7px; color: var(--green); }
     .status i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 
+    .lab-tabs {
+      display: grid;
+      min-height: 54px;
+      border-bottom: 1px solid var(--ink);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .lab-tabs button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      border: 0;
+      border-right: 1px solid var(--ink);
+      background: var(--card);
+      cursor: pointer;
+      font: 600 12px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+    .lab-tabs button:last-child { border-right: 0; }
+    .lab-tabs button span { color: var(--muted); font: 11px "IBM Plex Sans", sans-serif; text-transform: none; }
+    .lab-tabs button.active { background: var(--yellow); color: #17181a; }
+    .lab-tabs button.active span { color: #4f4630; }
+    .lab-view[hidden] { display: none !important; }
+
     .control-strip {
       display: grid;
       min-height: 78px;
@@ -121,6 +146,9 @@
     }
     .timeline label { display: flex; justify-content: space-between; color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
     input[type="range"] { width: 100%; accent-color: var(--blue); }
+    .phase-track { display: grid; gap: 3px; grid-template-columns: repeat(5, 1fr); }
+    .phase-track i { height: 3px; background: var(--line); }
+    .phase-track i.active { background: var(--yellow); }
 
     .workspace {
       display: grid;
@@ -234,6 +262,18 @@
       font: 600 11px "IBM Plex Mono", monospace;
     }
     .joint-grid button.active { border-color: var(--ink); background: var(--yellow); color: #17181a; }
+    .score-basis { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .score-basis button {
+      min-height: 38px;
+      padding: 7px 8px;
+      border: 1px solid var(--line);
+      background: transparent;
+      cursor: pointer;
+      font: 600 10px "IBM Plex Mono", monospace;
+    }
+    .score-basis button + button { border-left: 0; }
+    .score-basis button.active { background: var(--ink); color: var(--paper); }
+    .basis-note { min-height: 34px; margin: 8px 0 0; color: var(--muted); font-size: 11px; }
     .metric-tabs { display: grid; border: 1px solid var(--line); grid-template-columns: repeat(5, minmax(0, 1fr)); }
     .metric-tabs button { min-width: 0; padding-inline: 3px; border: 0; border-right: 1px solid var(--line); font-size: 10px; }
     .metric-tabs button:last-child { border-right: 0; }
@@ -268,7 +308,121 @@
     .evidence-strip strong { display: block; font: 600 14px/1.25 "Space Grotesk", "Noto Sans SC", sans-serif; }
     .evidence-strip small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
 
+    .stats-view { background: var(--paper); }
+    .stats-controls {
+      display: grid;
+      border-bottom: 1px solid var(--ink);
+      background: var(--card);
+      grid-template-columns: 1.15fr .85fr;
+    }
+    .stats-intro,
+    .cohort-control { min-width: 0; padding: 18px; }
+    .stats-intro { border-right: 1px solid var(--ink); }
+    .stats-intro span { color: var(--blue); letter-spacing: .06em; font: 600 11px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .stats-intro h2 { margin: 7px 0 5px; font: 600 24px/1.05 "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .stats-intro p { max-width: 680px; margin: 0; color: var(--muted); font-size: 12px; }
+    .toolchain { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+    .toolchain b { padding: 4px 7px; border: 1px solid var(--line); font: 500 10px "IBM Plex Mono", monospace; }
+    .cohort-control { display: grid; align-content: center; gap: 10px; }
+    .cohort-control label { display: flex; align-items: end; justify-content: space-between; gap: 16px; font: 600 11px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .cohort-control label b { color: var(--blue); font-size: 27px; line-height: 1; }
+    .cohort-control small { color: var(--muted); font-size: 11px; }
+
+    .stats-toolbar {
+      display: grid;
+      border-bottom: 1px solid var(--ink);
+      background: var(--card);
+      grid-template-columns: 1fr auto;
+    }
+    .stats-joints,
+    .chart-modes { display: flex; min-width: 0; }
+    .stats-joints { overflow-x: auto; }
+    .stats-joints button,
+    .chart-modes button {
+      min-width: 76px;
+      min-height: 44px;
+      padding: 7px 10px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      cursor: pointer;
+      font: 600 10px "IBM Plex Mono", monospace;
+    }
+    .stats-joints button.active { background: var(--yellow); color: #17181a; }
+    .chart-modes { border-left: 1px solid var(--ink); }
+    .chart-modes button.active { background: var(--ink); color: var(--paper); }
+    .stats-metric-control { display: grid; min-width: 128px; align-content: center; gap: 2px; padding: 5px 10px; border-right: 1px solid var(--line); }
+    .stats-metric-control span { color: var(--muted); font: 8px "IBM Plex Mono", monospace; }
+    .stats-metric-control select { max-width: 126px; border: 0; background: var(--card); color: var(--ink); font: 600 10px "IBM Plex Mono", monospace; }
+
+    .stats-layout {
+      display: grid;
+      min-height: 430px;
+      grid-template-columns: minmax(0, 1.42fr) minmax(250px, .58fr);
+    }
+    .stats-chart-card { min-width: 0; margin: 0; padding: 18px; border-right: 1px solid var(--ink); background: var(--card); }
+    .stats-chart-card figcaption { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .stats-chart-card figcaption b { font: 600 12px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .stats-chart-card figcaption span { color: var(--muted); text-align: right; font: 10px "IBM Plex Mono", monospace; }
+    #stats-chart { display: block; width: 100%; height: 340px; border: 1px solid var(--line); background: color-mix(in srgb, var(--card) 94%, var(--paper)); }
+    .stats-grid-line,
+    .stats-grid { stroke: var(--line); stroke-width: 1; opacity: .7; }
+    .stats-axis { stroke: var(--ink); stroke-width: 1; }
+    .stats-axis-label { fill: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    .stats-axis-title { fill: var(--muted); font: 9px "IBM Plex Mono", monospace; letter-spacing: .03em; }
+    .stats-selected-column { fill: color-mix(in srgb, var(--yellow) 12%, transparent); }
+    .stats-hit { fill: transparent; cursor: pointer; }
+    .box-whisker { stroke: var(--ink); stroke-width: 1.5; }
+    .box-body { fill: color-mix(in srgb, var(--blue) 16%, var(--card)); stroke: var(--blue); stroke-width: 2; }
+    .box-body.active,
+    .box-body.selected { fill: color-mix(in srgb, var(--yellow) 38%, var(--card)); stroke: #9d7600; }
+    .box-median { stroke: var(--red); stroke-width: 3; }
+    .box-mean { fill: var(--blue); stroke: var(--card); stroke-width: 2; }
+    .central-line { fill: none; }
+    .central-line.mean-line { stroke: var(--blue); stroke-width: 3; }
+    .central-line.median-line { stroke: var(--red); stroke-width: 2.5; stroke-dasharray: 6 4; }
+    .central-mean { fill: var(--blue); stroke: var(--card); stroke-width: 2; }
+    .central-median { fill: var(--red); }
+    .stats-legend { font: 600 9px "IBM Plex Mono", monospace; }
+    .stats-legend.mean { fill: var(--blue); }
+    .stats-legend.median { fill: var(--red); }
+    .precision-area { fill: color-mix(in srgb, var(--blue) 15%, transparent); }
+    .precision-line { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .precision-marker { stroke: var(--yellow); stroke-width: 2; stroke-dasharray: 5 4; }
+    .precision-point { fill: var(--yellow); stroke: var(--ink); stroke-width: 2; }
+    .precision-label { fill: var(--ink); font: 600 10px "IBM Plex Mono", monospace; }
+    .mean-point { fill: var(--blue); stroke: var(--card); stroke-width: 2; }
+    .stats-line-mean { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .stats-line-median { fill: none; stroke: var(--red); stroke-width: 2.5; stroke-dasharray: 6 4; }
+    .stats-ci-area { fill: color-mix(in srgb, var(--blue) 15%, transparent); }
+    .stats-current { stroke: var(--yellow); stroke-width: 2; }
+
+    .stats-summary { display: grid; align-content: start; background: var(--paper); }
+    .stats-summary > header { padding: 17px; border-bottom: 1px solid var(--ink); background: var(--screen); color: var(--screen-text); }
+    .stats-summary > header span { color: var(--yellow); font: 600 11px "IBM Plex Mono", monospace; }
+    .stats-summary > header h3 { margin: 5px 0 0; font: 600 22px "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .stat-grid article { min-height: 86px; padding: 13px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--card); }
+    .stat-grid article:nth-child(2n) { border-right: 0; }
+    .stat-grid span { display: block; color: var(--muted); font: 9px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .stat-grid b { display: block; margin-top: 7px; color: var(--ink); font: 600 23px "Space Grotesk", sans-serif; }
+    .stats-insight { margin: 14px; padding: 12px; border-left: 4px solid var(--yellow); background: var(--card); color: var(--muted); font-size: 11px; }
+    .stats-insight b { display: block; margin-bottom: 4px; color: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+    .analytics-pipeline {
+      display: grid;
+      border-top: 1px solid var(--ink);
+      background: var(--card);
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .analytics-pipeline article { position: relative; min-height: 84px; padding: 14px; border-right: 1px solid var(--ink); }
+    .analytics-pipeline article:last-child { border-right: 0; }
+    .analytics-pipeline article:not(:last-child)::after { position: absolute; z-index: 2; top: 31px; right: -8px; content: "→"; color: var(--red); font-weight: 700; }
+    .analytics-pipeline b { display: block; color: var(--blue); font: 600 10px "IBM Plex Mono", monospace; }
+    .analytics-pipeline strong { display: block; margin-top: 5px; font-size: 12px; }
+    .analytics-pipeline small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+
     @media (max-width: 620px) {
+      .lab-tabs button { align-items: flex-start; flex-direction: column; justify-content: center; gap: 2px; }
       .control-strip { grid-template-columns: 1fr; }
       .transport { border-top: 1px solid var(--ink); border-left: 0; }
       .timeline { flex: 1; }
@@ -279,6 +433,16 @@
       .evidence-strip { grid-template-columns: 1fr; }
       .evidence-strip article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--ink); }
       .evidence-strip article:last-child { border-bottom: 0; }
+      .stats-controls,
+      .stats-layout { grid-template-columns: 1fr; }
+      .stats-intro { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .stats-toolbar { grid-template-columns: 1fr; }
+      .chart-modes { border-top: 1px solid var(--ink); border-left: 0; }
+      .chart-modes button { flex: 1; }
+      .stats-chart-card { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .analytics-pipeline { grid-template-columns: 1fr; }
+      .analytics-pipeline article { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .analytics-pipeline article:not(:last-child)::after { top: auto; right: 14px; bottom: -9px; content: "↓"; }
     }
 
     @media (max-width: 480px) {
@@ -304,6 +468,19 @@
       <span class="status"><i></i><span data-copy="study">20+ TEST SERIES</span></span>
     </header>
 
+    <nav class="lab-tabs" aria-label="Research views">
+      <button class="active" type="button" data-lab-view="motion">
+        <b data-copy="motion-tab">01 · MOTION DIAGNOSTIC</b>
+        <span data-copy="motion-tab-note">individual relative scoring</span>
+      </button>
+      <button type="button" data-lab-view="stats">
+        <b data-copy="stats-tab">02 · COHORT ANALYTICS</b>
+        <span data-copy="stats-tab-note">statistics and visualization</span>
+      </button>
+    </nav>
+
+    <div class="lab-view" id="motion-view">
+
     <section class="control-strip" aria-label="Performance controls">
       <div class="performance-switch" role="group" aria-label="Performance sample">
         <button type="button" class="active" data-mode="reference">
@@ -320,6 +497,7 @@
         <div class="timeline">
           <label><span data-copy="cycle">MOVEMENT CYCLE</span><b id="time-label">00.0s</b></label>
           <input id="timeline" type="range" min="0" max="1000" value="0" aria-label="Movement timeline">
+          <span class="phase-track" aria-hidden="true"><i class="active"></i><i></i><i></i><i></i><i></i></span>
         </div>
         <button id="reset-pose" type="button" aria-label="Reset pose">↺</button>
       </div>
@@ -346,6 +524,14 @@
       </div>
 
       <aside class="analysis-panel">
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="basis-title">SCORING BASIS</b><span data-copy="basis-meta">COMPARE THE MODEL</span></h2>
+          <div class="score-basis">
+            <button type="button" data-score-basis="absolute" data-copy="absolute">ABSOLUTE THRESHOLD</button>
+            <button type="button" class="active" data-score-basis="relative" data-copy="individual">INDIVIDUAL RELATIVE</button>
+          </div>
+          <p class="basis-note" id="basis-note">Movement trends are compared with the reference inside each participant's usable range.</p>
+        </section>
         <section class="panel-block">
           <h2 class="block-title"><b data-copy="joint-title">JOINT DIAGNOSTIC</b><span id="selected-joint-meta">WRIST / R</span></h2>
           <div class="joint-grid" id="joint-grid"></div>
@@ -377,6 +563,60 @@
       <article><b>02</b><strong data-copy="evidence-2-title">Dynamic joint feedback</strong><small data-copy="evidence-2-body">Five kinematic metrics stay synchronized with the skeleton.</small></article>
       <article><b>03</b><strong data-copy="evidence-3-title">Transferable framework</strong><small data-copy="evidence-3-body">The same pipeline can evaluate other movement disciplines.</small></article>
     </section>
+    </div>
+
+    <section class="lab-view stats-view" id="stats-view" hidden>
+      <header class="stats-controls">
+        <div class="stats-intro">
+          <span data-copy="stats-kicker">COHORT ANALYSIS / SYNTHETIC DEMO DATA</span>
+          <h2 data-copy="stats-title">From movement sequences to a stable evaluation model.</h2>
+          <p data-copy="stats-body">Box plots, mean, median, quartiles and confidence intervals make individual differences visible and show how the estimate stabilizes as the cohort grows.</p>
+          <div class="toolchain"><b>RStudio</b><b>MATLAB</b><b>Statistical Analysis</b><b>Dynamic Visualization</b></div>
+        </div>
+        <div class="cohort-control">
+          <label><span data-copy="participants">PARTICIPANTS INCLUDED</span><b id="participant-count">20</b></label>
+          <input id="participant-slider" type="range" min="8" max="24" value="20" aria-label="Participants included">
+          <small data-copy="participants-note">Increase the cohort to reduce estimate uncertainty.</small>
+        </div>
+      </header>
+
+      <div class="stats-toolbar">
+        <div class="stats-joints" id="stats-joints" aria-label="Joint group"></div>
+        <div class="chart-modes" aria-label="Visualization type">
+          <label class="stats-metric-control"><span data-copy="metric-select">METRIC</span><select id="stats-metric-select" aria-label="Metric"></select></label>
+          <button class="active" type="button" data-chart-mode="box" data-copy="box-mode">BOX PLOT</button>
+          <button type="button" data-chart-mode="central" data-copy="central-mode">MEAN / MEDIAN</button>
+          <button type="button" data-chart-mode="precision" data-copy="precision-mode">PRECISION</button>
+        </div>
+      </div>
+
+      <div class="stats-layout">
+        <figure class="stats-chart-card">
+          <figcaption>
+            <b id="stats-chart-title">JOINT SCORE DISTRIBUTION</b>
+            <span id="stats-chart-meta">ANGULAR VELOCITY · n=20</span>
+          </figcaption>
+          <svg id="stats-chart" viewBox="0 0 720 340" role="img" aria-label="Interactive cohort statistics chart"></svg>
+        </figure>
+        <aside class="stats-summary">
+          <header><span data-copy="selected-group">SELECTED GROUP</span><h3 id="stats-selected-joint">WRIST</h3></header>
+          <div class="stat-grid">
+            <article><span data-copy="mean">MEAN</span><b id="stat-mean">78.4</b></article>
+            <article><span data-copy="median">MEDIAN</span><b id="stat-median">79.1</b></article>
+            <article><span data-copy="iqr">IQR</span><b id="stat-iqr">11.6</b></article>
+            <article><span data-copy="ci">95% CI ±</span><b id="stat-ci">3.2</b></article>
+          </div>
+          <p class="stats-insight"><b id="stability-label">MODEL STABILITY · 88%</b><span id="stats-insight-text">More participants narrow uncertainty while the median and distribution shape become more stable.</span></p>
+        </aside>
+      </div>
+
+      <footer class="analytics-pipeline">
+        <article><b>01 · INPUT</b><strong data-copy="pipeline-1-title">Partner-provided skeleton data</strong><small data-copy="pipeline-1-body">CV supplies joint sequences; the research begins with experiment design.</small></article>
+        <article><b>02 · PROCESS</b><strong data-copy="pipeline-2-title">MATLAB / RStudio processing</strong><small data-copy="pipeline-2-body">Kinematics, cleaning, aggregation and statistical comparison.</small></article>
+        <article><b>03 · MODEL</b><strong data-copy="pipeline-3-title">Relative evaluation framework</strong><small data-copy="pipeline-3-body">Participant-specific correlation and expandable scoring rules.</small></article>
+        <article><b>04 · EVIDENCE</b><strong data-copy="pipeline-4-title">Dynamic and cohort visualization</strong><small data-copy="pipeline-4-body">Joint feedback, distributions and confidence communicate the result.</small></article>
+      </footer>
+    </section>
   </main>
 
   <script>
@@ -393,7 +633,19 @@
           live: "当前动作", ref: "参考动作", overall: "综合分数", "joint-title": "关节诊断", "metric-title": "运动学指标",
           "score-title": "关节评分", corr: "基于相对相关性", relative: "相对变化", "evidence-1-title": "相对而非绝对",
           "evidence-1-body": "评分适配每位被试自身的动作特征。", "evidence-2-title": "动态关节反馈", "evidence-2-body": "五类运动学指标与骨架动作保持同步。",
-          "evidence-3-title": "可迁移评估框架", "evidence-3-body": "同一流程可以拓展到其他运动项目。"
+          "evidence-3-title": "可迁移评估框架", "evidence-3-body": "同一流程可以拓展到其他运动项目。",
+          "motion-tab": "01 · 动作诊断", "motion-tab-note": "个体相对评分",
+          "stats-tab": "02 · 群体统计", "stats-tab-note": "统计分析与可视化",
+          "basis-title": "评分基准", "basis-meta": "比较评价模型", absolute: "绝对阈值", individual: "个体相对",
+          "stats-kicker": "群体分析 / 合成演示数据", "stats-title": "从动作序列建立稳定的评价模型。",
+          "stats-body": "通过箱型图、均值、中位数、四分位数与置信区间呈现个体差异，并观察样本扩大后评估结果如何逐步稳定。",
+          participants: "纳入被试", "participants-note": "增加样本量，观察估计不确定性逐步收敛。",
+          "metric-select": "分析指标", "box-mode": "箱型图", "central-mode": "均值 / 中位数", "precision-mode": "评判精度",
+          "selected-group": "当前关节组", mean: "平均数", median: "中位数", iqr: "四分位距", ci: "95% 置信区间 ±",
+          "pipeline-1-title": "合作方提供骨架数据", "pipeline-1-body": "CV 输出关节序列，研究工作从实验设计与数据定义开始。",
+          "pipeline-2-title": "MATLAB / RStudio 处理", "pipeline-2-body": "完成运动学计算、清洗、聚合与统计比较。",
+          "pipeline-3-title": "相对评价框架", "pipeline-3-body": "建立个体相关评分与可扩展评价规则。",
+          "pipeline-4-title": "动态与群体可视化", "pipeline-4-body": "用关节反馈、分布与置信度传递分析结论。"
         },
         en: {}
       };
@@ -428,6 +680,7 @@
         mode: "reference",
         joint: "wrist",
         metric: "angularVelocity",
+        basis: "relative",
         playing: !reducedMotion.matches,
         progress: 0,
         offsets: { wrist: { x: 0, y: 0 }, elbow: { x: 0, y: 0 }, shoulder: { x: 0, y: 0 }, neck: { x: 0, y: 0 }, hip: { x: 0, y: 0 }, knee: { x: 0, y: 0 } },
@@ -572,16 +825,35 @@
         reference: { neck: 94, shoulder: 91, elbow: 90, wrist: 94, hip: 92, knee: 91 },
         attention: { neck: 84, shoulder: 76, elbow: 61, wrist: 55, hip: 73, knee: 64 }
       };
+      const correctionTargets = {
+        neck: { x: 0, y: -8 }, shoulder: { x: -5, y: -10 }, elbow: { x: 0, y: -18 },
+        wrist: { x: -4, y: -34 }, hip: { x: 0, y: -7 }, knee: { x: -15, y: -12 }
+      };
       function scoreFor(joint) {
         const offset = state.offsets[joint];
-        const penalty = Math.min(28, Math.hypot(offset.x, offset.y) * .42);
-        return Math.max(35, Math.round(scoreBase[state.mode][joint] - penalty));
+        let adjustment = 0;
+        if (state.mode === "attention") {
+          const target = correctionTargets[joint];
+          const initialDistance = Math.hypot(target.x, target.y);
+          const currentDistance = Math.hypot(offset.x - target.x, offset.y - target.y);
+          adjustment = Math.max(-16, Math.min(26, (initialDistance - currentDistance) * .72));
+        } else {
+          adjustment = -Math.min(24, Math.hypot(offset.x, offset.y) * .42);
+        }
+        if (state.basis === "absolute") {
+          adjustment -= { neck: 8, shoulder: 10, elbow: 6, wrist: 12, hip: 7, knee: 9 }[joint];
+        }
+        return Math.max(35, Math.round(scoreBase[state.mode][joint] + adjustment));
       }
       function allScores() { return Object.fromEntries(joints.map((joint) => [joint, scoreFor(joint)])); }
 
       function renderControls() {
         jointGrid.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.joint === state.joint));
         metricTabs.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.metric === state.metric));
+        document.querySelectorAll("[data-score-basis]").forEach((button) => button.classList.toggle("active", button.dataset.scoreBasis === state.basis));
+        document.querySelector("#basis-note").textContent = state.basis === "relative"
+          ? (locale === "zh" ? "在每位被试可用活动范围内比较动作趋势，减少体型与绝对幅度差异造成的偏差。" : "Movement trends are compared inside each participant's usable range, reducing bias from body scale and absolute amplitude.")
+          : (locale === "zh" ? "统一阈值会把体型与活动范围差异计入扣分，因此同一动作可能得到更低分。" : "One global threshold also penalizes body scale and range differences, so the same movement can receive a lower score.");
         const scores = allScores();
         jointScores.replaceChildren();
         joints.forEach((joint) => {
@@ -637,11 +909,16 @@
         scoreOrbit.classList.toggle("attention", overall < 80);
         const selected = scores[state.joint];
         document.querySelector("#callout-title").textContent = `${labels[state.joint]} · ${selected}`;
-        document.querySelector("#callout-body").textContent = selected >= 85
-          ? (locale === "zh" ? "相对动作模式与参考序列保持一致。" : "Relative motion follows the expert reference pattern.")
-          : (locale === "zh" ? "当前阶段偏离参考相关关系，建议降低幅度并保持动作连续。" : "The current phase deviates from the reference correlation; reduce amplitude and keep the motion continuous.");
+        const hasCorrection = Math.hypot(state.offsets[state.joint].x, state.offsets[state.joint].y) > 4;
+        document.querySelector("#callout-body").textContent = hasCorrection && state.mode === "attention"
+          ? (locale === "zh" ? "WHAT-IF 修正：拖向参考残影时，预测关节分数同步提高；原始序列不会被覆盖。" : "WHAT-IF correction: moving toward the reference ghost raises the predicted joint score without overwriting the source sequence.")
+          : selected >= 85
+            ? (locale === "zh" ? "相对动作模式与参考序列保持一致。" : "Relative motion follows the expert reference pattern.")
+            : (locale === "zh" ? "当前阶段偏离参考相关关系；可拖动突出关节进行局部修正实验。" : "The current phase deviates from the reference correlation; drag the highlighted joint for a local correction experiment.");
         timeline.value = Math.round(state.progress * 1000);
         document.querySelector("#time-label").textContent = `${(state.progress * 8).toFixed(1)}s`;
+        const activePhase = Math.min(4, Math.floor(state.progress * 5));
+        document.querySelectorAll(".phase-track i").forEach((node, index) => node.classList.toggle("active", index <= activePhase));
         renderChart();
       }
 
@@ -662,6 +939,206 @@
       document.querySelector("#reset-pose").addEventListener("click", () => {
         Object.values(state.offsets).forEach((offset) => { offset.x = 0; offset.y = 0; });
         renderControls(); renderFrame();
+      });
+
+      document.querySelectorAll("[data-score-basis]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.basis = button.dataset.scoreBasis;
+          renderControls();
+          renderFrame();
+        });
+      });
+
+      const statsState = { participants: 20, joint: "wrist", metric: "angularVelocity", chart: "box" };
+      const statsJoints = document.querySelector("#stats-joints");
+      const statsMetricSelect = document.querySelector("#stats-metric-select");
+      const participantSlider = document.querySelector("#participant-slider");
+      const statsChart = document.querySelector("#stats-chart");
+      const metricIndex = () => metricData.findIndex(([key]) => key === statsState.metric);
+      const jointIndex = (joint) => joints.indexOf(joint);
+      const translated = (zh, en) => locale === "zh" ? zh : en;
+      const clamp = (min, max, value) => Math.max(min, Math.min(max, value));
+
+      joints.forEach((joint) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.statsJoint = joint;
+        button.textContent = labels[joint];
+        button.addEventListener("click", () => { statsState.joint = joint; renderStats(); });
+        statsJoints.append(button);
+      });
+      metricData.forEach(([key, label]) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = label;
+        statsMetricSelect.append(option);
+      });
+      statsMetricSelect.value = statsState.metric;
+
+      function cohortValues(joint, count, metric) {
+        const j = jointIndex(joint);
+        const m = metricData.findIndex(([key]) => key === metric);
+        const center = 83 - j * 1.8 + m * .7;
+        return Array.from({ length: count }, (_, index) => {
+          const wave = Math.sin((index + 1) * (1.19 + j * .07) + m * .61) * (7.1 + j * .42);
+          const secondary = Math.cos((index + 2) * .73 + j * .8) * 3.4;
+          const groupOffset = index % 7 === 0 ? -5.2 : index % 11 === 0 ? 3.8 : 0;
+          return Number(clamp(45, 98, center + wave + secondary + groupOffset).toFixed(1));
+        });
+      }
+
+      function quantile(sorted, position) {
+        const index = (sorted.length - 1) * position;
+        const lower = Math.floor(index);
+        const fraction = index - lower;
+        return sorted[lower + 1] === undefined ? sorted[lower] : sorted[lower] + fraction * (sorted[lower + 1] - sorted[lower]);
+      }
+
+      function summarize(values, joint = statsState.joint) {
+        const sorted = [...values].sort((a, b) => a - b);
+        const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+        const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / Math.max(1, values.length - 1);
+        const q1 = quantile(sorted, .25);
+        const median = quantile(sorted, .5);
+        const q3 = quantile(sorted, .75);
+        const theoreticalSigma = 7.8 + jointIndex(joint) * .5 + metricIndex() * .35;
+        return {
+          min: sorted[0], max: sorted[sorted.length - 1], mean, median, q1, q3,
+          iqr: q3 - q1, sd: Math.sqrt(variance), ci: 1.96 * theoreticalSigma / Math.sqrt(values.length)
+        };
+      }
+
+      function svgNode(tag, attributes = {}, content = "") {
+        const node = makeSvg(tag);
+        Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+        if (content !== "") node.textContent = content;
+        return node;
+      }
+
+      function drawStatsAxes(yTicks, yMap, xLabels) {
+        const left = 54;
+        const right = 696;
+        const top = 24;
+        const bottom = 286;
+        yTicks.forEach((tick) => {
+          const y = yMap(tick);
+          statsChart.append(svgNode("line", { class: "stats-grid", x1: left, y1: y, x2: right, y2: y }));
+          statsChart.append(svgNode("text", { class: "stats-axis-label", x: 43, y: y + 4, "text-anchor": "end" }, String(tick)));
+        });
+        xLabels.forEach((label, index) => {
+          const x = left + (index + .5) * ((right - left) / xLabels.length);
+          statsChart.append(svgNode("text", { class: "stats-axis-label", x, y: bottom + 28, "text-anchor": "middle" }, label));
+        });
+        statsChart.append(svgNode("line", { class: "stats-axis", x1: left, y1: bottom, x2: right, y2: bottom }));
+        statsChart.append(svgNode("line", { class: "stats-axis", x1: left, y1: top, x2: left, y2: bottom }));
+        return { left, right, top, bottom };
+      }
+
+      function drawBoxPlot(summaries) {
+        const yMap = (value) => 286 - (value - 40) / 60 * 262;
+        const bounds = drawStatsAxes([40, 55, 70, 85, 100], yMap, joints.map((joint) => labels[joint]));
+        const step = (bounds.right - bounds.left) / joints.length;
+        summaries.forEach((summary, index) => {
+          const joint = joints[index];
+          const x = bounds.left + (index + .5) * step;
+          if (joint === statsState.joint) {
+            statsChart.insertBefore(svgNode("rect", { class: "stats-selected-column", x: x - step * .43, y: bounds.top, width: step * .86, height: bounds.bottom - bounds.top }), statsChart.firstChild);
+          }
+          statsChart.append(svgNode("line", { class: "box-whisker", x1: x, y1: yMap(summary.min), x2: x, y2: yMap(summary.max) }));
+          statsChart.append(svgNode("line", { class: "box-whisker", x1: x - 13, y1: yMap(summary.min), x2: x + 13, y2: yMap(summary.min) }));
+          statsChart.append(svgNode("line", { class: "box-whisker", x1: x - 13, y1: yMap(summary.max), x2: x + 13, y2: yMap(summary.max) }));
+          statsChart.append(svgNode("rect", { class: `box-body${joint === statsState.joint ? " selected" : ""}`, x: x - 24, y: yMap(summary.q3), width: 48, height: Math.max(2, yMap(summary.q1) - yMap(summary.q3)) }));
+          statsChart.append(svgNode("line", { class: "box-median", x1: x - 24, y1: yMap(summary.median), x2: x + 24, y2: yMap(summary.median) }));
+          statsChart.append(svgNode("circle", { class: "box-mean", cx: x, cy: yMap(summary.mean), r: 4.5 }));
+          const hit = svgNode("rect", { class: "stats-hit", x: x - step / 2, y: bounds.top, width: step, height: bounds.bottom - bounds.top });
+          hit.addEventListener("click", () => { statsState.joint = joint; renderStats(); });
+          statsChart.append(hit);
+        });
+      }
+
+      function drawCentralTendency(summaries) {
+        const yMap = (value) => 286 - (value - 60) / 35 * 262;
+        const bounds = drawStatsAxes([60, 70, 80, 90, 95], yMap, joints.map((joint) => labels[joint]));
+        const step = (bounds.right - bounds.left) / joints.length;
+        const point = (summary, index, key) => `${bounds.left + (index + .5) * step},${yMap(summary[key])}`;
+        statsChart.append(svgNode("polyline", { class: "central-line mean-line", points: summaries.map((summary, index) => point(summary, index, "mean")).join(" ") }));
+        statsChart.append(svgNode("polyline", { class: "central-line median-line", points: summaries.map((summary, index) => point(summary, index, "median")).join(" ") }));
+        summaries.forEach((summary, index) => {
+          const x = bounds.left + (index + .5) * step;
+          statsChart.append(svgNode("circle", { class: "central-mean", cx: x, cy: yMap(summary.mean), r: 5 }));
+          statsChart.append(svgNode("rect", { class: "central-median", x: x - 4, y: yMap(summary.median) - 4, width: 8, height: 8 }));
+        });
+        statsChart.append(svgNode("text", { class: "stats-legend mean", x: 566, y: 38 }, translated("● 平均数", "● MEAN")));
+        statsChart.append(svgNode("text", { class: "stats-legend median", x: 566, y: 58 }, translated("■ 中位数", "■ MEDIAN")));
+      }
+
+      function drawPrecision() {
+        const yMap = (value) => 286 - value / 8 * 262;
+        const samples = Array.from({ length: statsState.participants - 5 }, (_, index) => index + 6);
+        const xMap = (sample) => 54 + (sample - 6) / 18 * 642;
+        const bounds = drawStatsAxes([0, 2, 4, 6, 8], yMap, []);
+        [6, 10, 14, 18, 22, 24].forEach((sample) => {
+          statsChart.append(svgNode("text", { class: "stats-axis-label", x: xMap(sample), y: bounds.bottom + 28, "text-anchor": "middle" }, String(sample)));
+        });
+        const sigma = 7.8 + jointIndex(statsState.joint) * .5 + metricIndex() * .35;
+        const points = samples.map((sample) => [xMap(sample), 1.96 * sigma / Math.sqrt(sample)]);
+        const area = [[points[0][0], yMap(0)], ...points.map(([x, value]) => [x, yMap(value)]), [points[points.length - 1][0], yMap(0)]];
+        statsChart.append(svgNode("polygon", { class: "precision-area", points: area.map(([x, y]) => `${x},${y}`).join(" ") }));
+        statsChart.append(svgNode("polyline", { class: "precision-line", points: points.map(([x, value]) => `${x},${yMap(value)}`).join(" ") }));
+        const current = points[points.length - 1];
+        statsChart.append(svgNode("line", { class: "precision-marker", x1: current[0], y1: bounds.top, x2: current[0], y2: bounds.bottom }));
+        statsChart.append(svgNode("circle", { class: "precision-point", cx: current[0], cy: yMap(current[1]), r: 6 }));
+        statsChart.append(svgNode("text", { class: "precision-label", x: current[0] - 8, y: yMap(current[1]) - 13, "text-anchor": "end" }, `n=${statsState.participants} · ±${current[1].toFixed(1)}`));
+        statsChart.append(svgNode("text", { class: "stats-axis-title", x: 54, y: 14 }, translated("95% 置信区间半宽（越低越稳定）", "95% CI HALF-WIDTH (LOWER IS MORE STABLE)")));
+      }
+
+      function renderStats() {
+        statsState.participants = Number(participantSlider.value);
+        document.querySelector("#participant-count").textContent = statsState.participants;
+        statsJoints.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.statsJoint === statsState.joint));
+        document.querySelectorAll("[data-chart-mode]").forEach((button) => button.classList.toggle("active", button.dataset.chartMode === statsState.chart));
+        const summaries = joints.map((joint) => summarize(cohortValues(joint, statsState.participants, statsState.metric), joint));
+        const selected = summaries[jointIndex(statsState.joint)];
+        document.querySelector("#stats-selected-joint").textContent = labels[statsState.joint];
+        document.querySelector("#stat-mean").textContent = selected.mean.toFixed(1);
+        document.querySelector("#stat-median").textContent = selected.median.toFixed(1);
+        document.querySelector("#stat-iqr").textContent = selected.iqr.toFixed(1);
+        document.querySelector("#stat-ci").textContent = selected.ci.toFixed(1);
+        const stability = Math.round(clamp(64, 96, 102 - selected.ci * 5.2));
+        document.querySelector("#stability-label").textContent = translated(`模型稳定度 · ${stability}%`, `MODEL STABILITY · ${stability}%`);
+        document.querySelector("#stats-insight-text").textContent = translated(
+          `纳入 ${statsState.participants} 名被试后，分布形态与中位数共同描述典型表现；样本增加使置信区间收窄，评判依据更稳定。`,
+          `With ${statsState.participants} participants, distribution and median describe typical performance; a larger sample narrows uncertainty and stabilizes the evaluation basis.`
+        );
+        const metric = metricData.find(([key]) => key === statsState.metric);
+        const titles = {
+          box: translated("关节评分分布", "JOINT SCORE DISTRIBUTION"),
+          central: translated("均值与中位数比较", "MEAN AND MEDIAN COMPARISON"),
+          precision: translated("样本量与评判精度", "SAMPLE SIZE AND EVALUATION PRECISION")
+        };
+        document.querySelector("#stats-chart-title").textContent = titles[statsState.chart];
+        document.querySelector("#stats-chart-meta").textContent = `${metric[1]} · n=${statsState.participants}`;
+        statsChart.replaceChildren();
+        if (statsState.chart === "box") drawBoxPlot(summaries);
+        if (statsState.chart === "central") drawCentralTendency(summaries);
+        if (statsState.chart === "precision") drawPrecision();
+        reportHeight();
+      }
+
+      participantSlider.addEventListener("input", renderStats);
+      statsMetricSelect.addEventListener("change", () => { statsState.metric = statsMetricSelect.value; renderStats(); });
+      document.querySelectorAll("[data-chart-mode]").forEach((button) => {
+        button.addEventListener("click", () => { statsState.chart = button.dataset.chartMode; renderStats(); });
+      });
+      document.querySelectorAll("[data-lab-view]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const view = button.dataset.labView;
+          document.querySelectorAll("[data-lab-view]").forEach((item) => item.classList.toggle("active", item === button));
+          document.querySelector("#motion-view").hidden = view !== "motion";
+          document.querySelector("#stats-view").hidden = view !== "stats";
+          if (view === "stats") renderStats();
+          reportHeight();
+        });
       });
 
       function tick(now) {
@@ -688,6 +1165,7 @@
       if ("ResizeObserver" in window) new ResizeObserver(reportHeight).observe(document.querySelector(".app"));
       renderControls();
       renderFrame();
+      renderStats();
       requestAnimationFrame(tick);
       reportHeight();
     })();

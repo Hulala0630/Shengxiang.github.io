@@ -62,16 +62,16 @@ const sceneBuilderFlow = locale === "zh"
 
 const motionEvaluationFlow = locale === "zh"
   ? [
-      ["01", "选择动作样本", "对比资深动作与待改进动作，观察评分如何随动作质量变化。"],
-      ["02", "定位关键关节", "在颈、肩、肘、腕、胯与膝之间切换，读取关节级诊断。"],
-      ["03", "切换运动学指标", "查看角度、速度、加速度、角速度与角加速度的相对变化。"],
-      ["04", "读取动态反馈", "综合分数、需关注关节与时序曲线随骨架运动同步更新。"]
+      ["01", "比较动作表现", "切换参考动作与待改进动作，查看整体评分和关键关节变化。"],
+      ["02", "进行局部修正", "定位颈、肩、肘、腕、胯或膝，并拖动关节测试修正方向。"],
+      ["03", "检查评价依据", "比较个体相对与绝对阈值，并查看五类运动学指标。"],
+      ["04", "验证群体证据", "调节被试数量，在箱型图、集中趋势与评判精度之间切换。"]
     ]
   : [
-      ["01", "Choose a performance", "Compare an expert-like sample with a movement that needs correction."],
-      ["02", "Locate the joint", "Move across neck, shoulder, elbow, wrist, hip and knee diagnostics."],
-      ["03", "Switch kinematic metrics", "Inspect relative angle, velocity, acceleration and angular derivatives."],
-      ["04", "Read dynamic feedback", "Follow the live score, joint warning and synchronized time-series view."]
+      ["01", "Compare performance", "Switch between a reference movement and a sample that needs correction."],
+      ["02", "Test a local correction", "Locate a joint and drag it to explore a possible correction direction."],
+      ["03", "Inspect the evaluation basis", "Compare participant-relative and absolute scoring across five kinematic metrics."],
+      ["04", "Validate cohort evidence", "Change sample size and move between box plot, central tendency and precision views."]
     ];
 
 const faultArchitecture = locale === "zh"
@@ -138,32 +138,32 @@ const sceneArchitecture = locale === "zh"
 
 const motionArchitecture = locale === "zh"
   ? {
-      title: "动作评估与教学研究闭环",
-      intro: "资深运动员与教学视频先被抽象为参考骨架和相对评分标准，被试动作再通过同一套特征管线形成个体化反馈；眼动研究则把观看兴趣区域转化为教学视频拍摄规范。",
+      title: "实验设计、数据处理与评价闭环",
+      intro: "合作企业提供 CV 骨架序列作为数据输入；项目贡献从实验与评分标准设计开始，贯穿运动学数据处理、相对评价、统计验证与可视化反馈，并通过眼动研究补充教学视频规范。",
       flow: [
-        ["01", "参考体系", "从资深动作与教学视频建立客观评分标准"],
-        ["02", "骨架与特征", "提取六组关节及五类运动学指标"],
-        ["03", "相对评分", "比较相关性与动作模式，不依赖绝对幅值"],
-        ["04", "动态反馈", "输出综合分数、关节诊断与可选择图表"]
+        ["01", "实验与标准设计", "从资深动作、教学视频和研究问题定义评价依据"],
+        ["02", "骨架数据处理", "使用 MATLAB 与 RStudio 处理六组关节和五类指标"],
+        ["03", "相对评分与统计验证", "结合个体动作模式、群体分布和样本不确定性"],
+        ["04", "动态与群体可视化", "输出关节反馈、箱型图、集中趋势与评判精度"]
       ],
       outputs: [
-        ["个体训练反馈", "帮助 20+ 被试定位并优化气功动作"],
-        ["可复用评估框架", "评分、诊断和可视化流程可迁移到其他运动"],
+        ["个体与群体证据", "连接关节级反馈、统计分布与评价稳定性"],
+        ["可复用评价框架", "实验、数据、评分和可视化流程可迁移到其他运动"],
         ["教学视频规范", "依据眼动兴趣区域形成镜头与构图指导"]
       ]
     }
   : {
-      title: "Motion evaluation and teaching-research loop",
-      intro: "Expert performance and teaching videos establish a reference skeleton and relative scoring criteria. Participant motion then passes through the same feature pipeline for personalized feedback, while eye-tracking evidence becomes filming guidance for teaching videos.",
+      title: "Experiment, data processing and evaluation loop",
+      intro: "A company partner supplied CV skeleton sequences as the data input. The project contribution begins with experiment and scoring-criteria design, then spans kinematic processing, relative evaluation, statistical validation and visual feedback, with eye tracking adding teaching-video guidance.",
       flow: [
-        ["01", "Reference system", "Derive objective criteria from experts and teaching videos"],
-        ["02", "Skeleton & features", "Extract six joint groups and five kinematic metrics"],
-        ["03", "Relative scoring", "Compare correlations and movement patterns, not raw magnitudes"],
-        ["04", "Dynamic feedback", "Return a live score, joint diagnosis and selectable charts"]
+        ["01", "Experiment & criteria", "Define the evaluation basis from experts, teaching videos and research questions"],
+        ["02", "Skeleton-data processing", "Process six joint groups and five metrics in MATLAB and RStudio"],
+        ["03", "Relative scoring & statistics", "Combine individual movement patterns, cohort distributions and uncertainty"],
+        ["04", "Dynamic & cohort visualization", "Return joint feedback, box plots, central tendency and precision"]
       ],
       outputs: [
-        ["Personal training feedback", "Help 20+ participants locate and improve Qigong movement"],
-        ["Reusable evaluation framework", "Transfer scoring, diagnosis and visualization to other sports"],
+        ["Individual & cohort evidence", "Connect joint feedback, statistical distributions and evaluation stability"],
+        ["Reusable evaluation framework", "Transfer experiment, data, scoring and visualization to other sports"],
         ["Teaching-video guidance", "Turn eye-tracking areas of interest into filming rules"]
       ]
     };
@@ -377,7 +377,7 @@ const projectSummary = (project: Project) =>
                     id="motion-evaluation-frame"
                     class="motion-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-1`}
+                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-2`}
                     loading="lazy"
                     scrolling="no"
                     title={locale === "zh"

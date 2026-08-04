@@ -738,39 +738,41 @@ const projectsData = [
       zh: "运动评估研究"
     },
     pitch: {
-      en: "Turn abstract Qigong movement into personalized scores and joint-level feedback, validated with more than 20 participants.",
-      zh: "把抽象的气功动作转化为适合个体的相对评分与关节级反馈，并通过 20 余名被试验证。"
+      en: "Turn abstract Qigong movement into personalized scores, statistical evidence and joint-level feedback, validated with more than 20 participants.",
+      zh: "把抽象的气功动作转化为个体相对评分、统计证据与关节级反馈，并通过 20 余名被试验证。"
     },
     summary: {
-      en: "A human-factors evaluation framework that derives objective motion criteria from expert and teaching videos, scores each participant relative to their own movement profile, and translates the result into dynamic joint-level feedback.",
-      zh: "这是一个人因工程动作评估框架：从资深运动员与教学视频中提取客观标准，依据每位被试自身的运动特征计算相对分数，并把结果转化为动态的关节级反馈。"
+      en: "A human-factors study that turns expert movement into a reusable relative-scoring framework, combining experiment design, kinematic data processing, statistical visualization and participant-specific feedback.",
+      zh: "一项将资深动作转化为可复用相对评价框架的人因工程研究，覆盖实验设计、运动学数据处理、统计可视化与个体反馈。"
     },
     problem: {
-      en: "Qigong quality is difficult to describe with a single absolute target: body proportions, mobility and movement amplitude differ between participants, while visual coaching remains subjective and gives limited evidence about which joint or phase requires correction. Teaching-video effectiveness also depends on whether the camera keeps the relevant body regions within the viewer's attention.",
-      zh: "气功动作难以用单一绝对值评价：被试的身体比例、活动范围和动作幅度各不相同，单纯依赖观察既主观，也难以说明应当修正哪个关节或动作阶段；教学视频是否有效，还取决于镜头能否持续覆盖观看者真正关注的身体区域。"
+      en: "Qigong quality is abstract and difficult to evaluate with one absolute target. Body proportions, mobility and movement amplitude differ between participants, while visual coaching provides little objective evidence about which joint or phase needs correction. The study therefore needed a measurable but individualized evaluation basis, a statistically defensible comparison across participants, and evidence for how teaching videos should frame the movement.",
+      zh: "气功动作较为抽象，难以用单一绝对值评价。被试的身体比例、活动范围与动作幅度各不相同，单纯观察既主观，也难以定位需要修正的关节和动作阶段。因此，项目需要建立兼顾客观性与个体差异的评价依据，通过群体统计验证其稳定性，并说明教学视频应如何呈现动作。"
     },
     solution: {
-      en: "Expert performances and teaching videos were converted into skeleton sequences and analyzed through joint angle, velocity, acceleration, angular velocity and angular acceleration. Instead of grading raw magnitudes, the system evaluates correlations and relative patterns against the reference, producing participant-specific scores, live joint diagnostics and selectable visual analyses. A complementary eye-tracking study mapped areas of interest and translated viewing behavior into practical filming guidelines for teaching videos.",
-      zh: "系统将资深运动员和教学视频转化为骨架序列，分析关节角度、速度、加速度、角速度与角加速度；评分不依赖原始数值大小，而是比较动作与参考序列之间的相关性和相对变化，从而生成适合个体的综合分数、实时关节诊断和可选择的数据图表。配套眼动实验进一步识别兴趣区域，并把观看行为转化为教学视频的拍摄指导规范。"
+      en: "The study defined the experiment, reference actions and scoring logic from experienced athletes and teaching videos. A company partner supplied the computer-vision skeleton sequences; the project work focused on cleaning and processing those sequences in MATLAB and RStudio, deriving joint angle, velocity, acceleration, angular velocity and angular acceleration, and building participant-relative scores from correlations and movement patterns rather than raw magnitude. Dynamic joint diagnostics were combined with box plots, mean, median, quartiles and confidence intervals so individual feedback and cohort evidence could be examined together. Eye tracking added areas-of-interest evidence and practical filming guidance for teaching videos.",
+      zh: "项目基于资深运动员和教学视频完成实验设计、参考动作定义与评分逻辑设计；合作企业提供计算机视觉识别与骨架序列，研究工作则聚焦于使用 MATLAB、RStudio 清洗和处理数据，计算关节角度、速度、加速度、角速度与角加速度，并依据相关性和动作模式建立不依赖绝对幅值的个体相对评分。动态关节诊断与箱型图、平均数、中位数、四分位数和置信区间结合，使个体反馈与群体统计证据可以共同验证。配套眼动实验进一步形成兴趣区域分析与教学视频拍摄规范。"
     },
     highlights: {
       en: [
-        "Derived explicit scoring criteria for an otherwise abstract movement from expert athletes and teaching videos.",
-        "Used relative correlation across angle, velocity, acceleration, angular velocity and angular acceleration instead of absolute thresholds.",
-        "Evaluated neck, shoulder, elbow, wrist, hip and knee motion dynamically and returned joint-level guidance.",
-        "Provided selectable time-series and comparison views for exploring individual movement patterns.",
-        "Validated the feedback workflow with more than 20 participants and used it to improve Qigong performance.",
-        "Combined eye-tracking areas of interest with motion analysis to define teaching-video filming guidelines.",
-        "Designed the scoring and visualization pipeline as a reusable framework for other sports."
+        "Defined the experiment and objective scoring criteria for an otherwise abstract movement from expert athletes and teaching videos.",
+        "Kept the project boundary explicit: the company partner supplied CV skeleton sequences; study design, data processing, scoring and evaluation formed the project contribution.",
+        "Used relative correlation across angle, velocity, acceleration, angular velocity and angular acceleration instead of one absolute threshold.",
+        "Connected dynamic neck, shoulder, elbow, wrist, hip and knee feedback with cohort-level statistical analysis.",
+        "Used box plots, mean, median, quartiles and confidence intervals to reveal variation and show greater evaluation stability as the participant sample grows.",
+        "Validated the framework with more than 20 participants and used the feedback to improve Qigong performance.",
+        "Combined eye-tracking areas of interest with motion analysis to define teaching-video filming guidance.",
+        "Designed the data and visualization pipeline as a reusable evaluation framework for other sports."
       ],
       zh: [
-        "从资深运动员与教学视频中提炼明确标准，使抽象动作能够被客观评价。",
+        "从资深运动员与教学视频出发设计实验并提炼评分标准，使抽象动作能够被客观评价。",
+        "明确项目边界：合作企业提供 CV 骨架序列，项目工作集中于实验设计、数据处理、评分体系与评价框架。",
         "使用角度、速度、加速度、角速度和角加速度的相对相关关系，而不是统一的绝对阈值。",
-        "动态评估颈部、肩、肘、腕、胯与膝，并输出关节级动作建议。",
-        "通过可选择的时序与对比图表分析每位被试的动作模式。",
-        "在 20 余名被试中验证评分反馈流程，并用于优化气功运动表现。",
+        "把颈、肩、肘、腕、胯与膝的动态反馈和群体统计分析连接在同一评价流程中。",
+        "通过箱型图、平均数、中位数、四分位数与置信区间呈现个体差异，并展示样本增加后评判稳定性的提升。",
+        "在 20 余名被试中验证评价框架，并通过反馈优化气功运动表现。",
         "结合眼动兴趣区域与动作分析，形成教学视频拍摄指导规范。",
-        "评分、反馈与可视化流程可复用于其他运动项目。"
+        "数据处理、评分与可视化流程可复用于其他运动项目。"
       ]
     },
     structure: {
@@ -810,12 +812,12 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "Testing with more than 20 participants showed that personalized, joint-level scoring could guide measurable improvement in Qigong performance. The project also produced a reusable motion-analysis framework and evidence-based filming guidance derived from eye-tracking areas of interest.",
-      zh: "20 余名被试的测试表明，个体化的关节级评分能够帮助被试针对性优化气功动作表现。项目同时沉淀出可迁移到其他运动的动作分析框架，以及基于眼动兴趣区域形成的教学视频拍摄规范。"
+      en: "Testing with more than 20 participants connected participant-relative joint scoring with dynamic and cohort-level evidence. Statistical views exposed variation, central tendency and uncertainty, while larger participant samples made the evaluation basis progressively more stable. The outcome was a reusable experimental and data-evaluation framework for other sports, plus evidence-based filming guidance from eye-tracking areas of interest.",
+      zh: "20 余名被试的测试把个体相对关节评分与动态、群体两级证据连接起来；统计图表呈现差异、集中趋势与不确定性，参与者增加后评价依据也逐步稳定。项目最终沉淀出可迁移到其他运动的实验与数据评价框架，以及基于眼动兴趣区域形成的教学视频拍摄规范。"
     },
     cardResult: {
-      en: "Validated with 20+ participants · personalized scoring across 6 joint groups · transferable to other sports.",
-      zh: "20+ 被试验证 · 6 组关键关节个体化评分 · 可迁移至其他运动。"
+      en: "20+ participants · relative scoring across 6 joint groups · dynamic and cohort statistics · reusable framework.",
+      zh: "20+ 被试 · 6 组关节相对评分 · 动态与群体统计可视化 · 可复用评价框架。"
     },
     metrics: [
       {
@@ -831,7 +833,7 @@ const projectsData = [
         label: { en: "Kinematic metrics", zh: "运动学指标" }
       }
     ],
-    technologies: ["Human Factors", "Skeleton Tracking", "Motion Analysis", "Relative Scoring", "Data Visualization", "Eye Tracking"]
+    technologies: ["Human Factors", "Experimental Design", "MATLAB", "RStudio", "Statistical Analysis", "Data Visualization", "Relative Scoring", "Skeleton Data", "Eye Tracking"]
   },
 
   {
