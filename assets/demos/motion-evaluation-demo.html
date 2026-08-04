@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relative Motion Evaluation</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f2ea;
+      --card: #fffdf7;
+      --ink: #17181a;
+      --muted: #6f716f;
+      --line: #bbb8ad;
+      --grid: rgba(23, 24, 26, .065);
+      --screen: #12151b;
+      --screen-2: #191d25;
+      --screen-line: #343b49;
+      --screen-text: #eef1f5;
+      --yellow: #efc452;
+      --blue: #4774bd;
+      --red: #eb6b52;
+      --green: #50b56a;
+      --shadow: #17181a;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #111216;
+      --card: #191b21;
+      --ink: #f0eee8;
+      --muted: #a8a9a7;
+      --line: #4d4f56;
+      --grid: rgba(255, 255, 255, .055);
+      --screen: #090b10;
+      --screen-2: #10141b;
+      --screen-line: #303848;
+      --screen-text: #f5f3ed;
+      --yellow: #f2ca5b;
+      --blue: #79a8ef;
+      --red: #f07861;
+      --green: #65ce7d;
+      --shadow: #6e95d5;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      overflow-x: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font: 14px/1.45 "IBM Plex Sans", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .app {
+      min-width: 0;
+      border: 1px solid var(--ink);
+      background: var(--card);
+      box-shadow: 8px 8px 0 color-mix(in srgb, var(--yellow) 80%, var(--shadow));
+    }
+
+    .topline {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      background: var(--ink);
+      color: var(--paper);
+      letter-spacing: .04em;
+      font: 600 12px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+    .topline b { color: var(--yellow); }
+    .status { display: inline-flex; align-items: center; gap: 7px; color: var(--green); }
+    .status i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    .control-strip {
+      display: grid;
+      min-height: 78px;
+      border-bottom: 1px solid var(--ink);
+      grid-template-columns: 1fr auto;
+    }
+    .performance-switch,
+    .transport {
+      display: flex;
+      align-items: stretch;
+    }
+    .performance-switch { min-width: 0; }
+    .performance-switch button,
+    .transport button {
+      min-height: 48px;
+      border: 0;
+      border-right: 1px solid var(--ink);
+      background: transparent;
+      cursor: pointer;
+      letter-spacing: .035em;
+      font: 600 12px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+    .performance-switch button { min-width: 150px; padding: 10px 17px; text-align: left; }
+    .performance-switch button span { display: block; margin-top: 3px; color: var(--muted); font: 11px/1.25 "IBM Plex Sans", sans-serif; text-transform: none; }
+    .performance-switch button.active { background: var(--blue); color: #fff; }
+    .performance-switch button.active span { color: rgba(255, 255, 255, .82); }
+    .performance-switch button[data-mode="attention"].active { background: var(--red); }
+    .transport { justify-content: flex-end; border-left: 1px solid var(--ink); }
+    .transport button { width: 48px; padding: 0; font-size: 17px; }
+    .transport button:last-child { border-right: 0; }
+    button:hover { background: color-mix(in srgb, var(--yellow) 28%, var(--card)); }
+    button:focus-visible, input:focus-visible { outline: 3px solid var(--yellow); outline-offset: -3px; }
+
+    .timeline {
+      display: grid;
+      min-width: 170px;
+      align-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+    }
+    .timeline label { display: flex; justify-content: space-between; color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); }
+
+    .workspace {
+      display: grid;
+      min-height: 486px;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+    }
+
+    .motion-stage {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border-right: 1px solid var(--ink);
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        var(--screen);
+      background-size: 24px 24px;
+      color: var(--screen-text);
+    }
+    .stage-head {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--screen-line);
+      background: color-mix(in srgb, var(--screen) 92%, transparent);
+      font: 11px "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+    }
+    .legend { display: flex; gap: 13px; color: #aeb6c4; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 16px; height: 2px; background: var(--blue); }
+    .legend span:last-child i { height: 0; border-top: 2px dashed #697383; background: none; }
+
+    #skeleton-stage { display: block; width: 100%; height: 486px; touch-action: none; }
+    .view-label { fill: #8f98a8; letter-spacing: .12em; font: 11px "IBM Plex Mono", monospace; }
+    .ground { stroke: #495160; stroke-width: 1; }
+    .divider { stroke: #343b49; stroke-width: 1; stroke-dasharray: 4 6; }
+    .reference-line { stroke: #778191; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 3 10; opacity: .36; }
+    .body-line { stroke: #e9edf2; stroke-width: 8; stroke-linecap: round; }
+    .body-line.warn { stroke: var(--red); }
+    .joint { fill: var(--screen); stroke: #e9edf2; stroke-width: 4; cursor: grab; }
+    .joint:hover { fill: var(--yellow); stroke: var(--yellow); }
+    .joint:active { cursor: grabbing; }
+    .joint.active { fill: var(--yellow); stroke: var(--yellow); }
+    .joint.warn { fill: var(--red); stroke: #ffd2c9; }
+    .joint-ring { fill: none; stroke: var(--yellow); stroke-width: 2; opacity: .85; pointer-events: none; }
+    .joint-ring.pulse { animation: joint-pulse 1.6s ease-out infinite; }
+    @keyframes joint-pulse { from { r: 13; opacity: .95; } to { r: 27; opacity: 0; } }
+
+    .score-orbit {
+      position: absolute;
+      z-index: 3;
+      top: 67px;
+      right: 16px;
+      display: grid;
+      width: 92px;
+      height: 92px;
+      place-items: center;
+      border: 1px solid #596273;
+      border-radius: 50%;
+      background: rgba(9, 12, 18, .86);
+    }
+    .score-orbit::before {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border: 4px solid var(--blue);
+      border-top-color: transparent;
+      border-radius: 50%;
+      content: "";
+      transform: rotate(38deg);
+    }
+    .score-orbit b { z-index: 1; font: 600 27px "Space Grotesk", sans-serif; }
+    .score-orbit small { position: absolute; bottom: 12px; color: #aab2bf; font: 9px "IBM Plex Mono", monospace; }
+    .score-orbit.attention::before { border-color: var(--red); border-top-color: transparent; }
+
+    .joint-callout {
+      position: absolute;
+      z-index: 3;
+      bottom: 14px;
+      left: 14px;
+      max-width: calc(100% - 28px);
+      padding: 10px 12px;
+      border-left: 4px solid var(--yellow);
+      background: rgba(9, 12, 18, .88);
+      color: #cfd5df;
+      font: 11px/1.5 "IBM Plex Mono", monospace;
+    }
+    .joint-callout b { display: block; margin-bottom: 2px; color: var(--yellow); font-size: 12px; }
+
+    .analysis-panel { min-width: 0; background: var(--card); }
+    .panel-block { padding: 15px; border-bottom: 1px solid var(--ink); }
+    .panel-block:last-child { border-bottom: 0; }
+    .block-title { display: flex; align-items: center; justify-content: space-between; margin: 0 0 10px; letter-spacing: .06em; font: 600 11px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .block-title span { color: var(--muted); font-weight: 400; }
+    .joint-grid { display: grid; gap: 5px; grid-template-columns: repeat(3, 1fr); }
+    .joint-grid button,
+    .metric-tabs button {
+      min-height: 38px;
+      padding: 7px 8px;
+      border: 1px solid var(--line);
+      background: transparent;
+      cursor: pointer;
+      font: 600 11px "IBM Plex Mono", monospace;
+    }
+    .joint-grid button.active { border-color: var(--ink); background: var(--yellow); color: #17181a; }
+    .metric-tabs { display: grid; border: 1px solid var(--line); grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .metric-tabs button { min-width: 0; padding-inline: 3px; border: 0; border-right: 1px solid var(--line); font-size: 10px; }
+    .metric-tabs button:last-child { border-right: 0; }
+    .metric-tabs button.active { background: var(--ink); color: var(--paper); }
+
+    .chart-wrap { margin-top: 12px; border: 1px solid var(--line); background: color-mix(in srgb, var(--card) 90%, var(--paper)); }
+    #metric-chart { display: block; width: 100%; height: 126px; }
+    .chart-grid { stroke: var(--line); stroke-width: 1; opacity: .65; }
+    .reference-path { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 5 4; }
+    .current-path { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .attention-path { stroke: var(--red); }
+    .chart-cursor { stroke: var(--yellow); stroke-width: 2; }
+    .chart-caption { display: flex; justify-content: space-between; padding: 7px 9px; border-top: 1px solid var(--line); color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    .chart-caption b { color: var(--ink); }
+
+    .joint-scores { display: grid; gap: 6px; }
+    .joint-score { display: grid; align-items: center; gap: 8px; grid-template-columns: 56px 1fr 28px; color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    .joint-score i { height: 5px; background: var(--line); }
+    .joint-score i b { display: block; height: 100%; background: var(--blue); }
+    .joint-score.warn { color: var(--red); }
+    .joint-score.warn i b { background: var(--red); }
+    .joint-score strong { color: var(--ink); text-align: right; }
+
+    .evidence-strip {
+      display: grid;
+      border-top: 1px solid var(--ink);
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .evidence-strip article { min-height: 88px; padding: 14px 16px; border-right: 1px solid var(--ink); }
+    .evidence-strip article:last-child { border-right: 0; }
+    .evidence-strip b { display: block; margin-bottom: 4px; color: var(--blue); font: 600 12px "IBM Plex Mono", monospace; }
+    .evidence-strip strong { display: block; font: 600 14px/1.25 "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .evidence-strip small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+
+    @media (max-width: 620px) {
+      .control-strip { grid-template-columns: 1fr; }
+      .transport { border-top: 1px solid var(--ink); border-left: 0; }
+      .timeline { flex: 1; }
+      .performance-switch button { min-width: 0; flex: 1; }
+      .workspace { grid-template-columns: 1fr; }
+      .motion-stage { border-right: 0; border-bottom: 1px solid var(--ink); }
+      #skeleton-stage { height: 430px; }
+      .evidence-strip { grid-template-columns: 1fr; }
+      .evidence-strip article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--ink); }
+      .evidence-strip article:last-child { border-bottom: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .topline { align-items: flex-start; padding-block: 10px; }
+      .topline > span:first-child { max-width: 68%; }
+      .performance-switch button span { display: none; }
+      .joint-grid { grid-template-columns: repeat(2, 1fr); }
+      .score-orbit { width: 76px; height: 76px; }
+      .score-orbit::before { width: 58px; height: 58px; }
+      .score-orbit b { font-size: 22px; }
+      .score-orbit small { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .joint-ring.pulse { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topline">
+      <span><b>TUM / HF-MOTION-03</b> · <span data-copy="title">RELATIVE MOTION EVALUATION</span></span>
+      <span class="status"><i></i><span data-copy="study">20+ TEST SERIES</span></span>
+    </header>
+
+    <section class="control-strip" aria-label="Performance controls">
+      <div class="performance-switch" role="group" aria-label="Performance sample">
+        <button type="button" class="active" data-mode="reference">
+          <span data-copy="good-label">01 · GOOD PERFORMANCE</span>
+          <span data-copy="good-body">stable relative pattern</span>
+        </button>
+        <button type="button" data-mode="attention">
+          <span data-copy="attention-label">02 · NEEDS ATTENTION</span>
+          <span data-copy="attention-body">joint deviation visible</span>
+        </button>
+      </div>
+      <div class="transport">
+        <button id="play-toggle" type="button" aria-label="Pause">Ⅱ</button>
+        <div class="timeline">
+          <label><span data-copy="cycle">MOVEMENT CYCLE</span><b id="time-label">00.0s</b></label>
+          <input id="timeline" type="range" min="0" max="1000" value="0" aria-label="Movement timeline">
+        </div>
+        <button id="reset-pose" type="button" aria-label="Reset pose">↺</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="motion-stage">
+        <div class="stage-head">
+          <span data-copy="stage">2D SKELETON · FRONT / SIDE</span>
+          <span class="legend"><span><i></i><b data-copy="live">CURRENT</b></span><span><i></i><b data-copy="ref">REFERENCE</b></span></span>
+        </div>
+        <svg id="skeleton-stage" viewBox="0 0 680 486" role="img" aria-label="Animated front and side skeleton views">
+          <line class="ground" x1="34" y1="430" x2="646" y2="430"></line>
+          <line class="divider" x1="365" y1="64" x2="365" y2="430"></line>
+          <text class="view-label" x="38" y="82">FRONT VIEW</text>
+          <text class="view-label" x="393" y="82">SIDE VIEW</text>
+          <g id="front-reference"></g>
+          <g id="side-reference"></g>
+          <g id="front-live"></g>
+          <g id="side-live"></g>
+        </svg>
+        <div class="score-orbit" id="score-orbit"><b id="overall-score">92</b><small data-copy="overall">OVERALL</small></div>
+        <div class="joint-callout"><b id="callout-title">WRIST · 94</b><span id="callout-body">Relative motion follows the expert pattern.</span></div>
+      </div>
+
+      <aside class="analysis-panel">
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="joint-title">JOINT DIAGNOSTIC</b><span id="selected-joint-meta">WRIST / R</span></h2>
+          <div class="joint-grid" id="joint-grid"></div>
+        </section>
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="metric-title">KINEMATIC METRIC</b><span id="metric-unit">°/s</span></h2>
+          <div class="metric-tabs" id="metric-tabs"></div>
+          <div class="chart-wrap">
+            <svg id="metric-chart" viewBox="0 0 360 126" preserveAspectRatio="none" aria-label="Selected metric chart">
+              <line class="chart-grid" x1="0" y1="32" x2="360" y2="32"></line>
+              <line class="chart-grid" x1="0" y1="63" x2="360" y2="63"></line>
+              <line class="chart-grid" x1="0" y1="94" x2="360" y2="94"></line>
+              <path class="reference-path" id="reference-path"></path>
+              <path class="current-path" id="current-path"></path>
+              <line class="chart-cursor" id="chart-cursor" x1="0" y1="0" x2="0" y2="126"></line>
+            </svg>
+            <div class="chart-caption"><span><b id="metric-name">ANGULAR VELOCITY</b> · <span data-copy="relative">RELATIVE PATTERN</span></span><span id="metric-value">+42 °/s</span></div>
+          </div>
+        </section>
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="score-title">JOINT SCORES</b><span data-copy="corr">CORRELATION BASED</span></h2>
+          <div class="joint-scores" id="joint-scores"></div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="evidence-strip">
+      <article><b>01</b><strong data-copy="evidence-1-title">Relative, not absolute</strong><small data-copy="evidence-1-body">Scores adapt to each participant's movement profile.</small></article>
+      <article><b>02</b><strong data-copy="evidence-2-title">Dynamic joint feedback</strong><small data-copy="evidence-2-body">Five kinematic metrics stay synchronized with the skeleton.</small></article>
+      <article><b>03</b><strong data-copy="evidence-3-title">Transferable framework</strong><small data-copy="evidence-3-body">The same pipeline can evaluate other movement disciplines.</small></article>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const locale = params.get("lang") === "en" ? "en" : "zh";
+      document.documentElement.lang = locale;
+      document.documentElement.dataset.theme = params.get("theme") === "dark" ? "dark" : "light";
+
+      const copy = {
+        zh: {
+          title: "相对动作评估", study: "20+ 被试序列", "good-label": "01 · 良好表现", "good-body": "相对动作模式稳定",
+          "attention-label": "02 · 待改进表现", "attention-body": "关节偏差同步显现", cycle: "动作周期", stage: "二维骨架 · 正面 / 侧面",
+          live: "当前动作", ref: "参考动作", overall: "综合分数", "joint-title": "关节诊断", "metric-title": "运动学指标",
+          "score-title": "关节评分", corr: "基于相对相关性", relative: "相对变化", "evidence-1-title": "相对而非绝对",
+          "evidence-1-body": "评分适配每位被试自身的动作特征。", "evidence-2-title": "动态关节反馈", "evidence-2-body": "五类运动学指标与骨架动作保持同步。",
+          "evidence-3-title": "可迁移评估框架", "evidence-3-body": "同一流程可以拓展到其他运动项目。"
+        },
+        en: {}
+      };
+      document.querySelectorAll("[data-copy]").forEach((node) => {
+        const value = copy[locale][node.dataset.copy];
+        if (value) node.textContent = value;
+      });
+
+      const labels = locale === "zh"
+        ? { neck: "颈部", shoulder: "肩部", elbow: "肘关节", wrist: "手腕", hip: "胯部", knee: "膝关节" }
+        : { neck: "NECK", shoulder: "SHOULDER", elbow: "ELBOW", wrist: "WRIST", hip: "HIP", knee: "KNEE" };
+      const metricData = locale === "zh"
+        ? [
+            ["angle", "角度", "°"], ["velocity", "速度", "m/s"], ["acceleration", "加速度", "m/s²"],
+            ["angularVelocity", "角速度", "°/s"], ["angularAcceleration", "角加速度", "°/s²"]
+          ]
+        : [
+            ["angle", "ANGLE", "°"], ["velocity", "VELOCITY", "m/s"], ["acceleration", "ACCEL.", "m/s²"],
+            ["angularVelocity", "ANG. VEL.", "°/s"], ["angularAcceleration", "ANG. ACC.", "°/s²"]
+          ];
+      const joints = Object.keys(labels);
+      const jointGrid = document.querySelector("#joint-grid");
+      const metricTabs = document.querySelector("#metric-tabs");
+      const jointScores = document.querySelector("#joint-scores");
+      const timeline = document.querySelector("#timeline");
+      const playToggle = document.querySelector("#play-toggle");
+      const scoreOrbit = document.querySelector("#score-orbit");
+      const overallScore = document.querySelector("#overall-score");
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+      const state = {
+        mode: "reference",
+        joint: "wrist",
+        metric: "angularVelocity",
+        playing: !reducedMotion.matches,
+        progress: 0,
+        offsets: { wrist: { x: 0, y: 0 }, elbow: { x: 0, y: 0 }, shoulder: { x: 0, y: 0 }, neck: { x: 0, y: 0 }, hip: { x: 0, y: 0 }, knee: { x: 0, y: 0 } },
+        lastFrame: performance.now()
+      };
+
+      joints.forEach((joint) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.joint = joint;
+        button.textContent = labels[joint];
+        if (joint === state.joint) button.classList.add("active");
+        button.addEventListener("click", () => { state.joint = joint; renderControls(); renderFrame(); });
+        jointGrid.append(button);
+      });
+
+      metricData.forEach(([key, label]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.metric = key;
+        button.textContent = label;
+        if (key === state.metric) button.classList.add("active");
+        button.addEventListener("click", () => { state.metric = key; renderControls(); renderChart(); });
+        metricTabs.append(button);
+      });
+
+      const bones = [
+        ["head", "neck"], ["neck", "shoulderL"], ["neck", "shoulderR"], ["shoulderL", "elbowL"], ["elbowL", "wristL"],
+        ["shoulderR", "elbowR"], ["elbowR", "wristR"], ["neck", "hip"], ["hip", "hipL"], ["hip", "hipR"],
+        ["hipL", "kneeL"], ["kneeL", "ankleL"], ["hipR", "kneeR"], ["kneeR", "ankleR"]
+      ];
+      const draggableMap = { neck: "neck", shoulderR: "shoulder", elbowR: "elbow", wristR: "wrist", hip: "hip", kneeR: "knee" };
+      let drag = null;
+
+      function pose(progress, mode, reference = false) {
+        const t = progress * Math.PI * 2;
+        const wave = Math.sin(t);
+        const lift = Math.sin(t - .55);
+        const variance = mode === "attention" && !reference ? 1 : 0;
+        const base = {
+          head: [182, 95], neck: [182, 128], shoulderL: [145, 142], shoulderR: [219, 142],
+          elbowL: [120 - wave * 10, 192 - lift * 25], elbowR: [244 + wave * 10, 192 + lift * 7 + variance * 18],
+          wristL: [99 - wave * 25, 238 - lift * 62], wristR: [265 + wave * 25, 238 + lift * 30 + variance * 34],
+          hip: [182, 246], hipL: [157, 255], hipR: [207, 255],
+          kneeL: [151 - wave * 8, 335], kneeR: [213 + wave * 8 + variance * 15, 335 + variance * 12],
+          ankleL: [144 - wave * 13, 416], ankleR: [220 + wave * 13 + variance * 21, 416],
+        };
+        if (!reference) {
+          Object.entries(draggableMap).forEach(([point, joint]) => {
+            const offset = state.offsets[joint];
+            base[point][0] += offset.x;
+            base[point][1] += offset.y;
+          });
+        }
+        return base;
+      }
+
+      function sidePose(front) {
+        const center = 510;
+        const depth = (x) => (x - 182) * .26;
+        const side = {};
+        Object.entries(front).forEach(([key, [x, y]]) => { side[key] = [center + depth(x), y]; });
+        side.head[0] += 5;
+        side.shoulderL[0] -= 6; side.shoulderR[0] += 6;
+        side.hipL[0] -= 5; side.hipR[0] += 5;
+        return side;
+      }
+
+      function makeSvg(tag, className) {
+        const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        if (className) node.setAttribute("class", className);
+        return node;
+      }
+
+      function renderSkeleton(groupId, points, reference, side = false) {
+        const group = document.querySelector(`#${groupId}`);
+        group.replaceChildren();
+        bones.forEach(([from, to]) => {
+          const line = makeSvg("line", reference ? "reference-line" : "body-line");
+          const focus = state.mode === "attention" && [from, to].some((key) => key.toLowerCase().includes(state.joint === "wrist" ? "wrist" : state.joint));
+          if (!reference && focus) line.classList.add("warn");
+          line.setAttribute("x1", points[from][0]); line.setAttribute("y1", points[from][1]);
+          line.setAttribute("x2", points[to][0]); line.setAttribute("y2", points[to][1]);
+          group.append(line);
+        });
+        if (reference) return;
+        Object.entries(points).forEach(([key, [x, y]]) => {
+          if (key === "head") {
+            const head = makeSvg("circle", "joint");
+            head.setAttribute("cx", x); head.setAttribute("cy", y); head.setAttribute("r", 17);
+            head.style.pointerEvents = "none";
+            group.append(head);
+            return;
+          }
+          const jointName = draggableMap[key];
+          const circle = makeSvg("circle", "joint");
+          circle.setAttribute("cx", x); circle.setAttribute("cy", y); circle.setAttribute("r", jointName ? 7 : 5);
+          if (jointName === state.joint) circle.classList.add("active");
+          if (state.mode === "attention" && jointName === state.joint) circle.classList.add("warn");
+          if (jointName && !side) {
+            circle.dataset.joint = jointName;
+            circle.addEventListener("pointerdown", startDrag);
+          } else {
+            circle.style.pointerEvents = "none";
+          }
+          group.append(circle);
+          if (jointName === state.joint && !side) {
+            const ring = makeSvg("circle", "joint-ring pulse");
+            ring.setAttribute("cx", x); ring.setAttribute("cy", y); ring.setAttribute("r", 13);
+            group.append(ring);
+          }
+        });
+      }
+
+      function startDrag(event) {
+        event.preventDefault();
+        const svg = document.querySelector("#skeleton-stage");
+        const point = svg.createSVGPoint();
+        point.x = event.clientX; point.y = event.clientY;
+        const local = point.matrixTransform(svg.getScreenCTM().inverse());
+        state.joint = event.currentTarget.dataset.joint;
+        drag = { joint: state.joint, x: local.x, y: local.y, startX: state.offsets[state.joint].x, startY: state.offsets[state.joint].y };
+        svg.setPointerCapture(event.pointerId);
+        renderControls();
+      }
+
+      const stage = document.querySelector("#skeleton-stage");
+      stage.addEventListener("pointermove", (event) => {
+        if (!drag) return;
+        const point = stage.createSVGPoint();
+        point.x = event.clientX; point.y = event.clientY;
+        const local = point.matrixTransform(stage.getScreenCTM().inverse());
+        state.offsets[drag.joint].x = Math.max(-45, Math.min(45, drag.startX + local.x - drag.x));
+        state.offsets[drag.joint].y = Math.max(-45, Math.min(45, drag.startY + local.y - drag.y));
+        renderFrame();
+      });
+      const stopDrag = () => { drag = null; };
+      stage.addEventListener("pointerup", stopDrag);
+      stage.addEventListener("pointercancel", stopDrag);
+
+      const scoreBase = {
+        reference: { neck: 94, shoulder: 91, elbow: 90, wrist: 94, hip: 92, knee: 91 },
+        attention: { neck: 84, shoulder: 76, elbow: 61, wrist: 55, hip: 73, knee: 64 }
+      };
+      function scoreFor(joint) {
+        const offset = state.offsets[joint];
+        const penalty = Math.min(28, Math.hypot(offset.x, offset.y) * .42);
+        return Math.max(35, Math.round(scoreBase[state.mode][joint] - penalty));
+      }
+      function allScores() { return Object.fromEntries(joints.map((joint) => [joint, scoreFor(joint)])); }
+
+      function renderControls() {
+        jointGrid.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.joint === state.joint));
+        metricTabs.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.metric === state.metric));
+        const scores = allScores();
+        jointScores.replaceChildren();
+        joints.forEach((joint) => {
+          const row = document.createElement("div");
+          row.className = `joint-score${scores[joint] < 70 ? " warn" : ""}`;
+          row.innerHTML = `<span>${labels[joint]}</span><i><b style="width:${scores[joint]}%"></b></i><strong>${scores[joint]}</strong>`;
+          row.addEventListener("click", () => { state.joint = joint; renderControls(); renderFrame(); });
+          jointScores.append(row);
+        });
+        const metric = metricData.find(([key]) => key === state.metric);
+        document.querySelector("#metric-unit").textContent = metric[2];
+        document.querySelector("#metric-name").textContent = metric[1];
+        document.querySelector("#selected-joint-meta").textContent = `${labels[state.joint]} / R`;
+      }
+
+      function renderChart() {
+        const metricIndex = metricData.findIndex(([key]) => key === state.metric);
+        const score = scoreFor(state.joint);
+        const count = 42;
+        const ref = [];
+        const current = [];
+        for (let i = 0; i < count; i++) {
+          const x = i / (count - 1) * 360;
+          const phase = i / (count - 1) * Math.PI * 2;
+          const shape = Math.sin(phase + metricIndex * .34) * (22 + metricIndex * 3) + Math.sin(phase * 2.1) * 8;
+          const refY = 63 - shape;
+          const deviation = state.mode === "attention" ? Math.sin(phase * 1.45 + .8) * (100 - score) * .43 + (100 - score) * .2 : Math.sin(phase * 3) * 2.5;
+          ref.push([x, refY]);
+          current.push([x, refY + deviation]);
+        }
+        const path = (values) => values.map(([x, y], index) => `${index ? "L" : "M"}${x.toFixed(1)},${Math.max(7, Math.min(119, y)).toFixed(1)}`).join(" ");
+        document.querySelector("#reference-path").setAttribute("d", path(ref));
+        const currentPath = document.querySelector("#current-path");
+        currentPath.setAttribute("d", path(current));
+        currentPath.classList.toggle("attention-path", state.mode === "attention");
+        const cursorX = state.progress * 360;
+        const cursor = document.querySelector("#chart-cursor");
+        cursor.setAttribute("x1", cursorX); cursor.setAttribute("x2", cursorX);
+        const amplitude = Math.round((Math.sin(state.progress * Math.PI * 2 + metricIndex) * (28 + metricIndex * 9)) * 10) / 10;
+        document.querySelector("#metric-value").textContent = `${amplitude >= 0 ? "+" : ""}${amplitude} ${metricData[metricIndex][2]}`;
+      }
+
+      function renderFrame() {
+        const liveFront = pose(state.progress, state.mode);
+        const refFront = pose(state.progress, "reference", true);
+        renderSkeleton("front-reference", refFront, true);
+        renderSkeleton("side-reference", sidePose(refFront), true, true);
+        renderSkeleton("front-live", liveFront, false);
+        renderSkeleton("side-live", sidePose(liveFront), false, true);
+        const scores = allScores();
+        const overall = Math.round(Object.values(scores).reduce((sum, value) => sum + value, 0) / joints.length);
+        overallScore.textContent = overall;
+        scoreOrbit.classList.toggle("attention", overall < 80);
+        const selected = scores[state.joint];
+        document.querySelector("#callout-title").textContent = `${labels[state.joint]} · ${selected}`;
+        document.querySelector("#callout-body").textContent = selected >= 85
+          ? (locale === "zh" ? "相对动作模式与参考序列保持一致。" : "Relative motion follows the expert reference pattern.")
+          : (locale === "zh" ? "当前阶段偏离参考相关关系，建议降低幅度并保持动作连续。" : "The current phase deviates from the reference correlation; reduce amplitude and keep the motion continuous.");
+        timeline.value = Math.round(state.progress * 1000);
+        document.querySelector("#time-label").textContent = `${(state.progress * 8).toFixed(1)}s`;
+        renderChart();
+      }
+
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.mode = button.dataset.mode;
+          document.querySelectorAll("[data-mode]").forEach((item) => item.classList.toggle("active", item === button));
+          renderControls(); renderFrame();
+        });
+      });
+      playToggle.addEventListener("click", () => {
+        state.playing = !state.playing;
+        playToggle.textContent = state.playing ? "Ⅱ" : "▶";
+        playToggle.setAttribute("aria-label", state.playing ? "Pause" : "Play");
+        state.lastFrame = performance.now();
+      });
+      timeline.addEventListener("input", () => { state.progress = Number(timeline.value) / 1000; renderFrame(); });
+      document.querySelector("#reset-pose").addEventListener("click", () => {
+        Object.values(state.offsets).forEach((offset) => { offset.x = 0; offset.y = 0; });
+        renderControls(); renderFrame();
+      });
+
+      function tick(now) {
+        if (state.playing) {
+          state.progress = (state.progress + Math.min(40, now - state.lastFrame) / 8000) % 1;
+          renderFrame();
+        }
+        state.lastFrame = now;
+        requestAnimationFrame(tick);
+      }
+
+      function reportHeight() {
+        requestAnimationFrame(() => parent.postMessage({
+          type: "motion-evaluation-height",
+          height: document.documentElement.scrollHeight
+        }, "*"));
+      }
+      addEventListener("message", (event) => {
+        if (event.data?.type === "bauhaus-theme") {
+          document.documentElement.dataset.theme = event.data.theme === "dark" ? "dark" : "light";
+        }
+      });
+      addEventListener("resize", reportHeight);
+      if ("ResizeObserver" in window) new ResizeObserver(reportHeight).observe(document.querySelector(".app"));
+      renderControls();
+      renderFrame();
+      requestAnimationFrame(tick);
+      reportHeight();
+    })();
+  </script>
+</body>
+</html>

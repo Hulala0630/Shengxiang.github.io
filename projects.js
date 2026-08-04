@@ -730,43 +730,47 @@ const projectsData = [
       zh: "基于视觉的人体动作评估与反馈系统"
     },
     projectType: {
-      en: "Personal Project",
-      zh: "个人项目"
+      en: "TUM · Human Factors Project",
+      zh: "TUM · 人因工程项目"
     },
     technicalType: {
-      en: "Technical Project",
-      zh: "技术项目"
+      en: "Motion Evaluation Research",
+      zh: "运动评估研究"
     },
     pitch: {
-      en: "Turn human motion into measurable metrics and corrective feedback.",
-      zh: "把人体动作转化为可量化的指标与可执行的纠正反馈。"
+      en: "Turn abstract Qigong movement into personalized scores and joint-level feedback, validated with more than 20 participants.",
+      zh: "把抽象的气功动作转化为适合个体的相对评分与关节级反馈，并通过 20 余名被试验证。"
     },
     summary: {
-      en: "A skeleton-based motion analysis system that compares user movement against expert references, computes multi-dimensional scores, and generates joint-level improvement feedback.",
-      zh: "这是一个基于骨架数据的人体动作分析系统，通过将用户动作与专业标准动作对比，生成多维评分，并输出关节级的改进反馈。"
+      en: "A human-factors evaluation framework that derives objective motion criteria from expert and teaching videos, scores each participant relative to their own movement profile, and translates the result into dynamic joint-level feedback.",
+      zh: "这是一个人因工程动作评估框架：从资深运动员与教学视频中提取客观标准，依据每位被试自身的运动特征计算相对分数，并把结果转化为动态的关节级反馈。"
     },
     problem: {
-      en: "Traditional motion evaluation relied heavily on expert observation, making it difficult to standardize, scale, and give precise feedback on where a user should improve.",
-      zh: "传统动作评估高度依赖专业人员观察，难以标准化、规模化，也很难准确指出用户应当在哪个关节或动作阶段改进。"
+      en: "Qigong quality is difficult to describe with a single absolute target: body proportions, mobility and movement amplitude differ between participants, while visual coaching remains subjective and gives limited evidence about which joint or phase requires correction. Teaching-video effectiveness also depends on whether the camera keeps the relevant body regions within the viewer's attention.",
+      zh: "气功动作难以用单一绝对值评价：被试的身体比例、活动范围和动作幅度各不相同，单纯依赖观察既主观，也难以说明应当修正哪个关节或动作阶段；教学视频是否有效，还取决于镜头能否持续覆盖观看者真正关注的身体区域。"
     },
     solution: {
-      en: "I built a vision-based evaluation pipeline using supplier-provided skeleton models to extract motion features, compare them against expert reference actions, and translate the results into multi-dimensional scoring and intuitive user feedback.",
-      zh: "我构建了一条基于视觉的人体动作评估流程，利用供应商提供的骨架模型提取动作特征，再与专业标准动作进行对比，并将结果转化为多维评分与直观反馈。"
+      en: "Expert performances and teaching videos were converted into skeleton sequences and analyzed through joint angle, velocity, acceleration, angular velocity and angular acceleration. Instead of grading raw magnitudes, the system evaluates correlations and relative patterns against the reference, producing participant-specific scores, live joint diagnostics and selectable visual analyses. A complementary eye-tracking study mapped areas of interest and translated viewing behavior into practical filming guidelines for teaching videos.",
+      zh: "系统将资深运动员和教学视频转化为骨架序列，分析关节角度、速度、加速度、角速度与角加速度；评分不依赖原始数值大小，而是比较动作与参考序列之间的相关性和相对变化，从而生成适合个体的综合分数、实时关节诊断和可选择的数据图表。配套眼动实验进一步识别兴趣区域，并把观看行为转化为教学视频的拍摄指导规范。"
     },
     highlights: {
       en: [
-        "Processed skeleton-based motion data at around 30 fps.",
-        "Designed custom metrics including joint angles, angle change rate, and joint acceleration.",
-        "Compared user motion against expert reference actions to build a scoring framework.",
-        "Generated multi-dimensional feedback for shoulder, elbow, wrist, waist, knee, and ankle.",
-        "Used backend charts for analysis and red / yellow / green indicators for user-facing feedback."
+        "Derived explicit scoring criteria for an otherwise abstract movement from expert athletes and teaching videos.",
+        "Used relative correlation across angle, velocity, acceleration, angular velocity and angular acceleration instead of absolute thresholds.",
+        "Evaluated neck, shoulder, elbow, wrist, hip and knee motion dynamically and returned joint-level guidance.",
+        "Provided selectable time-series and comparison views for exploring individual movement patterns.",
+        "Validated the feedback workflow with more than 20 participants and used it to improve Qigong performance.",
+        "Combined eye-tracking areas of interest with motion analysis to define teaching-video filming guidelines.",
+        "Designed the scoring and visualization pipeline as a reusable framework for other sports."
       ],
       zh: [
-        "以约 30 fps 处理基于骨架的人体动作数据。",
-        "设计了包含关节角度、角度变化速率和关节加速度在内的自定义指标。",
-        "通过用户动作与专业标准动作对比建立评分框架。",
-        "针对肩、肘、腕、腰、膝、踝等关键部位生成多维反馈。",
-        "后台通过图表分析，面向用户则采用红 / 黄 / 绿颜色提示。"
+        "从资深运动员与教学视频中提炼明确标准，使抽象动作能够被客观评价。",
+        "使用角度、速度、加速度、角速度和角加速度的相对相关关系，而不是统一的绝对阈值。",
+        "动态评估颈部、肩、肘、腕、胯与膝，并输出关节级动作建议。",
+        "通过可选择的时序与对比图表分析每位被试的动作模式。",
+        "在 20 余名被试中验证评分反馈流程，并用于优化气功运动表现。",
+        "结合眼动兴趣区域与动作分析，形成教学视频拍摄指导规范。",
+        "评分、反馈与可视化流程可复用于其他运动项目。"
       ]
     },
     structure: {
@@ -806,10 +810,28 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "The system established a quantifiable motion evaluation framework and enabled actionable feedback at joint level instead of generic coaching advice.",
-      zh: "该系统建立了可量化的人体动作评估框架，使反馈能够精确到关节层级，而不再停留在笼统的训练建议。"
+      en: "Testing with more than 20 participants showed that personalized, joint-level scoring could guide measurable improvement in Qigong performance. The project also produced a reusable motion-analysis framework and evidence-based filming guidance derived from eye-tracking areas of interest.",
+      zh: "20 余名被试的测试表明，个体化的关节级评分能够帮助被试针对性优化气功动作表现。项目同时沉淀出可迁移到其他运动的动作分析框架，以及基于眼动兴趣区域形成的教学视频拍摄规范。"
     },
-    technologies: ["Computer Vision", "Skeleton Model", "Motion Analysis", "Feature Engineering", "Scoring Model", "Feedback Design"]
+    cardResult: {
+      en: "Validated with 20+ participants · personalized scoring across 6 joint groups · transferable to other sports.",
+      zh: "20+ 被试验证 · 6 组关键关节个体化评分 · 可迁移至其他运动。"
+    },
+    metrics: [
+      {
+        value: "20+",
+        label: { en: "Participants", zh: "测试被试" }
+      },
+      {
+        value: "06",
+        label: { en: "Joint groups", zh: "关键关节组" }
+      },
+      {
+        value: "05",
+        label: { en: "Kinematic metrics", zh: "运动学指标" }
+      }
+    ],
+    technologies: ["Human Factors", "Skeleton Tracking", "Motion Analysis", "Relative Scoring", "Data Visualization", "Eye Tracking"]
   },
 
   {

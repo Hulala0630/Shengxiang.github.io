@@ -60,6 +60,20 @@ const sceneBuilderFlow = locale === "zh"
       ["04", "Compose outputs on demand", "Generate hierarchy trees, reports, metadata and scene captures from one scene state."]
     ];
 
+const motionEvaluationFlow = locale === "zh"
+  ? [
+      ["01", "选择动作样本", "对比资深动作与待改进动作，观察评分如何随动作质量变化。"],
+      ["02", "定位关键关节", "在颈、肩、肘、腕、胯与膝之间切换，读取关节级诊断。"],
+      ["03", "切换运动学指标", "查看角度、速度、加速度、角速度与角加速度的相对变化。"],
+      ["04", "读取动态反馈", "综合分数、需关注关节与时序曲线随骨架运动同步更新。"]
+    ]
+  : [
+      ["01", "Choose a performance", "Compare an expert-like sample with a movement that needs correction."],
+      ["02", "Locate the joint", "Move across neck, shoulder, elbow, wrist, hip and knee diagnostics."],
+      ["03", "Switch kinematic metrics", "Inspect relative angle, velocity, acceleration and angular derivatives."],
+      ["04", "Read dynamic feedback", "Follow the live score, joint warning and synchronized time-series view."]
+    ];
+
 const faultArchitecture = locale === "zh"
   ? {
       title: "系统拓扑",
@@ -119,6 +133,38 @@ const sceneArchitecture = locale === "zh"
         ["Document ↔ 3D", "Bidirectional structure and transform synchronization"],
         ["Defect & error simulation", "Normal and parameterized abnormal states share one scene"],
         ["Hierarchy & visual evidence", "Scene trees, reports, metadata and captures"]
+      ]
+    };
+
+const motionArchitecture = locale === "zh"
+  ? {
+      title: "动作评估与教学研究闭环",
+      intro: "资深运动员与教学视频先被抽象为参考骨架和相对评分标准，被试动作再通过同一套特征管线形成个体化反馈；眼动研究则把观看兴趣区域转化为教学视频拍摄规范。",
+      flow: [
+        ["01", "参考体系", "从资深动作与教学视频建立客观评分标准"],
+        ["02", "骨架与特征", "提取六组关节及五类运动学指标"],
+        ["03", "相对评分", "比较相关性与动作模式，不依赖绝对幅值"],
+        ["04", "动态反馈", "输出综合分数、关节诊断与可选择图表"]
+      ],
+      outputs: [
+        ["个体训练反馈", "帮助 20+ 被试定位并优化气功动作"],
+        ["可复用评估框架", "评分、诊断和可视化流程可迁移到其他运动"],
+        ["教学视频规范", "依据眼动兴趣区域形成镜头与构图指导"]
+      ]
+    }
+  : {
+      title: "Motion evaluation and teaching-research loop",
+      intro: "Expert performance and teaching videos establish a reference skeleton and relative scoring criteria. Participant motion then passes through the same feature pipeline for personalized feedback, while eye-tracking evidence becomes filming guidance for teaching videos.",
+      flow: [
+        ["01", "Reference system", "Derive objective criteria from experts and teaching videos"],
+        ["02", "Skeleton & features", "Extract six joint groups and five kinematic metrics"],
+        ["03", "Relative scoring", "Compare correlations and movement patterns, not raw magnitudes"],
+        ["04", "Dynamic feedback", "Return a live score, joint diagnosis and selectable charts"]
+      ],
+      outputs: [
+        ["Personal training feedback", "Help 20+ participants locate and improve Qigong movement"],
+        ["Reusable evaluation framework", "Transfer scoring, diagnosis and visualization to other sports"],
+        ["Teaching-video guidance", "Turn eye-tracking areas of interest into filming rules"]
       ]
     };
 
@@ -254,14 +300,14 @@ const projectSummary = (project: Project) =>
               tabindex="-1"
             >
               <div class="project-bar">
-                <span>{index <= 1 ? text(project.projectType, locale) : selectedLabels[index]}</span>
+                <span>{text(project.projectType, locale) || selectedLabels[index]}</span>
                 <b>{text(project.technicalType, locale) || selectedLabels[index]}</b>
                 <i class="project-locator" aria-hidden="true"></i>
               </div>
               <div class="selected-copy">
                 <h3>{text(project.title, locale)}</h3>
                 <p>{projectSummary(project)}</p>
-                {index <= 1 && text(project.cardResult, locale) && (
+                {text(project.cardResult, locale) && (
                   <p class="selected-outcome">
                     <span>{locale === "zh" ? "成果" : "Outcome"}</span>
                     <strong>{text(project.cardResult, locale) || text(project.result, locale)}</strong>
@@ -272,7 +318,7 @@ const projectSummary = (project: Project) =>
                     <li>{technology}</li>
                   ))}
                 </ul>
-                {index <= 1 && (
+                {index <= 2 && (
                   <div class="fault-flow-summary">
                     <p class="fault-flow-label">
                       {index === 0
@@ -280,7 +326,12 @@ const projectSummary = (project: Project) =>
                         : (locale === "zh" ? "交互路径" : "Interaction path")}
                     </p>
                     <ol>
-                      {(index === 0 ? faultTrainingFlow : sceneBuilderFlow).map(([number, title, body]) => (
+                      {(index === 0
+                        ? faultTrainingFlow
+                        : index === 1
+                          ? sceneBuilderFlow
+                          : motionEvaluationFlow
+                      ).map(([number, title, body]) => (
                         <li>
                           <b>{number}</b>
                           <span><strong>{title}</strong><small>{body}</small></span>
@@ -293,7 +344,7 @@ const projectSummary = (project: Project) =>
 
               <div
                 class:list={["selected-effect", `effect-${index + 1}`]}
-                aria-hidden={index <= 1 ? undefined : "true"}
+                aria-hidden={index <= 2 ? undefined : "true"}
               >
                 {index === 0 && (
                   <iframe
@@ -322,12 +373,17 @@ const projectSummary = (project: Project) =>
                   ></iframe>
                 )}
                 {index === 2 && (
-                  <div class="motion-figure">
-                    <i class="head"></i><i class="torso"></i>
-                    <i class="arm left"></i><i class="arm right"></i>
-                    <i class="leg left"></i><i class="leg right"></i>
-                    <span>84</span><span>71</span><span>88</span>
-                  </div>
+                  <iframe
+                    id="motion-evaluation-frame"
+                    class="motion-demo-frame"
+                    data-theme-frame
+                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-1`}
+                    loading="lazy"
+                    scrolling="no"
+                    title={locale === "zh"
+                      ? "人体动作相对评分与关节反馈交互演示"
+                      : "Interactive relative motion scoring and joint feedback demo"}
+                  ></iframe>
                 )}
               </div>
 
@@ -337,7 +393,7 @@ const projectSummary = (project: Project) =>
                   <span class="details-trigger-signal" aria-hidden="true"><i></i><b></b></span>
                 </summary>
                 <div class="selected-detail-content">
-                  {index <= 1 && (
+                  {index <= 2 && (
                     <section class="fault-detail-lead">
                       <div>
                         <span>{c.summary}</span>
@@ -359,7 +415,7 @@ const projectSummary = (project: Project) =>
                         project={project}
                         locale={locale}
                         group="narrative"
-                        hideSummary={index <= 1}
+                        hideSummary={index <= 2}
                       />
                       {index === 1 && project.video?.url && (
                         <figure class="project-video-card project-video-inline">
@@ -391,7 +447,7 @@ const projectSummary = (project: Project) =>
                         project={project}
                         locale={locale}
                         group="lists"
-                        hideStructure={index <= 1}
+                        hideStructure={index <= 2}
                       />
                     </div>
                   </div>
@@ -400,6 +456,9 @@ const projectSummary = (project: Project) =>
                   )}
                   {index === 1 && (
                     <ProjectArchitecture architecture={sceneArchitecture} />
+                  )}
+                  {index === 2 && (
+                    <ProjectArchitecture architecture={motionArchitecture} />
                   )}
                   {project.video?.url && index !== 1 ? (
                     <video controls preload="none" playsinline>
@@ -540,6 +599,7 @@ const projectSummary = (project: Project) =>
     const frame = $("#hero-frame") as HTMLIFrameElement | null;
     const faultFrame = $("#fault-training-frame") as HTMLIFrameElement | null;
     const isaacFrame = $("#isaac-builder-frame") as HTMLIFrameElement | null;
+    const motionFrame = $("#motion-evaluation-frame") as HTMLIFrameElement | null;
     const themeFrames = $$("iframe[data-theme-frame]") as HTMLIFrameElement[];
     const setTheme = (theme: "light" | "dark") => {
       document.documentElement.dataset.theme = theme;
@@ -699,6 +759,13 @@ const projectSummary = (project: Project) =>
         event.source === isaacFrame.contentWindow
       ) {
         isaacFrame.style.height = `${Math.max(640, Math.min(980, Number(event.data.height) || 680))}px`;
+      }
+      if (
+        event.data?.type === "motion-evaluation-height" &&
+        motionFrame &&
+        event.source === motionFrame.contentWindow
+      ) {
+        motionFrame.style.height = `${Math.max(680, Math.min(1500, Number(event.data.height) || 720))}px`;
       }
     });
 
