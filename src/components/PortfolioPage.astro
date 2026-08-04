@@ -365,9 +365,20 @@ const projectSummary = (project: Project) =>
                         <figure class="project-video-card project-video-inline">
                           <figcaption>
                             <span>{locale === "zh" ? "ISAAC SIM 应用闭环实录" : "ISAAC SIM APPLICATION LOOP"}</span>
-                            <button type="button" data-video-expand>
-                              {locale === "zh" ? "放大 / 全屏 ↗" : "Expand / fullscreen ↗"}
-                            </button>
+                            <div class="project-video-actions">
+                              <button
+                                type="button"
+                                data-video-expand
+                                data-expand-label={locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                                data-shrink-label={locale === "zh" ? "缩小 ↙" : "Reduce ↙"}
+                                aria-pressed="false"
+                              >
+                                {locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                              </button>
+                              <button type="button" data-video-fullscreen>
+                                {locale === "zh" ? "全屏 ⛶" : "Fullscreen ⛶"}
+                              </button>
+                            </div>
                           </figcaption>
                           <video controls preload="none" playsinline>
                             <source src={assetPath(project.video.url)} type="video/mp4" />
@@ -502,6 +513,13 @@ const projectSummary = (project: Project) =>
       </div>
     </section>
   </main>
+
+  <div
+    class="video-lightbox-backdrop"
+    id="video-lightbox-backdrop"
+    aria-hidden="true"
+    hidden
+  ></div>
 
   <footer>
     <div class="wrap foot">
@@ -684,14 +702,71 @@ const projectSummary = (project: Project) =>
       }
     });
 
-    $$("[data-video-expand]").forEach((button) => {
-      button.addEventListener("click", async () => {
-        const video = button.closest(".project-video-card")?.querySelector("video");
+    const videoBackdrop = $("#video-lightbox-backdrop");
+    let enlargedVideoCard: HTMLElement | null = null;
+    let enlargedVideoButton: HTMLButtonElement | null = null;
+    let enlargedVideoAnchor: Comment | null = null;
+    const closeVideoLightbox = (restoreFocus = false) => {
+      if (!enlargedVideoCard || !enlargedVideoButton) return;
+      const previousCard = enlargedVideoCard;
+      enlargedVideoButton.setAttribute("aria-pressed", "false");
+      enlargedVideoButton.textContent = enlargedVideoButton.dataset.expandLabel ?? "Expand ↗";
+      document.body.classList.remove("video-lightbox-open");
+      if (videoBackdrop) {
+        videoBackdrop.hidden = true;
+        videoBackdrop.setAttribute("aria-hidden", "true");
+      }
+      const previousButton = enlargedVideoButton;
+      previousCard.classList.remove("is-enlarged");
+      if (enlargedVideoAnchor?.parentNode) {
+        enlargedVideoAnchor.parentNode.insertBefore(previousCard, enlargedVideoAnchor);
+        enlargedVideoAnchor.remove();
+      }
+      enlargedVideoCard = null;
+      enlargedVideoButton = null;
+      enlargedVideoAnchor = null;
+      if (restoreFocus) previousButton.focus();
+    };
+    $$("[data-video-expand]").forEach((control) => {
+      const button = control as HTMLButtonElement;
+      button.addEventListener("click", () => {
+        const card = button.closest(".project-video-card") as HTMLElement | null;
+        if (!card) return;
+        if (enlargedVideoCard === card) {
+          closeVideoLightbox(true);
+          return;
+        }
+        closeVideoLightbox();
+        const anchor = document.createComment("project-video-card-anchor");
+        card.parentNode?.insertBefore(anchor, card);
+        document.body.append(card);
+        enlargedVideoCard = card;
+        enlargedVideoButton = button;
+        enlargedVideoAnchor = anchor;
+        card.classList.add("is-enlarged");
+        button.setAttribute("aria-pressed", "true");
+        button.textContent = button.dataset.shrinkLabel ?? "Reduce ↙";
+        document.body.classList.add("video-lightbox-open");
+        if (videoBackdrop) {
+          videoBackdrop.hidden = false;
+          videoBackdrop.setAttribute("aria-hidden", "false");
+        }
+      });
+    });
+    $$("[data-video-fullscreen]").forEach((control) => {
+      control.addEventListener("click", async () => {
+        const video = control.closest(".project-video-card")?.querySelector("video");
         if (!video) return;
         try {
           if (video.requestFullscreen) await video.requestFullscreen();
         } catch {}
       });
+    });
+    videoBackdrop?.addEventListener("click", () => closeVideoLightbox(true));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && enlargedVideoCard && !document.fullscreenElement) {
+        closeVideoLightbox(true);
+      }
     });
     window.addEventListener("resize", () => requestAnimationFrame(alignHeroColumns));
 

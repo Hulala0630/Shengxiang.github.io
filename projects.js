@@ -1051,37 +1051,37 @@ const projectsData = [
       zh: "技术延展项目"
     },
     pitch: {
-      en: "A reusable industrial simulation framework that turns scene intent and structured documents into digital-twin environments, defect simulations and on-demand engineering outputs.",
-      zh: "一个可复用的工业仿真应用框架，将场景意图与结构化文档转换为数字孪生环境、缺陷模拟和按需工程输出。"
+      en: "Use structured documents to describe industrial scenes, interpret configuration intent, generate digital twins, and support defect simulation and engineering outputs in one framework.",
+      zh: "使用结构化文档描述工业场景，通过意图识别自动生成数字孪生，并在同一框架中完成缺陷模拟与工程输出。"
     },
     summary: {
-      en: "Structured documents define the scene, generate the digital twin, and drive defect simulation and on-demand outputs from one shared state.",
-      zh: "以结构化文档描述场景、自动生成数字孪生，并基于统一状态完成缺陷模拟与按需输出。"
+      en: "A configuration-driven industrial simulation framework that turns structured scene descriptions into digital twins, while supporting defect simulation, 3D parameter write-back and on-demand outputs.",
+      zh: "这是一个配置驱动的工业仿真框架：以结构化文档统一描述场景，自动搭建数字孪生，同时支持缺陷模拟、三维参数回写与按需输出。"
     },
     problem: {
-      en: "Industrial digital twins, industrial AI and embodied-intelligence systems all depend on reliable simulation environments and high-quality scene data. Traditional workflows still require engineers to build USD scenes, place assets, tune parameters and reproduce defects manually. Scene knowledge remains trapped in individual projects, while digital-twin variants, error cases and output packages are expensive to rebuild, difficult to reproduce and hard to scale across applications.",
-      zh: "工业数字孪生、工业 AI 与具身智能系统都依赖可靠的仿真环境和高质量场景数据，但传统流程仍高度依赖工程师手工搭建 USD 场景、摆放资产、调节参数并复现缺陷。场景知识容易被固化在单个项目中，数字孪生变体、错误场景和输出资料需要重复制作，导致建模成本高、复现困难，也难以跨应用扩展。"
+      en: "Industrial digital twins and simulation-data production still rely heavily on manually building USD scenes, placing assets and tuning parameters. Each scene variant or defect case often requires repeated modeling and a new set of output files, increasing engineering cost, weakening reproducibility and making scene knowledge difficult to reuse across stations and projects.",
+      zh: "工业数字孪生和仿真数据生产仍高度依赖人工搭建 USD 场景、摆放资产和调节参数；当场景发生变体或需要复现缺陷时，工程师往往需要重复建模并重新整理输出资料，导致成本高、复现性不足，也难以把场景知识复用到其他站点和项目。"
     },
     solution: {
-      en: "The framework separates intent interpretation, scene description, digital-twin construction and output generation. Scene requirements are mapped to structured YAML configurations; reusable assets, materials and relationships are then composed automatically into a USD Stage and scene tree. Direct 3D edits write transformations back to the document, while parameterized defect and error states reuse the same scene definition. Reports, hierarchy trees, metadata, viewpoints and scene captures are generated on demand from this shared state through modular output adapters.",
-      zh: "该框架将意图识别、场景描述、数字孪生构建与输出生成解耦：场景需求先被映射为结构化 YAML 配置，再由可复用资产、材质和对象关系自动组合为 USD Stage 与场景树；三维对象的直接编辑能够将位姿回写文档，参数化的缺陷与错误状态则复用同一份场景定义。报告、层级结构树、Metadata、视角图和场景截图通过模块化输出适配器按需生成。"
+      en: "The framework connects intent interpretation, structured scene description, digital-twin construction, defect simulation and output generation in one configuration-driven workflow. Scene requirements are converted into YAML, which assembles reusable assets, materials and object relationships into a USD Stage and hierarchy. Direct 3D edits write transforms back to the document, normal and parameterized defect states share the same scene definition, and reports, hierarchy trees, metadata and scene captures are generated on demand from the synchronized state.",
+      zh: "框架将意图识别、结构化描述、数字孪生构建、缺陷模拟和输出生成串联为一条配置驱动的流程：场景需求被转换为 YAML 配置，可复用资产、材质和对象关系据此自动组合为 USD Stage 与层级树；三维编辑会把位姿回写文档，参数化缺陷与正常状态共用同一场景定义，报告、结构树、Metadata 和场景截图则从同步后的状态按需生成。"
     },
     highlights: {
       en: [
-        "Treats structured documents as an executable scene contract rather than a one-time import format.",
-        "Uses intent recognition and configuration rules to translate scene requirements into assets, parameters and relationships.",
-        "Generates digital-twin scenes from reusable industrial components and a modular USD asset library.",
-        "Models defects and errors as parameterized scene states so normal and abnormal conditions share one definition.",
-        "Keeps YAML, the 3D scene and the USD hierarchy synchronized around a single source of scene truth.",
-        "Exposes reusable extension points for new assets, defect rules and on-demand outputs such as hierarchy trees, reports and scene captures."
+        "Uses structured documents as the shared entry point for scene configuration and 3D construction.",
+        "Translates scene intent into asset, parameter and relationship configurations.",
+        "Builds digital twins from reusable industrial components and a modular USD asset library.",
+        "Represents defects as parameterized states so normal and abnormal conditions share one scene definition.",
+        "Synchronizes YAML, 3D transforms and the USD hierarchy around one scene state.",
+        "Extends assets, defect rules and output modules independently, including hierarchy trees, reports and scene captures."
       ],
       zh: [
-        "将结构化文档视为可执行的场景契约，而不是一次性的导入格式。",
-        "通过意图识别与配置规则，将场景需求转换为资产、参数和对象关系。",
-        "基于可复用工业组件与模块化 USD 资产库自动生成数字孪生场景。",
-        "把缺陷与错误建模为参数化场景状态，使正常与异常工况共享同一份定义。",
-        "让 YAML、三维场景与 USD 层级结构围绕统一场景数据源保持同步。",
-        "通过可扩展模块接入新资产、缺陷规则，以及结构树、报告和场景截图等按需输出。"
+        "以结构化文档作为场景配置和三维建模的统一入口。",
+        "根据场景意图生成资产、参数和对象关系配置。",
+        "通过可复用工业组件和模块化 USD 资产库搭建数字孪生。",
+        "以参数化状态模拟缺陷与错误，使正常与异常工况共用一套场景定义。",
+        "同步 YAML、三维位姿与 USD 层级结构，保持统一的场景状态。",
+        "资产、故障规则和输出模块均可独立扩展，并按需生成结构树、报告和场景截图。"
       ]
     },
     structure: {
@@ -1143,12 +1143,12 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "The framework consolidates scene knowledge into a reusable application structure: one structured description can generate a digital-twin scene, reproduce parameterized defects and supply multiple engineering outputs without rebuilding the environment for every task. Its modular architecture allows assets, intent rules, fault models and output adapters to evolve independently, improving reproducibility while making the same framework transferable across stations, projects and data-production scenarios.",
-      zh: "该框架把场景知识沉淀为可复用的应用结构：同一份结构化描述可以生成数字孪生场景、复现参数化缺陷，并为不同工程任务提供多种输出，无需反复重建环境。模块化架构使资产、意图规则、故障模型和输出适配器能够独立扩展，在提升复现性的同时，也让同一框架可以迁移到不同站点、项目和仿真数据生产场景。"
+      en: "The framework combines scene construction, defect reproduction and engineering outputs into one reusable workflow. A single structured document can continuously drive the digital twin and multiple output formats, while assets, intent rules, defect models and output modules remain independently extensible for use across stations, projects and simulation-data tasks.",
+      zh: "框架将原本分散的场景搭建、缺陷复现和资料输出整合为可复用流程。同一份结构化文档可以持续驱动数字孪生与多种工程输出，资产、意图规则、故障模型和输出模块也能够独立扩展，便于迁移到不同站点、项目和仿真数据任务。"
     },
     cardResult: {
-      en: "Structured YAML and 3D transforms stay synchronized across four reproducible defect cases, with USD, metadata and camera outputs prepared from one scene state.",
-      zh: "结构化 YAML 与三维位姿在四类可复现缺陷场景中保持同步，并从同一场景状态准备 USD、Metadata 与相机输出。"
+      en: "Structured YAML and 3D transforms stay synchronized across four reproducible defect cases, with USD, metadata and camera outputs generated from one scene state.",
+      zh: "结构化 YAML 与三维位姿在四类可复现缺陷场景中保持双向同步，并从统一场景状态生成 USD、Metadata 与相机输出。"
     },
     metrics: [
       {
