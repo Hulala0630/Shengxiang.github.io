@@ -158,6 +158,7 @@
 
     .motion-stage {
       position: relative;
+      display: flex;
       min-width: 0;
       overflow: hidden;
       border-right: 1px solid var(--ink);
@@ -167,6 +168,7 @@
         var(--screen);
       background-size: 24px 24px;
       color: var(--screen-text);
+      flex-direction: column;
     }
     .stage-head {
       position: absolute;
@@ -189,7 +191,7 @@
     .legend i { width: 16px; height: 2px; background: var(--blue); }
     .legend span:last-child i { height: 0; border-top: 2px dashed #697383; background: none; }
 
-    #skeleton-stage { display: block; width: 100%; height: 486px; touch-action: none; }
+    #skeleton-stage { display: block; width: 100%; height: 486px; flex: 0 0 486px; touch-action: none; }
     .view-label { fill: #8f98a8; letter-spacing: .12em; font: 11px "IBM Plex Mono", monospace; }
     .ground { stroke: #495160; stroke-width: 1; }
     .divider { stroke: #343b49; stroke-width: 1; stroke-dasharray: 4 6; }
@@ -232,12 +234,66 @@
     .score-orbit small { position: absolute; bottom: 12px; color: #aab2bf; font: 9px "IBM Plex Mono", monospace; }
     .score-orbit.attention::before { border-color: var(--red); border-top-color: transparent; }
 
+    .phase-diagnostic {
+      margin: 0 14px 10px;
+      border: 1px solid var(--screen-line);
+      background: rgba(9, 12, 18, .82);
+    }
+    .phase-diagnostic-head {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 11px;
+      border-bottom: 1px solid var(--screen-line);
+      color: #aeb6c4;
+      font: 10px "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+    }
+    .phase-diagnostic-head b { color: var(--yellow); font-weight: 600; }
+    .phase-diagnostic-head span:last-child { color: #d8dde6; }
+    .phase-plot { display: grid; min-height: 116px; grid-template-columns: minmax(0, 1fr) 126px; }
+    #phase-deviation-chart { display: block; width: 100%; height: 116px; border-right: 1px solid var(--screen-line); }
+    .phase-chart-grid { stroke: #303846; stroke-width: 1; }
+    .phase-reference-path { fill: none; stroke: #788294; stroke-width: 2; stroke-dasharray: 4 6; }
+    .phase-current-path { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .phase-current-path.warn { stroke: var(--red); }
+    .phase-chart-point { fill: var(--screen); stroke: var(--blue); stroke-width: 2; }
+    .phase-chart-point.warn { stroke: var(--red); }
+    .phase-chart-point.active { fill: var(--yellow); stroke: var(--yellow); }
+    .phase-chart-cursor { stroke: var(--yellow); stroke-width: 1.5; stroke-dasharray: 3 4; }
+    .phase-chart-label { fill: #858f9f; font: 9px "IBM Plex Mono", monospace; }
+    .phase-readout { display: grid; align-content: center; gap: 12px; padding: 11px; }
+    .phase-readout span { display: block; color: #8993a3; font: 9px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .phase-readout b { display: block; margin-top: 2px; color: #eef1f5; font: 600 18px "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .phase-readout b.warn { color: var(--red); }
+    .phase-readout b.good { color: var(--green); }
+    .phase-samples { display: grid; border-top: 1px solid var(--screen-line); grid-template-columns: repeat(5, 1fr); }
+    .phase-samples button {
+      display: grid;
+      min-width: 0;
+      min-height: 47px;
+      align-content: center;
+      gap: 2px;
+      padding: 5px 8px;
+      border: 0;
+      border-right: 1px solid var(--screen-line);
+      background: transparent;
+      color: #8f98a8;
+      cursor: pointer;
+      text-align: left;
+      font: 9px "IBM Plex Mono", monospace;
+    }
+    .phase-samples button:last-child { border-right: 0; }
+    .phase-samples button:hover { background: rgba(239, 196, 82, .1); }
+    .phase-samples button.active { background: var(--yellow); color: #17181a; }
+    .phase-samples button b { font-size: 11px; }
+    .phase-samples button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
     .joint-callout {
-      position: absolute;
       z-index: 3;
-      bottom: 14px;
-      left: 14px;
-      max-width: calc(100% - 28px);
+      margin: 0 14px 14px;
       padding: 10px 12px;
       border-left: 4px solid var(--yellow);
       background: rgba(9, 12, 18, .88);
@@ -429,7 +485,11 @@
       .performance-switch button { min-width: 0; flex: 1; }
       .workspace { grid-template-columns: 1fr; }
       .motion-stage { border-right: 0; border-bottom: 1px solid var(--ink); }
-      #skeleton-stage { height: 430px; }
+      #skeleton-stage { height: 430px; flex-basis: 430px; }
+      .phase-plot { grid-template-columns: 1fr; }
+      #phase-deviation-chart { border-right: 0; border-bottom: 1px solid var(--screen-line); }
+      .phase-readout { grid-template-columns: repeat(2, 1fr); }
+      .phase-samples { overflow-x: auto; grid-template-columns: repeat(5, minmax(92px, 1fr)); }
       .evidence-strip { grid-template-columns: 1fr; }
       .evidence-strip article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--ink); }
       .evidence-strip article:last-child { border-bottom: 0; }
@@ -520,6 +580,31 @@
           <g id="side-live"></g>
         </svg>
         <div class="score-orbit" id="score-orbit"><b id="overall-score">92</b><small data-copy="overall">OVERALL</small></div>
+        <section class="phase-diagnostic" aria-label="Movement phase diagnostic">
+          <header class="phase-diagnostic-head">
+            <b data-copy="phase-diagnostic">MOVEMENT PHASE DIAGNOSTIC</b>
+            <span id="phase-joint-label">WRIST · ANGULAR VELOCITY</span>
+          </header>
+          <div class="phase-plot">
+            <svg id="phase-deviation-chart" viewBox="0 0 500 116" preserveAspectRatio="none" role="img" aria-label="Current and reference joint trajectory across five movement phases">
+              <line class="phase-chart-grid" x1="34" y1="27" x2="480" y2="27"></line>
+              <line class="phase-chart-grid" x1="34" y1="58" x2="480" y2="58"></line>
+              <line class="phase-chart-grid" x1="34" y1="89" x2="480" y2="89"></line>
+              <text class="phase-chart-label" x="8" y="31">+1</text>
+              <text class="phase-chart-label" x="14" y="62">0</text>
+              <text class="phase-chart-label" x="8" y="93">−1</text>
+              <path class="phase-reference-path" id="phase-reference-path"></path>
+              <path class="phase-current-path" id="phase-current-path"></path>
+              <line class="phase-chart-cursor" id="phase-chart-cursor" x1="74" y1="14" x2="74" y2="101"></line>
+              <g id="phase-chart-points"></g>
+            </svg>
+            <div class="phase-readout">
+              <div><span data-copy="peak-phase">LARGEST DEVIATION</span><b id="peak-phase-value">03</b></div>
+              <div><span data-copy="predicted-score">CORRECTED SCORE</span><b class="good" id="predicted-score-value">82</b></div>
+            </div>
+          </div>
+          <div class="phase-samples" id="phase-samples" aria-label="Movement phases"></div>
+        </section>
         <div class="joint-callout"><b id="callout-title">WRIST · 94</b><span id="callout-body">Relative motion follows the expert pattern.</span></div>
       </div>
 
@@ -636,6 +721,7 @@
           "evidence-3-title": "可迁移评估框架", "evidence-3-body": "同一流程可以拓展到其他运动项目。",
           "motion-tab": "01 · 动作诊断", "motion-tab-note": "个体相对评分",
           "stats-tab": "02 · 群体统计", "stats-tab-note": "统计分析与可视化",
+          "phase-diagnostic": "动作相位诊断", "peak-phase": "最大偏差阶段", "predicted-score": "修正后预计分数",
           "basis-title": "评分基准", "basis-meta": "比较评价模型", absolute: "绝对阈值", individual: "个体相对",
           "stats-kicker": "群体分析 / 合成演示数据", "stats-title": "从动作序列建立稳定的评价模型。",
           "stats-body": "通过箱型图、均值、中位数、四分位数与置信区间呈现个体差异，并观察样本扩大后评估结果如何逐步稳定。",
@@ -703,8 +789,30 @@
         button.dataset.metric = key;
         button.textContent = label;
         if (key === state.metric) button.classList.add("active");
-        button.addEventListener("click", () => { state.metric = key; renderControls(); renderChart(); });
+        button.addEventListener("click", () => { state.metric = key; renderControls(); renderFrame(); });
         metricTabs.append(button);
+      });
+
+      const phaseNames = locale === "zh"
+        ? ["准备", "抬臂", "展开", "回收", "稳定"]
+        : ["PREPARE", "LIFT", "EXTEND", "RETURN", "SETTLE"];
+      const phaseProgress = [.04, .24, .44, .64, .84];
+      const phaseRisk = { neck: 1, shoulder: 2, elbow: 2, wrist: 3, hip: 1, knee: 2 };
+      const phaseSamples = document.querySelector("#phase-samples");
+      phaseNames.forEach((name, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.phaseIndex = index;
+        button.setAttribute("aria-label", `${index + 1} · ${name}`);
+        button.innerHTML = `<b>0${index + 1}</b><span>${name}</span>`;
+        button.addEventListener("click", () => {
+          state.progress = phaseProgress[index];
+          state.playing = false;
+          playToggle.textContent = "▶";
+          playToggle.setAttribute("aria-label", "Play");
+          renderFrame();
+        });
+        phaseSamples.append(button);
       });
 
       const bones = [
@@ -896,6 +1004,57 @@
         document.querySelector("#metric-value").textContent = `${amplitude >= 0 ? "+" : ""}${amplitude} ${metricData[metricIndex][2]}`;
       }
 
+      function renderPhaseDiagnostic(activePhase) {
+        const selectedScore = scoreFor(state.joint);
+        const metricPosition = metricData.findIndex(([key]) => key === state.metric);
+        const riskCenter = phaseRisk[state.joint];
+        const reference = phaseProgress.map((progress, index) => Math.sin(progress * Math.PI * 2 + metricPosition * .28) * .54 + Math.cos(index * 1.13) * .08);
+        const current = reference.map((value, index) => {
+          const proximity = Math.max(0, 1 - Math.abs(index - riskCenter) / 2.7);
+          const direction = index % 2 === 0 ? 1 : -1;
+          const deviation = state.mode === "attention"
+            ? direction * proximity * ((100 - selectedScore) / 52)
+            : Math.sin(index * 1.8 + metricPosition) * .055;
+          return Math.max(-1.08, Math.min(1.08, value + deviation));
+        });
+        const deviations = current.map((value, index) => Math.abs(value - reference[index]));
+        const peakIndex = deviations.indexOf(Math.max(...deviations));
+        const phaseScores = deviations.map((deviation) => Math.max(35, Math.min(99, Math.round(selectedScore + 5 - deviation * 31))));
+        const predictedScore = selectedScore >= 85
+          ? selectedScore
+          : Math.min(96, selectedScore + Math.max(8, Math.round((100 - selectedScore) * .48)));
+        const xAt = (index) => 74 + index * 94;
+        const yAt = (value) => 58 - value * 31;
+        const linePath = (values) => values.map((value, index) => `${index ? "L" : "M"}${xAt(index)},${yAt(value).toFixed(1)}`).join(" ");
+        document.querySelector("#phase-reference-path").setAttribute("d", linePath(reference));
+        const currentPath = document.querySelector("#phase-current-path");
+        currentPath.setAttribute("d", linePath(current));
+        currentPath.classList.toggle("warn", state.mode === "attention");
+        const cursor = document.querySelector("#phase-chart-cursor");
+        cursor.setAttribute("x1", xAt(activePhase));
+        cursor.setAttribute("x2", xAt(activePhase));
+        const points = document.querySelector("#phase-chart-points");
+        points.replaceChildren();
+        current.forEach((value, index) => {
+          const point = makeSvg("circle", `phase-chart-point${state.mode === "attention" ? " warn" : ""}${index === activePhase ? " active" : ""}`);
+          point.setAttribute("cx", xAt(index));
+          point.setAttribute("cy", yAt(value));
+          point.setAttribute("r", index === activePhase ? 5 : 3.5);
+          points.append(point);
+        });
+        phaseSamples.querySelectorAll("button").forEach((button, index) => {
+          button.classList.toggle("active", index === activePhase);
+          button.querySelector("b").textContent = `0${index + 1} · ${phaseScores[index]}`;
+        });
+        const metricLabel = metricData.find(([key]) => key === state.metric)[1];
+        document.querySelector("#phase-joint-label").textContent = `${labels[state.joint]} · ${metricLabel}`;
+        document.querySelector("#peak-phase-value").textContent = `0${peakIndex + 1} · ${phaseNames[peakIndex]}`;
+        const predicted = document.querySelector("#predicted-score-value");
+        predicted.textContent = predictedScore;
+        predicted.classList.toggle("warn", predictedScore < 70);
+        predicted.classList.toggle("good", predictedScore >= 70);
+      }
+
       function renderFrame() {
         const liveFront = pose(state.progress, state.mode);
         const refFront = pose(state.progress, "reference", true);
@@ -919,6 +1078,7 @@
         document.querySelector("#time-label").textContent = `${(state.progress * 8).toFixed(1)}s`;
         const activePhase = Math.min(4, Math.floor(state.progress * 5));
         document.querySelectorAll(".phase-track i").forEach((node, index) => node.classList.toggle("active", index <= activePhase));
+        renderPhaseDiagnostic(activePhase);
         renderChart();
       }
 
