@@ -215,6 +215,8 @@
       display: grid;
       width: 92px;
       height: 92px;
+      align-content: center;
+      gap: 2px;
       place-items: center;
       border: 1px solid #596273;
       border-radius: 50%;
@@ -230,8 +232,8 @@
       content: "";
       transform: rotate(38deg);
     }
-    .score-orbit b { z-index: 1; font: 600 27px "Space Grotesk", sans-serif; }
-    .score-orbit small { position: absolute; bottom: 12px; color: #aab2bf; font: 9px "IBM Plex Mono", monospace; }
+    .score-orbit b { z-index: 1; font: 600 27px/1 "Space Grotesk", sans-serif; }
+    .score-orbit small { position: relative; z-index: 1; color: #aab2bf; font: 9px/1.1 "IBM Plex Mono", monospace; }
     .score-orbit.attention::before { border-color: var(--red); border-top-color: transparent; }
 
     .phase-diagnostic {
@@ -476,6 +478,38 @@
     .analytics-pipeline b { display: block; color: var(--blue); font: 600 10px "IBM Plex Mono", monospace; }
     .analytics-pipeline strong { display: block; margin-top: 5px; font-size: 12px; }
     .analytics-pipeline small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+
+    @media (min-width: 621px) {
+      .workspace { min-height: 0; }
+      #skeleton-stage { height: 356px; flex-basis: 356px; }
+      .score-orbit { top: 58px; width: 82px; height: 82px; }
+      .score-orbit::before { width: 62px; height: 62px; }
+      .score-orbit b { font-size: 24px; }
+
+      .phase-diagnostic { margin-bottom: 8px; }
+      .phase-diagnostic-head { min-height: 34px; }
+      .phase-plot { min-height: 88px; grid-template-columns: minmax(0, 1fr) 116px; }
+      #phase-deviation-chart { height: 88px; }
+      .phase-readout { gap: 8px; padding: 8px 10px; }
+      .phase-readout b { font-size: 16px; }
+      .phase-samples button { min-height: 40px; padding-block: 3px; }
+      .joint-callout { margin-bottom: 10px; padding-block: 8px; }
+
+      .panel-block { padding: 11px 13px; }
+      .block-title { margin-bottom: 8px; }
+      .joint-grid { gap: 4px; }
+      .joint-grid button,
+      .metric-tabs button,
+      .score-basis button { min-height: 33px; padding-block: 5px; }
+      .basis-note { min-height: 27px; margin-top: 6px; line-height: 1.35; }
+      .chart-wrap { margin-top: 9px; }
+      #metric-chart { height: 102px; }
+      .chart-caption { padding-block: 5px; }
+      .joint-scores { gap: 4px; }
+      .joint-score { gap: 7px; line-height: 1.25; }
+
+      .evidence-strip article { min-height: 72px; padding-block: 11px; }
+    }
 
     @media (max-width: 620px) {
       .lab-tabs button { align-items: flex-start; flex-direction: column; justify-content: center; gap: 2px; }
@@ -1311,10 +1345,14 @@
       }
 
       function reportHeight() {
-        requestAnimationFrame(() => parent.postMessage({
-          type: "motion-evaluation-height",
-          height: document.documentElement.scrollHeight
-        }, "*"));
+        requestAnimationFrame(() => {
+          const app = document.querySelector(".app");
+          const contentHeight = app ? Math.ceil(app.getBoundingClientRect().height + 8) : 720;
+          parent.postMessage({
+            type: "motion-evaluation-height",
+            height: contentHeight
+          }, "*");
+        });
       }
       addEventListener("message", (event) => {
         if (event.data?.type === "bauhaus-theme") {

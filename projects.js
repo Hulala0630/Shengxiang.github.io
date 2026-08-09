@@ -15,6 +15,7 @@ const projectsData = [
           en: "VC Line Auto Builder",
           zh: "产线自动建模 Demo"
         },
+        cover: "assets/images/production-line-auto-modeler-cover.png",
         description: {
           en: "A configuration-driven Unity demo that builds industrial production lines from JSON.",
           zh: "一个基于 JSON 配置自动生成工业产线结构的 Unity Demo。"
@@ -75,6 +76,7 @@ const projectsData = [
           en: "Aster Desktop Agent",
           zh: "Aster 桌面智能助手"
         },
+        cover: "assets/images/aster-desktop-assistant-cover-v3.png",
         description: {
           en: "A lightweight desktop AI assistant that integrates local memory, offline voice input, and real-time LLM interaction.",
           zh: "一个集成本地记忆、离线语音输入与实时大模型交互的桌面智能助手。"
@@ -165,6 +167,7 @@ const projectsData = [
           en: "PLC Platform Benchmark & Migration Decision Copilot",
           zh: "PLC平台选型与迁移决策智能助手"
         },
+        cover: "assets/images/plc-selection-migration-assistant-cover.png",
         description: {
           en: "A local-first decision-support workspace for PLC ecosystem selection, weighted benchmarking, migration-risk discussion, and consulting-style report drafting.",
           zh: "一个本地优先的PLC平台决策工作台，支持生态选型、加权Benchmark、迁移风险分析与咨询式报告生成。"
@@ -337,6 +340,7 @@ const projectsData = [
       en: "Production Line Diagnostics Agent",
       zh: "产线状态分析与故障诊断Agent"
     },
+    cover: "assets/images/production-line-fault-analysis-diagnosis-cover.png",
     pitch: {
       en: "A workflow-based industrial agent for production line diagnostics, tool orchestration, and closed-loop reasoning.",
       zh: "一个面向产线诊断的工作流式工业智能助手，支持工具编排、上下文推理与闭环决策。"
@@ -459,6 +463,7 @@ const projectsData = [
       en: "Industrial Digital Twin Demo",
       zh: "工业数字孪生演示系统"
     },
+    cover: "assets/images/industrial-digital-twin-demo-cover.png",
     projectType: {
       en: "Personal Project",
       zh: "个人项目"
@@ -647,6 +652,7 @@ const projectsData = [
       en: "Plugin-based System Decoupling",
       zh: "基于插件的系统解耦"
     },
+    cover: "assets/images/plugin-system-decoupling-cover.png",
     projectType: {
       en: "Industry Project",
       zh: "企业项目"
@@ -750,8 +756,8 @@ const projectsData = [
       zh: "气功动作较为抽象，难以用单一绝对值评价。被试的身体比例、活动范围与动作幅度各不相同，单纯观察既主观，也难以定位需要修正的关节和动作阶段。因此，项目需要建立兼顾客观性与个体差异的评价依据，通过群体统计验证其稳定性，并说明教学视频应如何呈现动作。"
     },
     solution: {
-      en: "The study defined the experiment, reference actions and scoring logic from experienced athletes and teaching videos. A company partner supplied the computer-vision skeleton sequences; the project work focused on cleaning and processing those sequences in MATLAB and RStudio, deriving joint angle, velocity, acceleration, angular velocity and angular acceleration, and building participant-relative scores from correlations and movement patterns rather than raw magnitude. Dynamic joint diagnostics were combined with box plots, mean, median, quartiles and confidence intervals so individual feedback and cohort evidence could be examined together. Eye tracking added areas-of-interest evidence and practical filming guidance for teaching videos.",
-      zh: "项目基于资深运动员和教学视频完成实验设计、参考动作定义与评分逻辑设计；合作企业提供计算机视觉识别与骨架序列，研究工作则聚焦于使用 MATLAB、RStudio 清洗和处理数据，计算关节角度、速度、加速度、角速度与角加速度，并依据相关性和动作模式建立不依赖绝对幅值的个体相对评分。动态关节诊断与箱型图、平均数、中位数、四分位数和置信区间结合，使个体反馈与群体统计证据可以共同验证。配套眼动实验进一步形成兴趣区域分析与教学视频拍摄规范。"
+      en: "The study defined the experiment, reference actions and scoring logic from experienced athletes and teaching videos. A company partner supplied the computer-vision skeleton sequences; based on the movement characteristics of Qigong, the project researched and selected joint angle, velocity, acceleration, angular velocity and angular acceleration as the evaluation dimensions, then cleaned and processed the sequences in MATLAB and RStudio. Correlations and movement patterns were used to build participant-relative scores rather than relying on raw magnitude. Dynamic joint diagnostics were combined with box plots, mean, median, quartiles and confidence intervals so individual feedback and cohort evidence could be examined together. Eye tracking added areas-of-interest evidence and practical filming guidance for teaching videos.",
+      zh: "项目基于资深运动员和教学视频完成实验设计、参考动作定义与评分逻辑设计；合作企业提供计算机视觉识别与骨架序列，项目则依据气功运动的动作特征研究并筛选关节角度、速度、加速度、角速度与角加速度作为评价维度，再使用 MATLAB、RStudio 完成数据清洗与处理，并依据相关性和动作模式建立不依赖绝对幅值的个体相对评分。动态关节诊断与箱型图、平均数、中位数、四分位数和置信区间结合，使个体反馈与群体统计证据可以共同验证。配套眼动实验进一步形成兴趣区域分析与教学视频拍摄规范。"
     },
     highlights: {
       en: [
@@ -816,8 +822,8 @@ const projectsData = [
       zh: "20 余名被试的测试把个体相对关节评分与动态、群体两级证据连接起来；统计图表呈现差异、集中趋势与不确定性，参与者增加后评价依据也逐步稳定。项目最终沉淀出可迁移到其他运动的实验与数据评价框架，以及基于眼动兴趣区域形成的教学视频拍摄规范。"
     },
     cardResult: {
-      en: "20+ participants · relative scoring across 6 joint groups · dynamic and cohort statistics · reusable framework.",
-      zh: "20+ 被试 · 6 组关节相对评分 · 动态与群体统计可视化 · 可复用评价框架。"
+      en: "The study validated relative scoring across 6 joint groups with 20+ participants and integrated dynamic and cohort statistics into a reusable motion-evaluation framework.",
+      zh: "项目通过 20+ 名被试验证了 6 组关节相对评分，并将动态与群体统计可视化整合为可复用的运动评价框架。"
     },
     metrics: [
       {
@@ -841,6 +847,7 @@ const projectsData = [
       en: "Multimodal 3D Navigation System",
       zh: "多模态三维导航系统"
     },
+    cover: "assets/images/sound-guided-navigation-cover.png",
     projectType: {
       en: "Personal Project",
       zh: "个人项目"
@@ -917,6 +924,7 @@ const projectsData = [
       en: "Matrix-based Production Scheduling Model",
       zh: "基于矩阵的生产调度模型"
     },
+    cover: "assets/images/matrix-production-scheduling-model-cover-v2.png",
     projectType: {
       en: "Industry Project",
       zh: "企业项目"
@@ -993,6 +1001,7 @@ const projectsData = [
       en: "Lean Process Optimization",
       zh: "精益流程优化"
     },
+    cover: "assets/images/lean-production-process-optimization-cover.png",
     projectType: {
       en: "Industry Project",
       zh: "企业项目"

@@ -142,7 +142,7 @@ const motionArchitecture = locale === "zh"
       intro: "合作企业提供 CV 骨架序列作为数据输入；项目贡献从实验与评分标准设计开始，贯穿运动学数据处理、相对评价、统计验证与可视化反馈，并通过眼动研究补充教学视频规范。",
       flow: [
         ["01", "实验与标准设计", "从资深动作、教学视频和研究问题定义评价依据"],
-        ["02", "骨架数据处理", "使用 MATLAB 与 RStudio 处理六组关节和五类指标"],
+        ["02", "指标研究与数据处理", "依据运动特点筛选五类指标，并处理六组关节数据"],
         ["03", "相对评分与统计验证", "结合个体动作模式、群体分布和样本不确定性"],
         ["04", "动态与群体可视化", "输出关节反馈、箱型图、集中趋势与评判精度"]
       ],
@@ -157,7 +157,7 @@ const motionArchitecture = locale === "zh"
       intro: "A company partner supplied CV skeleton sequences as the data input. The project contribution begins with experiment and scoring-criteria design, then spans kinematic processing, relative evaluation, statistical validation and visual feedback, with eye tracking adding teaching-video guidance.",
       flow: [
         ["01", "Experiment & criteria", "Define the evaluation basis from experts, teaching videos and research questions"],
-        ["02", "Skeleton-data processing", "Process six joint groups and five metrics in MATLAB and RStudio"],
+        ["02", "Metric research & processing", "Select five metrics from the movement characteristics, then process six joint groups"],
         ["03", "Relative scoring & statistics", "Combine individual movement patterns, cohort distributions and uncertainty"],
         ["04", "Dynamic & cohort visualization", "Return joint feedback, box plots, central tendency and precision"]
       ],
@@ -377,7 +377,7 @@ const projectSummary = (project: Project) =>
                     id="motion-evaluation-frame"
                     class="motion-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-3`}
+                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-6`}
                     loading="lazy"
                     scrolling="no"
                     title={locale === "zh"
@@ -495,8 +495,17 @@ const projectSummary = (project: Project) =>
                   <h3>{text(project.title, locale)}</h3>
                   <p>{projectSummary(project)}</p>
                 </div>
-                <div class:list={["project-effect", { "no-video": !project.video?.url }]}>
-                  {project.video?.url ? (
+                <div class:list={["project-effect", { "no-media-preview": !project.cover && !project.video?.url }]}>
+                  {project.cover ? (
+                    <img
+                      src={assetPath(project.cover)}
+                      alt=""
+                      width="1536"
+                      height="512"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : project.video?.url ? (
                     <video
                       muted
                       loop

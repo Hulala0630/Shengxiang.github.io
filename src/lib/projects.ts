@@ -6,6 +6,7 @@ export type Project = Record<string, any> & {
   title: Localized;
   projectType?: Localized;
   technologies?: string[];
+  cover?: string;
   video?: { type?: string; url?: string };
 };
 
