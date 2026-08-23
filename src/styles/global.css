@@ -1811,23 +1811,186 @@ summary:focus-visible {
 }
 
 .archive-detail {
-  display: grid;
-  gap: 0;
-  padding: 30px 34px 36px;
   border-top: 3px solid var(--archive-accent);
   background: var(--card);
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
 }
 
-.archive-detail > div:not(.project-media) {
+.archive-detail-lead {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+  padding: 26px 32px 28px;
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.archive-detail-lead > span,
+.archive-structure > span {
+  color: var(--archive-accent);
+  letter-spacing: 0.09em;
+  font: 600 10px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.archive-detail-lead p {
+  max-width: 920px;
+  margin: 0;
+  color: var(--ink);
+  font: 500 17px/1.65 "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
+.archive-detail-body {
+  display: grid;
+  padding: 30px 32px 34px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+}
+
+.archive-detail-column {
   min-width: 0;
-  padding-right: 34px;
-  border-right: 1px solid var(--line);
+  padding-right: 32px;
 }
 
-.project-media {
-  align-self: start;
-  padding-left: 34px;
+.archive-detail-column.evidence {
+  padding-right: 0;
+  padding-left: 32px;
+  border-left: 1px solid var(--line);
+}
+
+.archive-detail-support {
+  display: grid;
+  border-top: 1px solid var(--line);
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+}
+
+.archive-detail-support.is-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.archive-structure {
+  min-width: 0;
+  margin: 0;
+  padding: 25px 32px 32px;
+}
+
+.archive-video-card {
+  margin: 28px 0 0;
+}
+
+.archive-video-card figcaption > span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--archive-accent);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-video-card figcaption b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.archive-structure > span {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.archive-structure.is-horizontal pre {
+  margin: 0;
+  padding: 17px 20px;
+  border: 1px solid color-mix(in srgb, var(--archive-accent) 32%, var(--line));
+  border-left: 3px solid var(--archive-accent);
+  background: color-mix(in srgb, var(--archive-accent) 5%, var(--card));
+  color: var(--ink);
+  text-align: center;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 600 12px/1.8 "IBM Plex Mono", "Noto Sans SC", monospace;
+}
+
+.agent-architecture {
+  display: grid;
+  width: 100%;
+  justify-items: center;
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--archive-accent) 32%, var(--line));
+  border-left: 3px solid var(--archive-accent);
+  background: color-mix(in srgb, var(--archive-accent) 5%, var(--card));
+}
+
+.agent-architecture-node {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--archive-accent) 38%, var(--line));
+  background: var(--card);
+  color: var(--ink);
+  text-align: center;
+  white-space: nowrap;
+  font: 600 11px/1.4 "IBM Plex Mono", "Noto Sans SC", monospace;
+}
+
+.agent-architecture-node.is-primary,
+.agent-architecture-node.is-output {
+  border-color: var(--archive-accent);
+}
+
+.agent-architecture-node.is-loop {
+  color: var(--archive-accent);
+}
+
+.agent-architecture-connector {
+  display: block;
+  width: 1px;
+  height: 22px;
+  background: var(--archive-accent);
+}
+
+.agent-architecture-row {
+  position: relative;
+  display: grid;
+  width: 100%;
+  gap: clamp(12px, 4vw, 52px);
+  padding-top: 22px;
+}
+
+.agent-architecture-row.is-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.agent-architecture-row.is-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.agent-architecture-row::before {
+  position: absolute;
+  top: 0;
+  right: 16.667%;
+  left: 16.667%;
+  height: 1px;
+  background: var(--archive-accent);
+  content: "";
+}
+
+.agent-architecture-row.is-two::before {
+  right: 25%;
+  left: 25%;
+}
+
+.agent-architecture-row .agent-architecture-node {
+  width: 100%;
+  min-width: 0;
+}
+
+.agent-architecture-row .agent-architecture-node::before {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 1px;
+  height: 22px;
+  background: var(--archive-accent);
+  content: "";
 }
 
 .details-grid pre,
@@ -1842,24 +2005,14 @@ summary:focus-visible {
   font: 11px/1.5 "IBM Plex Mono", monospace;
 }
 
-.project-media video {
+.archive-video-card video {
   display: block;
   width: 100%;
-  max-height: 360px;
+  max-height: 430px;
+  aspect-ratio: 16 / 9;
   border: 1px solid var(--ink);
   background: #050608;
-}
-
-.no-media {
-  display: grid;
-  min-height: 190px;
-  place-items: center;
-  padding: 20px;
-  border: 0;
-  background: transparent;
-  color: var(--faint);
-  text-align: center;
-  font: 11px "IBM Plex Mono", monospace;
+  object-fit: contain;
 }
 
 .last-grid {
@@ -2341,20 +2494,64 @@ footer {
   }
 
   .archive-detail {
-    padding: 20px 14px 28px;
+    padding: 0;
+  }
+
+  .archive-detail-lead {
+    gap: 8px;
+    padding: 22px 18px 24px;
     grid-template-columns: 1fr;
   }
 
-  .archive-detail > div:not(.project-media) {
-    padding-right: 0;
-    border-right: 0;
+  .archive-detail-body,
+  .archive-detail-support {
+    grid-template-columns: 1fr;
   }
 
-  .project-media {
-    margin-top: 22px;
-    padding-top: 22px;
+  .archive-detail-body {
+    padding: 24px 18px 28px;
+  }
+
+  .archive-detail-column {
+    padding-right: 0;
+  }
+
+  .archive-detail-column.evidence {
+    margin-top: 24px;
+    padding-top: 24px;
     padding-left: 0;
     border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .archive-detail-support > :nth-child(2) {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .archive-structure {
+    padding: 22px 18px 26px;
+  }
+
+  .archive-structure.is-horizontal pre {
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 10px;
+  }
+
+  .agent-architecture {
+    padding: 16px 10px;
+  }
+
+  .agent-architecture-node {
+    min-width: 0;
+    padding: 7px 5px;
+    white-space: normal;
+    font-size: 9px;
+  }
+
+  .agent-architecture-row {
+    gap: 6px;
   }
 
   .cap-grid {

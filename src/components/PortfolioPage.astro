@@ -520,16 +520,94 @@ const projectSummary = (project: Project) =>
                 <b class="plus">+</b>
               </summary>
               <div class="archive-detail">
-                <div><ProjectFacts project={project} locale={locale} /></div>
-                <div class="project-media">
-                  {project.video?.url ? (
-                    <video controls preload="none" playsinline>
-                      <source src={assetPath(project.video.url)} type="video/mp4" />
-                    </video>
-                  ) : (
-                    <div class="no-media">{c.noMedia}</div>
-                  )}
+                <section class="archive-detail-lead">
+                  <span>{c.summary}</span>
+                  <p>{text(project.summary, locale) || projectSummary(project)}</p>
+                </section>
+                <div class="archive-detail-body">
+                  <div class="archive-detail-column narrative">
+                    <ProjectFacts
+                      project={project}
+                      locale={locale}
+                      group="narrative"
+                      hideSummary
+                    />
+                    {project.video?.url && (
+                      <figure class="project-video-card archive-video-card">
+                        <figcaption>
+                          <span>
+                            {locale === "zh" ? "项目实录" : "Project evidence"}
+                            <b> · {text(project.title, locale)}</b>
+                          </span>
+                          <div class="project-video-actions">
+                            <button
+                              type="button"
+                              data-video-expand
+                              data-expand-label={locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                              data-shrink-label={locale === "zh" ? "缩小 ↙" : "Reduce ↙"}
+                              aria-pressed="false"
+                            >
+                              {locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                            </button>
+                            <button type="button" data-video-fullscreen>
+                              {locale === "zh" ? "全屏 ⛶" : "Fullscreen ⛶"}
+                            </button>
+                          </div>
+                        </figcaption>
+                        <video controls preload="none" playsinline>
+                          <source src={assetPath(project.video.url)} type="video/mp4" />
+                        </video>
+                      </figure>
+                    )}
+                  </div>
+                  <div class="archive-detail-column evidence">
+                    <ProjectFacts
+                      project={project}
+                      locale={locale}
+                      group="lists"
+                      hideStructure
+                    />
+                  </div>
                 </div>
+                {text(project.structure, locale) && (
+                  <div class="archive-detail-support is-single">
+                    <section
+                      class:list={[
+                        "archive-structure",
+                        {
+                          "is-horizontal": project.structureStyle === "horizontal",
+                          "is-agent-architecture": project.structureStyle === "agent-architecture"
+                        }
+                      ]}
+                    >
+                      <span>{c.structure}</span>
+                      {project.structureStyle === "agent-architecture" && project.architecture ? (
+                        <div class="agent-architecture" aria-label={text(project.structure, locale)}>
+                          <code class="agent-architecture-node">[ {text(project.architecture.input, locale)} ]</code>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <code class="agent-architecture-node is-primary">[ {text(project.architecture.orchestrator, locale)} ]</code>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <div class="agent-architecture-row is-three">
+                            <code class="agent-architecture-node">[ {text(project.architecture.planner, locale)} ]</code>
+                            <code class="agent-architecture-node">[ {text(project.architecture.executor, locale)} ]</code>
+                            <code class="agent-architecture-node">[ {text(project.architecture.reviewer, locale)} ]</code>
+                          </div>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <code class="agent-architecture-node is-loop">[ {text(project.architecture.replan, locale)} ]</code>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <div class="agent-architecture-row is-two">
+                            <code class="agent-architecture-node">[ {text(project.architecture.tools, locale)} ]</code>
+                            <code class="agent-architecture-node">[ {text(project.architecture.memory, locale)} ]</code>
+                          </div>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <code class="agent-architecture-node is-output">[ {text(project.architecture.output, locale)} ]</code>
+                        </div>
+                      ) : (
+                        <pre>{text(project.structure, locale)}</pre>
+                      )}
+                    </section>
+                  </div>
+                )}
               </div>
             </details>
           ))}
@@ -1110,7 +1188,7 @@ const projectSummary = (project: Project) =>
             }
           });
           const detailParts = $$(
-            ".details-grid .detail-column, .archive-detail > div",
+            ".details-grid .detail-column, .archive-detail > *",
             content
           );
           if (detailParts.length) {
