@@ -407,31 +407,31 @@ const projectsData = [
       zh: "技术项目"
     },
     pitch: {
-      en: "Mirror PLC-controlled equipment states in Unity through OPC UA and REST, making industrial behavior visible as one connected digital twin.",
-      zh: "通过 OPC UA 与 REST 将 PLC 控制的设备状态同步到 Unity，让工业过程以完整、连贯的数字孪生形式呈现。"
+      en: "Synchronize PLC-controlled equipment states with Unity through OPC UA and REST, presenting the industrial control process as a complete digital chain that reproduces a production digital-twin workflow.",
+      zh: "通过 OPC UA 与 REST 将 PLC 控制的设备状态同步到 Unity，让工业控制过程以完整连贯的数字形式呈现，复现生产数字孪生链路。"
     },
     summary: {
-      en: "An industrial digital twin system that connects simulated PLC logic, industrial communication, application services, and a Unity scene so equipment state changes can be observed across the complete data path.",
-      zh: "这是一个工业数字孪生系统，将 PLC 逻辑仿真、工业通信、应用服务与 Unity 场景连接起来，使设备状态变化能够沿完整数据链路被观察和理解。"
+      en: "A compact industrial digital-twin system that connects PLC logic simulation, industrial communication, application services, and a Unity scene so equipment and logic state changes can be observed and understood across the complete data path.",
+      zh: "这是一个简单的工业数字孪生系统，将 PLC 逻辑仿真、工业通信、应用服务与 Unity 场景连接起来，使设备与逻辑状态变化能够沿完整数据链路被观察和理解。"
     },
     problem: {
-      en: "Control logic, communication services, and 3D visualization are often reviewed as separate parts of an industrial system. This makes it difficult to see how a PLC signal becomes an application state, how an equipment change travels through the software layers, and whether the digital representation remains consistent with the control behavior.",
-      zh: "工业系统中的控制逻辑、通信服务与三维可视化经常被分开理解。工程人员很难直观看到一个 PLC 信号如何转化为应用状态、设备变化如何穿过各个软件层，以及数字场景是否始终与控制行为保持一致。"
+      en: "Control logic, communication services, and 3D visualization in industrial digitalization are often understood separately. Engineers have difficulty seeing how a PLC signal becomes an application state, how equipment changes pass through each software layer, and whether the digital scene remains consistent with control behavior.",
+      zh: "工业系统数字化中的控制逻辑、通信服务与三维可视化经常被分开理解。工程人员很难直观看到一个 PLC 信号如何转化为应用状态、设备变化如何穿过各个软件层，以及数字场景是否始终与控制行为保持一致。"
     },
     solution: {
-      en: "The system exposes simulated PLC states through OPC UA, organizes selected equipment data through a REST service, and maps it to corresponding objects and behaviors in Unity. Each layer has a clear responsibility, while the shared state keeps control signals, application data, and the digital scene connected.",
-      zh: "系统通过 OPC UA 提供 PLC 仿真状态，由 REST 服务整理设备数据，再将其映射到 Unity 中对应的对象与行为。各层保持清晰职责，并通过统一状态连接控制信号、应用数据和数字场景。"
+      en: "The system exposes the inputs and outputs of simulated PLC states through OPC UA, organizes equipment data through a REST service, and maps it to corresponding objects and behaviors in Unity. Unity interactions can change interface variables, which are transmitted through OPC UA to a PLC simulated with C# scripts for logic processing. The results return as Unity object behaviors, keeping the entire path clear and traceable.",
+      zh: "系统通过 OPC UA 提供 PLC 仿真状态的输入输出，由 REST 服务整理设备数据，再将其映射到 Unity 中对应的对象与行为。Unity 交互可改变接口变量，经 OPC UA 与 C# 脚本模拟的 PLC 完成数据传输与逻辑运算，再将结果返回为 Unity 对象行为，使整个链路清晰可追溯。"
     },
     keyFeatures: {
       en: [
-        "Simulate equipment and control states without relying on a physical production line.",
+        "Simulate equipment and control states to verify that the logic behaves correctly.",
         "Transfer selected PLC data through a standard industrial connection.",
         "Organize equipment information for use by software applications.",
         "Reflect machine states and process changes in a Unity scene.",
         "Observe the same state across control, service, and visualization layers."
       ],
       zh: [
-        "不依赖实体产线即可模拟设备与控制状态。",
+        "模拟设备与控制状态，验证逻辑正确性。",
         "通过标准工业连接传递所需的 PLC 数据。",
         "将设备信息整理为软件应用可以直接使用的内容。",
         "在 Unity 场景中同步呈现设备状态与过程变化。",
@@ -458,12 +458,12 @@ const projectsData = [
     },
     structureStyle: "horizontal",
     structure: {
-      en: "PLC Logic Simulation  →  OPC UA Data Layer  →  REST Application Service  →  Unity State Mapping  →  Digital Twin View",
-      zh: "PLC 逻辑仿真  →  OPC UA 数据层  →  REST 应用服务  →  Unity 状态映射  →  数字孪生界面"
+      en: "Control path: PLC Logic Simulation → OPC UA Data Layer → REST Application Service → Unity State Mapping → Digital Twin Interface\nInteraction path: Digital Twin Interface → Unity Interaction Variables → REST Application Service → OPC UA Data Layer → PLC Logic Simulation → State Feedback",
+      zh: "控制链路：PLC 逻辑仿真 → OPC UA 数据层 → REST 应用服务 → Unity 状态映射 → 数字孪生界面\n交互链路：数字孪生界面 → Unity 交互变量 → REST 应用服务 → OPC UA 数据层 → PLC 逻辑仿真 → 状态反馈"
     },
     result: {
-      en: "The system makes the path from industrial control logic to a visible digital scene understandable as one connected model. It provides a clear basis for reviewing state consistency, discussing integration responsibilities, and extending the same pattern to additional equipment and process states.",
-      zh: "该系统将工业控制逻辑到可视化数字场景的完整路径组织成一个连贯模型，为检查状态一致性、讨论各层集成职责，以及扩展更多设备与过程状态提供了清晰基础。"
+      en: "The system organizes the complete path from industrial control logic to a visual digital scene as one coherent model, providing a compact reproduction of the framework used in current digital-twin systems.",
+      zh: "该系统将工业控制逻辑到可视化数字场景的完整路径组织成一个连贯模型，简单复现了现行数字孪生的框架结构。"
     },
     technologies: ["PLC", "OPC UA", "REST API", "Unity", "C#", "Digital Twin", "Simulation"],
     video: {
@@ -578,70 +578,67 @@ const projectsData = [
 
   {
     title: {
-      en: "Plugin-based System Decoupling",
-      zh: "基于插件的系统解耦"
+      en: "Digital Twin IT Communication Plugin Integration",
+      zh: "数字孪生 IT 通信插件集成"
     },
     cover: "assets/images/plugin-system-decoupling-cover.png",
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "BMW Group · Enterprise Project",
+      zh: "企业项目 · BMW Group"
     },
     technicalType: {
       en: "Technical Project",
       zh: "技术项目"
     },
     pitch: {
-      en: "Replace costly external dependencies with a local plugin architecture.",
-      zh: "用本地插件架构替代高成本的外部依赖。"
+      en: "Use a local plugin to handle telegram transfer between IT and industrial control systems, replacing costly external dependencies.",
+      zh: "用本地插件实现 IT 系统与工业控制系统的 Telegram 传输，替代高成本的外部依赖。"
     },
     summary: {
-      en: "A toolchain optimization project that removed a critical dependency on external RFC-based IT interaction by embedding the required functionality directly into the digital simulation software.",
-      zh: "这是一个工具链优化项目，通过将关键功能直接嵌入数字仿真软件内部，替代原有基于 RFC 的外部 IT 系统交互依赖。"
+      en: "A toolchain optimization project that embeds IT communication directly into digital simulation software, replacing the original external IT-system interaction based on RFC.",
+      zh: "这是一个工具链优化项目，通过将 IT 通信功能直接嵌入数字仿真软件内部，替代原有基于 RFC 的外部 IT 系统交互依赖。"
     },
     problem: {
-      en: "A key function in the workflow depended on RFC-based interaction with external IT systems, which increased cost, reduced flexibility, and created long-term dependency on external infrastructure.",
-      zh: "工作流中的关键功能依赖于与外部 IT 系统的 RFC 交互，这不仅带来了较高成本，也削弱了系统灵活性，并形成长期的外部依赖。"
+      en: "A digital twin needs to reproduce the real communication between external IT and industrial control systems, but direct reliance on the original IT system adds cost. The project therefore needed to integrate this communication into the digital-twin solution while reducing external-system dependency.",
+      zh: "数字孪生需要复现外部 IT 系统与工业控制系统的实际通信，但直接依赖原有 IT 系统会产生额外成本。项目需要将对应通信能力集成到数字孪生方案中，同时降低外部系统依赖。"
     },
     solution: {
-      en: "The dependency path was redesigned by replacing the external interaction with a custom plugin running inside the digital simulation software.",
-      zh: "依赖路径通过数字仿真软件内部的自定义插件完成重构，以本地功能替代原有外部交互方式。"
+      en: "The telegram transfer path between the IT and industrial control systems was identified and reproduced in C#, then integrated into the digital simulation software as a plugin.",
+      zh: "识别 IT 系统与工业控制系统之间的 Telegram 传输链路，通过 C# 脚本实现对应的通信逻辑，并以插件形式集成到数字仿真软件中。"
     },
     keyFeatures: {
       en: [
-        "Keep the required function directly inside the simulation software.",
-        "Replace repeated external communication with a local plugin.",
-        "Reuse the same functional logic across different models and production lines."
+        "Simulate telegram data transfer between the IT system and PLC.",
+        "Receive and process PLC data, then return the corresponding IT communication information.",
+        "Integrate IT–PLC interaction into the digital-twin environment.",
+        "Reuse the communication function across production lines and digital models."
       ],
       zh: [
-        "将所需功能直接保留在仿真软件内部。",
-        "使用本地插件替代反复发生的外部系统通信。",
-        "在不同模型与产线之间复用同一套功能逻辑。"
+        "模拟 IT 系统与 PLC 之间的 Telegram 数据传输。",
+        "接收和处理 PLC 数据，并返回对应的 IT 通信信息。",
+        "将 IT 与 PLC 的交互集成到数字孪生环境中。",
+        "在不同产线与数字模型中复用通信功能。"
       ]
     },
     technicalHighlights: {
       en: [
-        "Embedded functional modules replace the original RFC-dependent execution path.",
-        "A plugin boundary keeps local logic modular, replaceable, and reusable.",
-        "The refactored path separates simulation responsibilities from supplier-controlled infrastructure.",
-        "Local execution reduces integration dependencies while preserving extensibility across models and lines."
+        "Identified and reproduced the telegram communication path between the IT system and PLC.",
+        "Implemented the communication logic in C# and integrated it into the simulation software as a plugin.",
+        "An embedded functional module replaces the original RFC-dependent execution path.",
+        "The plugin design supports reuse of communication logic across different models and production lines."
       ],
       zh: [
+        "识别并复现 IT 系统与 PLC 之间的 Telegram 通信链路。",
+        "使用 C# 实现通信逻辑，并以插件形式集成至仿真软件。",
         "使用嵌入式功能模块替换原有依赖 RFC 的执行路径。",
-        "插件边界使本地逻辑保持模块化、可替换与可复用。",
-        "重构后的路径将仿真职责与供应商控制的基础设施分离。",
-        "本地执行减少集成依赖，同时保留跨模型与跨产线的扩展能力。"
+        "插件化设计支持通信逻辑在不同模型与产线中的复用。"
       ]
     },
-    structureStyle: "horizontal",
-    structure: {
-      en: "Original: Simulation → External IT System (RFC)  |  Refactored: Simulation → Custom Plugin → Local Functional Logic",
-      zh: "原始路径：仿真系统 → 外部 IT 系统（RFC）  |  重构路径：仿真系统 → 自定义插件 → 本地功能逻辑"
-    },
     result: {
-      en: "The refactor significantly reduced annual cost, improved scalability across models and lines, and made the system less dependent on external IT infrastructure.",
-      zh: "这次重构显著降低了年度成本，提升了跨模型和跨产线的扩展性，也让系统摆脱了对外部 IT 基础设施的强依赖。"
+      en: "The solution reduced dependency on the external IT system and its associated costs, and was applied to digital models spanning 10 production lines and 20 related modules.",
+      zh: "方案降低了外部 IT 系统依赖及相关成本，并应用于 10 条产线、20 个相关模块的数字模型。"
     },
-    technologies: ["Plugin Architecture", "Simulation Software", "RFC Replacement", "System Decoupling", "Integration Logic"]
+    technologies: ["C#", "Plugin Architecture", "Telegram Communication", "RFC Replacement", "IT/OT Integration", "Digital Twin"]
   },
 
   {
@@ -763,41 +760,39 @@ const projectsData = [
     },
     cover: "assets/images/sound-guided-navigation-cover.png",
     projectType: {
-      en: "Personal Project",
-      zh: "个人项目"
+      en: "TUM · Personal Project",
+      zh: "个人项目 · TUM"
     },
     technicalType: {
       en: "Extended Technical Project",
       zh: "技术延展项目"
     },
     pitch: {
-      en: "Guide people through complex spaces using more than just arrows.",
-      zh: "不只依赖箭头，而是用多模态线索引导用户穿越复杂空间。"
+      en: "Use multimodal cues to guide users through complex spaces and toward their destination.",
+      zh: "多模态线索引导用户穿越复杂空间，寻找目标。"
     },
     summary: {
-      en: "A 3D navigation and interaction system that combines visual, auditory, and environmental cues to improve spatial understanding in complex scenes.",
-      zh: "这是一个结合视觉、听觉和环境交互线索的三维导航与交互系统，用于提升用户在复杂场景中的空间理解能力。"
+      en: "A 3D navigation and interaction system that combines visual, auditory, and environmental interaction cues to improve immersion and perceptual quality in complex scenes.",
+      zh: "这是一个结合视觉、听觉和环境交互线索的三维导航与交互系统，提升用户在复杂场景中的沉浸体验和感知质感。"
     },
     problem: {
-      en: "Traditional navigation methods in 3D environments often relied on single-mode guidance, which increased cognitive load and made it harder for users to build spatial understanding.",
-      zh: "传统三维场景中的导航方式往往依赖单一模式的提示，这会增加认知负担，也不利于用户建立稳定的空间理解。"
+      en: "Traditional navigation in 3D scenes often relies on map-based prompts. This increases cognitive load and can disrupt the experience in scenes designed for immersion.",
+      zh: "传统三维场景中的导航方式往往依赖地图侧的提示，这会增加认知负担，对于需要沉浸体验的场景会破坏体验感。"
     },
     solution: {
-      en: "The navigation system combines scene interaction, changing streetlight intensity, footstep echo, and firefly guidance to direct users toward their targets.",
-      zh: "导航系统结合场景交互、路灯光强变化、脚步回音与萤火虫引导，帮助用户逐步接近目标。"
+      en: "The navigation system combines scene interaction with changing streetlight intensity, footstep echoes, and firefly cues, helping users move progressively closer to the target.",
+      zh: "导航系统结合场景交互，让路灯光强变化、脚步回音与萤火虫引导用户，帮助用户逐步接近目标。"
     },
     keyFeatures: {
       en: [
         "Guide users with light, sound, and environmental changes instead of arrows alone.",
-        "Adapt guidance to the user's current position and intended destination.",
-        "Trigger different cues as the user moves through the scene.",
-        "Evaluate whether the guidance reduces effort and improves spatial understanding."
+        "Adapt the guidance to the user's current position and target location.",
+        "Use a human-factors evaluation framework to verify whether guidance reduces workload and improves spatial understanding."
       ],
       zh: [
         "使用光线、声音和环境变化引导用户，而不只依赖箭头。",
         "根据用户当前位置与目标位置调整引导方式。",
-        "随着用户在场景中移动触发不同提示。",
-        "评估引导方式是否降低操作负担并改善空间理解。"
+        "人因学评估体系验证引导方式是否降低操作负担并改善空间理解。"
       ]
     },
     technicalHighlights: {
@@ -816,12 +811,12 @@ const projectsData = [
     },
     structureStyle: "horizontal",
     structure: {
-      en: "Current + Predicted Position  →  Target Relationship  →  Dynamic Navigation Region  →  Light / Audio / Environment Cues  →  Navigation Feedback",
-      zh: "当前位置 + 预测位置  →  目标关系  →  动态导航区域  →  光线 / 声音 / 环境线索  →  导航反馈"
+      en: "Algorithm: Actual User Position + Target Point + Environmental Trigger Point → Triangle Area Evaluation → Determine Interaction Trigger Direction\nInteraction: User Movement Direction + Next Action → Select Environmental Node → Light / Sound / Environmental Feedback",
+      zh: "算法部分：用户实际位置 + 目标点 + 环境触发点 → 三角形面积判断 → 确定交互触发方向\n交互部分：用户移动方向 + 下一步行为 → 选择环境节点 → 光线 / 声音 / 环境反馈"
     },
     result: {
-      en: "The project improved user satisfaction by 30%, reduced cognitive load, and demonstrated how multimodal guidance could make 3D navigation more intuitive.",
-      zh: "该项目将用户满意度提升了 30%，降低了认知负担，并验证了多模态引导能够让三维导航更直观。"
+      en: "The project improved user satisfaction by 30%, reduced cognitive load, and demonstrated that multimodal guidance can outperform conventional map guidance in specific scenarios.",
+      zh: "该项目将用户满意度提升了 30%，降低了认知负担，并验证了多模态引导对比传统地图指引在特定场景的更优表现。"
     },
     technologies: ["Unity", "3D Interaction", "Navigation Design", "NASA-TLX", "UX Evaluation", "Multimodal Feedback"]
   },
@@ -833,8 +828,8 @@ const projectsData = [
     },
     cover: "assets/images/matrix-production-scheduling-model-cover-v2.png",
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "ZF Group · Enterprise Project",
+      zh: "企业项目 · ZF Group"
     },
     technicalType: {
       en: "Extended Technical Project",
@@ -845,16 +840,16 @@ const projectsData = [
       zh: "把生产冲突转化为可计算的调度模型。"
     },
     summary: {
-      en: "A scheduling model designed to balance standardized production efficiency with customized product demand using weighted matrix logic.",
-      zh: "这是一个基于加权矩阵逻辑的调度模型，用于在标准化生产效率与客制化产品需求之间寻找平衡。"
+      en: "A scheduling model based on weighted matrix logic that automatically generates production plans for customized product requirements.",
+      zh: "这是一个基于加权矩阵逻辑的调度模型，针对客制化产品需求完成生产计划的自动排班。"
     },
     problem: {
       en: "Production planning had to manage the conflict between standardized throughput and customized order requirements, but existing planning methods lacked a structured optimization model.",
       zh: "生产计划需要同时兼顾标准化吞吐效率和客制化订单要求，但现有排产方式缺乏结构化的优化模型。"
     },
     solution: {
-      en: "The scheduling challenge is expressed as a matrix problem by combining a remaining-workload matrix with a workload-distribution matrix and adjusting weights to prioritize customized demand.",
-      zh: "调度挑战被转化为矩阵问题：组合剩余工作量矩阵与工时分布矩阵，再通过权重调整优先满足客制化需求。"
+      en: "To resolve the conflict between the remaining workload of different orders and limited working hours, the model converts the production state into a remaining-workload matrix and a working-time distribution matrix. Weights then adjust the priority of customized demand before the model generates the corresponding production schedule.",
+      zh: "面对不同订单剩余工作量与有限工时之间的冲突，模型将生产状态转化为剩余工作量矩阵与工时分布矩阵，再通过权重调整客制化需求的优先级，最终生成对应的生产调度结果。"
     },
     keyFeatures: {
       en: [
@@ -884,14 +879,9 @@ const projectsData = [
         "通过 MATLAB 实现初始调度模型与计算过程。"
       ]
     },
-    structureStyle: "horizontal",
-    structure: {
-      en: "Remaining Workload Matrix  +  Workload Distribution Matrix  →  Weight Strategy  →  Scheduling Calculation  →  Production Priority Output",
-      zh: "剩余工作量矩阵  +  工时分布矩阵  →  权重策略  →  调度计算  →  生产优先级输出"
-    },
     result: {
-      en: "The model provides a structured way to balance efficiency and customization, demonstrating how scheduling decisions can move from experience-based judgment to computable logic.",
-      zh: "该模型为效率与客制化之间的平衡提供了结构化方法，也说明调度决策可以从经验判断转化为可计算逻辑。"
+      en: "The model provides a structured method for balancing efficiency and customization, validating an approach that turns scheduling decisions from experience-based judgment into computable logic.",
+      zh: "该模型为效率与客制化之间的平衡提供了结构化方法，验证了调度决策从经验判断转化为可计算逻辑的方案。"
     },
     technologies: ["MATLAB", "Scheduling Model", "Matrix Modeling", "Weight Strategy", "Production Planning"]
   },
@@ -903,67 +893,62 @@ const projectsData = [
     },
     cover: "assets/images/lean-production-process-optimization-cover.png",
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "Esquel Group · Enterprise Project",
+      zh: "企业项目 · 溢达集团"
     },
     technicalType: {
       en: "Extended Technical Project",
       zh: "技术延展项目"
     },
     pitch: {
-      en: "Reveal bottlenecks by making process flow visible end to end.",
-      zh: "通过让流程全链路可见，识别真正的瓶颈所在。"
+      en: "Optimize lean production for a button manufacturing line.",
+      zh: "纽扣产线的精益生产方案优化。"
     },
     summary: {
-      en: "A process optimization project that used value stream mapping to identify waste, bottlenecks, and non-value-added steps in manufacturing workflows.",
-      zh: "这是一个流程优化项目，通过价值流图分析识别制造流程中的浪费、瓶颈和非增值步骤。"
+      en: "A process optimization project that uses value stream mapping to identify bottlenecks and non-value-added steps in button manufacturing, then applies established industrial-engineering methods to improve process layout and production efficiency.",
+      zh: "这是一个流程优化项目，通过价值流图分析识别纽扣制造流程中的瓶颈和非增值步骤，并使用经典工业工程方法优化流程布局，提高生产效率。"
     },
     problem: {
-      en: "Production workflows contained hidden inefficiencies, but teams lacked a structured way to visualize process flow and distinguish value-added from non-value-added work.",
-      zh: "生产流程中存在隐性低效问题，但团队缺少一套结构化方法去可视化流程全貌，并区分增值与非增值活动。"
+      en: "The button manufacturing process contained workflow waste, and actual production efficiency diverged from the overall capacity plan. Industrial-engineering methods were needed to identify bottlenecks and improve efficiency.",
+      zh: "纽扣生产制造过程中存在流程浪费，实际生产效率与整体产能计划出现偏差，需要结合工业工程方法识别瓶颈并提高生产效率。"
     },
     solution: {
-      en: "Value stream mapping is used to analyze the end-to-end workflow, identify bottlenecks, and develop process improvements based on lean principles.",
-      zh: "项目使用价值流图分析端到端流程、识别瓶颈位置，并依据精益原则形成流程改进方案。"
+      en: "VSM was used to map the production process and locate problem points and bottlenecks. Video analysis and standard work-cell analysis then informed an optimization proposal for equipment layout and workflow.",
+      zh: "通过 VSM 梳理生产流程并定位问题节点与瓶颈，结合视频分析与标准工作单元分析，形成设备布局与工作流程的优化方案。"
     },
     keyFeatures: {
       en: [
-        "Map the complete production workflow from beginning to end.",
-        "Identify bottlenecks, waiting, and repeated work.",
-        "Separate value-adding activities from unnecessary steps.",
-        "Turn the analysis into a clear process-improvement proposal."
+        "Map the complete production process with VSM and identify bottlenecks.",
+        "Break down the actual production process through video analysis.",
+        "Use standard work-cell analysis to examine specific operations.",
+        "Optimize equipment layout and workflow based on the findings."
       ],
       zh: [
-        "从起点到终点梳理完整生产流程。",
-        "识别瓶颈、等待与重复工作。",
-        "区分创造价值的活动与不必要步骤。",
-        "将分析结果整理为清晰的流程改进方案。"
+        "通过 VSM 梳理完整生产流程并识别瓶颈。",
+        "通过视频分析拆解实际生产过程。",
+        "使用标准工作单元分析具体作业环节。",
+        "根据分析结果优化设备布局与工作流程。"
       ]
     },
     technicalHighlights: {
       en: [
-        "Value stream mapping provides a shared end-to-end representation of the workflow.",
-        "Activity classification separates value-added, necessary non-value-added, and avoidable work.",
-        "Bottleneck and waste analysis connects process delay with resource utilization.",
-        "The structured current-state view provides the baseline for a future-state process proposal."
+        "Value stream mapping identifies bottlenecks and waste across the end-to-end production process.",
+        "Video analysis reveals additional efficiency issues in actual operations.",
+        "Standard work-cell analysis breaks down and compares specific production activities.",
+        "The findings are translated into equipment-layout and workflow optimization proposals."
       ],
       zh: [
-        "价值流图为端到端流程提供统一表达。",
-        "活动分类区分增值、必要非增值与可避免工作。",
-        "瓶颈与浪费分析将流程延迟和资源利用联系起来。",
-        "结构化的当前状态视图为未来状态流程方案提供基线。"
+        "使用价值流图定位端到端生产流程中的瓶颈与浪费。",
+        "结合视频分析进一步识别实际作业过程中的效率问题。",
+        "使用标准工作单元分析拆解并比较具体生产作业。",
+        "将分析结果转化为设备布局与工作流程优化方案。"
       ]
     },
-    structureStyle: "horizontal",
-    structure: {
-      en: "Current Workflow Mapping  →  Activity Classification  →  Bottleneck & Waste Analysis  →  Future-state Process Proposal",
-      zh: "当前流程映射  →  活动分类  →  瓶颈与浪费分析  →  未来状态流程方案"
-    },
     result: {
-      en: "The analysis improved process transparency and created a clearer basis for workflow optimization and resource utilization improvements.",
-      zh: "该分析提升了流程透明度，也为后续流程优化与资源利用改善建立了更清晰的依据。"
+      en: "The optimization proposal improved production efficiency, shifted the original bottleneck away from the critical production stage, and improved the capacity performance of the overall process.",
+      zh: "优化方案提升了生产效率，并将原有瓶颈从关键生产节点转移，改善了整体流程的产能表现。"
     },
-    technologies: ["Lean", "Value Stream Mapping", "Process Analysis", "Workflow Optimization", "Industrial Engineering"]
+    technologies: ["Lean", "Value Stream Mapping", "Video Analysis", "Standard Work", "Process Analysis", "Industrial Engineering"]
   },
   {
     title: {
