@@ -274,7 +274,7 @@ const projectSummary = (project: Project) =>
           <iframe
             id="hero-frame"
             data-theme-frame
-            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=theme-shell-4"
+            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=mobile-panel-1"
             loading="eager"
             scrolling="no"
             title="Interactive assembly digital twin"
@@ -437,7 +437,7 @@ const projectSummary = (project: Project) =>
                               </button>
                             </div>
                           </figcaption>
-                          <video controls preload="none" playsinline>
+                          <video controls preload="metadata" playsinline poster={project.cover ? assetPath(project.cover) : undefined}>
                             <source src={assetPath(project.video.url)} type="video/mp4" />
                           </video>
                         </figure>
@@ -462,7 +462,7 @@ const projectSummary = (project: Project) =>
                     <ProjectArchitecture architecture={motionArchitecture} />
                   )}
                   {project.video?.url && index !== 1 ? (
-                    <video controls preload="none" playsinline>
+                    <video controls preload="metadata" playsinline poster={project.cover ? assetPath(project.cover) : undefined}>
                       <source src={assetPath(project.video.url)} type="video/mp4" />
                     </video>
                   ) : null}
@@ -503,7 +503,7 @@ const projectSummary = (project: Project) =>
                       alt=""
                       width="1536"
                       height="512"
-                      loading="lazy"
+                      loading="eager"
                       decoding="async"
                     />
                   ) : project.video?.url ? (
@@ -555,7 +555,7 @@ const projectSummary = (project: Project) =>
                             </button>
                           </div>
                         </figcaption>
-                        <video controls preload="none" playsinline>
+                        <video controls preload="metadata" playsinline poster={project.cover ? assetPath(project.cover) : undefined}>
                           <source src={assetPath(project.video.url)} type="video/mp4" />
                         </video>
                       </figure>
@@ -862,14 +862,18 @@ const projectSummary = (project: Project) =>
         isaacFrame &&
         event.source === isaacFrame.contentWindow
       ) {
-        isaacFrame.style.height = `${Math.max(640, Math.min(980, Number(event.data.height) || 680))}px`;
+        const requestedHeight = Number(event.data.height) || 680;
+        const maximumHeight = window.innerWidth <= 650 ? 1800 : 980;
+        isaacFrame.style.height = `${Math.max(640, Math.min(maximumHeight, requestedHeight))}px`;
       }
       if (
         event.data?.type === "motion-evaluation-height" &&
         motionFrame &&
         event.source === motionFrame.contentWindow
       ) {
-        motionFrame.style.height = `${Math.max(680, Math.min(1500, Number(event.data.height) || 720))}px`;
+        const requestedHeight = Number(event.data.height) || 720;
+        const maximumHeight = window.innerWidth <= 650 ? 2800 : 1500;
+        motionFrame.style.height = `${Math.max(680, Math.min(maximumHeight, requestedHeight))}px`;
       }
     });
 
@@ -926,11 +930,24 @@ const projectSummary = (project: Project) =>
     });
     $$("[data-video-fullscreen]").forEach((control) => {
       control.addEventListener("click", async () => {
-        const video = control.closest(".project-video-card")?.querySelector("video");
+        const card = control.closest(".project-video-card") as HTMLElement | null;
+        const video = card?.querySelector("video") as
+          | (HTMLVideoElement & { webkitEnterFullscreen?: () => void })
+          | null;
         if (!video) return;
         try {
-          if (video.requestFullscreen) await video.requestFullscreen();
-        } catch {}
+          if (video.requestFullscreen) {
+            await video.requestFullscreen();
+          } else if (typeof video.webkitEnterFullscreen === "function") {
+            video.webkitEnterFullscreen();
+          } else {
+            const expandButton = card?.querySelector("[data-video-expand]") as HTMLButtonElement | null;
+            expandButton?.click();
+          }
+        } catch {
+          const expandButton = card?.querySelector("[data-video-expand]") as HTMLButtonElement | null;
+          expandButton?.click();
+        }
       });
     });
     videoBackdrop?.addEventListener("click", () => closeVideoLightbox(true));
