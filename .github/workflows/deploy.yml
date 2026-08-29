@@ -21,6 +21,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Sync canonical project data
+        run: npm run sync:content
       - name: Validate bilingual project data
         run: npm run check:content
       - name: Build static site
