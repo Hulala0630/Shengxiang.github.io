@@ -2,43 +2,43 @@ export type Locale = "zh" | "en";
 
 export const siteCopy = {
   zh: {
-    metaTitle: "胡生翔｜工业 AI 与数字孪生解决方案工程师",
+    metaTitle: "胡生翔｜工业数字孪生与 AI 应用",
     metaDescription:
-      "胡生翔的工业 AI、数字孪生、仿真工程与工业软件项目作品集。",
-    profileEyebrow: "个人信息 / 慕尼黑 / 工业系统",
+      "工业 AI、数字孪生、仿真工程与工业软件项目作品集",
+    profileEyebrow: "个人信息 / 上海 / 工业与 AI",
     name: "胡生翔",
     latinName: "Hu Shengxiang",
-    role: "工业 AI 与数字孪生解决方案工程师",
+    role: "工业数字孪生与 AI 应用解决方案工程师",
     intro:
-      "我连接自动化、仿真、软件与 AI，把复杂物理过程转化为可建模、可测试、可解释、可交付的系统。",
+      "我关注工业系统、数字孪生和 AI 应用之间的结合。学习与工作经历让我接触了生产流程、自动化、仿真、人机交互和软件工具，也让我逐渐开始思考：如何把分散的工程信息组织起来，让复杂系统更容易被理解、验证和使用。现在，我希望继续探索 AI 如何进入具体流程、帮助人完成工作。",
     current: "当前",
-    currentValue: "BMW 慕尼黑 · 数字孪生 / 虚拟调试",
+    currentValue: "AI 解决方案专家",
     education: "教育",
     educationValue: "慕尼黑工业大学硕士 · 同济大学工学学士",
     focus: "方向",
-    focusValue: "仿真 · 工程工具 · 工业 AI",
+    focusValue: "AI 应用 · 工业仿真 · 数字孪生",
     contact: "联系",
-    selectedWork: "重点项目",
-    projectIndex: "项目索引",
+    selectedWork: "体验重点项目",
+    projectIndex: "浏览全部项目",
     career: "教育与工作经历",
-    swipe: "拖动浏览",
+    swipe: "横向拖动查看经历",
     heroLive: "运行中 / ASM-A01",
-    heroSystem: "THREE.JS · FLUID SIM v2.0",
+    heroSystem: "THREE.JS · 工业场景模拟",
     online: "在线",
     selectedNo: "02 / 重点项目",
-    selectedTitle: "三个重点系统。",
+    selectedTitle: "体验三个有趣，也有实际价值的项目。",
     selectedIntro:
-      "工业培训、仿真生成与运动评估，分别呈现企业交付、个人工具和研究成果。",
+      "体验来自企业实践、个人探索和研究工作的有趣项目，感受工业仿真、工具构建、数据分析与人机交互中的不同想法。",
     enterpriseSystem: "企业系统",
     simulationSystem: "仿真系统",
     researchProject: "研究项目",
     projectContext: "项目详情",
     projectVideo: "项目与视频",
     archiveNo: "03 / 其他项目",
-    archiveTitle: "其他成果完整保留，按需展开。",
+    archiveTitle: "更多项目与实践。",
     archiveIntro:
-      "默认展示类别、标题、简介和效果；展开后读取同一份项目数据，显示完整资料与视频。",
-    all: "全部",
+      "其他企业项目、个人项目与研究实践。展开后可以查看完整背景、方案、结果与相关技术。",
+    all: "全部项目",
     enterprise: "企业项目",
     personal: "个人项目",
     overview: "问题 / 背景",
@@ -55,15 +55,16 @@ export const siteCopy = {
     technologies: "技术",
     noMedia: "该项目目前没有公开演示视频",
     capabilityNo: "04 / 能力与联系",
-    capabilityTitle: "项目证据之后，再看能力范围。",
+    capabilityTitle: "技能点范围",
     capabilityIntro:
-      "能力、教育和联系方式位于项目之后，不与首屏个人定位竞争。",
-    evidenceLabel: "项目证据",
-    evidenceHint: "点击编号回到对应重点项目",
-    contactLead: "一起构建可测试的系统",
-    contactTitle: "自动化。\n仿真。\n工业 AI。",
+      "这些能力并不是独立罗列的技术关键词，而是来自前面项目中的实际工作、研究和个人探索。每项能力都可以回到对应项目中查看具体内容。",
+    capabilityTopics: "涉及内容",
+    evidenceLabel: "对应项目",
+    evidenceHint: "点击编号查看相关重点项目",
+    contactLead: "如果你也在关注这些方向",
+    contactTitle: "工业系统。\n数字孪生。\nAI 应用。",
     contactText:
-      "欢迎交流数字孪生、工业软件、仿真工程与面向工程师的 AI 系统。",
+      "欢迎和我交流工业数字孪生、仿真工具、AI 应用，以及技术如何进入真实工作流程。",
     email: "邮件",
     linkedin: "LinkedIn",
     light: "明亮",
@@ -72,50 +73,50 @@ export const siteCopy = {
     next: "下一段",
     hideNav: "隐藏导航",
     showNav: "显示导航",
-    profileNav: "个人信息",
+    profileNav: "关于我",
     workNav: "重点项目",
     projectsNav: "其他项目",
     capabilitiesNav: "能力与联系",
-    footer: "把工业知识变成可运行、可测试的系统"
+    footer: "让复杂的系统更容易被理解、连接和使用"
   },
   en: {
-    metaTitle: "Hu Shengxiang | Industrial AI & Digital Twin Solution Engineer",
+    metaTitle: "Hu Shengxiang | Industrial Digital Twins & AI Applications",
     metaDescription:
-      "Hu Shengxiang's portfolio of industrial AI, digital twins, simulation engineering and industrial software.",
-    profileEyebrow: "PROFILE / MUNICH / INDUSTRIAL SYSTEMS",
+      "A portfolio of industrial AI, digital twins, simulation engineering and industrial software projects.",
+    profileEyebrow: "PROFILE / SHANGHAI / INDUSTRY + AI",
     name: "Hu Shengxiang",
     latinName: "胡生翔",
-    role: "Industrial AI & Digital Twin Solution Engineer",
+    role: "Industrial Digital Twin & AI Application Solution Engineer",
     intro:
-      "I connect automation, simulation, software and AI—turning complex physical processes into systems that can be modeled, tested, explained and delivered.",
+      "I focus on the connection between industrial systems, digital twins and AI applications. My studies and work have introduced me to production processes, automation, simulation, human-system interaction and software tools. They have also led me to ask how scattered engineering information can be organized so complex systems become easier to understand, verify and use. I now want to keep exploring how AI can enter real workflows and help people get work done.",
     current: "Current",
-    currentValue: "BMW Munich · Digital Twin / Virtual Commissioning",
+    currentValue: "AI Solutions Specialist",
     education: "Education",
     educationValue: "TUM M.Sc. · Tongji B.Eng.",
     focus: "Focus",
-    focusValue: "Simulation · Tooling · Industrial AI",
+    focusValue: "AI Applications · Industrial Simulation · Digital Twins",
     contact: "Contact",
-    selectedWork: "Selected work",
-    projectIndex: "Project index",
+    selectedWork: "Explore selected projects",
+    projectIndex: "Browse all projects",
     career: "Education + Experience",
-    swipe: "Drag to explore",
+    swipe: "Drag horizontally to explore",
     heroLive: "LIVE / ASM-A01",
-    heroSystem: "THREE.JS · FLUID SIM v2.0",
+    heroSystem: "THREE.JS · INDUSTRIAL SCENE SIMULATION",
     online: "Online",
     selectedNo: "02 / SELECTED WORK",
-    selectedTitle: "Three selected systems.",
+    selectedTitle: "Explore three projects that are both engaging and useful.",
     selectedIntro:
-      "Industrial training, simulation generation and motion evaluation presented across enterprise delivery, personal tooling and completed research.",
+      "Explore projects from enterprise practice, personal experimentation and research, and see different ideas across industrial simulation, tool building, data analysis and human-system interaction.",
     enterpriseSystem: "Enterprise system",
     simulationSystem: "Simulation system",
     researchProject: "Research project",
     projectContext: "Project context",
     projectVideo: "Project + video",
     archiveNo: "03 / OTHER PROJECTS",
-    archiveTitle: "The rest stays complete and available.",
+    archiveTitle: "More projects and practical work.",
     archiveIntro:
-      "Category, title, summary and effect stay visible. Expanded content reads from the same project source and includes the complete record and video.",
-    all: "All",
+      "More enterprise projects, personal work and research practice. Expand an item to read its complete background, solution, result and technologies.",
+    all: "All projects",
     enterprise: "Enterprise",
     personal: "Personal",
     overview: "Problem / overview",
@@ -132,15 +133,16 @@ export const siteCopy = {
     technologies: "Technologies",
     noMedia: "No public demonstration video is available for this project.",
     capabilityNo: "04 / CAPABILITY + CONTACT",
-    capabilityTitle: "Technical range after the evidence.",
+    capabilityTitle: "Range of skills",
     capabilityIntro:
-      "Capabilities, education and contact follow the project evidence instead of competing with the personal introduction.",
-    evidenceLabel: "Project evidence",
-    evidenceHint: "Open the selected project behind this capability",
-    contactLead: "LET'S BUILD TESTABLE SYSTEMS",
-    contactTitle: "Automation.\nSimulation.\nIndustrial AI.",
+      "These capabilities are not an isolated list of technical terms. They come from the practical work, research and personal exploration shown above, and each one links back to the projects where it was applied.",
+    capabilityTopics: "Areas involved",
+    evidenceLabel: "Related projects",
+    evidenceHint: "Open the related selected project",
+    contactLead: "IF YOU ARE EXPLORING SIMILAR DIRECTIONS",
+    contactTitle: "Industrial systems.\nDigital twins.\nAI applications.",
     contactText:
-      "Open to conversations around digital twins, industrial software, simulation engineering and engineering-facing AI systems.",
+      "I am open to conversations about industrial digital twins, simulation tools, AI applications and how technology can enter real working processes.",
     email: "Email",
     linkedin: "LinkedIn",
     light: "Light",
@@ -149,37 +151,37 @@ export const siteCopy = {
     next: "Next section",
     hideNav: "Hide navigation",
     showNav: "Show navigation",
-    profileNav: "Profile",
+    profileNav: "About me",
     workNav: "Selected work",
     projectsNav: "Other projects",
     capabilitiesNav: "Capabilities + contact",
-    footer: "TURNING INDUSTRIAL KNOWLEDGE INTO TESTABLE SYSTEMS"
+    footer: "MAKING COMPLEX SYSTEMS EASIER TO UNDERSTAND, CONNECT AND USE"
   }
 } as const;
 
 export const career = [
   {
     period: "2016–2021",
-    title: { zh: "同济大学", en: "Tongji University" },
+    title: { zh: "同济大学 · 上海", en: "Tongji University · Shanghai" },
     role: {
       zh: "工业工程 · 工学学士",
       en: "B.Eng. Industrial Engineering"
     },
     body: {
-      zh: "生产系统、流程分析与工业工程基础。",
-      en: "Production systems, process analysis and industrial engineering foundations."
+      zh: "生产系统、流程分析、运筹与工业工程方法，从整体流程和资源关系的角度理解制造系统。",
+      en: "Production systems, process analysis, operations research and industrial engineering methods, building an understanding of manufacturing through complete processes and resource relationships."
     }
   },
   {
     period: "2021–2024",
-    title: { zh: "慕尼黑工业大学", en: "Technical University of Munich" },
+    title: { zh: "慕尼黑工业大学 · 慕尼黑", en: "Technical University of Munich · Munich" },
     role: {
       zh: "人因工程 · 理学硕士",
       en: "M.Sc. Human Factors Engineering"
     },
     body: {
-      zh: "人机系统、界面设计、工程系统与数据分析。",
-      en: "Human-system interaction, interface design, engineering systems and data analysis."
+      zh: "人机交互、界面设计、数据分析与工程系统，关注技术如何被人理解、使用和接受。",
+      en: "Human-system interaction, interface design, data analysis and engineering systems, with a focus on how technology is understood, used and accepted."
     }
   },
   {
@@ -190,15 +192,15 @@ export const career = [
       en: "Digital Twin / Virtual Commissioning"
     },
     body: {
-      zh: "工业仿真、虚拟培训、系统集成与数字化交付。",
-      en: "Industrial simulation, virtual training, system integration and digital delivery."
+      zh: "工业仿真、虚拟调试、数字化培训与系统集成开发，理解数字模型如何进入真实的工程流程并产生实际价值。",
+      en: "Industrial simulation, virtual commissioning, digital training and system integration development, with practical experience of how digital models enter real engineering workflows and create value."
     },
     current: true
   },
   {
-    period: "NEXT",
-    title: { zh: "工业 AI 系统", en: "Industrial AI Systems" },
-    role: { zh: "当前发展方向", en: "Current direction" },
+    period: { zh: "当前方向", en: "CURRENT DIRECTION" },
+    title: { zh: "AI 应用与数字仿真", en: "AI Applications & Digital Simulation" },
+    role: { zh: "", en: "" },
     body: {
       zh: "连接仿真工具、工业数据和可解释智能系统。",
       en: "Connecting simulation tools, industrial data and explainable intelligent systems."
@@ -210,16 +212,24 @@ export const capabilities = [
   {
     code: "ST",
     evidence: [1, 2, 3],
-    title: { zh: "系统架构", en: "System Architecture" },
+    title: { zh: "系统思考", en: "Systems Thinking" },
+    description: {
+      zh: "从完整目标出发，理解系统中的模块、信息、接口与相互关系。",
+      en: "Start from the complete objective and understand the modules, information, interfaces and relationships within a system."
+    },
     body: {
-      zh: "系统思维 · 接口设计 · 故障建模",
-      en: "System Thinking · Interface Design · Fault Modeling"
+      zh: "系统结构 · 信息关系 · 接口设计 · 问题拆解",
+      en: "System Structure · Information Relationships · Interface Design · Problem Decomposition"
     }
   },
   {
     code: "DT",
     evidence: [1, 2],
     title: { zh: "仿真与数字孪生", en: "Simulation & Digital Twin" },
+    description: {
+      zh: "使用数字模型表达设备、场景、控制状态与实际过程之间的关系。",
+      en: "Use digital models to express the relationships between equipment, scenes, control states and real processes."
+    },
     body: {
       zh: "Unity · PLCSim · Isaac Sim · OpenUSD",
       en: "Unity · PLCSim · Isaac Sim · OpenUSD"
@@ -228,46 +238,66 @@ export const capabilities = [
   {
     code: "AI",
     evidence: [2],
-    title: { zh: "AI 系统", en: "AI Systems" },
+    title: { zh: "AI 应用", en: "AI Applications" },
+    description: {
+      zh: "探索 AI 如何进入具体任务，帮助用户整理信息、调用工具、分析问题并形成建议。",
+      en: "Explore how AI can enter specific tasks to organize information, call tools, analyze problems and form recommendations."
+    },
     body: {
-      zh: "工作流 · 工具调用 · 可解释性",
-      en: "Workflow · Tool Calling · Explainability"
+      zh: "智能体 · 工作流 · 工具调用 · 信息组织 · 可解释结果",
+      en: "Agents · Workflows · Tool Calling · Information Organization · Explainable Results"
     }
   },
   {
     code: "DI",
     evidence: [1, 2],
-    title: { zh: "工业集成", en: "Industrial Integration" },
+    title: { zh: "工业系统连接", en: "Industrial System Integration" },
+    description: {
+      zh: "连接控制系统、应用服务、仿真场景与数字界面，让同一份状态能够在不同系统之间传递。",
+      en: "Connect control systems, application services, simulation scenes and digital interfaces so the same state can travel across systems."
+    },
     body: {
-      zh: "OPC UA · REST API · 状态同步",
-      en: "OPC UA · REST API · State Synchronization"
+      zh: "OPC UA · REST API · PLC 数据 · 状态同步",
+      en: "OPC UA · REST API · PLC Data · State Synchronization"
     }
   },
   {
     code: "SW",
     evidence: [1, 2],
     title: { zh: "软件与工具", en: "Software & Tooling" },
+    description: {
+      zh: "根据具体需求构建小型工具、插件和应用，将想法组织成可以使用的功能。",
+      en: "Build focused tools, plugins and applications around specific needs, turning ideas into usable functions."
+    },
     body: {
-      zh: "C# · .NET · Python · 插件架构",
-      en: "C# · .NET · Python · Plugin Architecture"
+      zh: "C# · .NET · Python · 插件 · 桌面应用",
+      en: "C# · .NET · Python · Plugins · Desktop Applications"
     }
   },
   {
     code: "DA",
     evidence: [2, 3],
-    title: { zh: "数据与计算", en: "Data & Computation" },
+    title: { zh: "数据与分析", en: "Data & Analysis" },
+    description: {
+      zh: "从数据中提取特征、比较差异，并将分析结果转化为更容易理解的反馈。",
+      en: "Extract features from data, compare differences and turn analysis results into feedback that is easier to understand."
+    },
     body: {
-      zh: "MATLAB · 特征工程 · 动作分析",
-      en: "MATLAB · Feature Engineering · Motion Analysis"
+      zh: "MATLAB · 数据处理 · 特征提取 · 动作分析",
+      en: "MATLAB · Data Processing · Feature Extraction · Motion Analysis"
     }
   },
   {
     code: "UX",
     evidence: [1, 3],
-    title: { zh: "技术体验", en: "Technical UX" },
+    title: { zh: "人与技术", en: "People & Technology" },
+    description: {
+      zh: "关注用户如何理解系统、完成任务和接收反馈，让技术表达与实际使用过程保持一致。",
+      en: "Focus on how people understand systems, complete tasks and receive feedback, keeping technical expression aligned with actual use."
+    },
     body: {
-      zh: "NASA-TLX · 反馈设计 · 人机交互",
-      en: "NASA-TLX · Feedback Design · Human-system Interaction"
+      zh: "人机交互 · 反馈设计 · 用户研究 · NASA-TLX",
+      en: "Human-system Interaction · Feedback Design · User Research · NASA-TLX"
     }
   }
 ] as const;

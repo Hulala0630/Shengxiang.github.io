@@ -253,9 +253,9 @@ const projectSummary = (project: Project) =>
             >
               {career.map((item) => (
                 <article class:list={["history-item", { current: item.current }]}>
-                  <span>{item.period}</span>
+                  <span>{typeof item.period === "string" ? item.period : item.period[locale]}</span>
                   <h2>{item.title[locale]}</h2>
-                  <b>{item.role[locale]}</b>
+                  {item.role[locale] && <b>{item.role[locale]}</b>}
                   <p>{item.body[locale]}</p>
                 </article>
               ))}
@@ -629,7 +629,8 @@ const projectSummary = (project: Project) =>
                 <span>{capability.code}</span>
                 <div>
                   <h3>{capability.title[locale]}</h3>
-                  <p>{capability.body[locale]}</p>
+                  <p>{capability.description[locale]}</p>
+                  <p class="capability-topics"><small>{c.capabilityTopics}</small>{capability.body[locale]}</p>
                   <div class="capability-evidence">
                     <small>{c.evidenceLabel}</small>
                     {capability.evidence.map((projectNumber) => (

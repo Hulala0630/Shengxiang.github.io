@@ -2078,6 +2078,26 @@ summary:focus-visible {
   font: 11px "IBM Plex Mono", monospace;
 }
 
+.capability .capability-topics {
+  margin-top: 9px;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.capability-topics small {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+  font: 600 9px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.capability:hover .capability-topics small,
+.capability:focus-within .capability-topics small {
+  color: var(--paper);
+}
+
 .capability-evidence {
   display: flex;
   align-items: center;
