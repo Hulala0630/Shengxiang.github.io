@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERO GAME 3D v0.9 — TWIN CELL</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#17181A; --paper:#F5F5F2; --line:#D8D7D2; --muted:#5A5A56; --faint:#8B8B86;
+  --amber:#FF9E00; --run:#3DDC84; --ai:#C3A6FF; --ai-deep:#7C5FC9;
+  --sim:#5B7CA8; --sheet:#FFFFFF; --frame:#17181A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Mono','Noto Sans SC',monospace;background:var(--paper);color:var(--ink)}
+.cell{max-width:1040px;margin:24px auto;border:1px solid var(--frame);background:var(--sheet)}
+.tb{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--frame);font-size:11px}
+.tb .c{padding:8px 12px;border-right:1px solid var(--frame);color:var(--faint)}
+.tb .c b{color:var(--ink);font-weight:500}
+.vswitch{margin-left:auto;display:flex}
+.vswitch button{appearance:none;border:none;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.06em;padding:0 18px;min-height:40px;background:transparent;color:var(--faint);border-left:1px solid var(--frame);transition:all .25s}
+.vswitch button.active{background:var(--ink);color:var(--paper)}
+.vswitch button.simActive{background:var(--sim);color:#fff}
+#viewport{position:relative;width:100%;aspect-ratio:16/9;touch-action:none;cursor:grab;overflow:hidden}
+#viewport.dragging{cursor:grabbing}
+#viewport canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;left:10px;top:10px;font-size:10px;color:var(--faint);letter-spacing:.08em;pointer-events:none}
+.hud b{color:var(--sim)}
+#simBanner{position:absolute;left:50%;top:12px;transform:translateX(-50%);font-size:11px;padding:5px 12px;border:1px solid var(--ai-deep);color:var(--ai-deep);background:rgba(255,255,255,.9);opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+#stateBadge{position:absolute;right:10px;top:10px;font-size:10px;color:var(--run);pointer-events:none}
+#stateBadge.halt{color:var(--amber);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.3}}
+.t3d{position:absolute;font-size:12px;font-weight:500;pointer-events:none;
+  animation:rise 1s ease-out forwards;text-shadow:0 1px 0 rgba(255,255,255,.8)}
+@keyframes rise{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-30px)}}
+.aistrip{min-height:34px;font-size:11px;padding:9px 14px;border-top:1px dashed var(--frame);color:var(--ai-deep);display:flex;gap:10px;align-items:center}
+.aistrip .chip{border:1px solid var(--ai-deep);padding:1px 7px;font-size:9px;flex:none}
+.aistrip.idle{color:var(--faint)}
+.aistrip.idle .chip{border-color:var(--faint)}
+.modes{border-top:1px solid var(--frame);display:flex;font-size:10px}
+.modes .lbl{padding:0 12px;display:flex;align-items:center;color:var(--faint);border-right:1px solid var(--frame)}
+.modes button{appearance:none;border:none;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.05em;padding:0 14px;min-height:44px;flex:1;background:transparent;color:var(--faint);border-right:1px solid var(--frame);transition:all .25s}
+.modes button:last-child{border-right:none}
+.modes button.m0.on{background:var(--ink);color:var(--paper)}
+.modes button.m1.on{background:var(--amber);color:#1c1204}
+.modes button.m2.on{background:var(--ai-deep);color:#fff}
+.controls{border-top:1px solid var(--frame);display:flex;flex-wrap:wrap}
+.controls button{appearance:none;border:none;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.05em;padding:0 12px;min-height:46px;flex:1;background:transparent;color:var(--faint);border-right:1px solid var(--frame);transition:all .25s}
+.controls button:last-child{border-right:none}
+.controls button:hover{color:var(--ink)}
+.controls .bF{color:var(--amber)}
+.controls .bC{display:none}
+.controls .bC.show{display:block;color:var(--amber);animation:blink 1s steps(2) infinite}
+.kpirow{border-top:1px solid var(--frame);display:flex;flex-wrap:wrap;font-size:10px;color:var(--faint)}
+.kpirow div{padding:8px 11px;border-right:1px solid var(--frame)}
+.kpirow div:last-child{border-right:none;margin-left:auto}
+.kpirow b{color:var(--ink);font-weight:500}
+.kpirow .g b{color:var(--run)} .kpirow .r b{color:var(--amber)}
+.kpirow .x b{color:#D14836} .kpirow .p b{color:var(--ai-deep)}
+@media (max-width:720px){
+  .controls button,.modes button{font-size:10px;padding:0 6px}
+  .kpirow div:last-child,.modes .lbl{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="cell">
+  <div class="tb">
+    <div class="c">CELL <b>T-01 · v0.9</b></div>
+    <div class="c">TWIN <b id="syncTxt">SYNC</b></div>
+    <div class="vswitch">
+      <button id="vSim" onclick="setView('sim')">◇ SIMULATION</button>
+      <button id="vReal" class="active" onclick="setView('real')">◆ REAL SYSTEM</button>
+    </div>
+  </div>
+  <div id="viewport">
+    <div class="hud">DRAG = ORBIT · TAP FLOOR = OBSTACLE · <b>TAP ROBOT = GREET</b></div>
+    <div id="simBanner"></div>
+    <div id="stateBadge">● RUNNING</div>
+  </div>
+  <div class="aistrip idle" id="aistrip"><span class="chip">AI</span><span id="aitext">MODE: AI + SIM TWIN — faults are solved in simulation, physical executes verified policy</span></div>
+  <div class="modes">
+    <span class="lbl">CONTROL MODE</span>
+    <button class="m0" id="m0" onclick="setMode(0)">① NO AI</button>
+    <button class="m1" id="m1" onclick="setMode(1)">② AI ONLY (no sim)</button>
+    <button class="m2 on" id="m2" onclick="setMode(2)">③ AI + SIM TWIN</button>
+  </div>
+  <div class="controls">
+    <button class="bF" onclick="dropObstacle()">⚠ DROP OBSTACLE</button>
+    <button class="bC" id="bC" onclick="clearFault()">↯ CLEAR FAULT</button>
+    <button onclick="resetScene()">↻ RESET SCENE</button>
+  </div>
+  <div class="kpirow">
+    <div class="g">DELIVERED <b id="kG">0</b></div>
+    <div class="r">SCRAP <b id="kX">0</b></div>
+    <div class="x">REAL COLLISION <b id="kC">0</b></div>
+    <div class="p">SIM ITER <b id="kS">0</b></div>
+    <div>UPTIME <b id="kU">100%</b></div>
+    <div>gait fix · slow sim · audio · polish</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ═══════════ 轻量合成音效（首次手势后解锁） ═══════════ */
+let AC=null;
+function beep(f,d,type,g){
+  if(!AC)return;
+  try{const o=AC.createOscillator(),v=AC.createGain();
+    o.type=type||'square';o.frequency.value=f;
+    o.connect(v);v.connect(AC.destination);
+    const t=AC.currentTime;
+    v.gain.setValueAtTime(g||0.04,t);
+    v.gain.exponentialRampToValueAtTime(0.001,t+d);
+    o.start(t);o.stop(t+d)}catch(e){}}
+addEventListener('pointerdown',()=>{
+  if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}});
+/* ═══════════ 渲染 ═══════════ */
+const VP=document.getElementById('viewport');
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+VP.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(44,16/9,0.1,60);
+scene.add(new THREE.HemisphereLight(0xfff4e2,0xcdd3db,0.55));
+scene.add(new THREE.AmbientLight(0xd8dde4,0.35));
+const dl=new THREE.DirectionalLight(0xfff2df,0.9);
+dl.position.set(4,7,5);dl.castShadow=true;
+dl.shadow.mapSize.set(1024,1024);
+dl.shadow.camera.left=-7;dl.shadow.camera.right=7;
+dl.shadow.camera.top=7;dl.shadow.camera.bottom=-7;
+scene.add(dl);
+const rim=new THREE.DirectionalLight(0xdde6f0,0.35);
+rim.position.set(-5,4,-4);scene.add(rim);
+
+const C={paper:0xF5F5F2,ink:0x2A2B30,box:0xFFFFFF,gear:0xE8E7E2,wall:0xEFEEEA,
+  armor:0xE6E8EC,dark:0x26282E,joint:0x1E2026,glass:0x101216,
+  amber:0xFF9E00,run:0x3DDC84,ai:0xC3A6FF,red:0xFF5544,warm:0xFFF3DC,scrap:0xD14836,
+  sim:0x5B7CA8,holo:0x6E93C4,simBg:0xEEF3F9,simGrid:0xBACFE6,gridA:0xCFCEC8};
+scene.fog=new THREE.Fog(C.paper,10,22);
+
+/* ═══════════ 视图注册（创建即适配当前视图） ═══════════ */
+let viewSim=false;
+const R={meshes:[],edges:[]};
+const ghostFill=new THREE.MeshBasicMaterial({color:C.sim,transparent:true,opacity:0.06,depthWrite:false});
+function regMesh(m,mat){
+  m.userData.solid=mat;
+  m.material=viewSim?ghostFill:mat;
+  m.castShadow=!viewSim;R.meshes.push(m);return m}
+function regEdge(l,ink,keep){
+  l.userData.ink=ink;l.userData.keep=!!keep;
+  if(viewSim&&!keep)l.material.color.setHex(C.sim);
+  R.edges.push(l);return l}
+function pbr(color,met,rough){return new THREE.MeshStandardMaterial({color,metalness:met,roughness:rough})}
+const TIER={panel:[0.08,0.72],frame:[0.3,0.5],metal:[0.72,0.32],matte:[0.02,0.9]};
+function edged(geo,color,tier='panel',edgeColor,keep){
+  const g=new THREE.Group();
+  const[m,r]=TIER[tier];
+  g.add(regMesh(new THREE.Mesh(geo,null),pbr(color,m,r)));
+  g.add(regEdge(new THREE.LineSegments(new THREE.EdgesGeometry(geo,28),
+      new THREE.LineBasicMaterial({color:edgeColor??C.ink})),edgeColor??C.ink,keep));
+  return g}
+class SP{constructor(a=0){this.a=a;this.v=0}
+  to(t,ks,dp,dt){this.v+=(t-this.a)*ks*dt;this.v*=Math.exp(-dp*dt);this.a+=this.v*dt;return this.a}
+  kick(i){this.v+=i}}
+
+/* ═══════════ 地面：程序化混凝土贴图 + 接触阴影 ═══════════ */
+function concreteTex(){
+  const cv=document.createElement('canvas');cv.width=cv.height=512;
+  const g=cv.getContext('2d');
+  g.fillStyle='#F2F2EF';g.fillRect(0,0,512,512);
+  /* 云状色斑 */
+  for(let i=0;i<26;i++){
+    const x=Math.random()*512,y=Math.random()*512,r=40+Math.random()*90;
+    const gr=g.createRadialGradient(x,y,0,x,y,r);
+    gr.addColorStop(0,'rgba(224,224,219,'+(0.12+Math.random()*0.1)+')');
+    gr.addColorStop(1,'rgba(224,224,219,0)');
+    g.fillStyle=gr;g.beginPath();g.arc(x,y,r,0,7);g.fill()}
+  /* 噪点 */
+  for(let i=0;i<2600;i++){
+    g.fillStyle='rgba(120,120,115,'+(Math.random()*0.06)+')';
+    g.fillRect(Math.random()*512,Math.random()*512,1.2,1.2)}
+  /* 伸缩缝 */
+  g.strokeStyle='rgba(150,150,144,0.35)';g.lineWidth=1.6;
+  [128,256,384].forEach(p=>{g.beginPath();g.moveTo(p,0);g.lineTo(p,512);g.stroke();
+    g.beginPath();g.moveTo(0,p);g.lineTo(512,p);g.stroke()});
+  const tex=new THREE.CanvasTexture(cv);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(4,3);
+  return tex}
+const groundMat=new THREE.MeshStandardMaterial({map:concreteTex(),metalness:0.02,roughness:0.94});
+const ground=regMesh(new THREE.Mesh(new THREE.PlaneGeometry(26,20),null),groundMat);
+ground.rotation.x=-Math.PI/2;ground.castShadow=false;ground.receiveShadow=true;scene.add(ground);
+const grid=new THREE.GridHelper(26,20,C.gridA,0xE7E6E1);
+grid.material.transparent=true;grid.material.opacity=0.55;scene.add(grid);
+const zone=regMesh(new THREE.Mesh(new THREE.PlaneGeometry(7.4,3.0),null),pbr(0xFBFBF8,0.02,0.9));
+zone.rotation.x=-Math.PI/2;zone.position.set(1.25,0.006,0);
+zone.material.transparent=true;zone.material.opacity=0.75;
+zone.receiveShadow=true;zone.castShadow=false;scene.add(zone);
+/* 机器人接触阴影 */
+const blob=new THREE.Mesh(new THREE.CircleGeometry(0.32,20),
+  new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.14,depthWrite:false}));
+blob.rotation.x=-Math.PI/2;blob.position.y=0.013;scene.add(blob);
+
+/* ═══════════ 厂房背景（收敛版） ═══════════ */
+(function wall(){
+  const z=-4.6;
+  for(let x=-8;x<=8;x+=4){
+    const col=edged(new THREE.BoxGeometry(0.3,3.6,0.3),C.wall,'matte');
+    col.position.set(x,1.8,z);scene.add(col)}
+  const beam=edged(new THREE.BoxGeometry(16.6,0.26,0.3),C.wall,'matte');
+  beam.position.set(0,3.6,z);scene.add(beam);
+  const pts=[];
+  for(let x=-8;x<8;x+=4){
+    for(let wx=x+0.6;wx<x+3.6;wx+=1.0){pts.push(wx,1.4,z,wx,3.1,z)}
+    pts.push(x+0.4,2.25,z,x+3.6,2.25,z,x+0.4,1.4,z,x+3.6,1.4,z,x+0.4,3.1,z,x+3.6,3.1,z)}
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+  scene.add(regEdge(new THREE.LineSegments(geo,new THREE.LineBasicMaterial({color:0xC5C4BE})),0xC5C4BE));
+})();
+(function roof(){
+  [-2.4,0.4].forEach(z=>{
+    const pts=[],y0=3.4,y1=3.95;
+    pts.push(-7,y0,z,7,y0,z,-7,y1,z,7,y1,z);
+    for(let x=-7;x<7;x+=1.4){
+      pts.push(x,y0,z,x+0.7,y1,z,x+0.7,y1,z,x+1.4,y0,z,x,y0,z,x,y1,z)}
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+    scene.add(regEdge(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xBDBCB6})),0xBDBCB6))});
+  [-0.6,2.6].forEach(x=>{
+    const fix=edged(new THREE.BoxGeometry(1.2,0.08,0.3),C.dark,'frame');
+    fix.position.set(x,3.15,-1);scene.add(fix);
+    const glow=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.02,0.2),
+      new THREE.MeshBasicMaterial({color:C.warm}));
+    glow.position.set(x,3.1,-1);scene.add(glow);
+    const rod=edged(new THREE.BoxGeometry(0.035,0.35,0.035),C.dark,'frame');
+    rod.position.set(x,3.38,-1);scene.add(rod)});
+})();
+
+/* 传送带 + 塔灯 */
+const rollers=[];
+(function mkConv(){
+  [-0.55,0.55].forEach(z=>{
+    const rail=edged(new THREE.BoxGeometry(4.2,0.1,0.1),C.gear,'frame');
+    rail.position.set(-4,0.62,z*0.92);scene.add(rail)});
+  [[-5.8],[-4.6],[-3.4],[-2.2]].forEach(([x])=>{[-0.42,0.42].forEach(z=>{
+    const leg=edged(new THREE.BoxGeometry(0.09,0.6,0.09),C.gear,'frame');
+    leg.position.set(x,0.3,z);scene.add(leg)})});
+  for(let x=-5.7;x<-1.95;x+=0.34){
+    const r=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.075,1.0,12),pbr(0xC9CCD2,0.72,0.3));
+    r.rotation.x=Math.PI/2;r.position.set(x,0.66,0);
+    scene.add(regMesh(r,r.material));rollers.push(r)}
+  const post=edged(new THREE.BoxGeometry(0.06,0.9,0.06),C.dark,'metal');
+  post.position.set(-2.05,0.45,0.72);scene.add(post);
+  window.stackLight={};
+  [['red',C.red,1.06],['amb',C.amber,0.96],['grn',C.run,0.86]].forEach(([k,col,y])=>{
+    const l=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,0.09,10),
+      new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.25}));
+    l.position.set(-2.05,y,0.72);scene.add(l);stackLight[k]=l});
+})();
+
+/* ═══ 交付工作台（开放式，杜绝穿模）+ 后置入库架 ═══ */
+(function bench(){
+  const top=edged(new THREE.BoxGeometry(1.1,0.07,0.95),C.gear,'frame');
+  top.position.set(4.4,0.86,0);scene.add(top);
+  [[3.9,-0.4],[3.9,0.4],[4.9,-0.4],[4.9,0.4]].forEach(([x,z])=>{
+    const leg=edged(new THREE.BoxGeometry(0.07,0.83,0.07),C.gear,'metal');
+    leg.position.set(x,0.42,z);scene.add(leg)});
+  const shelf2=edged(new THREE.BoxGeometry(1.0,0.05,0.8),C.gear,'frame');
+  shelf2.position.set(4.4,0.3,0);scene.add(shelf2);
+  /* 后置入库架（成品堆放处） */
+  [[5.35,-0.35],[5.35,0.35]].forEach(([x,z])=>{
+    const p=edged(new THREE.BoxGeometry(0.08,1.9,0.08),C.gear,'metal');
+    p.position.set(x,0.95,z);scene.add(p)});
+  [1.15,1.75].forEach(y=>{
+    const b=edged(new THREE.BoxGeometry(0.9,0.06,0.85),C.gear,'frame');
+    b.position.set(5.35,y,0);scene.add(b)});
+})();
+[-1.6,3.55].forEach(x=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(0.28,0.34,26),
+    new THREE.MeshBasicMaterial({color:C.ink,side:THREE.DoubleSide,transparent:true,opacity:.5}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(x,0.012,0);scene.add(ring);regEdge(ring,C.ink)});
+(function lane(){
+  const pts=[];for(let x=-1.4;x<3.6;x+=0.5){pts.push(x,0.012,0.85,x+0.26,0.012,0.85,x,0.012,-0.85,x+0.26,0.012,-0.85)}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+  scene.add(regEdge(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xB9B8B2})),0xB9B8B2))})();
+for(let i=0;i<4;i++){
+  const s=new THREE.Mesh(new THREE.PlaneGeometry(0.42,0.14),
+    new THREE.MeshBasicMaterial({color:C.amber,transparent:true,opacity:0.55}));
+  s.rotation.x=-Math.PI/2;s.rotation.z=Math.PI/4;
+  s.position.set(-2.3+i*0.32,0.013,0.8);scene.add(s)}
+[[-1.3,0.95],[3.8,0.95],[3.8,-0.95],[-1.3,-0.95]].forEach(([x,z])=>{
+  const b=edged(new THREE.CylinderGeometry(0.055,0.055,0.46,8),C.amber,'metal',C.amber,true);
+  b.position.set(x,0.23,z);scene.add(b)});
+let cabLed;
+(function cab(){
+  const c=edged(new THREE.BoxGeometry(0.55,1.05,0.38),C.gear,'panel');
+  c.position.set(-2.7,0.52,1.45);scene.add(c);
+  cabLed=new THREE.Mesh(new THREE.SphereGeometry(0.03,8,8),
+    new THREE.MeshBasicMaterial({color:C.run}));
+  cabLed.position.set(-2.55,0.9,1.65);scene.add(cabLed);
+})();
+
+/* ═══════════ 人形机器人（v0.7 造型不变） ═══════════ */
+function botMats(ghost){
+  if(ghost){
+    const h=o=>new THREE.MeshBasicMaterial({color:C.holo,transparent:true,opacity:o,depthWrite:false});
+    return{armor:h(0.4),dark:h(0.62),joint:h(0.62),glass:h(0.8),foot:h(0.55)}}
+  return{armor:pbr(C.armor,0.15,0.5),dark:pbr(C.dark,0.55,0.42),
+         joint:pbr(C.joint,0.6,0.38),glass:pbr(C.glass,0.5,0.18),foot:pbr(C.dark,0.4,0.5)}}
+const botHit=[];
+function buildBot(ghost){
+  const M=botMats(ghost);
+  const mesh=(geo,mat)=>{const m=new THREE.Mesh(geo,mat);m.castShadow=!ghost;
+    if(!ghost)botHit.push(m);return m};
+  const root=new THREE.Group();scene.add(root);
+  const yawG=new THREE.Group();root.add(yawG);
+  const torsoG=new THREE.Group();torsoG.position.y=0.92;yawG.add(torsoG);
+  const hip=mesh(new THREE.BoxGeometry(0.26,0.12,0.19),M.armor);hip.position.y=-0.04;torsoG.add(hip);
+  const abd=mesh(new THREE.CylinderGeometry(0.095,0.115,0.16,10),M.dark);abd.position.y=0.07;torsoG.add(abd);
+  const chest=mesh(new THREE.BoxGeometry(0.36,0.32,0.24),M.armor);chest.position.y=0.31;torsoG.add(chest);
+  [-0.185,0.185].forEach(x=>{const v=mesh(new THREE.BoxGeometry(0.012,0.24,0.18),M.dark);
+    v.position.set(x,0.31,0);torsoG.add(v)});
+  const collar=mesh(new THREE.BoxGeometry(0.3,0.05,0.18),M.dark);collar.position.y=0.485;torsoG.add(collar);
+  const pack=mesh(new THREE.BoxGeometry(0.24,0.28,0.09),M.dark);pack.position.set(0,0.3,-0.165);torsoG.add(pack);
+  const chestLed=new THREE.Mesh(new THREE.PlaneGeometry(0.13,0.028),
+    new THREE.MeshBasicMaterial({color:C.run}));
+  chestLed.position.set(0,0.38,0.125);torsoG.add(chestLed);
+  const neck=mesh(new THREE.CylinderGeometry(0.04,0.045,0.06,8),M.dark);neck.position.y=0.535;torsoG.add(neck);
+  const headG=new THREE.Group();headG.position.y=0.61;torsoG.add(headG);
+  const skull=mesh(new THREE.BoxGeometry(0.165,0.19,0.2),M.armor);skull.position.y=0.075;headG.add(skull);
+  const visor=mesh(new THREE.BoxGeometry(0.15,0.115,0.02),M.glass);
+  visor.position.set(0,0.07,0.102);headG.add(visor);
+  const vline=new THREE.Mesh(new THREE.PlaneGeometry(0.11,0.01),
+    new THREE.MeshBasicMaterial({color:C.run}));
+  vline.position.set(0,0.055,0.115);headG.add(vline);
+  [-0.09,0.09].forEach(x=>{const ear=mesh(new THREE.CylinderGeometry(0.035,0.035,0.024,10),M.joint);
+    ear.rotation.z=Math.PI/2;ear.position.set(x,0.075,0);headG.add(ear)});
+  function limb(upLen,loLen,rU,rL,px,py,end){
+    const up=new THREE.Group();up.position.set(px,py,0);torsoG.add(up);
+    const act1=mesh(new THREE.CylinderGeometry(rU*1.28,rU*1.28,rU*1.9,12),M.joint);
+    act1.rotation.z=Math.PI/2;up.add(act1);
+    const um=mesh(new THREE.CylinderGeometry(rU,rU*0.78,upLen,10),M.armor);
+    um.position.y=-upLen/2;up.add(um);
+    const lo=new THREE.Group();lo.position.y=-upLen;up.add(lo);
+    const act2=mesh(new THREE.CylinderGeometry(rU*0.95,rU*0.95,rU*1.5,12),M.joint);
+    act2.rotation.z=Math.PI/2;lo.add(act2);
+    const lm=mesh(new THREE.CylinderGeometry(rL,rL*0.82,loLen,10),M.dark);
+    lm.position.y=-loLen/2;lo.add(lm);
+    if(end==='foot'){
+      const ankle=mesh(new THREE.CylinderGeometry(rL*0.8,rL*0.8,0.05,8),M.joint);
+      ankle.position.y=-loLen;lo.add(ankle);
+      const foot=mesh(new THREE.BoxGeometry(rL*2.1,0.055,rL*3.6),M.foot);
+      foot.position.set(0,-loLen-0.04,rL*0.9);lo.add(foot)}
+    if(end==='hand'){
+      [-1,1].forEach(s=>{const f=mesh(new THREE.BoxGeometry(0.024,0.09,0.055),M.dark);
+        f.position.set(s*0.04,-loLen-0.04,0.008);lo.add(f)})}
+    return{up,lo,sU:new SP(0),sL:new SP(0)}}
+  const legL=limb(0.37,0.37,0.072,0.055,-0.115,-0.1,'foot'),
+        legR=limb(0.37,0.37,0.072,0.055,0.115,-0.1,'foot');
+  const armL=limb(0.28,0.25,0.048,0.038,-0.24,0.44,'hand'),
+        armR=limb(0.28,0.25,0.048,0.038,0.24,0.44,'hand');
+  let carry;
+  if(ghost){carry=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.3,0.34),
+    new THREE.MeshBasicMaterial({color:C.holo,transparent:true,opacity:0.5}))}
+  else{carry=edged(new THREE.BoxGeometry(0.34,0.3,0.34),C.box,'panel')}
+  carry.position.set(0,0.14,0.36);carry.visible=false;torsoG.add(carry);
+  return{root,yawG,torsoG,headG,legL,legR,armL,armR,carry,
+         led:vline,chest:chestLed,
+         yaw:Math.PI/2,crouch:0,reach:0,
+         sLean:new SP(0),sBob:new SP(0),headYaw:0,headPitch:0}}
+const bot=buildBot(false),simBot=buildBot(true);
+simBot.root.visible=false;
+const BOT_DY=-0.06;
+
+const lerp=(a,b,k)=>a+(b-a)*k,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const KS=110,DP=13;
+function pose(b,p,dt){
+  const yawT=p.faceDir>0?Math.PI/2:-Math.PI/2;
+  b.yaw=lerp(b.yaw,yawT,Math.min(1,dt*6));b.yawG.rotation.y=b.yaw;
+  b.crouch=lerp(b.crouch,p.wantCrouch?1:0,Math.min(1,dt*7));
+  b.reach=lerp(b.reach,p.wantReach?1:0,Math.min(1,dt*8));
+  const idle=(1-p.speed01)*(1-b.crouch),tnow=performance.now();
+  const leanT=p.speed01*0.11+(p.lift>0?0.13:0)+b.crouch*0.34;
+  b.torsoG.rotation.x=b.sLean.to(leanT,60,10,dt)+Math.sin(p.ph*2)*0.01*p.speed01;
+  b.torsoG.rotation.y=Math.sin(p.ph)*0.06*p.speed01;
+  let hy=0;
+  if(p.lookAtX!==undefined)hy=clamp((p.lookAtX-p.x)*(p.faceDir>0?0.5:-0.5),-0.8,0.8);
+  b.headYaw=lerp(b.headYaw,hy,Math.min(1,dt*5));
+  b.headPitch=lerp(b.headPitch,b.crouch*0.4+(p.nod?0.4:0),Math.min(1,dt*8));
+  b.headG.rotation.y=b.headYaw;
+  b.headG.rotation.x=b.headPitch-Math.abs(Math.sin(p.ph))*0.018*p.speed01;
+  const stride=0.48*p.speed01;
+  function leg(L,phase){
+    let upT,loT;
+    if(p.lift>0.05){upT=-1.0;loT=+1.3}
+    else{const sw=Math.sin(p.ph+phase);
+      upT=-sw*stride-b.crouch*0.85;
+      loT=clamp(Math.sin(p.ph+phase-0.35),0,1)*0.85*p.speed01+b.crouch*1.2+0.05}
+    L.up.rotation.x=L.sU.to(upT,KS,DP,dt);
+    L.lo.rotation.x=Math.max(0.02,L.sL.to(loT,KS,DP,dt))}
+  leg(b.legL,0);leg(b.legR,Math.PI);
+  function arm(A,phase){
+    let upT,loT;const sw=Math.sin(p.ph+phase);
+    if(p.carrying){upT=-0.95+sw*0.035;loT=-0.6}
+    else if(b.reach>0.05){upT=-1.3;loT=-0.1}
+    else{upT=sw*0.34*p.speed01+Math.sin(tnow/850+phase)*0.025*idle;
+      loT=-0.18-Math.abs(sw)*0.22*p.speed01}
+    A.up.rotation.x=A.sU.to(upT,KS,DP,dt);
+    A.lo.rotation.x=Math.min(-0.02,A.sL.to(loT,KS,DP,dt))}
+  arm(b.armL,0);arm(b.armR,Math.PI);
+  const bobT=p.lift+Math.abs(Math.sin(p.ph))*0.045*p.speed01-b.crouch*0.18+Math.sin(tnow/850)*0.006*idle;
+  b.root.position.set(p.x,BOT_DY+b.sBob.to(bobT,90,11,dt),0);
+  b.carry.visible=!!p.carrying;
+  b.led.material.color.setHex(p.led);
+  b.chest.material.color.setHex(p.led)}
+
+/* ═══════════ 3D 浮字（+1 / 事件提示） ═══════════ */
+const v3=new THREE.Vector3();
+function toast3d(x,y,z,text,color){
+  v3.set(x,y,z).project(camera);
+  const r=VP.getBoundingClientRect();
+  const d=document.createElement('div');
+  d.className='t3d';d.textContent=text;d.style.color=color;
+  d.style.left=((v3.x*0.5+0.5)*r.width)+'px';
+  d.style.top=((-v3.y*0.5+0.5)*r.height)+'px';
+  VP.appendChild(d);setTimeout(()=>d.remove(),1000)}
+
+/* ═══════════ 物料 / 废品 / 障碍 ═══════════ */
+const boxes=[],scraps=[];
+function spawnBox(){
+  const m=edged(new THREE.BoxGeometry(0.34,0.3,0.34),C.box,'panel');
+  m.position.set(-5.8,0.86,0);scene.add(m);
+  boxes.push({m,x:-5.8})}
+const stackG=new THREE.Group();scene.add(stackG);
+function stackDelivered(n){
+  if((n-1)%6===0)while(stackG.children.length)stackG.remove(stackG.children[0]);
+  const m=(n-1)%6;
+  const bx=edged(new THREE.BoxGeometry(0.34,0.3,0.34),C.box,'panel',C.run,true);
+  bx.position.set(5.15+(m%2)*0.4,1.34+Math.floor(m/2)*0.6-((m%2)?0:0),(m%2?-0.2:0.2));
+  bx.position.y=1.34+Math.floor(m/3)*0.6;
+  bx.position.x=5.15+(m%3)*0.0;
+  bx.position.set(5.35,1.34+Math.floor(m/3)*0.6,-0.26+(m%3)*0.26);
+  stackG.add(bx)}
+/* 台面暂存箱（放置动画） */
+let placed=null;
+function placePayload(){
+  const m=edged(new THREE.BoxGeometry(0.34,0.3,0.34),C.box,'panel');
+  m.position.set(3.95,1.0,0);scene.add(m);
+  placed={m,t:0}}
+function dropScrap(x){
+  const s=edged(new THREE.BoxGeometry(0.34,0.3,0.34),C.box,'panel',C.scrap,true);
+  s.position.set(x-0.25,0.15,0.5+Math.random()*0.2);
+  s.rotation.set(0.4,Math.random(),0.7);
+  scene.add(s);scraps.push(s);
+  if(scraps.length>3)scene.remove(scraps.shift());
+  W.scrap++;kX.textContent=W.scrap;
+  toast3d(x,0.6,0.5,'SCRAP','#D14836')}
+let obstacle=null;
+function dropObstacle(atX){
+  if(obstacle)return;
+  let x=(atX!==undefined)?atX:0.6+Math.random()*2;
+  x=clamp(x,-0.8,3.2);
+  if(Math.abs(x-W.bot.x)<0.6)x=clamp(W.bot.x+(x>=W.bot.x?0.65:-0.65),-0.8,3.2);
+  const g=edged(new THREE.ConeGeometry(0.26,0.5,4),C.amber,'matte',C.amber,true);
+  g.position.set(x,1.5,0);g.rotation.y=Math.PI/4;scene.add(g);
+  obstacle={x,g,mesh:g.children[0],policy:false,vy:0,settled:false};
+  if(W.mode===0)setAI('MODE ① NO AI — obstacle ahead, line will halt on contact',true)}
+function clearObstacle(){if(obstacle){scene.remove(obstacle.g);obstacle=null}}
+/* 已学策略下的跨越弧（双向通用） */
+function liftAt(x){
+  if(obstacle&&obstacle.policy){
+    const d=Math.abs(x-obstacle.x);
+    if(d<0.55)return Math.cos(d/0.55*Math.PI/2)*0.6}
+  return 0}
+
+/* ═══════════ 世界状态 / 三模式 ═══════════ */
+const W={running:true,mode:2,view:'real',t0:performance.now(),down:0,haltAt:0,
+  good:0,scrap:0,coll:0,iters:0,
+  bot:{x:-1.6,dir:1,state:'toPick',tm:0,ph:0,carry:false,nod:0,att:null,spd:0,greet:0},
+  sim:{mode:'mirror',t:0,carry:false,dir:1}};
+const PICK=-1.6,DROP=3.55,SPEED=1.5;
+const MODE_TXT=[
+ 'MODE ① NO AI — faults halt the physical line; manual recovery only',
+ 'MODE ② AI ONLY — AI recovers by trial-and-error ON THE REAL ROBOT (collisions & scrap!)',
+ 'MODE ③ AI + SIM TWIN — faults are solved in simulation, physical executes verified policy'];
+function setMode(m){W.mode=m;
+  [m0,m1,m2].forEach((b,i)=>b.classList.toggle('on',i===m));
+  setAI(MODE_TXT[m],true)}
+function setAI(m,idle){aitext.textContent=m;aistrip.classList.toggle('idle',!!idle)}
+function halt(msg){beep(220,.3,'square',.05);W.running=false;W.haltAt=performance.now();
+  stateBadge.textContent='■ LINE HALTED';stateBadge.classList.add('halt');
+  bC.classList.add('show');setAI(msg,true)}
+function clearFault(){if(W.running)return;
+  clearObstacle();W.down+=performance.now()-W.haltAt;W.running=true;
+  stateBadge.textContent='● RUNNING';stateBadge.classList.remove('halt');
+  bC.classList.remove('show');setAI(MODE_TXT[W.mode],true)}
+function resetScene(){
+  boxes.forEach(b=>scene.remove(b.m));boxes.length=0;
+  scraps.forEach(s=>scene.remove(s));scraps.length=0;
+  if(placed){scene.remove(placed.m);placed=null}
+  while(stackG.children.length)stackG.remove(stackG.children[0]);
+  clearObstacle();
+  W.good=0;W.scrap=0;W.coll=0;W.iters=0;
+  kG.textContent=0;kX.textContent=0;kC.textContent=0;kS.textContent=0;
+  W.t0=performance.now();W.down=0;W.running=true;
+  W.bot={x:-1.6,dir:1,state:'toPick',tm:0,ph:0,carry:false,nod:0,att:null,spd:0,greet:0};
+  W.sim.mode='mirror';banner.style.opacity=0;
+  stateBadge.textContent='● RUNNING';stateBadge.classList.remove('halt');
+  bC.classList.remove('show');syncTxt.textContent='SYNC';
+  bot.carry.visible=false;simBot.carry.visible=false;
+  setView('real');setAI(MODE_TXT[W.mode],true)}
+const aistrip=document.getElementById('aistrip'),aitext=document.getElementById('aitext'),
+  stateBadge=document.getElementById('stateBadge'),banner=document.getElementById('simBanner'),
+  bC=document.getElementById('bC'),
+  kG=document.getElementById('kG'),kX=document.getElementById('kX'),
+  kC=document.getElementById('kC'),kS=document.getElementById('kS'),kU=document.getElementById('kU');
+
+/* ═══════════ 视图切换 ═══════════ */
+const bgCol=new THREE.Color(C.paper),bgTarget=new THREE.Color(C.paper);
+function setView(v){
+  W.view=v;viewSim=(v==='sim');
+  vSim.classList.toggle('simActive',viewSim);
+  vReal.classList.toggle('active',!viewSim);
+  bgTarget.setHex(viewSim?C.simBg:C.paper);
+  scene.fog.color.setHex(viewSim?C.simBg:C.paper);
+  dl.castShadow=!viewSim;
+  blob.visible=!viewSim;
+  R.meshes.forEach(m=>{m.material=viewSim?ghostFill:m.userData.solid;m.castShadow=!viewSim});
+  R.edges.forEach(e=>{if(!e.userData.keep)e.material.color.setHex(viewSim?C.sim:e.userData.ink)});
+  grid.material.color.setHex(viewSim?C.simGrid:C.gridA);
+  ground.material=viewSim?new THREE.MeshBasicMaterial({color:C.simBg}):ground.userData.solid;
+  simBot.root.visible=viewSim;
+  bot.root.visible=!viewSim}
+scene.background=bgCol;
+
+/* ═══════════ SIM 试错（方向感知） ═══════════ */
+function startSimTest(dir){
+  W.sim.mode='test';W.sim.t=0;W.sim.carry=W.bot.carry;W.sim.dir=dir;
+  W.prevView=W.view;setView('sim');syncTxt.textContent='TESTING';
+  setAI('ANOMALY: obstacle @ x='+obstacle.x.toFixed(1)+' — spawning twin test…',false)}
+function runSimTest(dt){
+  const s=W.sim,o=obstacle;if(!o){s.mode='mirror';return}
+  s.t+=dt;const D=s.dir;let x,lift=0,led=C.ai,sp=1;
+  if(s.t<1.5){                       /* 接近 */
+    x=o.x-1.5*D+Math.min(1,s.t/1.35)*1.32*D;
+    if(s.t>1.35){led=C.red;o.mesh.material.color.setHex(C.red);
+      banner.textContent='SIM ITER 1 — COLLISION ✗';banner.style.opacity=1;
+      banner.style.color='var(--amber)';banner.style.borderColor='var(--amber)'}
+  }else if(s.t<2.2){                 /* 碰撞定格：让观众读懂 */
+    x=o.x-0.18*D+Math.sin(s.t*40)*0.01;
+    led=C.red;sp=0;
+  }else if(s.t<4.2){                 /* 重规划：抬腿跨越（慢速） */
+    if(!s.i2){s.i2=true;W.iters++;kS.textContent=W.iters;
+      o.mesh.material.color.setHex(C.amber);
+      banner.textContent='SIM ITER 2 — REPLANNING · STEP-OVER';
+      banner.style.color='var(--sim)';banner.style.borderColor='var(--sim)'}
+    const k=Math.min(1,(s.t-2.2)/1.8);
+    x=o.x-1.5*D+k*3.0*D;const d=Math.abs(x-o.x);
+    if(d<0.55)lift=Math.cos(d/0.55*Math.PI/2)*0.6;
+    if(s.t>3.9){banner.textContent='SIM ITER 2 — STEP-OVER ✓';
+      banner.style.color='var(--run)';banner.style.borderColor='var(--run)';led=C.run}
+  }else if(s.t<5.8){                 /* 策略下发（停留展示） */
+    if(!s.dep){s.dep=true;W.iters++;kS.textContent=W.iters;
+      banner.textContent='▼ DEPLOY POLICY → REAL SYSTEM (0 real collisions)';
+      banner.style.color='var(--ai-deep)';banner.style.borderColor='var(--ai-deep)';
+      setAI('POLICY VERIFIED IN SIM — deploying step-over · real robot untouched',false);
+      beep(660,.09,'sine',.05);setTimeout(()=>beep(990,.12,'sine',.05),120)}
+    x=o.x+1.55*D;led=C.run;sp=0;
+  }else{
+    o.policy=true;s.mode='mirror';s.i2=false;s.dep=false;
+    banner.style.opacity=0;syncTxt.textContent='SYNC';
+    W.bot.nod=0.6;setView(W.prevView||'real');return}
+  pose(simBot,{x,faceDir:D,speed01:sp,ph:s.t*6.5,lift,wantCrouch:false,wantReach:false,
+    carrying:s.carry,led,nod:false},dt)}
+
+/* ═══════════ 主循环 ═══════════ */
+let nextSpawn=0,last=performance.now();
+function tick(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  const b=W.bot;
+  bgCol.lerp(bgTarget,Math.min(1,dt*8));
+  rollers.forEach(r=>r.rotation.y+=(W.running?2.2:0)*dt);
+  stackLight.grn.material.opacity=W.running?(0.55+Math.sin(now/300)*0.25):0.12;
+  stackLight.amb.material.opacity=W.running?0.12:(0.55+Math.sin(now/180)*0.3);
+  stackLight.red.material.opacity=0.12;
+  cabLed.material.color.setHex(W.running?C.run:C.amber);
+  /* 障碍落下回弹 */
+  if(obstacle&&!obstacle.settled){
+    obstacle.vy-=9*dt;
+    obstacle.g.position.y+=obstacle.vy*dt;
+    if(obstacle.g.position.y<0.25){
+      obstacle.g.position.y=0.25;
+      if(Math.abs(obstacle.vy)>0.8)obstacle.vy*=-0.32;
+      else{obstacle.vy=0;obstacle.settled=true}}}
+  /* 台面暂存箱 → 入库 */
+  if(placed){placed.t+=dt;
+    placed.m.position.x=3.95+Math.min(1,placed.t/0.5)*0.45;
+    if(placed.t>0.75){scene.remove(placed.m);placed=null;
+      stackDelivered(W.good)}}
+
+  if(W.running){
+    if(now>nextSpawn){spawnBox();nextSpawn=now+3000}
+    boxes.sort((a,c)=>c.x-a.x).forEach((bx,i)=>{
+      let stop=bx.x>=-2.25;
+      const ah=boxes[i-1];if(ah&&bx.x>ah.x-0.5)stop=true;
+      if(!stop)bx.x+=0.5*dt;
+      bx.m.position.x=bx.x});
+
+    let tgtSpd=0,lift=0,led=C.run,look;
+    let wantCrouch=false,wantReach=false;
+    if(b.nod>0)b.nod-=dt;
+
+    if(b.greet>0){                       /* 点击问候：停步看向镜头 */
+      b.greet-=dt;tgtSpd=0;
+      look=camera.position.x;
+      led=(Math.sin(now/90)>0)?0xFFFFFF:C.run;
+    }
+    else if(b.att){                      /* 模式②：真机试错（方向感知） */
+      const a=b.att;a.t+=dt;const D=a.dir;
+      look=obstacle?obstacle.x:undefined;
+      if(a.phase===0){
+        tgtSpd=SPEED*0.9*D;b.dir=D;led=C.ai;
+        const gap=D>0?(obstacle?obstacle.x-b.x:9):(obstacle?b.x-obstacle.x:9);
+        if(obstacle&&gap<0.14){
+          a.phase=1;a.t=0;W.coll++;kC.textContent=W.coll;
+          obstacle.mesh.material.color.setHex(C.red);
+          bot.sLean.kick(7);bot.sBob.kick(-1.6);
+          ctrl.shake=0.5;beep(110,.28,'sawtooth',.06);
+          toast3d(b.x,1.7,0,'COLLISION','#D14836');
+          if(b.carry){b.carry=false;dropScrap(b.x)}
+          banner.textContent='REAL ATTEMPT 1 — COLLISION ✗ (scrap +1)';
+          banner.style.opacity=1;banner.style.color='#D14836';banner.style.borderColor='#D14836';
+          setAI('REAL-WORLD TRIAL FAILED — collision on physical robot, part scrapped',false)}
+      }else if(a.phase===1){
+        led=C.red;tgtSpd=-SPEED*0.6*D;b.dir=D;
+        if(a.t>0.7){a.phase=2;a.t=0;
+          obstacle.mesh.material.color.setHex(C.amber);
+          banner.textContent='REAL ATTEMPT 2 — STEP-OVER (untested)';
+          banner.style.color='var(--amber)';banner.style.borderColor='var(--amber)'}
+      }else{
+        tgtSpd=SPEED*0.9*D;b.dir=D;led=C.ai;
+        const d=Math.abs(b.x-(obstacle?obstacle.x:0));
+        if(obstacle&&d<0.55)lift=Math.cos(d/0.55*Math.PI/2)*0.6;
+        if(obstacle&&(D>0?b.x>obstacle.x+0.6:b.x<obstacle.x-0.6)){
+          obstacle.policy=true;b.att=null;banner.style.opacity=0;
+          setAI('POLICY LEARNED ON HARDWARE — cost: 1 collision · 1 scrap',false)}
+      }
+    }
+    else if(b.state==='toPick'){
+      b.dir=-1;
+      /* 返程障碍：双向处理（修复穿模/异常跳起） */
+      if(obstacle&&!obstacle.policy&&b.x>obstacle.x&&b.x-obstacle.x<0.6){
+        if(W.mode===2){tgtSpd=0;led=C.ai;look=obstacle.x;
+          if(W.sim.mode!=='test')startSimTest(-1)}
+        else if(W.mode===1){b.att={phase:0,t:0,dir:-1}}
+        else{tgtSpd=0;halt('OPERATOR ACTION REQUIRED — obstacle blocked the robot')}
+      }else{
+        lift=liftAt(b.x);
+        const dist=b.x-PICK;
+        tgtSpd=-SPEED*clamp(dist/0.6,0.25,1);
+        if(b.x<=PICK){b.x=PICK;tgtSpd=0;
+          if(boxes.some(x=>x.x>=-2.3)){b.state='pick';b.tm=.55}}}
+    }
+    else if(b.state==='pick'){wantCrouch=true;wantReach=true;b.tm-=dt;tgtSpd=0;
+      if(b.tm<=0){const i=boxes.findIndex(x=>x.x>=-2.3);
+        if(i>-1){scene.remove(boxes[i].m);boxes.splice(i,1);b.carry=true;b.state='toDrop'}
+        else b.state='toPick'}}
+    else if(b.state==='toDrop'){
+      b.dir=1;
+      if(obstacle&&!obstacle.policy&&b.x<obstacle.x&&obstacle.x-b.x<0.6){
+        if(W.mode===2){tgtSpd=0;led=C.ai;look=obstacle.x;
+          if(W.sim.mode!=='test')startSimTest(1)}
+        else if(W.mode===1){b.att={phase:0,t:0,dir:1}}
+        else{tgtSpd=0;halt('OPERATOR ACTION REQUIRED — obstacle blocked the robot')}
+      }else{
+        lift=liftAt(b.x);
+        const dist=DROP-b.x;
+        tgtSpd=SPEED*clamp(dist/0.6,0.25,1);
+        if(b.x>=DROP){b.x=DROP;tgtSpd=0;b.state='drop';b.tm=.6}}
+    }
+    else if(b.state==='drop'){wantCrouch=true;wantReach=b.carry;b.tm-=dt;tgtSpd=0;
+      if(b.tm<=0.25&&b.carry){                 /* 提前放置：箱子转移到台面 */
+        b.carry=false;W.good++;kG.textContent=W.good;
+        placePayload();
+        toast3d(4.1,1.5,0,'+1','#2f9e5f');
+        beep(880,.1,'sine',.045);setTimeout(()=>beep(1320,.12,'sine',.04),90)}
+      if(b.tm<=0)b.state='toPick'}
+
+    /* 速度缓动（起步/到站加减速） */
+    b.spd=lerp(b.spd,tgtSpd,Math.min(1,dt*6));
+    b.x+=b.spd*dt;b.x=clamp(b.x,-2.1,4.05);
+    const speed01=Math.min(1,Math.abs(b.spd)/SPEED);
+    if(Math.abs(b.spd)>0.05)b.ph+=dt*(6+3.5*speed01);
+
+    const p={x:b.x,faceDir:b.dir,speed01,ph:b.ph,lift,wantCrouch,wantReach,
+             carrying:b.carry,led,lookAtX:look,nod:b.nod>0};
+    pose(bot,p,dt);
+    if(W.sim.mode==='mirror')pose(simBot,p,dt);
+    blob.position.x=b.x;
+    blob.scale.setScalar(1-clamp(lift,0,0.6)*0.5);
+  }else{
+    const p={x:b.x,faceDir:b.dir,speed01:0,ph:b.ph,lift:0,wantCrouch:false,
+             wantReach:false,carrying:b.carry,led:C.red,nod:false};
+    pose(bot,p,dt);
+    if(W.sim.mode==='mirror')pose(simBot,p,dt);
+    blob.position.x=b.x}
+
+  if(W.sim.mode==='test')runSimTest(dt);
+
+  const tot=now-W.t0,dn=W.down+(W.running?0:now-W.haltAt);
+  kU.textContent=Math.max(0,Math.round(100*(1-dn/tot)))+'%';
+
+  ctrl.update(dt);renderer.render(scene,camera);
+  requestAnimationFrame(tick)}
+
+/* ═══════════ 轨道控制：惯性滑动 + 震动 + 点击分发 ═══════════ */
+const ctrl={theta:0.82,phi:1.06,r:6.8,target:new THREE.Vector3(1.0,0.85,0),
+  tv:0,pv:0,dragging:false,shake:0,
+  update(dt){
+    if(!this.dragging){this.theta+=this.tv;this.phi-=this.pv;
+      this.tv*=Math.exp(-4*dt);this.pv*=Math.exp(-4*dt)}
+    this.phi=Math.max(0.35,Math.min(1.42,this.phi));
+    this.r=Math.max(3.4,Math.min(11,this.r));
+    let sx=0,sy=0;
+    if(this.shake>0.002){
+      sx=(Math.random()-0.5)*this.shake*0.15;
+      sy=(Math.random()-0.5)*this.shake*0.15;
+      this.shake*=Math.exp(-6*dt)}
+    camera.position.set(
+      this.target.x+this.r*Math.sin(this.phi)*Math.cos(this.theta)+sx,
+      this.target.y+this.r*Math.cos(this.phi)+sy,
+      this.target.z+this.r*Math.sin(this.phi)*Math.sin(this.theta));
+    camera.lookAt(this.target)}};
+let drag=null,pinch=null,moved=0;
+VP.addEventListener('pointerdown',e=>{VP.setPointerCapture(e.pointerId);moved=0;
+  drag={x:e.clientX,y:e.clientY,t:performance.now(),id:e.pointerId};
+  ctrl.dragging=true;ctrl.tv=0;ctrl.pv=0;
+  VP.classList.add('dragging')});
+VP.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved+=Math.abs(dx)+Math.abs(dy);
+  ctrl.theta+=dx*0.006;ctrl.phi-=dy*0.005;
+  ctrl.tv=dx*0.006;ctrl.pv=dy*0.005;
+  drag.x=e.clientX;drag.y=e.clientY});
+VP.addEventListener('pointerup',e=>{VP.classList.remove('dragging');ctrl.dragging=false;
+  if(drag&&moved<7&&performance.now()-drag.t<400)clickPlace(e);drag=null});
+VP.addEventListener('wheel',e=>{e.preventDefault();ctrl.r*=(1+Math.sign(e.deltaY)*0.08)},{passive:false});
+VP.addEventListener('touchstart',e=>{if(e.touches.length===2){
+  pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                   e.touches[0].clientY-e.touches[1].clientY);
+  drag=null;ctrl.dragging=false}});
+VP.addEventListener('touchmove',e=>{if(pinch&&e.touches.length===2){
+  const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                     e.touches[0].clientY-e.touches[1].clientY);
+  ctrl.r*=pinch/d;pinch=d;e.preventDefault()}},{passive:false});
+VP.addEventListener('touchend',()=>pinch=null);
+const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
+function clickPlace(e){
+  const r=VP.getBoundingClientRect();
+  ptr.x=((e.clientX-r.left)/r.width)*2-1;
+  ptr.y=-((e.clientY-r.top)/r.height)*2+1;
+  ray.setFromCamera(ptr,camera);
+  /* 点机器人 → 问候 */
+  if(!viewSim){
+    const hb=ray.intersectObjects(botHit,false);
+    if(hb.length){W.bot.greet=1.4;beep(1040,.08,'sine',.04);
+      toast3d(W.bot.x,1.85,0,'UNIT T-01 · OK','#2E3D4D');return}}
+  if(obstacle){const hit=ray.intersectObject(obstacle.mesh);
+    if(hit.length){clearObstacle();return}}
+  const hit=ray.intersectObject(ground);
+  if(hit.length){const p=hit[0].point;
+    if(p.x>-1&&p.x<3.3&&Math.abs(p.z)<2.0)dropObstacle(p.x)}}
+function fit(){const r=VP.getBoundingClientRect();
+  renderer.setSize(r.width,r.height,false);
+  camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
+addEventListener('resize',fit);fit();
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

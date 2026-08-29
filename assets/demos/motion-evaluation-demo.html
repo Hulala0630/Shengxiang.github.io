@@ -1,0 +1,1372 @@
+<!doctype html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relative Motion Evaluation</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f2ea;
+      --card: #fffdf7;
+      --ink: #17181a;
+      --muted: #6f716f;
+      --line: #bbb8ad;
+      --grid: rgba(23, 24, 26, .065);
+      --screen: #12151b;
+      --screen-2: #191d25;
+      --screen-line: #343b49;
+      --screen-text: #eef1f5;
+      --yellow: #efc452;
+      --blue: #4774bd;
+      --red: #eb6b52;
+      --green: #50b56a;
+      --shadow: #17181a;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #111216;
+      --card: #191b21;
+      --ink: #f0eee8;
+      --muted: #a8a9a7;
+      --line: #4d4f56;
+      --grid: rgba(255, 255, 255, .055);
+      --screen: #090b10;
+      --screen-2: #10141b;
+      --screen-line: #303848;
+      --screen-text: #f5f3ed;
+      --yellow: #f2ca5b;
+      --blue: #79a8ef;
+      --red: #f07861;
+      --green: #65ce7d;
+      --shadow: #6e95d5;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      overflow-x: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font: 14px/1.45 "IBM Plex Sans", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .app {
+      min-width: 0;
+      border: 1px solid var(--ink);
+      background: var(--card);
+      box-shadow: 8px 8px 0 color-mix(in srgb, var(--yellow) 80%, var(--shadow));
+    }
+
+    .topline {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      background: var(--ink);
+      color: var(--paper);
+      letter-spacing: .04em;
+      font: 600 12px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+    .topline b { color: var(--yellow); }
+    .status { display: inline-flex; align-items: center; gap: 7px; color: var(--green); }
+    .status i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    .lab-tabs {
+      display: grid;
+      min-height: 54px;
+      border-bottom: 1px solid var(--ink);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .lab-tabs button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      border: 0;
+      border-right: 1px solid var(--ink);
+      background: var(--card);
+      cursor: pointer;
+      font: 600 12px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+    .lab-tabs button:last-child { border-right: 0; }
+    .lab-tabs button span { color: var(--muted); font: 11px "IBM Plex Sans", sans-serif; text-transform: none; }
+    .lab-tabs button.active { background: var(--yellow); color: #17181a; }
+    .lab-tabs button.active span { color: #4f4630; }
+    .lab-view[hidden] { display: none !important; }
+
+    .control-strip {
+      display: grid;
+      min-height: 78px;
+      border-bottom: 1px solid var(--ink);
+      grid-template-columns: 1fr auto;
+    }
+    .performance-switch,
+    .transport {
+      display: flex;
+      align-items: stretch;
+    }
+    .performance-switch { min-width: 0; }
+    .performance-switch button,
+    .transport button {
+      min-height: 48px;
+      border: 0;
+      border-right: 1px solid var(--ink);
+      background: transparent;
+      cursor: pointer;
+      letter-spacing: .035em;
+      font: 600 12px "IBM Plex Mono", Consolas, monospace;
+      text-transform: uppercase;
+    }
+    .performance-switch button { min-width: 150px; padding: 10px 17px; text-align: left; }
+    .performance-switch button span { display: block; margin-top: 3px; color: var(--muted); font: 11px/1.25 "IBM Plex Sans", sans-serif; text-transform: none; }
+    .performance-switch button.active { background: var(--blue); color: #fff; }
+    .performance-switch button.active span { color: rgba(255, 255, 255, .82); }
+    .performance-switch button[data-mode="attention"].active { background: var(--red); }
+    .transport { justify-content: flex-end; border-left: 1px solid var(--ink); }
+    .transport button { width: 48px; padding: 0; font-size: 17px; }
+    .transport button:last-child { border-right: 0; }
+    button:hover { background: color-mix(in srgb, var(--yellow) 28%, var(--card)); }
+    button:focus-visible, input:focus-visible { outline: 3px solid var(--yellow); outline-offset: -3px; }
+
+    .timeline {
+      display: grid;
+      min-width: 170px;
+      align-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+    }
+    .timeline label { display: flex; justify-content: space-between; color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); }
+    .phase-track { display: grid; gap: 3px; grid-template-columns: repeat(5, 1fr); }
+    .phase-track i { height: 3px; background: var(--line); }
+    .phase-track i.active { background: var(--yellow); }
+
+    .workspace {
+      display: grid;
+      min-height: 486px;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+    }
+
+    .motion-stage {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      overflow: hidden;
+      border-right: 1px solid var(--ink);
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        var(--screen);
+      background-size: 24px 24px;
+      color: var(--screen-text);
+      flex-direction: column;
+    }
+    .stage-head {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--screen-line);
+      background: color-mix(in srgb, var(--screen) 92%, transparent);
+      font: 11px "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+    }
+    .legend { display: flex; gap: 13px; color: #aeb6c4; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 16px; height: 2px; background: var(--blue); }
+    .legend span:last-child i { height: 0; border-top: 2px dashed #697383; background: none; }
+
+    #skeleton-stage { display: block; width: 100%; height: 486px; flex: 0 0 486px; touch-action: none; }
+    .view-label { fill: #8f98a8; letter-spacing: .12em; font: 11px "IBM Plex Mono", monospace; }
+    .ground { stroke: #495160; stroke-width: 1; }
+    .divider { stroke: #343b49; stroke-width: 1; stroke-dasharray: 4 6; }
+    .reference-line { stroke: #778191; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 3 10; opacity: .36; }
+    .body-line { stroke: #e9edf2; stroke-width: 8; stroke-linecap: round; }
+    .body-line.warn { stroke: var(--red); }
+    .joint { fill: var(--screen); stroke: #e9edf2; stroke-width: 4; cursor: grab; }
+    .joint:hover { fill: var(--yellow); stroke: var(--yellow); }
+    .joint:active { cursor: grabbing; }
+    .joint.active { fill: var(--yellow); stroke: var(--yellow); }
+    .joint.warn { fill: var(--red); stroke: #ffd2c9; }
+    .joint-ring { fill: none; stroke: var(--yellow); stroke-width: 2; opacity: .85; pointer-events: none; }
+    .joint-ring.pulse { animation: joint-pulse 1.6s ease-out infinite; }
+    @keyframes joint-pulse { from { r: 13; opacity: .95; } to { r: 27; opacity: 0; } }
+
+    .score-orbit {
+      position: absolute;
+      z-index: 3;
+      top: 67px;
+      right: 16px;
+      display: grid;
+      width: 92px;
+      height: 92px;
+      align-content: center;
+      gap: 2px;
+      place-items: center;
+      border: 1px solid #596273;
+      border-radius: 50%;
+      background: rgba(9, 12, 18, .86);
+    }
+    .score-orbit::before {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border: 4px solid var(--blue);
+      border-top-color: transparent;
+      border-radius: 50%;
+      content: "";
+      transform: rotate(38deg);
+    }
+    .score-orbit b { z-index: 1; font: 600 27px/1 "Space Grotesk", sans-serif; }
+    .score-orbit small { position: relative; z-index: 1; color: #aab2bf; font: 9px/1.1 "IBM Plex Mono", monospace; }
+    .score-orbit.attention::before { border-color: var(--red); border-top-color: transparent; }
+
+    .phase-diagnostic {
+      margin: 0 14px 10px;
+      border: 1px solid var(--screen-line);
+      background: rgba(9, 12, 18, .82);
+    }
+    .phase-diagnostic-head {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 11px;
+      border-bottom: 1px solid var(--screen-line);
+      color: #aeb6c4;
+      font: 10px "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+    }
+    .phase-diagnostic-head b { color: var(--yellow); font-weight: 600; }
+    .phase-diagnostic-head span:last-child { color: #d8dde6; }
+    .phase-plot { display: grid; min-height: 116px; grid-template-columns: minmax(0, 1fr) 126px; }
+    #phase-deviation-chart { display: block; width: 100%; height: 116px; border-right: 1px solid var(--screen-line); }
+    .phase-chart-grid { stroke: #303846; stroke-width: 1; }
+    .phase-reference-path { fill: none; stroke: #788294; stroke-width: 2; stroke-dasharray: 4 6; }
+    .phase-current-path { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .phase-current-path.warn { stroke: var(--red); }
+    .phase-chart-point { fill: var(--screen); stroke: var(--blue); stroke-width: 2; }
+    .phase-chart-point.warn { stroke: var(--red); }
+    .phase-chart-point.active { fill: var(--yellow); stroke: var(--yellow); }
+    .phase-chart-cursor { stroke: var(--yellow); stroke-width: 1.5; stroke-dasharray: 3 4; }
+    .phase-chart-label { fill: #858f9f; font: 9px "IBM Plex Mono", monospace; }
+    .phase-readout { display: grid; align-content: center; gap: 12px; padding: 11px; }
+    .phase-readout span { display: block; color: #8993a3; font: 9px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .phase-readout b { display: block; margin-top: 2px; color: #eef1f5; font: 600 18px "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .phase-readout b.warn { color: var(--red); }
+    .phase-readout b.good { color: var(--green); }
+    .phase-samples { display: grid; border-top: 1px solid var(--screen-line); grid-template-columns: repeat(5, 1fr); }
+    .phase-samples button {
+      display: grid;
+      min-width: 0;
+      min-height: 47px;
+      align-content: center;
+      gap: 2px;
+      padding: 5px 8px;
+      border: 0;
+      border-right: 1px solid var(--screen-line);
+      background: transparent;
+      color: #8f98a8;
+      cursor: pointer;
+      text-align: left;
+      font: 9px "IBM Plex Mono", monospace;
+    }
+    .phase-samples button:last-child { border-right: 0; }
+    .phase-samples button:hover { background: rgba(239, 196, 82, .1); }
+    .phase-samples button.active { background: var(--yellow); color: #17181a; }
+    .phase-samples button b { font-size: 11px; }
+    .phase-samples button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .joint-callout {
+      z-index: 3;
+      margin: 0 14px 14px;
+      padding: 10px 12px;
+      border-left: 4px solid var(--yellow);
+      background: rgba(9, 12, 18, .88);
+      color: #cfd5df;
+      font: 11px/1.5 "IBM Plex Mono", monospace;
+    }
+    .joint-callout b { display: block; margin-bottom: 2px; color: var(--yellow); font-size: 12px; }
+
+    .analysis-panel { min-width: 0; background: var(--card); }
+    .panel-block { padding: 15px; border-bottom: 1px solid var(--ink); }
+    .panel-block:last-child { border-bottom: 0; }
+    .block-title { display: flex; align-items: center; justify-content: space-between; margin: 0 0 10px; letter-spacing: .06em; font: 600 11px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .block-title span { color: var(--muted); font-weight: 400; }
+    .joint-grid { display: grid; gap: 5px; grid-template-columns: repeat(3, 1fr); }
+    .joint-grid button,
+    .metric-tabs button {
+      min-height: 38px;
+      padding: 7px 8px;
+      border: 1px solid var(--line);
+      background: transparent;
+      cursor: pointer;
+      font: 600 11px "IBM Plex Mono", monospace;
+    }
+    .joint-grid button.active { border-color: var(--ink); background: var(--yellow); color: #17181a; }
+    .score-basis { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .score-basis button {
+      min-height: 38px;
+      padding: 7px 8px;
+      border: 1px solid var(--line);
+      background: transparent;
+      cursor: pointer;
+      font: 600 10px "IBM Plex Mono", monospace;
+    }
+    .score-basis button + button { border-left: 0; }
+    .score-basis button.active { background: var(--ink); color: var(--paper); }
+    .basis-note { min-height: 34px; margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+    .metric-tabs { display: grid; border: 1px solid var(--line); grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .metric-tabs button { min-width: 0; padding-inline: 3px; border: 0; border-right: 1px solid var(--line); font-size: 10px; }
+    .metric-tabs button:last-child { border-right: 0; }
+    .metric-tabs button.active { background: var(--ink); color: var(--paper); }
+
+    .chart-wrap { margin-top: 12px; border: 1px solid var(--line); background: color-mix(in srgb, var(--card) 90%, var(--paper)); }
+    #metric-chart { display: block; width: 100%; height: 126px; }
+    .chart-grid { stroke: var(--line); stroke-width: 1; opacity: .65; }
+    .reference-path { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 5 4; }
+    .current-path { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .attention-path { stroke: var(--red); }
+    .chart-cursor { stroke: var(--yellow); stroke-width: 2; }
+    .chart-caption { display: flex; justify-content: space-between; padding: 7px 9px; border-top: 1px solid var(--line); color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    .chart-caption b { color: var(--ink); }
+
+    .joint-scores { display: grid; gap: 6px; }
+    .joint-score { display: grid; align-items: center; gap: 8px; grid-template-columns: 56px 1fr 28px; color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    .joint-score i { height: 5px; background: var(--line); }
+    .joint-score i b { display: block; height: 100%; background: var(--blue); }
+    .joint-score.warn { color: var(--red); }
+    .joint-score.warn i b { background: var(--red); }
+    .joint-score strong { color: var(--ink); text-align: right; }
+
+    .evidence-strip {
+      display: grid;
+      border-top: 1px solid var(--ink);
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .evidence-strip article { min-height: 88px; padding: 14px 16px; border-right: 1px solid var(--ink); }
+    .evidence-strip article:last-child { border-right: 0; }
+    .evidence-strip b { display: block; margin-bottom: 4px; color: var(--blue); font: 600 12px "IBM Plex Mono", monospace; }
+    .evidence-strip strong { display: block; font: 600 14px/1.25 "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .evidence-strip small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+
+    .stats-view { background: var(--paper); }
+    .stats-controls {
+      display: grid;
+      border-bottom: 1px solid var(--ink);
+      background: var(--card);
+      grid-template-columns: 1.15fr .85fr;
+    }
+    .stats-intro,
+    .cohort-control { min-width: 0; padding: 18px; }
+    .stats-intro { border-right: 1px solid var(--ink); }
+    .stats-intro span { color: var(--blue); letter-spacing: .06em; font: 600 11px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .stats-intro h2 { margin: 7px 0 5px; font: 600 24px/1.05 "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .stats-intro p { max-width: 680px; margin: 0; color: var(--muted); font-size: 12px; }
+    .toolchain { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+    .toolchain b { padding: 4px 7px; border: 1px solid var(--line); font: 500 10px "IBM Plex Mono", monospace; }
+    .cohort-control { display: grid; align-content: center; gap: 10px; }
+    .cohort-control label { display: flex; align-items: end; justify-content: space-between; gap: 16px; font: 600 11px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .cohort-control label b { color: var(--blue); font-size: 27px; line-height: 1; }
+    .cohort-control small { color: var(--muted); font-size: 11px; }
+
+    .stats-toolbar {
+      display: grid;
+      border-bottom: 1px solid var(--ink);
+      background: var(--card);
+      grid-template-columns: 1fr auto;
+    }
+    .stats-joints,
+    .chart-modes { display: flex; min-width: 0; }
+    .stats-joints { overflow-x: auto; }
+    .stats-joints button,
+    .chart-modes button {
+      min-width: 76px;
+      min-height: 44px;
+      padding: 7px 10px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      cursor: pointer;
+      font: 600 10px "IBM Plex Mono", monospace;
+    }
+    .stats-joints button.active { background: var(--yellow); color: #17181a; }
+    .chart-modes { border-left: 1px solid var(--ink); }
+    .chart-modes button.active { background: var(--ink); color: var(--paper); }
+    .stats-metric-control { display: grid; min-width: 128px; align-content: center; gap: 2px; padding: 5px 10px; border-right: 1px solid var(--line); }
+    .stats-metric-control span { color: var(--muted); font: 8px "IBM Plex Mono", monospace; }
+    .stats-metric-control select { max-width: 126px; border: 0; background: var(--card); color: var(--ink); font: 600 10px "IBM Plex Mono", monospace; }
+
+    .stats-layout {
+      display: grid;
+      min-height: 430px;
+      grid-template-columns: minmax(0, 1.42fr) minmax(250px, .58fr);
+    }
+    .stats-chart-card { min-width: 0; margin: 0; padding: 18px; border-right: 1px solid var(--ink); background: var(--card); }
+    .stats-chart-card figcaption { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .stats-chart-card figcaption b { font: 600 12px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .stats-chart-card figcaption span { color: var(--muted); text-align: right; font: 10px "IBM Plex Mono", monospace; }
+    #stats-chart { display: block; width: 100%; height: 340px; border: 1px solid var(--line); background: color-mix(in srgb, var(--card) 94%, var(--paper)); }
+    .stats-grid-line,
+    .stats-grid { stroke: var(--line); stroke-width: 1; opacity: .7; }
+    .stats-axis { stroke: var(--ink); stroke-width: 1; }
+    .stats-axis-label { fill: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+    .stats-axis-title { fill: var(--muted); font: 9px "IBM Plex Mono", monospace; letter-spacing: .03em; }
+    .stats-selected-column { fill: color-mix(in srgb, var(--yellow) 12%, transparent); }
+    .stats-hit { fill: transparent; cursor: pointer; }
+    .box-whisker { stroke: var(--ink); stroke-width: 1.5; }
+    .box-body { fill: color-mix(in srgb, var(--blue) 16%, var(--card)); stroke: var(--blue); stroke-width: 2; }
+    .box-body.active,
+    .box-body.selected { fill: color-mix(in srgb, var(--yellow) 38%, var(--card)); stroke: #9d7600; }
+    .box-median { stroke: var(--red); stroke-width: 3; }
+    .box-mean { fill: var(--blue); stroke: var(--card); stroke-width: 2; }
+    .central-line { fill: none; }
+    .central-line.mean-line { stroke: var(--blue); stroke-width: 3; }
+    .central-line.median-line { stroke: var(--red); stroke-width: 2.5; stroke-dasharray: 6 4; }
+    .central-mean { fill: var(--blue); stroke: var(--card); stroke-width: 2; }
+    .central-median { fill: var(--red); }
+    .stats-legend { font: 600 9px "IBM Plex Mono", monospace; }
+    .stats-legend.mean { fill: var(--blue); }
+    .stats-legend.median { fill: var(--red); }
+    .precision-area { fill: color-mix(in srgb, var(--blue) 15%, transparent); }
+    .precision-line { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .precision-marker { stroke: var(--yellow); stroke-width: 2; stroke-dasharray: 5 4; }
+    .precision-point { fill: var(--yellow); stroke: var(--ink); stroke-width: 2; }
+    .precision-label { fill: var(--ink); font: 600 10px "IBM Plex Mono", monospace; }
+    .mean-point { fill: var(--blue); stroke: var(--card); stroke-width: 2; }
+    .stats-line-mean { fill: none; stroke: var(--blue); stroke-width: 3; }
+    .stats-line-median { fill: none; stroke: var(--red); stroke-width: 2.5; stroke-dasharray: 6 4; }
+    .stats-ci-area { fill: color-mix(in srgb, var(--blue) 15%, transparent); }
+    .stats-current { stroke: var(--yellow); stroke-width: 2; }
+
+    .stats-summary { display: grid; align-content: start; background: var(--paper); }
+    .stats-summary > header { padding: 17px; border-bottom: 1px solid var(--ink); background: var(--screen); color: var(--screen-text); }
+    .stats-summary > header span { color: var(--yellow); font: 600 11px "IBM Plex Mono", monospace; }
+    .stats-summary > header h3 { margin: 5px 0 0; font: 600 22px "Space Grotesk", "Noto Sans SC", sans-serif; }
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .stat-grid article { min-height: 86px; padding: 13px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--card); }
+    .stat-grid article:nth-child(2n) { border-right: 0; }
+    .stat-grid span { display: block; color: var(--muted); font: 9px "IBM Plex Mono", monospace; text-transform: uppercase; }
+    .stat-grid b { display: block; margin-top: 7px; color: var(--ink); font: 600 23px "Space Grotesk", sans-serif; }
+    .stats-insight { margin: 14px; padding: 12px; border-left: 4px solid var(--yellow); background: var(--card); color: var(--muted); font-size: 11px; }
+    .stats-insight b { display: block; margin-bottom: 4px; color: var(--ink); font: 600 11px "IBM Plex Mono", monospace; }
+    .analytics-pipeline {
+      display: grid;
+      border-top: 1px solid var(--ink);
+      background: var(--card);
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .analytics-pipeline article { position: relative; min-height: 84px; padding: 14px; border-right: 1px solid var(--ink); }
+    .analytics-pipeline article:last-child { border-right: 0; }
+    .analytics-pipeline article:not(:last-child)::after { position: absolute; z-index: 2; top: 31px; right: -8px; content: "→"; color: var(--red); font-weight: 700; }
+    .analytics-pipeline b { display: block; color: var(--blue); font: 600 10px "IBM Plex Mono", monospace; }
+    .analytics-pipeline strong { display: block; margin-top: 5px; font-size: 12px; }
+    .analytics-pipeline small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+
+    @media (min-width: 621px) {
+      .workspace { min-height: 0; }
+      #skeleton-stage { height: 356px; flex-basis: 356px; }
+      .score-orbit { top: 58px; width: 82px; height: 82px; }
+      .score-orbit::before { width: 62px; height: 62px; }
+      .score-orbit b { font-size: 24px; }
+
+      .phase-diagnostic { margin-bottom: 8px; }
+      .phase-diagnostic-head { min-height: 34px; }
+      .phase-plot { min-height: 88px; grid-template-columns: minmax(0, 1fr) 116px; }
+      #phase-deviation-chart { height: 88px; }
+      .phase-readout { gap: 8px; padding: 8px 10px; }
+      .phase-readout b { font-size: 16px; }
+      .phase-samples button { min-height: 40px; padding-block: 3px; }
+      .joint-callout { margin-bottom: 10px; padding-block: 8px; }
+
+      .panel-block { padding: 11px 13px; }
+      .block-title { margin-bottom: 8px; }
+      .joint-grid { gap: 4px; }
+      .joint-grid button,
+      .metric-tabs button,
+      .score-basis button { min-height: 33px; padding-block: 5px; }
+      .basis-note { min-height: 27px; margin-top: 6px; line-height: 1.35; }
+      .chart-wrap { margin-top: 9px; }
+      #metric-chart { height: 102px; }
+      .chart-caption { padding-block: 5px; }
+      .joint-scores { gap: 4px; }
+      .joint-score { gap: 7px; line-height: 1.25; }
+
+      .evidence-strip article { min-height: 72px; padding-block: 11px; }
+    }
+
+    @media (max-width: 620px) {
+      .lab-tabs button { align-items: flex-start; flex-direction: column; justify-content: center; gap: 2px; }
+      .control-strip { grid-template-columns: 1fr; }
+      .transport { border-top: 1px solid var(--ink); border-left: 0; }
+      .timeline { flex: 1; }
+      .performance-switch button { min-width: 0; flex: 1; }
+      .workspace { grid-template-columns: 1fr; }
+      .motion-stage { border-right: 0; border-bottom: 1px solid var(--ink); }
+      #skeleton-stage { height: 430px; flex-basis: 430px; }
+      .phase-plot { grid-template-columns: 1fr; }
+      #phase-deviation-chart { border-right: 0; border-bottom: 1px solid var(--screen-line); }
+      .phase-readout { grid-template-columns: repeat(2, 1fr); }
+      .phase-samples { overflow-x: auto; grid-template-columns: repeat(5, minmax(92px, 1fr)); }
+      .evidence-strip { grid-template-columns: 1fr; }
+      .evidence-strip article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--ink); }
+      .evidence-strip article:last-child { border-bottom: 0; }
+      .stats-controls,
+      .stats-layout { grid-template-columns: 1fr; }
+      .stats-intro { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .stats-toolbar { grid-template-columns: 1fr; }
+      .chart-modes { border-top: 1px solid var(--ink); border-left: 0; }
+      .chart-modes button { flex: 1; }
+      .stats-chart-card { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .analytics-pipeline { grid-template-columns: 1fr; }
+      .analytics-pipeline article { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .analytics-pipeline article:not(:last-child)::after { top: auto; right: 14px; bottom: -9px; content: "↓"; }
+    }
+
+    @media (max-width: 480px) {
+      .topline { align-items: flex-start; padding-block: 10px; }
+      .topline > span:first-child { max-width: 68%; }
+      .performance-switch button span { display: none; }
+      .joint-grid { grid-template-columns: repeat(2, 1fr); }
+      .score-orbit { width: 76px; height: 76px; }
+      .score-orbit::before { width: 58px; height: 58px; }
+      .score-orbit b { font-size: 22px; }
+      .score-orbit small { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .joint-ring.pulse { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topline">
+      <span><b>TUM / HF-MOTION-03</b> · <span data-copy="title">RELATIVE MOTION EVALUATION</span></span>
+      <span class="status"><i></i><span data-copy="study">20+ TEST SERIES</span></span>
+    </header>
+
+    <nav class="lab-tabs" aria-label="Research views">
+      <button class="active" type="button" data-lab-view="motion">
+        <b data-copy="motion-tab">01 · MOTION DIAGNOSTIC</b>
+        <span data-copy="motion-tab-note">individual relative scoring</span>
+      </button>
+      <button type="button" data-lab-view="stats">
+        <b data-copy="stats-tab">02 · COHORT ANALYTICS</b>
+        <span data-copy="stats-tab-note">statistics and visualization</span>
+      </button>
+    </nav>
+
+    <div class="lab-view" id="motion-view">
+
+    <section class="control-strip" aria-label="Performance controls">
+      <div class="performance-switch" role="group" aria-label="Performance sample">
+        <button type="button" class="active" data-mode="reference">
+          <span data-copy="good-label">01 · GOOD PERFORMANCE</span>
+          <span data-copy="good-body">stable relative pattern</span>
+        </button>
+        <button type="button" data-mode="attention">
+          <span data-copy="attention-label">02 · NEEDS ATTENTION</span>
+          <span data-copy="attention-body">joint deviation visible</span>
+        </button>
+      </div>
+      <div class="transport">
+        <button id="play-toggle" type="button" aria-label="Pause">Ⅱ</button>
+        <div class="timeline">
+          <label><span data-copy="cycle">MOVEMENT CYCLE</span><b id="time-label">00.0s</b></label>
+          <input id="timeline" type="range" min="0" max="1000" value="0" aria-label="Movement timeline">
+          <span class="phase-track" aria-hidden="true"><i class="active"></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <button id="reset-pose" type="button" aria-label="Reset pose">↺</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="motion-stage">
+        <div class="stage-head">
+          <span data-copy="stage">2D SKELETON · FRONT / SIDE</span>
+          <span class="legend"><span><i></i><b data-copy="live">CURRENT</b></span><span><i></i><b data-copy="ref">REFERENCE</b></span></span>
+        </div>
+        <svg id="skeleton-stage" viewBox="0 0 680 486" role="img" aria-label="Animated front and side skeleton views">
+          <line class="ground" x1="34" y1="430" x2="646" y2="430"></line>
+          <line class="divider" x1="365" y1="64" x2="365" y2="430"></line>
+          <text class="view-label" x="38" y="82">FRONT VIEW</text>
+          <text class="view-label" x="393" y="82">SIDE VIEW</text>
+          <g id="front-reference"></g>
+          <g id="side-reference"></g>
+          <g id="front-live"></g>
+          <g id="side-live"></g>
+        </svg>
+        <div class="score-orbit" id="score-orbit"><b id="overall-score">92</b><small data-copy="overall">OVERALL</small></div>
+        <section class="phase-diagnostic" aria-label="Movement phase diagnostic">
+          <header class="phase-diagnostic-head">
+            <b data-copy="phase-diagnostic">MOVEMENT PHASE DIAGNOSTIC</b>
+            <span id="phase-joint-label">WRIST · ANGULAR VELOCITY</span>
+          </header>
+          <div class="phase-plot">
+            <svg id="phase-deviation-chart" viewBox="0 0 500 116" preserveAspectRatio="none" role="img" aria-label="Current and reference joint trajectory across five movement phases">
+              <line class="phase-chart-grid" x1="34" y1="27" x2="480" y2="27"></line>
+              <line class="phase-chart-grid" x1="34" y1="58" x2="480" y2="58"></line>
+              <line class="phase-chart-grid" x1="34" y1="89" x2="480" y2="89"></line>
+              <text class="phase-chart-label" x="8" y="31">+1</text>
+              <text class="phase-chart-label" x="14" y="62">0</text>
+              <text class="phase-chart-label" x="8" y="93">−1</text>
+              <path class="phase-reference-path" id="phase-reference-path"></path>
+              <path class="phase-current-path" id="phase-current-path"></path>
+              <line class="phase-chart-cursor" id="phase-chart-cursor" x1="74" y1="14" x2="74" y2="101"></line>
+              <g id="phase-chart-points"></g>
+            </svg>
+            <div class="phase-readout">
+              <div><span data-copy="peak-phase">LARGEST DEVIATION</span><b id="peak-phase-value">03</b></div>
+              <div><span data-copy="predicted-score">CORRECTED SCORE</span><b class="good" id="predicted-score-value">82</b></div>
+            </div>
+          </div>
+          <div class="phase-samples" id="phase-samples" aria-label="Movement phases"></div>
+        </section>
+        <div class="joint-callout"><b id="callout-title">WRIST · 94</b><span id="callout-body">Relative motion follows the expert pattern.</span></div>
+      </div>
+
+      <aside class="analysis-panel">
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="basis-title">SCORING BASIS</b><span data-copy="basis-meta">COMPARE THE MODEL</span></h2>
+          <div class="score-basis">
+            <button type="button" data-score-basis="absolute" data-copy="absolute">ABSOLUTE THRESHOLD</button>
+            <button type="button" class="active" data-score-basis="relative" data-copy="individual">INDIVIDUAL RELATIVE</button>
+          </div>
+          <p class="basis-note" id="basis-note">Movement trends are compared with the reference inside each participant's usable range.</p>
+        </section>
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="joint-title">JOINT DIAGNOSTIC</b><span id="selected-joint-meta">WRIST / R</span></h2>
+          <div class="joint-grid" id="joint-grid"></div>
+        </section>
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="metric-title">KINEMATIC METRIC</b><span id="metric-unit">°/s</span></h2>
+          <div class="metric-tabs" id="metric-tabs"></div>
+          <div class="chart-wrap">
+            <svg id="metric-chart" viewBox="0 0 360 126" preserveAspectRatio="none" aria-label="Selected metric chart">
+              <line class="chart-grid" x1="0" y1="32" x2="360" y2="32"></line>
+              <line class="chart-grid" x1="0" y1="63" x2="360" y2="63"></line>
+              <line class="chart-grid" x1="0" y1="94" x2="360" y2="94"></line>
+              <path class="reference-path" id="reference-path"></path>
+              <path class="current-path" id="current-path"></path>
+              <line class="chart-cursor" id="chart-cursor" x1="0" y1="0" x2="0" y2="126"></line>
+            </svg>
+            <div class="chart-caption"><span><b id="metric-name">ANGULAR VELOCITY</b> · <span data-copy="relative">RELATIVE PATTERN</span></span><span id="metric-value">+42 °/s</span></div>
+          </div>
+        </section>
+        <section class="panel-block">
+          <h2 class="block-title"><b data-copy="score-title">JOINT SCORES</b><span data-copy="corr">CORRELATION BASED</span></h2>
+          <div class="joint-scores" id="joint-scores"></div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="evidence-strip">
+      <article><b>01</b><strong data-copy="evidence-1-title">Relative, not absolute</strong><small data-copy="evidence-1-body">Scores adapt to each participant's movement profile.</small></article>
+      <article><b>02</b><strong data-copy="evidence-2-title">Dynamic joint feedback</strong><small data-copy="evidence-2-body">Five kinematic metrics stay synchronized with the skeleton.</small></article>
+      <article><b>03</b><strong data-copy="evidence-3-title">Transferable framework</strong><small data-copy="evidence-3-body">The same pipeline can evaluate other movement disciplines.</small></article>
+    </section>
+    </div>
+
+    <section class="lab-view stats-view" id="stats-view" hidden>
+      <header class="stats-controls">
+        <div class="stats-intro">
+          <span data-copy="stats-kicker">COHORT ANALYSIS / SYNTHETIC DEMO DATA</span>
+          <h2 data-copy="stats-title">From movement sequences to a stable evaluation model.</h2>
+          <p data-copy="stats-body">Box plots, mean, median, quartiles and confidence intervals make individual differences visible and show how the estimate stabilizes as the cohort grows.</p>
+          <div class="toolchain"><b>RStudio</b><b>MATLAB</b><b>Statistical Analysis</b><b>Dynamic Visualization</b></div>
+        </div>
+        <div class="cohort-control">
+          <label><span data-copy="participants">PARTICIPANTS INCLUDED</span><b id="participant-count">20</b></label>
+          <input id="participant-slider" type="range" min="8" max="24" value="20" aria-label="Participants included">
+          <small data-copy="participants-note">Increase the cohort to reduce estimate uncertainty.</small>
+        </div>
+      </header>
+
+      <div class="stats-toolbar">
+        <div class="stats-joints" id="stats-joints" aria-label="Joint group"></div>
+        <div class="chart-modes" aria-label="Visualization type">
+          <label class="stats-metric-control"><span data-copy="metric-select">METRIC</span><select id="stats-metric-select" aria-label="Metric"></select></label>
+          <button class="active" type="button" data-chart-mode="box" data-copy="box-mode">BOX PLOT</button>
+          <button type="button" data-chart-mode="central" data-copy="central-mode">MEAN / MEDIAN</button>
+          <button type="button" data-chart-mode="precision" data-copy="precision-mode">PRECISION</button>
+        </div>
+      </div>
+
+      <div class="stats-layout">
+        <figure class="stats-chart-card">
+          <figcaption>
+            <b id="stats-chart-title">JOINT SCORE DISTRIBUTION</b>
+            <span id="stats-chart-meta">ANGULAR VELOCITY · n=20</span>
+          </figcaption>
+          <svg id="stats-chart" viewBox="0 0 720 340" role="img" aria-label="Interactive cohort statistics chart"></svg>
+        </figure>
+        <aside class="stats-summary">
+          <header><span data-copy="selected-group">SELECTED GROUP</span><h3 id="stats-selected-joint">WRIST</h3></header>
+          <div class="stat-grid">
+            <article><span data-copy="mean">MEAN</span><b id="stat-mean">78.4</b></article>
+            <article><span data-copy="median">MEDIAN</span><b id="stat-median">79.1</b></article>
+            <article><span data-copy="iqr">IQR</span><b id="stat-iqr">11.6</b></article>
+            <article><span data-copy="ci">95% CI ±</span><b id="stat-ci">3.2</b></article>
+          </div>
+          <p class="stats-insight"><b id="stability-label">MODEL STABILITY · 88%</b><span id="stats-insight-text">More participants narrow uncertainty while the median and distribution shape become more stable.</span></p>
+        </aside>
+      </div>
+
+      <footer class="analytics-pipeline">
+        <article><b>01 · INPUT</b><strong data-copy="pipeline-1-title">Partner-provided skeleton data</strong><small data-copy="pipeline-1-body">CV supplies joint sequences; the research begins with experiment design.</small></article>
+        <article><b>02 · PROCESS</b><strong data-copy="pipeline-2-title">MATLAB / RStudio processing</strong><small data-copy="pipeline-2-body">Kinematics, cleaning, aggregation and statistical comparison.</small></article>
+        <article><b>03 · MODEL</b><strong data-copy="pipeline-3-title">Relative evaluation framework</strong><small data-copy="pipeline-3-body">Participant-specific correlation and expandable scoring rules.</small></article>
+        <article><b>04 · EVIDENCE</b><strong data-copy="pipeline-4-title">Dynamic and cohort visualization</strong><small data-copy="pipeline-4-body">Joint feedback, distributions and confidence communicate the result.</small></article>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const locale = params.get("lang") === "en" ? "en" : "zh";
+      document.documentElement.lang = locale;
+      document.documentElement.dataset.theme = params.get("theme") === "dark" ? "dark" : "light";
+
+      const copy = {
+        zh: {
+          title: "相对动作评估", study: "20+ 被试序列", "good-label": "01 · 良好表现", "good-body": "相对动作模式稳定",
+          "attention-label": "02 · 待改进表现", "attention-body": "关节偏差同步显现", cycle: "动作周期", stage: "二维骨架 · 正面 / 侧面",
+          live: "当前动作", ref: "参考动作", overall: "综合分数", "joint-title": "关节诊断", "metric-title": "运动学指标",
+          "score-title": "关节评分", corr: "基于相对相关性", relative: "相对变化", "evidence-1-title": "相对而非绝对",
+          "evidence-1-body": "评分适配每位被试自身的动作特征。", "evidence-2-title": "动态关节反馈", "evidence-2-body": "五类运动学指标与骨架动作保持同步。",
+          "evidence-3-title": "可迁移评估框架", "evidence-3-body": "同一流程可以拓展到其他运动项目。",
+          "motion-tab": "01 · 动作诊断", "motion-tab-note": "个体相对评分",
+          "stats-tab": "02 · 群体统计", "stats-tab-note": "统计分析与可视化",
+          "phase-diagnostic": "动作相位诊断", "peak-phase": "最大偏差阶段", "predicted-score": "修正后预计分数",
+          "basis-title": "评分基准", "basis-meta": "比较评价模型", absolute: "绝对阈值", individual: "个体相对",
+          "stats-kicker": "群体分析 / 合成演示数据", "stats-title": "从动作序列建立稳定的评价模型。",
+          "stats-body": "通过箱型图、均值、中位数、四分位数与置信区间呈现个体差异，并观察样本扩大后评估结果如何逐步稳定。",
+          participants: "纳入被试", "participants-note": "增加样本量，观察估计不确定性逐步收敛。",
+          "metric-select": "分析指标", "box-mode": "箱型图", "central-mode": "均值 / 中位数", "precision-mode": "评判精度",
+          "selected-group": "当前关节组", mean: "平均数", median: "中位数", iqr: "四分位距", ci: "95% 置信区间 ±",
+          "pipeline-1-title": "合作方提供骨架数据", "pipeline-1-body": "CV 输出关节序列，研究工作从实验设计与数据定义开始。",
+          "pipeline-2-title": "MATLAB / RStudio 处理", "pipeline-2-body": "完成运动学计算、清洗、聚合与统计比较。",
+          "pipeline-3-title": "相对评价框架", "pipeline-3-body": "建立个体相关评分与可扩展评价规则。",
+          "pipeline-4-title": "动态与群体可视化", "pipeline-4-body": "用关节反馈、分布与置信度传递分析结论。"
+        },
+        en: {}
+      };
+      document.querySelectorAll("[data-copy]").forEach((node) => {
+        const value = copy[locale][node.dataset.copy];
+        if (value) node.textContent = value;
+      });
+
+      const labels = locale === "zh"
+        ? { neck: "颈部", shoulder: "肩部", elbow: "肘关节", wrist: "手腕", hip: "胯部", knee: "膝关节" }
+        : { neck: "NECK", shoulder: "SHOULDER", elbow: "ELBOW", wrist: "WRIST", hip: "HIP", knee: "KNEE" };
+      const metricData = locale === "zh"
+        ? [
+            ["angle", "角度", "°"], ["velocity", "速度", "m/s"], ["acceleration", "加速度", "m/s²"],
+            ["angularVelocity", "角速度", "°/s"], ["angularAcceleration", "角加速度", "°/s²"]
+          ]
+        : [
+            ["angle", "ANGLE", "°"], ["velocity", "VELOCITY", "m/s"], ["acceleration", "ACCEL.", "m/s²"],
+            ["angularVelocity", "ANG. VEL.", "°/s"], ["angularAcceleration", "ANG. ACC.", "°/s²"]
+          ];
+      const joints = Object.keys(labels);
+      const jointGrid = document.querySelector("#joint-grid");
+      const metricTabs = document.querySelector("#metric-tabs");
+      const jointScores = document.querySelector("#joint-scores");
+      const timeline = document.querySelector("#timeline");
+      const playToggle = document.querySelector("#play-toggle");
+      const scoreOrbit = document.querySelector("#score-orbit");
+      const overallScore = document.querySelector("#overall-score");
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+      const state = {
+        mode: "reference",
+        joint: "wrist",
+        metric: "angularVelocity",
+        basis: "relative",
+        playing: !reducedMotion.matches,
+        progress: 0,
+        offsets: { wrist: { x: 0, y: 0 }, elbow: { x: 0, y: 0 }, shoulder: { x: 0, y: 0 }, neck: { x: 0, y: 0 }, hip: { x: 0, y: 0 }, knee: { x: 0, y: 0 } },
+        lastFrame: performance.now()
+      };
+
+      joints.forEach((joint) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.joint = joint;
+        button.textContent = labels[joint];
+        if (joint === state.joint) button.classList.add("active");
+        button.addEventListener("click", () => { state.joint = joint; renderControls(); renderFrame(); });
+        jointGrid.append(button);
+      });
+
+      metricData.forEach(([key, label]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.metric = key;
+        button.textContent = label;
+        if (key === state.metric) button.classList.add("active");
+        button.addEventListener("click", () => { state.metric = key; renderControls(); renderFrame(); });
+        metricTabs.append(button);
+      });
+
+      const phaseNames = locale === "zh"
+        ? ["准备", "抬臂", "展开", "回收", "稳定"]
+        : ["PREPARE", "LIFT", "EXTEND", "RETURN", "SETTLE"];
+      const phaseProgress = [.04, .24, .44, .64, .84];
+      const phaseRisk = { neck: 1, shoulder: 2, elbow: 2, wrist: 3, hip: 1, knee: 2 };
+      const phaseSamples = document.querySelector("#phase-samples");
+      phaseNames.forEach((name, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.phaseIndex = index;
+        button.setAttribute("aria-label", `${index + 1} · ${name}`);
+        button.innerHTML = `<b>0${index + 1}</b><span>${name}</span>`;
+        button.addEventListener("click", () => {
+          state.progress = phaseProgress[index];
+          state.playing = false;
+          playToggle.textContent = "▶";
+          playToggle.setAttribute("aria-label", "Play");
+          renderFrame();
+        });
+        phaseSamples.append(button);
+      });
+
+      const bones = [
+        ["head", "neck"], ["neck", "shoulderL"], ["neck", "shoulderR"], ["shoulderL", "elbowL"], ["elbowL", "wristL"],
+        ["shoulderR", "elbowR"], ["elbowR", "wristR"], ["neck", "hip"], ["hip", "hipL"], ["hip", "hipR"],
+        ["hipL", "kneeL"], ["kneeL", "ankleL"], ["hipR", "kneeR"], ["kneeR", "ankleR"]
+      ];
+      const draggableMap = { neck: "neck", shoulderR: "shoulder", elbowR: "elbow", wristR: "wrist", hip: "hip", kneeR: "knee" };
+      let drag = null;
+
+      function pose(progress, mode, reference = false) {
+        const t = progress * Math.PI * 2;
+        const wave = Math.sin(t);
+        const lift = Math.sin(t - .55);
+        const variance = mode === "attention" && !reference ? 1 : 0;
+        const base = {
+          head: [182, 95], neck: [182, 128], shoulderL: [145, 142], shoulderR: [219, 142],
+          elbowL: [120 - wave * 10, 192 - lift * 25], elbowR: [244 + wave * 10, 192 + lift * 7 + variance * 18],
+          wristL: [99 - wave * 25, 238 - lift * 62], wristR: [265 + wave * 25, 238 + lift * 30 + variance * 34],
+          hip: [182, 246], hipL: [157, 255], hipR: [207, 255],
+          kneeL: [151 - wave * 8, 335], kneeR: [213 + wave * 8 + variance * 15, 335 + variance * 12],
+          ankleL: [144 - wave * 13, 416], ankleR: [220 + wave * 13 + variance * 21, 416],
+        };
+        if (!reference) {
+          Object.entries(draggableMap).forEach(([point, joint]) => {
+            const offset = state.offsets[joint];
+            base[point][0] += offset.x;
+            base[point][1] += offset.y;
+          });
+        }
+        return base;
+      }
+
+      function sidePose(front) {
+        const center = 510;
+        const depth = (x) => (x - 182) * .26;
+        const side = {};
+        Object.entries(front).forEach(([key, [x, y]]) => { side[key] = [center + depth(x), y]; });
+        side.head[0] += 5;
+        side.shoulderL[0] -= 6; side.shoulderR[0] += 6;
+        side.hipL[0] -= 5; side.hipR[0] += 5;
+        return side;
+      }
+
+      function makeSvg(tag, className) {
+        const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        if (className) node.setAttribute("class", className);
+        return node;
+      }
+
+      function renderSkeleton(groupId, points, reference, side = false) {
+        const group = document.querySelector(`#${groupId}`);
+        group.replaceChildren();
+        bones.forEach(([from, to]) => {
+          const line = makeSvg("line", reference ? "reference-line" : "body-line");
+          const focus = state.mode === "attention" && [from, to].some((key) => key.toLowerCase().includes(state.joint === "wrist" ? "wrist" : state.joint));
+          if (!reference && focus) line.classList.add("warn");
+          line.setAttribute("x1", points[from][0]); line.setAttribute("y1", points[from][1]);
+          line.setAttribute("x2", points[to][0]); line.setAttribute("y2", points[to][1]);
+          group.append(line);
+        });
+        if (reference) return;
+        Object.entries(points).forEach(([key, [x, y]]) => {
+          if (key === "head") {
+            const head = makeSvg("circle", "joint");
+            head.setAttribute("cx", x); head.setAttribute("cy", y); head.setAttribute("r", 17);
+            head.style.pointerEvents = "none";
+            group.append(head);
+            return;
+          }
+          const jointName = draggableMap[key];
+          const circle = makeSvg("circle", "joint");
+          circle.setAttribute("cx", x); circle.setAttribute("cy", y); circle.setAttribute("r", jointName ? 7 : 5);
+          if (jointName === state.joint) circle.classList.add("active");
+          if (state.mode === "attention" && jointName === state.joint) circle.classList.add("warn");
+          if (jointName && !side) {
+            circle.dataset.joint = jointName;
+            circle.addEventListener("pointerdown", startDrag);
+          } else {
+            circle.style.pointerEvents = "none";
+          }
+          group.append(circle);
+          if (jointName === state.joint && !side) {
+            const ring = makeSvg("circle", "joint-ring pulse");
+            ring.setAttribute("cx", x); ring.setAttribute("cy", y); ring.setAttribute("r", 13);
+            group.append(ring);
+          }
+        });
+      }
+
+      function startDrag(event) {
+        event.preventDefault();
+        const svg = document.querySelector("#skeleton-stage");
+        const point = svg.createSVGPoint();
+        point.x = event.clientX; point.y = event.clientY;
+        const local = point.matrixTransform(svg.getScreenCTM().inverse());
+        state.joint = event.currentTarget.dataset.joint;
+        drag = { joint: state.joint, x: local.x, y: local.y, startX: state.offsets[state.joint].x, startY: state.offsets[state.joint].y };
+        svg.setPointerCapture(event.pointerId);
+        renderControls();
+      }
+
+      const stage = document.querySelector("#skeleton-stage");
+      stage.addEventListener("pointermove", (event) => {
+        if (!drag) return;
+        const point = stage.createSVGPoint();
+        point.x = event.clientX; point.y = event.clientY;
+        const local = point.matrixTransform(stage.getScreenCTM().inverse());
+        state.offsets[drag.joint].x = Math.max(-45, Math.min(45, drag.startX + local.x - drag.x));
+        state.offsets[drag.joint].y = Math.max(-45, Math.min(45, drag.startY + local.y - drag.y));
+        renderFrame();
+      });
+      const stopDrag = () => { drag = null; };
+      stage.addEventListener("pointerup", stopDrag);
+      stage.addEventListener("pointercancel", stopDrag);
+
+      const scoreBase = {
+        reference: { neck: 94, shoulder: 91, elbow: 90, wrist: 94, hip: 92, knee: 91 },
+        attention: { neck: 84, shoulder: 76, elbow: 61, wrist: 55, hip: 73, knee: 64 }
+      };
+      const correctionTargets = {
+        neck: { x: 0, y: -8 }, shoulder: { x: -5, y: -10 }, elbow: { x: 0, y: -18 },
+        wrist: { x: -4, y: -34 }, hip: { x: 0, y: -7 }, knee: { x: -15, y: -12 }
+      };
+      function scoreFor(joint) {
+        const offset = state.offsets[joint];
+        let adjustment = 0;
+        if (state.mode === "attention") {
+          const target = correctionTargets[joint];
+          const initialDistance = Math.hypot(target.x, target.y);
+          const currentDistance = Math.hypot(offset.x - target.x, offset.y - target.y);
+          adjustment = Math.max(-16, Math.min(26, (initialDistance - currentDistance) * .72));
+        } else {
+          adjustment = -Math.min(24, Math.hypot(offset.x, offset.y) * .42);
+        }
+        if (state.basis === "absolute") {
+          adjustment -= { neck: 8, shoulder: 10, elbow: 6, wrist: 12, hip: 7, knee: 9 }[joint];
+        }
+        return Math.max(35, Math.round(scoreBase[state.mode][joint] + adjustment));
+      }
+      function allScores() { return Object.fromEntries(joints.map((joint) => [joint, scoreFor(joint)])); }
+
+      function renderControls() {
+        jointGrid.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.joint === state.joint));
+        metricTabs.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.metric === state.metric));
+        document.querySelectorAll("[data-score-basis]").forEach((button) => button.classList.toggle("active", button.dataset.scoreBasis === state.basis));
+        document.querySelector("#basis-note").textContent = state.basis === "relative"
+          ? (locale === "zh" ? "在每位被试可用活动范围内比较动作趋势，减少体型与绝对幅度差异造成的偏差。" : "Movement trends are compared inside each participant's usable range, reducing bias from body scale and absolute amplitude.")
+          : (locale === "zh" ? "统一阈值会把体型与活动范围差异计入扣分，因此同一动作可能得到更低分。" : "One global threshold also penalizes body scale and range differences, so the same movement can receive a lower score.");
+        const scores = allScores();
+        jointScores.replaceChildren();
+        joints.forEach((joint) => {
+          const row = document.createElement("div");
+          row.className = `joint-score${scores[joint] < 70 ? " warn" : ""}`;
+          row.innerHTML = `<span>${labels[joint]}</span><i><b style="width:${scores[joint]}%"></b></i><strong>${scores[joint]}</strong>`;
+          row.addEventListener("click", () => { state.joint = joint; renderControls(); renderFrame(); });
+          jointScores.append(row);
+        });
+        const metric = metricData.find(([key]) => key === state.metric);
+        document.querySelector("#metric-unit").textContent = metric[2];
+        document.querySelector("#metric-name").textContent = metric[1];
+        document.querySelector("#selected-joint-meta").textContent = `${labels[state.joint]} / R`;
+      }
+
+      function renderChart() {
+        const metricIndex = metricData.findIndex(([key]) => key === state.metric);
+        const score = scoreFor(state.joint);
+        const count = 42;
+        const ref = [];
+        const current = [];
+        for (let i = 0; i < count; i++) {
+          const x = i / (count - 1) * 360;
+          const phase = i / (count - 1) * Math.PI * 2;
+          const shape = Math.sin(phase + metricIndex * .34) * (22 + metricIndex * 3) + Math.sin(phase * 2.1) * 8;
+          const refY = 63 - shape;
+          const deviation = state.mode === "attention" ? Math.sin(phase * 1.45 + .8) * (100 - score) * .43 + (100 - score) * .2 : Math.sin(phase * 3) * 2.5;
+          ref.push([x, refY]);
+          current.push([x, refY + deviation]);
+        }
+        const path = (values) => values.map(([x, y], index) => `${index ? "L" : "M"}${x.toFixed(1)},${Math.max(7, Math.min(119, y)).toFixed(1)}`).join(" ");
+        document.querySelector("#reference-path").setAttribute("d", path(ref));
+        const currentPath = document.querySelector("#current-path");
+        currentPath.setAttribute("d", path(current));
+        currentPath.classList.toggle("attention-path", state.mode === "attention");
+        const cursorX = state.progress * 360;
+        const cursor = document.querySelector("#chart-cursor");
+        cursor.setAttribute("x1", cursorX); cursor.setAttribute("x2", cursorX);
+        const amplitude = Math.round((Math.sin(state.progress * Math.PI * 2 + metricIndex) * (28 + metricIndex * 9)) * 10) / 10;
+        document.querySelector("#metric-value").textContent = `${amplitude >= 0 ? "+" : ""}${amplitude} ${metricData[metricIndex][2]}`;
+      }
+
+      function renderPhaseDiagnostic(activePhase) {
+        const selectedScore = scoreFor(state.joint);
+        const metricPosition = metricData.findIndex(([key]) => key === state.metric);
+        const riskCenter = phaseRisk[state.joint];
+        const reference = phaseProgress.map((progress, index) => Math.sin(progress * Math.PI * 2 + metricPosition * .28) * .54 + Math.cos(index * 1.13) * .08);
+        const current = reference.map((value, index) => {
+          const proximity = Math.max(0, 1 - Math.abs(index - riskCenter) / 2.7);
+          const direction = index % 2 === 0 ? 1 : -1;
+          const deviation = state.mode === "attention"
+            ? direction * proximity * ((100 - selectedScore) / 52)
+            : Math.sin(index * 1.8 + metricPosition) * .055;
+          return Math.max(-1.08, Math.min(1.08, value + deviation));
+        });
+        const deviations = current.map((value, index) => Math.abs(value - reference[index]));
+        const peakIndex = deviations.indexOf(Math.max(...deviations));
+        const phaseScores = deviations.map((deviation) => Math.max(35, Math.min(99, Math.round(selectedScore + 5 - deviation * 31))));
+        const predictedScore = selectedScore >= 85
+          ? selectedScore
+          : Math.min(96, selectedScore + Math.max(8, Math.round((100 - selectedScore) * .48)));
+        const xAt = (index) => 74 + index * 94;
+        const yAt = (value) => 58 - value * 31;
+        const linePath = (values) => values.map((value, index) => `${index ? "L" : "M"}${xAt(index)},${yAt(value).toFixed(1)}`).join(" ");
+        document.querySelector("#phase-reference-path").setAttribute("d", linePath(reference));
+        const currentPath = document.querySelector("#phase-current-path");
+        currentPath.setAttribute("d", linePath(current));
+        currentPath.classList.toggle("warn", state.mode === "attention");
+        const cursor = document.querySelector("#phase-chart-cursor");
+        cursor.setAttribute("x1", xAt(activePhase));
+        cursor.setAttribute("x2", xAt(activePhase));
+        const points = document.querySelector("#phase-chart-points");
+        points.replaceChildren();
+        current.forEach((value, index) => {
+          const point = makeSvg("circle", `phase-chart-point${state.mode === "attention" ? " warn" : ""}${index === activePhase ? " active" : ""}`);
+          point.setAttribute("cx", xAt(index));
+          point.setAttribute("cy", yAt(value));
+          point.setAttribute("r", index === activePhase ? 5 : 3.5);
+          points.append(point);
+        });
+        phaseSamples.querySelectorAll("button").forEach((button, index) => {
+          button.classList.toggle("active", index === activePhase);
+          button.querySelector("b").textContent = `0${index + 1} · ${phaseScores[index]}`;
+        });
+        const metricLabel = metricData.find(([key]) => key === state.metric)[1];
+        document.querySelector("#phase-joint-label").textContent = `${labels[state.joint]} · ${metricLabel}`;
+        document.querySelector("#peak-phase-value").textContent = `0${peakIndex + 1} · ${phaseNames[peakIndex]}`;
+        const predicted = document.querySelector("#predicted-score-value");
+        predicted.textContent = predictedScore;
+        predicted.classList.toggle("warn", predictedScore < 70);
+        predicted.classList.toggle("good", predictedScore >= 70);
+      }
+
+      function renderFrame() {
+        const liveFront = pose(state.progress, state.mode);
+        const refFront = pose(state.progress, "reference", true);
+        renderSkeleton("front-reference", refFront, true);
+        renderSkeleton("side-reference", sidePose(refFront), true, true);
+        renderSkeleton("front-live", liveFront, false);
+        renderSkeleton("side-live", sidePose(liveFront), false, true);
+        const scores = allScores();
+        const overall = Math.round(Object.values(scores).reduce((sum, value) => sum + value, 0) / joints.length);
+        overallScore.textContent = overall;
+        scoreOrbit.classList.toggle("attention", overall < 80);
+        const selected = scores[state.joint];
+        document.querySelector("#callout-title").textContent = `${labels[state.joint]} · ${selected}`;
+        const hasCorrection = Math.hypot(state.offsets[state.joint].x, state.offsets[state.joint].y) > 4;
+        document.querySelector("#callout-body").textContent = hasCorrection && state.mode === "attention"
+          ? (locale === "zh" ? "WHAT-IF 修正：拖向参考残影时，预测关节分数同步提高；原始序列不会被覆盖。" : "WHAT-IF correction: moving toward the reference ghost raises the predicted joint score without overwriting the source sequence.")
+          : selected >= 85
+            ? (locale === "zh" ? "相对动作模式与参考序列保持一致。" : "Relative motion follows the expert reference pattern.")
+            : (locale === "zh" ? "当前阶段偏离参考相关关系；可拖动突出关节进行局部修正实验。" : "The current phase deviates from the reference correlation; drag the highlighted joint for a local correction experiment.");
+        timeline.value = Math.round(state.progress * 1000);
+        document.querySelector("#time-label").textContent = `${(state.progress * 8).toFixed(1)}s`;
+        const activePhase = Math.min(4, Math.floor(state.progress * 5));
+        document.querySelectorAll(".phase-track i").forEach((node, index) => node.classList.toggle("active", index <= activePhase));
+        renderPhaseDiagnostic(activePhase);
+        renderChart();
+      }
+
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.mode = button.dataset.mode;
+          document.querySelectorAll("[data-mode]").forEach((item) => item.classList.toggle("active", item === button));
+          renderControls(); renderFrame();
+        });
+      });
+      playToggle.addEventListener("click", () => {
+        state.playing = !state.playing;
+        playToggle.textContent = state.playing ? "Ⅱ" : "▶";
+        playToggle.setAttribute("aria-label", state.playing ? "Pause" : "Play");
+        state.lastFrame = performance.now();
+      });
+      timeline.addEventListener("input", () => { state.progress = Number(timeline.value) / 1000; renderFrame(); });
+      document.querySelector("#reset-pose").addEventListener("click", () => {
+        Object.values(state.offsets).forEach((offset) => { offset.x = 0; offset.y = 0; });
+        renderControls(); renderFrame();
+      });
+
+      document.querySelectorAll("[data-score-basis]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.basis = button.dataset.scoreBasis;
+          renderControls();
+          renderFrame();
+        });
+      });
+
+      const statsState = { participants: 20, joint: "wrist", metric: "angularVelocity", chart: "box" };
+      const statsJoints = document.querySelector("#stats-joints");
+      const statsMetricSelect = document.querySelector("#stats-metric-select");
+      const participantSlider = document.querySelector("#participant-slider");
+      const statsChart = document.querySelector("#stats-chart");
+      const metricIndex = () => metricData.findIndex(([key]) => key === statsState.metric);
+      const jointIndex = (joint) => joints.indexOf(joint);
+      const translated = (zh, en) => locale === "zh" ? zh : en;
+      const clamp = (min, max, value) => Math.max(min, Math.min(max, value));
+
+      joints.forEach((joint) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.statsJoint = joint;
+        button.textContent = labels[joint];
+        button.addEventListener("click", () => { statsState.joint = joint; renderStats(); });
+        statsJoints.append(button);
+      });
+      metricData.forEach(([key, label]) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = label;
+        statsMetricSelect.append(option);
+      });
+      statsMetricSelect.value = statsState.metric;
+
+      function cohortValues(joint, count, metric) {
+        const j = jointIndex(joint);
+        const m = metricData.findIndex(([key]) => key === metric);
+        const center = 83 - j * 1.8 + m * .7;
+        return Array.from({ length: count }, (_, index) => {
+          const wave = Math.sin((index + 1) * (1.19 + j * .07) + m * .61) * (7.1 + j * .42);
+          const secondary = Math.cos((index + 2) * .73 + j * .8) * 3.4;
+          const groupOffset = index % 7 === 0 ? -5.2 : index % 11 === 0 ? 3.8 : 0;
+          return Number(clamp(45, 98, center + wave + secondary + groupOffset).toFixed(1));
+        });
+      }
+
+      function quantile(sorted, position) {
+        const index = (sorted.length - 1) * position;
+        const lower = Math.floor(index);
+        const fraction = index - lower;
+        return sorted[lower + 1] === undefined ? sorted[lower] : sorted[lower] + fraction * (sorted[lower + 1] - sorted[lower]);
+      }
+
+      function summarize(values, joint = statsState.joint) {
+        const sorted = [...values].sort((a, b) => a - b);
+        const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+        const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / Math.max(1, values.length - 1);
+        const q1 = quantile(sorted, .25);
+        const median = quantile(sorted, .5);
+        const q3 = quantile(sorted, .75);
+        const theoreticalSigma = 7.8 + jointIndex(joint) * .5 + metricIndex() * .35;
+        return {
+          min: sorted[0], max: sorted[sorted.length - 1], mean, median, q1, q3,
+          iqr: q3 - q1, sd: Math.sqrt(variance), ci: 1.96 * theoreticalSigma / Math.sqrt(values.length)
+        };
+      }
+
+      function svgNode(tag, attributes = {}, content = "") {
+        const node = makeSvg(tag);
+        Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+        if (content !== "") node.textContent = content;
+        return node;
+      }
+
+      function drawStatsAxes(yTicks, yMap, xLabels) {
+        const left = 54;
+        const right = 696;
+        const top = 24;
+        const bottom = 286;
+        yTicks.forEach((tick) => {
+          const y = yMap(tick);
+          statsChart.append(svgNode("line", { class: "stats-grid", x1: left, y1: y, x2: right, y2: y }));
+          statsChart.append(svgNode("text", { class: "stats-axis-label", x: 43, y: y + 4, "text-anchor": "end" }, String(tick)));
+        });
+        xLabels.forEach((label, index) => {
+          const x = left + (index + .5) * ((right - left) / xLabels.length);
+          statsChart.append(svgNode("text", { class: "stats-axis-label", x, y: bottom + 28, "text-anchor": "middle" }, label));
+        });
+        statsChart.append(svgNode("line", { class: "stats-axis", x1: left, y1: bottom, x2: right, y2: bottom }));
+        statsChart.append(svgNode("line", { class: "stats-axis", x1: left, y1: top, x2: left, y2: bottom }));
+        return { left, right, top, bottom };
+      }
+
+      function drawBoxPlot(summaries) {
+        const yMap = (value) => 286 - (value - 40) / 60 * 262;
+        const bounds = drawStatsAxes([40, 55, 70, 85, 100], yMap, joints.map((joint) => labels[joint]));
+        const step = (bounds.right - bounds.left) / joints.length;
+        summaries.forEach((summary, index) => {
+          const joint = joints[index];
+          const x = bounds.left + (index + .5) * step;
+          if (joint === statsState.joint) {
+            statsChart.insertBefore(svgNode("rect", { class: "stats-selected-column", x: x - step * .43, y: bounds.top, width: step * .86, height: bounds.bottom - bounds.top }), statsChart.firstChild);
+          }
+          statsChart.append(svgNode("line", { class: "box-whisker", x1: x, y1: yMap(summary.min), x2: x, y2: yMap(summary.max) }));
+          statsChart.append(svgNode("line", { class: "box-whisker", x1: x - 13, y1: yMap(summary.min), x2: x + 13, y2: yMap(summary.min) }));
+          statsChart.append(svgNode("line", { class: "box-whisker", x1: x - 13, y1: yMap(summary.max), x2: x + 13, y2: yMap(summary.max) }));
+          statsChart.append(svgNode("rect", { class: `box-body${joint === statsState.joint ? " selected" : ""}`, x: x - 24, y: yMap(summary.q3), width: 48, height: Math.max(2, yMap(summary.q1) - yMap(summary.q3)) }));
+          statsChart.append(svgNode("line", { class: "box-median", x1: x - 24, y1: yMap(summary.median), x2: x + 24, y2: yMap(summary.median) }));
+          statsChart.append(svgNode("circle", { class: "box-mean", cx: x, cy: yMap(summary.mean), r: 4.5 }));
+          const hit = svgNode("rect", { class: "stats-hit", x: x - step / 2, y: bounds.top, width: step, height: bounds.bottom - bounds.top });
+          hit.addEventListener("click", () => { statsState.joint = joint; renderStats(); });
+          statsChart.append(hit);
+        });
+      }
+
+      function drawCentralTendency(summaries) {
+        const yMap = (value) => 286 - (value - 60) / 35 * 262;
+        const bounds = drawStatsAxes([60, 70, 80, 90, 95], yMap, joints.map((joint) => labels[joint]));
+        const step = (bounds.right - bounds.left) / joints.length;
+        const point = (summary, index, key) => `${bounds.left + (index + .5) * step},${yMap(summary[key])}`;
+        statsChart.append(svgNode("polyline", { class: "central-line mean-line", points: summaries.map((summary, index) => point(summary, index, "mean")).join(" ") }));
+        statsChart.append(svgNode("polyline", { class: "central-line median-line", points: summaries.map((summary, index) => point(summary, index, "median")).join(" ") }));
+        summaries.forEach((summary, index) => {
+          const x = bounds.left + (index + .5) * step;
+          statsChart.append(svgNode("circle", { class: "central-mean", cx: x, cy: yMap(summary.mean), r: 5 }));
+          statsChart.append(svgNode("rect", { class: "central-median", x: x - 4, y: yMap(summary.median) - 4, width: 8, height: 8 }));
+        });
+        statsChart.append(svgNode("text", { class: "stats-legend mean", x: 566, y: 38 }, translated("● 平均数", "● MEAN")));
+        statsChart.append(svgNode("text", { class: "stats-legend median", x: 566, y: 58 }, translated("■ 中位数", "■ MEDIAN")));
+      }
+
+      function drawPrecision() {
+        const yMap = (value) => 286 - value / 8 * 262;
+        const samples = Array.from({ length: statsState.participants - 5 }, (_, index) => index + 6);
+        const xMap = (sample) => 54 + (sample - 6) / 18 * 642;
+        const bounds = drawStatsAxes([0, 2, 4, 6, 8], yMap, []);
+        [6, 10, 14, 18, 22, 24].forEach((sample) => {
+          statsChart.append(svgNode("text", { class: "stats-axis-label", x: xMap(sample), y: bounds.bottom + 28, "text-anchor": "middle" }, String(sample)));
+        });
+        const sigma = 7.8 + jointIndex(statsState.joint) * .5 + metricIndex() * .35;
+        const points = samples.map((sample) => [xMap(sample), 1.96 * sigma / Math.sqrt(sample)]);
+        const area = [[points[0][0], yMap(0)], ...points.map(([x, value]) => [x, yMap(value)]), [points[points.length - 1][0], yMap(0)]];
+        statsChart.append(svgNode("polygon", { class: "precision-area", points: area.map(([x, y]) => `${x},${y}`).join(" ") }));
+        statsChart.append(svgNode("polyline", { class: "precision-line", points: points.map(([x, value]) => `${x},${yMap(value)}`).join(" ") }));
+        const current = points[points.length - 1];
+        statsChart.append(svgNode("line", { class: "precision-marker", x1: current[0], y1: bounds.top, x2: current[0], y2: bounds.bottom }));
+        statsChart.append(svgNode("circle", { class: "precision-point", cx: current[0], cy: yMap(current[1]), r: 6 }));
+        statsChart.append(svgNode("text", { class: "precision-label", x: current[0] - 8, y: yMap(current[1]) - 13, "text-anchor": "end" }, `n=${statsState.participants} · ±${current[1].toFixed(1)}`));
+        statsChart.append(svgNode("text", { class: "stats-axis-title", x: 54, y: 14 }, translated("95% 置信区间半宽（越低越稳定）", "95% CI HALF-WIDTH (LOWER IS MORE STABLE)")));
+      }
+
+      function renderStats() {
+        statsState.participants = Number(participantSlider.value);
+        document.querySelector("#participant-count").textContent = statsState.participants;
+        statsJoints.querySelectorAll("button").forEach((button) => button.classList.toggle("active", button.dataset.statsJoint === statsState.joint));
+        document.querySelectorAll("[data-chart-mode]").forEach((button) => button.classList.toggle("active", button.dataset.chartMode === statsState.chart));
+        const summaries = joints.map((joint) => summarize(cohortValues(joint, statsState.participants, statsState.metric), joint));
+        const selected = summaries[jointIndex(statsState.joint)];
+        document.querySelector("#stats-selected-joint").textContent = labels[statsState.joint];
+        document.querySelector("#stat-mean").textContent = selected.mean.toFixed(1);
+        document.querySelector("#stat-median").textContent = selected.median.toFixed(1);
+        document.querySelector("#stat-iqr").textContent = selected.iqr.toFixed(1);
+        document.querySelector("#stat-ci").textContent = selected.ci.toFixed(1);
+        const stability = Math.round(clamp(64, 96, 102 - selected.ci * 5.2));
+        document.querySelector("#stability-label").textContent = translated(`模型稳定度 · ${stability}%`, `MODEL STABILITY · ${stability}%`);
+        document.querySelector("#stats-insight-text").textContent = translated(
+          `纳入 ${statsState.participants} 名被试后，分布形态与中位数共同描述典型表现；样本增加使置信区间收窄，评判依据更稳定。`,
+          `With ${statsState.participants} participants, distribution and median describe typical performance; a larger sample narrows uncertainty and stabilizes the evaluation basis.`
+        );
+        const metric = metricData.find(([key]) => key === statsState.metric);
+        const titles = {
+          box: translated("关节评分分布", "JOINT SCORE DISTRIBUTION"),
+          central: translated("均值与中位数比较", "MEAN AND MEDIAN COMPARISON"),
+          precision: translated("样本量与评判精度", "SAMPLE SIZE AND EVALUATION PRECISION")
+        };
+        document.querySelector("#stats-chart-title").textContent = titles[statsState.chart];
+        document.querySelector("#stats-chart-meta").textContent = `${metric[1]} · n=${statsState.participants}`;
+        statsChart.replaceChildren();
+        if (statsState.chart === "box") drawBoxPlot(summaries);
+        if (statsState.chart === "central") drawCentralTendency(summaries);
+        if (statsState.chart === "precision") drawPrecision();
+        reportHeight();
+      }
+
+      participantSlider.addEventListener("input", renderStats);
+      statsMetricSelect.addEventListener("change", () => { statsState.metric = statsMetricSelect.value; renderStats(); });
+      document.querySelectorAll("[data-chart-mode]").forEach((button) => {
+        button.addEventListener("click", () => { statsState.chart = button.dataset.chartMode; renderStats(); });
+      });
+      document.querySelectorAll("[data-lab-view]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const view = button.dataset.labView;
+          document.querySelectorAll("[data-lab-view]").forEach((item) => item.classList.toggle("active", item === button));
+          document.querySelector("#motion-view").hidden = view !== "motion";
+          document.querySelector("#stats-view").hidden = view !== "stats";
+          if (view === "stats") renderStats();
+          reportHeight();
+        });
+      });
+
+      function tick(now) {
+        if (state.playing) {
+          state.progress = (state.progress + Math.min(40, now - state.lastFrame) / 8000) % 1;
+          renderFrame();
+        }
+        state.lastFrame = now;
+        requestAnimationFrame(tick);
+      }
+
+      function reportHeight() {
+        requestAnimationFrame(() => {
+          const app = document.querySelector(".app");
+          const contentHeight = app ? Math.ceil(app.getBoundingClientRect().height + 8) : 720;
+          parent.postMessage({
+            type: "motion-evaluation-height",
+            height: contentHeight
+          }, "*");
+        });
+      }
+      addEventListener("message", (event) => {
+        if (event.data?.type === "bauhaus-theme") {
+          document.documentElement.dataset.theme = event.data.theme === "dark" ? "dark" : "light";
+        }
+      });
+      addEventListener("resize", reportHeight);
+      if ("ResizeObserver" in window) new ResizeObserver(reportHeight).observe(document.querySelector(".app"));
+      renderControls();
+      renderFrame();
+      renderStats();
+      requestAnimationFrame(tick);
+      reportHeight();
+    })();
+  </script>
+</body>
+</html>

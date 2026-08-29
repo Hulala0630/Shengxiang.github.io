@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERO GAME ASM · FLUID SIM v2.0</title>
+<link rel="icon" href="data:,">
+<script>
+const heroQuery=new URLSearchParams(location.search);
+if(heroQuery.get("embed")==="bauhaus") document.documentElement.dataset.embed="bauhaus";
+document.documentElement.dataset.theme=heroQuery.get("theme")==="dark"?"dark":"light";
+</script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#151515; --paper:#F3F0E7; --line:#BBB6AA; --muted:#66635D; --faint:#8F8A80;
+  --red:#E94B35; --blue:#2767B2; --yellow:#F3B928; --blue-ink:#FFFFFF;
+  --amber:#FF9E00; --run:#3DDC84; --ai:#C3A6FF; --ai-deep:#7C5FC9;
+  --sim:#2767B2; --sheet:#FFFDF7; --frame:#151515;
+}
+[data-theme="dark"]{
+  --ink:#EEECE4;--paper:#121316;--line:#393A40;--muted:#AAA69C;--faint:#77746D;
+  --red:#FF614C;--blue:#68A4E5;--yellow:#FFC43D;--blue-ink:#151515;
+  --amber:#FF614C;--run:#3DDC84;--ai:#68A4E5;--ai-deep:#68A4E5;
+  --sim:#2767B2;--sheet:#1A1B20;--frame:#EEECE4;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Mono','Noto Sans SC',monospace;background:var(--paper);color:var(--ink)}
+.cell{max-width:1040px;margin:24px auto;border:1px solid var(--frame);background:var(--sheet)}
+[data-embed="bauhaus"] body{overflow:hidden}
+[data-embed="bauhaus"] .cell{max-width:none;margin:0;border:0}
+[data-embed="bauhaus"] .tb{border-bottom-width:2px;background:var(--sheet)}
+[data-embed="bauhaus"] .tb .c{background:var(--sheet)}
+[data-embed="bauhaus"] .tb .c:first-child{background:var(--sheet);color:var(--ink);box-shadow:inset 4px 0 0 var(--red)}
+[data-embed="bauhaus"] .tb .c:first-child b{color:var(--ink)}
+[data-embed="bauhaus"] .vswitch button{background:var(--sheet);color:var(--muted)}
+[data-embed="bauhaus"] .vswitch button:hover{background:var(--paper);color:var(--ink)}
+[data-embed="bauhaus"] .vswitch button.simActive{background:var(--blue);color:var(--blue-ink)}
+[data-embed="bauhaus"] .vswitch button.active{background:var(--red);color:#151515}
+[data-embed="bauhaus"] .modes button.m1.on{background:var(--yellow);color:#151515}
+[data-embed="bauhaus"] .modes button.m2.on{background:var(--blue);color:var(--blue-ink)}
+[data-embed="bauhaus"] .controls .bF{background:var(--red);color:#151515}
+[data-theme="dark"][data-embed="bauhaus"] .controls .bF{background:#FF614C;color:#151515}
+[data-embed="bauhaus"] .hud,[data-embed="bauhaus"] .guide{display:none}
+[data-embed="bauhaus"] .flow{grid-template-columns:auto 1fr}
+[data-embed="bauhaus"] .flow .hint{display:none}
+[data-embed="bauhaus"] #viewport.host-sized{aspect-ratio:auto}
+[data-theme="dark"] .sound,[data-theme="dark"] .guide{background:rgba(26,27,32,.94)}
+[data-theme="dark"] #simBanner{background:rgba(26,27,32,.94)}
+[data-theme="dark"] .simlab{background:rgba(22,29,39,.94);color:#9CC7F2}
+[data-theme="dark"] .simlab .simstate,[data-theme="dark"] .simlab dd{color:#D5E8FA}
+[data-theme="dark"] .simlab dt{color:#89A4BF}
+button:focus-visible,#viewport:focus-visible{outline:2px solid var(--amber);outline-offset:-3px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.tb{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--frame);font-size:11px}
+.tb .c{padding:8px 12px;border-right:1px solid var(--frame);color:var(--faint)}
+.tb .c b{color:var(--ink);font-weight:500}
+.vswitch{margin-left:auto;display:flex}
+.vswitch button{appearance:none;border:none;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.06em;padding:0 18px;min-height:40px;background:transparent;color:var(--faint);border-left:1px solid var(--frame);transition:all .25s}
+.vswitch button.active{background:var(--ink);color:var(--paper)}
+.vswitch button.simActive{background:var(--sim);color:#fff}
+#viewport{position:relative;width:100%;aspect-ratio:16/9;touch-action:none;cursor:grab;overflow:hidden}
+#viewport.dragging{cursor:grabbing}
+#viewport canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;left:10px;top:10px;font-size:10px;color:var(--faint);letter-spacing:.08em;pointer-events:none}
+.hud b{color:var(--amber)}
+#simBanner{position:absolute;left:50%;top:12px;transform:translateX(-50%);font-size:11px;padding:5px 12px;border:1px solid var(--ai-deep);color:var(--ai-deep);background:rgba(255,255,255,.9);opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.simlab{display:none;position:absolute;z-index:2;left:10px;top:38px;width:230px;padding:10px 11px;border:1px solid rgba(54,95,145,.72);background:rgba(238,243,249,.9);color:#365F91;font-size:9px;line-height:1.45;pointer-events:none;box-shadow:3px 3px 0 rgba(54,95,145,.12)}
+.simlab.show{display:block}.simlab .labhead{display:flex;justify-content:space-between;letter-spacing:.1em;border-bottom:1px solid rgba(54,95,145,.3);padding-bottom:6px;margin-bottom:7px}.simlab .live{color:var(--run)}
+.simlab .simstate{font-size:11px;color:#243E5D;margin-bottom:7px}.simlab dl{display:grid;grid-template-columns:1fr auto;gap:3px 8px}.simlab dt{color:#6B8199}.simlab dd{color:#243E5D;text-align:right}
+.simlab .risk.low{color:var(--run)}.simlab .risk.high{color:#D14836}.simlab .policy{margin-top:8px;padding-top:6px;border-top:1px dashed rgba(54,95,145,.42);color:var(--ai-deep)}
+.simlab .simbar{height:2px;margin-top:8px;background:rgba(54,95,145,.18)}.simlab .simbar i{display:block;width:0;height:100%;background:var(--ai-deep);transition:width .18s}
+#stateBadge{position:absolute;right:10px;top:10px;font-size:10px;color:var(--run);pointer-events:none}
+#stateBadge.halt{color:var(--amber);animation:blink 1s steps(2) infinite}
+.sound{position:absolute;right:10px;bottom:10px;z-index:3;min-width:40px;min-height:40px;padding:0 10px;border:1px solid var(--frame);background:rgba(245,245,242,.9);color:var(--muted);font:10px 'IBM Plex Mono',monospace;cursor:pointer}
+.sound.on{background:var(--ink);color:var(--paper)}
+.guide{position:absolute;left:10px;bottom:10px;z-index:2;max-width:min(430px,calc(100% - 76px));padding:10px 12px;border:1px solid var(--frame);background:rgba(245,245,242,.94);font-size:10px;line-height:1.5;color:var(--muted);box-shadow:3px 3px 0 rgba(23,24,26,.14)}
+.guide b{display:block;color:var(--ink);font-weight:500;margin-bottom:2px}
+.guide .step{color:var(--ai-deep)}
+@keyframes blink{50%{opacity:.3}}
+.t3d{position:absolute;font-size:12px;font-weight:500;pointer-events:none;
+  animation:rise 1s ease-out forwards;text-shadow:0 1px 0 rgba(255,255,255,.8)}
+@keyframes rise{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-30px)}}
+.aistrip{min-height:34px;font-size:11px;padding:9px 14px;border-top:1px dashed var(--frame);color:var(--ai-deep);display:flex;gap:10px;align-items:center}
+.aistrip .chip{border:1px solid var(--ai-deep);padding:1px 7px;font-size:9px;flex:none}
+.aistrip.idle{color:var(--faint)}
+.aistrip.idle .chip{border-color:var(--faint)}
+.modes{border-top:1px solid var(--frame);display:flex;font-size:10px}
+.modes .lbl{padding:0 12px;display:flex;align-items:center;color:var(--faint);border-right:1px solid var(--frame)}
+.modes button{appearance:none;border:none;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.05em;padding:0 14px;min-height:44px;flex:1;background:transparent;color:var(--faint);border-right:1px solid var(--frame);transition:all .25s}
+.modes button:last-child{border-right:none}
+.modes button.m0.on{background:var(--ink);color:var(--paper)}
+.modes button.m1.on{background:var(--amber);color:#1c1204}
+.modes button.m2.on{background:var(--ai-deep);color:#fff}
+.controls{border-top:1px solid var(--frame);display:flex;flex-wrap:wrap}
+.controls button{appearance:none;border:none;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.05em;padding:0 12px;min-height:46px;flex:1;background:transparent;color:var(--faint);border-right:1px solid var(--frame);transition:all .25s}
+.controls button:last-child{border-right:none}
+.controls button:hover{color:var(--ink)}
+.controls .bF{color:var(--amber)}
+.controls .bC{display:none}
+.controls .bC.show{display:block;color:var(--amber);animation:blink 1s steps(2) infinite}
+.kpirow{border-top:1px solid var(--frame);display:flex;flex-wrap:wrap;font-size:10px;color:var(--faint)}
+.kpirow div{padding:8px 11px;border-right:1px solid var(--frame)}
+.kpirow div:last-child{border-right:none;margin-left:auto}
+.kpirow b{color:var(--ink);font-weight:500}
+.kpirow .g b{color:var(--run)} .kpirow .r b{color:var(--amber)}
+.kpirow .x b{color:#D14836} .kpirow .p b{color:var(--ai-deep)}
+.flow{border-top:1px solid var(--frame);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;min-height:38px;padding:7px 11px;font-size:10px;color:var(--faint)}
+.flow b{color:var(--ink);font-weight:500}.flow .bar{height:2px;background:var(--line);overflow:hidden}.flow .bar i{display:block;height:100%;width:0;background:var(--run);transition:width .25s}
+.flow .hint{color:var(--ai-deep);text-align:right}
+button[disabled]{cursor:not-allowed;opacity:.38}
+@media (max-width:720px){
+  .cell{margin:0;border-left:0;border-right:0}
+  .controls button,.modes button{font-size:10px;padding:0 6px}
+  .kpirow div:last-child,.modes .lbl{display:none}
+  .hud{max-width:70%;line-height:1.45}.guide{font-size:9px}.flow{grid-template-columns:auto 1fr}.flow .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="cell">
+  <div class="tb">
+    <div class="c">CELL <b>A-01 · FLUID SIM v2.0</b></div>
+    <div class="c">TWIN <b id="syncTxt">SYNC</b></div>
+    <div class="vswitch">
+      <button id="vSim" class="simActive" aria-pressed="true" onclick="setView('sim')">◇ SIMULATION</button>
+      <button id="vReal" aria-pressed="false" onclick="setView('real')">◆ REAL SYSTEM</button>
+    </div>
+  </div>
+  <div id="viewport" tabindex="0" role="application" aria-label="Interactive robot assembly cell. Drag to orbit, use arrow keys to rotate, plus and minus to zoom.">
+    <div class="hud">DRAG / ARROWS = ORBIT · <b>TAP TRAY PART = FAULT</b> · TAP ROBOT = GREET</div>
+    <div id="simBanner"></div>
+    <div class="simlab" id="simLab" aria-hidden="true">
+      <div class="labhead"><b>SIMULATION LAB</b><span class="live" id="simLive">● LIVE</span></div>
+      <div class="simstate" id="simState">DIGITAL TWIN · MIRROR</div>
+      <dl>
+        <dt>ITERATION</dt><dd id="simIter">0 / 2</dd>
+        <dt>POSE ERROR</dt><dd id="simError">0.000 rad</dd>
+        <dt>COLLISION RISK</dt><dd class="risk low" id="simRisk">LOW</dd>
+        <dt>CONTACT FORCE</dt><dd id="simForce">0.0 N</dd>
+      </dl>
+      <div class="policy" id="simPolicy">POLICY · MONITORING</div>
+      <div class="simbar"><i id="simProgress"></i></div>
+    </div>
+    <div id="stateBadge">● RUNNING</div>
+    <div class="guide" id="guide"><b>RUN THE COMPARISON</b><span class="step" id="guideStep">STEP 1/3</span> Choose a control mode, then inject the same assembly fault.</div>
+    <button class="sound" id="soundBtn" aria-pressed="false" title="Toggle sound (M)">SOUND OFF</button>
+    <span class="sr" id="announce" aria-live="polite"></span>
+  </div>
+  <div class="aistrip idle" id="aistrip"><span class="chip">AI</span><span id="aitext">MODE: AI + SIM TWIN — insertion faults are solved in simulation, physical executes verified policy</span></div>
+  <div class="modes">
+    <span class="lbl">CONTROL MODE</span>
+    <button class="m0" id="m0" aria-pressed="false" onclick="setMode(0)">① NO AI</button>
+    <button class="m1" id="m1" aria-pressed="false" onclick="setMode(1)">② AI ONLY (no sim)</button>
+    <button class="m2 on" id="m2" aria-pressed="true" onclick="setMode(2)">③ AI + SIM TWIN</button>
+  </div>
+  <div class="controls">
+    <button class="bF" id="bF" onclick="injectFault()">⚠ INJECT FAULT</button>
+    <button class="bC" id="bC" onclick="clearFault()">↯ CLEAR FAULT</button>
+    <button onclick="resetScene()">↻ RESET SCENE</button>
+  </div>
+  <div class="kpirow">
+    <div class="g">ASSEMBLED <b id="kG">0</b></div>
+    <div class="r">SCRAP <b id="kX">0</b></div>
+    <div class="x">REAL JAM <b id="kC">0</b></div>
+    <div class="p">SIM ITER <b id="kS">0</b></div>
+    <div>UPTIME <b id="kU">100%</b></div>
+    <div>G1-inspired twin · simulation-first</div>
+  </div>
+  <div class="flow"><b id="phaseTxt">READY · FEEDING PARTS</b><span class="bar"><i id="phaseBar"></i></span><span class="hint">1/2/3 MODE · F FAULT · R RESET · M SOUND</span></div>
+</div>
+
+<script src="../vendor/three.r128.min.js"></script>
+<script>
+/* ═══════════ 合成音效 ═══════════ */
+let AC=null,soundEnabled=false;
+function beep(f,d,type,g){
+  if(!AC||!soundEnabled)return;
+  try{const o=AC.createOscillator(),v=AC.createGain();
+    o.type=type||'square';o.frequency.value=f;
+    o.connect(v);v.connect(AC.destination);
+    const t=AC.currentTime;
+    v.gain.setValueAtTime(g||0.04,t);
+    v.gain.exponentialRampToValueAtTime(0.001,t+d);
+    o.start(t);o.stop(t+d)}catch(e){}}
+addEventListener('pointerdown',()=>{
+  if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}});
+
+/* ═══════════ 渲染 ═══════════ */
+const VP=document.getElementById('viewport');
+const PERF={
+  low:(navigator.hardwareConcurrency||8)<=4||matchMedia('(max-width:720px)').matches,
+  fps:45,uiInterval:.12,frames:0,started:performance.now(),
+  adapted:false,sampleAt:0,sampleFrames:0
+};
+if(PERF.low)PERF.fps=30;
+const renderer=new THREE.WebGLRenderer({antialias:!PERF.low&&devicePixelRatio>1,powerPreference:'high-performance'});
+renderer.setPixelRatio(PERF.low?1:Math.min(devicePixelRatio,1.25));
+renderer.shadowMap.enabled=!PERF.low;
+renderer.shadowMap.type=THREE.PCFShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+VP.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(44,16/9,0.1,60);
+scene.add(new THREE.HemisphereLight(0xfff4e2,0xcdd3db,0.55));
+scene.add(new THREE.AmbientLight(0xd8dde4,0.35));
+const dl=new THREE.DirectionalLight(0xfff2df,0.9);
+dl.position.set(3,6,4);dl.castShadow=!PERF.low;
+dl.shadow.mapSize.set(512,512);
+dl.shadow.camera.left=-5;dl.shadow.camera.right=5;
+dl.shadow.camera.top=5;dl.shadow.camera.bottom=-5;
+scene.add(dl);
+const rim=new THREE.DirectionalLight(0xdde6f0,0.35);
+rim.position.set(-4,3,-3);scene.add(rim);
+const spot=new THREE.PointLight(0xfff0d8,0.45,4.5);
+spot.position.set(0,2.2,0.4);scene.add(spot);
+
+const C={paper:0xF5F5F2,ink:0x2A2B30,box:0xFFFFFF,gear:0xE8E7E2,wall:0xEFEEEA,
+  armor:0xB9C5D0,dark:0x26282E,joint:0x1E2026,glass:0x101216,
+  amber:0xFF9E00,run:0x3DDC84,ai:0xC3A6FF,red:0xFF5544,warm:0xFFF3DC,scrap:0xD14836,
+  sim:0x5B7CA8,holo:0x6E93C4,simBg:0xEEF3F9,simGrid:0xBACFE6,gridA:0xCFCEC8};
+scene.fog=new THREE.Fog(C.paper,8,18);
+
+/* ═══════════ 视图注册（创建即适配） ═══════════ */
+let viewSim=false;
+const R={meshes:[],edges:[]};
+const ghostFill=new THREE.MeshBasicMaterial({color:C.sim,transparent:true,opacity:0.06,depthWrite:false});
+function regMesh(m,mat){
+  m.userData.solid=mat;
+  m.material=viewSim?ghostFill:mat;
+  m.castShadow=false;m.receiveShadow=!viewSim;R.meshes.push(m);return m}
+function regEdge(l,ink,keep){
+  l.userData.ink=ink;l.userData.keep=!!keep;
+  if(viewSim&&!keep)l.material.color.setHex(C.sim);
+  R.edges.push(l);return l}
+function pbr(color,met,rough){return new THREE.MeshStandardMaterial({color,metalness:met,roughness:rough})}
+const TIER={panel:[0.08,0.72],frame:[0.3,0.5],metal:[0.72,0.32],matte:[0.02,0.9]};
+function edged(geo,color,tier='panel',edgeColor,keep){
+  const g=new THREE.Group();
+  const[m,r]=TIER[tier];
+  g.add(regMesh(new THREE.Mesh(geo,null),pbr(color,m,r)));
+  g.add(regEdge(new THREE.LineSegments(new THREE.EdgesGeometry(geo,28),
+      new THREE.LineBasicMaterial({color:edgeColor??C.ink})),edgeColor??C.ink,keep));
+  return g}
+class SP{constructor(a=0){this.a=a;this.v=0}
+  to(t,ks,dp,dt){this.v+=(t-this.a)*ks*dt;this.v*=Math.exp(-dp*dt);this.a+=this.v*dt;return this.a}
+  kick(i){this.v+=i}}
+
+/* ═══════════ 地面 ═══════════ */
+function concreteTex(){
+  const cv=document.createElement('canvas');cv.width=cv.height=512;
+  const g=cv.getContext('2d');
+  g.fillStyle='#F2F2EF';g.fillRect(0,0,512,512);
+  for(let i=0;i<26;i++){
+    const x=Math.random()*512,y=Math.random()*512,r=40+Math.random()*90;
+    const gr=g.createRadialGradient(x,y,0,x,y,r);
+    gr.addColorStop(0,'rgba(224,224,219,'+(0.12+Math.random()*0.1)+')');
+    gr.addColorStop(1,'rgba(224,224,219,0)');
+    g.fillStyle=gr;g.beginPath();g.arc(x,y,r,0,7);g.fill()}
+  for(let i=0;i<2600;i++){
+    g.fillStyle='rgba(120,120,115,'+(Math.random()*0.06)+')';
+    g.fillRect(Math.random()*512,Math.random()*512,1.2,1.2)}
+  g.strokeStyle='rgba(150,150,144,0.35)';g.lineWidth=1.6;
+  [128,256,384].forEach(p=>{g.beginPath();g.moveTo(p,0);g.lineTo(p,512);g.stroke();
+    g.beginPath();g.moveTo(0,p);g.lineTo(512,p);g.stroke()});
+  const tex=new THREE.CanvasTexture(cv);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(3,2.4);
+  return tex}
+const groundMat=new THREE.MeshStandardMaterial({map:concreteTex(),metalness:0.02,roughness:0.94});
+const simGroundMat=new THREE.MeshBasicMaterial({color:C.simBg});
+const ground=regMesh(new THREE.Mesh(new THREE.PlaneGeometry(18,14),null),groundMat);
+ground.rotation.x=-Math.PI/2;ground.castShadow=false;ground.receiveShadow=true;scene.add(ground);
+const grid=new THREE.GridHelper(18,14,C.gridA,0xE7E6E1);
+grid.material.transparent=true;grid.material.opacity=0.5;scene.add(grid);
+const blob=new THREE.Mesh(new THREE.CircleGeometry(0.34,20),
+  new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.13,depthWrite:false}));
+blob.rotation.x=-Math.PI/2;blob.position.set(0,0.013,-0.2);scene.add(blob);
+
+/* ═══════════ 背景（墙+桁架+吊灯） ═══════════ */
+(function wall(){
+  const z=-3.6;
+  for(let x=-6;x<=6;x+=4){
+    const col=edged(new THREE.BoxGeometry(0.28,3.2,0.28),C.wall,'matte');
+    col.position.set(x,1.6,z);scene.add(col)}
+  const beam=edged(new THREE.BoxGeometry(12.6,0.24,0.28),C.wall,'matte');
+  beam.position.set(0,3.2,z);scene.add(beam);
+  const pts=[];
+  for(let x=-6;x<6;x+=4){
+    for(let wx=x+0.6;wx<x+3.6;wx+=1.0){pts.push(wx,1.25,z,wx,2.75,z)}
+    pts.push(x+0.4,2.0,z,x+3.6,2.0,z,x+0.4,1.25,z,x+3.6,1.25,z,x+0.4,2.75,z,x+3.6,2.75,z)}
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+  scene.add(regEdge(new THREE.LineSegments(geo,new THREE.LineBasicMaterial({color:0xC5C4BE})),0xC5C4BE));
+})();
+(function roof(){
+  [-1.8,0.6].forEach(z=>{
+    const pts=[],y0=3.0,y1=3.5;
+    pts.push(-5,y0,z,5,y0,z,-5,y1,z,5,y1,z);
+    for(let x=-5;x<5;x+=1.25){
+      pts.push(x,y0,z,x+0.62,y1,z,x+0.62,y1,z,x+1.25,y0,z,x,y0,z,x,y1,z)}
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+    scene.add(regEdge(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xBDBCB6})),0xBDBCB6))});
+  [[-1.2],[1.4]].forEach(([x])=>{
+    const fix=edged(new THREE.BoxGeometry(1.1,0.08,0.28),C.dark,'frame');
+    fix.position.set(x,2.75,-0.4);scene.add(fix);
+    const glow=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.02,0.18),
+      new THREE.MeshBasicMaterial({color:C.warm}));
+    glow.position.set(x,2.7,-0.4);scene.add(glow);
+    const rod=edged(new THREE.BoxGeometry(0.03,0.3,0.03),C.dark,'frame');
+    rod.position.set(x,2.95,-0.4);scene.add(rod)});
+})();
+
+/* ═══════════ 装配工位（机器人 z=-0.2 面向 +z）═══════════ */
+(function bench(){
+  const top=edged(new THREE.BoxGeometry(1.9,0.14,0.82),0xD9DBDE,'metal');
+  top.position.set(0,0.82,0.42);scene.add(top);
+  const apron=edged(new THREE.BoxGeometry(1.82,0.18,0.07),C.dark,'frame');
+  apron.position.set(0,0.69,0.04);scene.add(apron);
+  [[-0.85,0.12],[-0.85,0.72],[0.85,0.12],[0.85,0.72]].forEach(([x,z])=>{
+    const leg=edged(new THREE.BoxGeometry(0.11,0.76,0.11),0x555B63,'metal');
+    leg.position.set(x,0.38,z);scene.add(leg);
+    const foot=edged(new THREE.CylinderGeometry(0.075,0.075,0.035,12),C.dark,'metal');
+    foot.position.set(x,0.02,z);scene.add(foot)});
+  const under=edged(new THREE.BoxGeometry(1.72,0.08,0.62),0x555B63,'frame');
+  under.position.set(0,0.28,0.42);scene.add(under);
+  const stationTag=(text,x)=>{
+    const cv=document.createElement('canvas');cv.width=256;cv.height=64;
+    const cx=cv.getContext('2d');cx.fillStyle='#F5F5F2';cx.fillRect(0,0,256,64);
+    cx.strokeStyle='#17181A';cx.lineWidth=4;cx.strokeRect(2,2,252,60);
+    cx.fillStyle='#17181A';cx.font='500 22px monospace';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(text,128,34);
+    const tex=new THREE.CanvasTexture(cv);tex.encoding=THREE.sRGBEncoding;
+    const tag=new THREE.Mesh(new THREE.PlaneGeometry(.36,.09),new THREE.MeshBasicMaterial({map:tex}));
+    tag.rotation.x=-Math.PI/2;tag.position.set(x,.895,.67);scene.add(tag)};
+  stationTag('01 INFEED',.58);stationTag('02 ASSEMBLE',0);stationTag('03 OUTPUT',-.6);
+})();
+/* 定位夹具 + 孔位环 + 钳口 */
+/* Desktop outfeed conveyor: the completed module stays supported from
+   fixture to chute instead of appearing to fly across the bench. */
+const outfeedSlats=[];
+(function outfeed(){
+  const belt=edged(new THREE.BoxGeometry(.94,.035,.31),C.dark,'frame',0x59616D);
+  belt.position.set(-.43,.91,.34);scene.add(belt);
+  [-1,1].forEach(s=>{
+    const rail=edged(new THREE.BoxGeometry(.98,.055,.022),0x717983,'metal');
+    rail.position.set(-.43,.945,.34+s*.17);scene.add(rail)});
+  [0.02,-.88].forEach(x=>{
+    const roller=edged(new THREE.CylinderGeometry(.045,.045,.29,8),0x737B85,'metal');
+    roller.rotation.x=Math.PI/2;roller.position.set(x,.91,.34);scene.add(roller)});
+  const slatMat=new THREE.MeshBasicMaterial({color:0xAAB4C0});
+  for(let i=0;i<6;i++){
+    const slat=new THREE.Mesh(new THREE.BoxGeometry(.018,.004,.265),slatMat);
+    slat.position.set(.01-i*.17,.93,.34);scene.add(slat);outfeedSlats.push(slat)}
+})();
+const FIX_X=.14;
+let boreRing,productHalo;
+(function fixture(){
+  const nest=edged(new THREE.BoxGeometry(0.46,0.10,0.42),C.dark,'metal');
+  nest.position.set(FIX_X,0.94,0.32);scene.add(nest);
+  const housing=edged(new THREE.BoxGeometry(0.28,0.18,0.28),0xBFC4CA,'metal');
+  housing.position.set(FIX_X,1.065,0.32);scene.add(housing);
+  const shoulder=edged(new THREE.CylinderGeometry(0.105,0.13,0.075,20),0xD9DCE0,'metal');
+  shoulder.position.set(FIX_X,1.19,0.32);scene.add(shoulder);
+  /* 开口套筒：旧版是实心圆柱，销钉插入时必然发生几何重叠。 */
+  const shaft=new THREE.Mesh(new THREE.CylinderGeometry(0.105,0.105,0.12,18,1,true),pbr(C.dark,.7,.25));
+  shaft.position.set(FIX_X,1.245,0.32);scene.add(regMesh(shaft,shaft.material));
+  boreRing=new THREE.Mesh(new THREE.TorusGeometry(0.062,0.012,8,20),pbr(0x3A3D44,0.6,0.4));
+  boreRing.rotation.x=-Math.PI/2;boreRing.position.set(FIX_X,1.31,0.32);
+  scene.add(regMesh(boreRing,boreRing.material));
+  productHalo=new THREE.Mesh(new THREE.TorusGeometry(0.15,0.009,8,28),
+    new THREE.MeshBasicMaterial({color:C.run,transparent:true,opacity:0}));
+  productHalo.rotation.x=-Math.PI/2;productHalo.position.set(FIX_X,1.325,0.32);scene.add(productHalo);
+  [-0.11,0.11].forEach(x=>{
+    const jaw=edged(new THREE.BoxGeometry(0.065,0.13,0.20),0x70757D,'metal');
+    jaw.position.set(FIX_X+x*1.45,1.04,0.32);scene.add(jaw)});
+})();
+/* 左手辅助工序：夹具锁紧手柄。 */
+const clampPivot=new THREE.Group();clampPivot.position.set(FIX_X-.27,1.08,.24);scene.add(clampPivot);
+const clampBase=edged(new THREE.CylinderGeometry(.06,.06,.07,14),0x555B63,'metal');
+clampBase.position.set(FIX_X-.27,1.045,.24);scene.add(clampBase);
+const clampLever=edged(new THREE.BoxGeometry(.045,.23,.045),C.amber,'metal');
+clampLever.position.y=.115;clampPivot.add(clampLever);
+const clampGrip=new THREE.Mesh(new THREE.SphereGeometry(.042,10,8),pbr(C.dark,.55,.35));
+clampGrip.position.y=.245;clampPivot.add(regMesh(clampGrip,clampGrip.material));
+/* 来料托盘（右） */
+(function tray(){
+  const base=edged(new THREE.BoxGeometry(0.5,0.03,0.3),C.gear,'panel');
+  base.position.set(0.55,0.9,0.36);scene.add(base);
+  [-0.25,0.25].forEach(dx=>{
+    const rail=edged(new THREE.BoxGeometry(0.02,0.05,0.3),C.dark,'metal');
+    rail.position.set(0.55+dx,0.93,0.36);scene.add(rail)});
+  /* 桌面式进料匣：零件从右端门架下方进入托盘，不再凭空生成。 */
+  [.245,.475].forEach(z=>{
+    const post=edged(new THREE.BoxGeometry(.055,.34,.055),0x555B63,'metal');
+    post.position.set(.87,1.08,z);scene.add(post)});
+  const bridge=edged(new THREE.BoxGeometry(.18,.055,.30),0x555B63,'frame');
+  bridge.position.set(.87,1.25,.36);scene.add(bridge);
+  const cassette=edged(new THREE.BoxGeometry(.10,.22,.03),0xD9DBDE,'panel');
+  cassette.position.set(.89,1.10,.49);scene.add(cassette);window.feedCassette=cassette;
+  const feedLed=new THREE.Mesh(new THREE.SphereGeometry(.022,8,8),new THREE.MeshBasicMaterial({color:C.run}));
+  feedLed.position.set(.835,1.18,.255);scene.add(feedLed);
+})();
+/* 出料滑槽 + 成品箱（左） */
+(function chute(){
+  const ramp=edged(new THREE.BoxGeometry(0.72,0.03,0.24),C.gear,'metal');
+  ramp.position.set(-1.18,0.772,0.34);ramp.rotation.z=0.38;scene.add(ramp);window.chuteRamp=ramp;
+  [-1,1].forEach(s=>{
+    const rail=edged(new THREE.BoxGeometry(0.72,0.06,0.02),C.dark,'metal');
+    rail.position.set(-1.18,0.817,0.34+s*0.12);rail.rotation.z=0.38;scene.add(rail)});
+  [[0,-0.13,0.14,0.03],[0,0.13,0.14,0.03],[-0.13,0,0.03,0.14],[0.13,0,0.03,0.14]].forEach(([dx,dz,w,d])=>{
+    const wallm=edged(new THREE.BoxGeometry(w*2,0.22,d*2),C.gear,'panel');
+    wallm.position.set(-1.58+dx,0.42,0.34+dz);scene.add(wallm)});
+  const binBase=edged(new THREE.BoxGeometry(0.3,0.35,0.3),C.gear,'frame');
+  binBase.position.set(-1.58,0.13,0.34);scene.add(binBase);
+})();
+/* 塔灯 + 控制柜 */
+let cabLed;
+(function aux(){
+  const mount=edged(new THREE.BoxGeometry(.17,.06,.17),0x555B63,'metal');
+  mount.position.set(.86,.92,.12);scene.add(mount);window.stackMount=mount;
+  const post=edged(new THREE.BoxGeometry(0.05,0.8,0.05),C.dark,'metal');
+  post.scale.y=.72;post.position.set(.86,1.24,.12);scene.add(post);
+  window.stackLight={};
+  [['red',C.red,1.68],['amb',C.amber,1.59],['grn',C.run,1.5]].forEach(([k,col,y])=>{
+    const l=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.08,10),
+      new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.25}));
+    l.position.set(.86,y,.12);scene.add(l);stackLight[k]=l});
+  const c=edged(new THREE.BoxGeometry(0.5,0.95,0.34),C.gear,'panel');
+  c.position.set(1.55,0.48,-0.5);scene.add(c);
+  cabLed=new THREE.Mesh(new THREE.SphereGeometry(0.028,8,8),
+    new THREE.MeshBasicMaterial({color:C.run}));
+  cabLed.position.set(1.42,0.82,-0.32);scene.add(cabLed);
+})();
+
+/* ═══════════ 销钉零件 ═══════════ */
+const partOutlines=[];
+function makePeg(ghost){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.15,12),
+    ghost?new THREE.MeshBasicMaterial({color:C.holo,transparent:true,opacity:0.7})
+         :pbr(0xF2F3F5,0.2,0.45));
+  body.position.y=0.075;body.castShadow=!ghost;g.add(body);
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,0.03,12),
+    ghost?new THREE.MeshBasicMaterial({color:C.holo,transparent:true,opacity:0.85})
+         :pbr(C.dark,0.55,0.4));
+  cap.position.y=0.165;cap.castShadow=!ghost;g.add(cap);
+  if(!ghost){g.children.forEach(m=>regMesh(m,m.material));
+    [body,cap].forEach(m=>{
+      const line=new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry,35),
+        new THREE.LineBasicMaterial({color:0x365F91,transparent:true,opacity:.9,depthTest:true}));
+      line.visible=viewSim;m.add(line);partOutlines.push(line)})}
+  else{[body,cap].forEach(m=>{
+    const line=new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry,42),
+      new THREE.LineBasicMaterial({color:0x365F91,transparent:true,opacity:.8,depthTest:true}));
+    line.renderOrder=12;m.add(line)})}
+  return g}
+function makeFinishedModule(){
+  const g=new THREE.Group();
+  const shell=edged(new THREE.BoxGeometry(.24,.16,.24),0xBFC4CA,'metal');
+  shell.position.y=.08;g.add(shell);
+  const hub=edged(new THREE.CylinderGeometry(.09,.11,.07,18),0xD9DCE0,'metal');
+  hub.position.y=.195;g.add(hub);
+  const pin=makePeg(false);pin.position.y=.23;g.add(pin);
+  return g}
+function setPegFault(part,on){
+  part.faulty=on;
+  part.g.rotation.z=on?0.38:0;
+  if(on&&!part.ring){
+    part.ring=new THREE.Mesh(new THREE.TorusGeometry(0.075,0.008,6,18),
+      new THREE.MeshBasicMaterial({color:C.amber}));
+    part.ring.rotation.x=-Math.PI/2;part.ring.position.y=0.005;
+    part.g.add(part.ring)}
+  if(!on&&part.ring){
+    part.g.remove(part.ring);
+    part.ring.geometry.dispose();part.ring.material.dispose();part.ring=null}}
+
+const SLOTX=[0.42,0.56,0.70];
+const trayParts=[null,null,null];
+const partHit=[];
+function releaseObject(root){
+  if(!root)return;
+  const meshes=new Set(),lines=new Set(),geometries=new Set(),materials=new Set();
+  root.traverse(o=>{
+    if(o.isMesh)meshes.add(o);
+    if(o.isLine||o.isLineSegments)lines.add(o);
+    if(o.geometry)geometries.add(o.geometry);
+    const mats=Array.isArray(o.material)?o.material:[o.material];
+    mats.forEach(m=>{if(m&&m!==ghostFill&&m!==groundMat&&m!==simGroundMat)materials.add(m)});
+    if(o.userData&&o.userData.solid&&o.userData.solid!==groundMat)materials.add(o.userData.solid);
+  });
+  R.meshes=R.meshes.filter(m=>!meshes.has(m));
+  R.edges=R.edges.filter(l=>!lines.has(l));
+  for(let i=partOutlines.length-1;i>=0;i--)
+    if(lines.has(partOutlines[i]))partOutlines.splice(i,1);
+  for(let i=partHit.length-1;i>=0;i--)
+    if(meshes.has(partHit[i]))partHit.splice(i,1);
+  if(root.parent)root.parent.remove(root);
+  geometries.forEach(g=>g.dispose());
+  materials.forEach(m=>m.dispose());
+}
+function refillTray(){
+  for(let i=0;i<3;i++){
+    if(!trayParts[i]){
+      const g=makePeg(false);
+      g.position.set(0.86,0.94,0.36);scene.add(g);
+      const part={g,faulty:false,ring:null,slot:i,sliding:true};
+      g.traverse(m=>{if(m.isMesh){m.userData.part=part;partHit.push(m)}});
+      trayParts[i]=part}}}
+const pegSeated=makePeg(false);pegSeated.position.set(FIX_X,1.29,0.32);pegSeated.visible=false;scene.add(pegSeated);
+const pegStuck=makePeg(false);pegStuck.position.set(FIX_X,1.34,0.32);pegStuck.rotation.z=0.38;pegStuck.visible=false;scene.add(pegStuck);
+/* 抓取工件使用世界坐标轨迹，不再挂在旋转前臂下方，避免前臂转动带来的穿台/穿夹具。 */
+const heldPeg=makePeg(false);heldPeg.visible=false;scene.add(heldPeg);
+const heldPegSim=makePeg(true);heldPegSim.visible=false;scene.add(heldPegSim);
+const HELD_PATH={
+  tray:new THREE.Vector3(.42,.94,.36),
+  lift:new THREE.Vector3(.42,1.34,.34),
+  align:new THREE.Vector3(.22,1.46,.32),
+  insert:new THREE.Vector3(FIX_X,1.31,.32)
+};
+
+/* ═══════════ 人形机器人（站姿作业版：手部挂载点 + 肩滚转弹簧） ═══════════ */
+function botMats(ghost){
+  if(ghost){
+    const h=o=>new THREE.MeshBasicMaterial({color:C.holo,transparent:true,opacity:o,depthWrite:false});
+    return{armor:h(0.4),dark:h(0.62),joint:h(0.62),glass:h(0.8),foot:h(0.55)}}
+  return{armor:pbr(C.armor,0.28,0.38),dark:pbr(C.dark,0.55,0.42),
+         joint:pbr(C.joint,0.6,0.38),glass:pbr(C.glass,0.5,0.18),foot:pbr(C.dark,0.4,0.5)}}
+const botHit=[];
+function buildBot(ghost){
+  const M=botMats(ghost);
+  const mesh=(geo,mat)=>{const m=new THREE.Mesh(geo,mat);m.castShadow=!ghost;
+    if(ghost){
+      const line=new THREE.LineSegments(new THREE.EdgesGeometry(geo,48),
+        new THREE.LineBasicMaterial({color:0x365F91,transparent:true,opacity:.62,depthTest:true}));
+      line.renderOrder=10;m.add(line)}
+    if(!ghost){
+      botHit.push(m);
+      const outline=new THREE.LineSegments(new THREE.EdgesGeometry(geo,42),
+        new THREE.LineBasicMaterial({color:0x3F4D59,transparent:true,opacity:.58,depthTest:true}));
+      outline.renderOrder=2;m.add(outline)}
+    return m};
+  const root=new THREE.Group();scene.add(root);
+  const torsoG=new THREE.Group();torsoG.position.y=0.92;root.add(torsoG);
+  /* G1-inspired compact anatomy: narrow pelvis, exposed waist actuator,
+     slim battery torso and a black sensor pod. Low segment counts are deliberate. */
+  const hip=mesh(new THREE.BoxGeometry(0.24,0.11,0.17),M.dark);hip.position.y=-0.04;torsoG.add(hip);
+  const abd=mesh(new THREE.CylinderGeometry(0.082,0.105,0.17,8),M.joint);abd.position.y=0.075;torsoG.add(abd);
+  const chest=mesh(new THREE.SphereGeometry(0.205,10,7),M.armor);
+  chest.scale.set(1,.88,.62);chest.position.y=0.31;torsoG.add(chest);
+  const core=mesh(new THREE.BoxGeometry(0.145,0.205,0.016),M.dark);core.position.set(0,0.30,0.135);torsoG.add(core);
+  const collar=mesh(new THREE.BoxGeometry(0.29,0.05,0.16),M.armor);collar.position.y=0.485;torsoG.add(collar);
+  const pack=mesh(new THREE.BoxGeometry(0.22,0.26,0.075),M.dark);pack.position.set(0,0.3,-0.14);torsoG.add(pack);
+  const chestLed=new THREE.Mesh(new THREE.PlaneGeometry(0.13,0.028),
+    new THREE.MeshBasicMaterial({color:C.run}));
+  chestLed.position.set(0,0.38,0.125);torsoG.add(chestLed);
+  const neck=mesh(new THREE.CylinderGeometry(0.04,0.045,0.06,8),M.dark);neck.position.y=0.535;torsoG.add(neck);
+  const headG=new THREE.Group();headG.position.y=0.61;torsoG.add(headG);
+  const skull=mesh(new THREE.SphereGeometry(0.115,12,8),M.armor);
+  skull.scale.set(1.04,.9,.94);skull.position.y=0.075;headG.add(skull);
+  const visor=mesh(new THREE.BoxGeometry(0.145,0.105,0.018),M.glass);
+  visor.position.set(0,0.07,0.108);headG.add(visor);
+  const faceLedMat=new THREE.MeshBasicMaterial({color:C.run});
+  const vline=new THREE.Mesh(new THREE.PlaneGeometry(0.12,0.009),faceLedMat);
+  vline.position.set(0,0.12,0.119);headG.add(vline);
+  [-1,1].forEach(s=>{
+    const side=new THREE.Mesh(new THREE.PlaneGeometry(.008,.085),faceLedMat);
+    side.position.set(s*.066,.073,.119);headG.add(side)});
+  function limb(upLen,loLen,rU,rL,px,py,end){
+    const up=new THREE.Group();up.position.set(px,py,0);torsoG.add(up);
+    const act1=mesh(new THREE.CylinderGeometry(rU*1.42,rU*1.42,rU*2.05,8),M.armor);
+    act1.rotation.z=Math.PI/2;up.add(act1);
+    const jointCore=mesh(new THREE.CylinderGeometry(rU*.72,rU*.72,rU*2.14,8),M.joint);
+    jointCore.rotation.z=Math.PI/2;up.add(jointCore);
+    const um=mesh(new THREE.CylinderGeometry(rU,rU*0.78,upLen,8),M.armor);
+    um.position.y=-upLen/2;up.add(um);
+    const lo=new THREE.Group();lo.position.y=-upLen;up.add(lo);
+    const act2=mesh(new THREE.CylinderGeometry(rU*0.95,rU*0.95,rU*1.5,8),M.joint);
+    act2.rotation.z=Math.PI/2;lo.add(act2);
+    const lm=mesh(new THREE.CylinderGeometry(rL,rL*0.82,loLen,8),M.armor);
+    lm.position.y=-loLen/2;lo.add(lm);
+    const mount=new THREE.Group();mount.position.y=-loLen-0.05;lo.add(mount);
+    if(end==='foot'){
+      const ankle=mesh(new THREE.CylinderGeometry(rL*0.8,rL*0.8,0.05,8),M.joint);
+      ankle.position.y=-loLen;lo.add(ankle);
+      const foot=mesh(new THREE.BoxGeometry(rL*2.1,0.055,rL*3.6),M.foot);
+      foot.position.set(0,-loLen-0.04,rL*0.9);lo.add(foot)}
+    if(end==='hand'){
+      const cuff=mesh(new THREE.CylinderGeometry(rL*1.08,rL*1.08,.065,8),M.joint);
+      cuff.position.y=-loLen+.015;lo.add(cuff);
+      const palm=mesh(new THREE.BoxGeometry(.095,.075,.06),M.dark);
+      palm.position.set(0,-loLen-.065,.006);lo.add(palm);
+      [-1,0,1].forEach(s=>{const f=mesh(new THREE.BoxGeometry(.018,.082,.025),M.dark);
+        f.position.set(s*.032,-loLen-.13,.014);f.rotation.z=s*.1;lo.add(f)})}
+    return{up,lo,mount,upLen,loLen,sU:new SP(0),sL:new SP(0),sZ:new SP(0)}}
+  const legL=limb(0.37,0.37,0.072,0.055,-0.115,-0.1,'foot'),
+        legR=limb(0.37,0.37,0.072,0.055,0.115,-0.1,'foot');
+  const armL=limb(0.34,0.30,0.048,0.038,-0.24,0.44,'hand'),
+        armR=limb(0.34,0.30,0.048,0.038,0.24,0.44,'hand');
+  /* 双腿从会旋转/俯仰的 torsoG 中脱离，固定到 root，避免身体前倾时脚穿地。 */
+  torsoG.remove(legL.up);torsoG.remove(legR.up);root.add(legL.up,legR.up);
+  legL.up.position.set(-0.115,.82,0);legR.up.position.set(.115,.82,0);
+  const pegHand=makePeg(ghost);
+  pegHand.rotation.x=Math.PI/2;
+  pegHand.visible=false;armR.mount.add(pegHand);
+  return{root,torsoG,headG,legL,legR,armL,armR,pegHand,
+         led:vline,chest:chestLed,
+         sYaw:new SP(0),sLean:new SP(0.06),headYaw:0,headPitch:0}}
+const bot=buildBot(false),simBot=buildBot(true);
+simBot.root.visible=false;
+bot.root.position.set(-0.18,0.006,-0.14);
+simBot.root.position.set(-0.18,0.006,-0.14);
+
+/* Simulation gets the richer visual budget: motion trace, insertion target,
+   predicted collision volume and a lightweight sensor field. */
+const simViz=new THREE.Group();simViz.visible=false;scene.add(simViz);
+const simTraceGeo=new THREE.BufferGeometry().setFromPoints([
+  new THREE.Vector3(.65,1.08,.36),new THREE.Vector3(.38,1.36,.35),
+  new THREE.Vector3(FIX_X,1.43,.33),new THREE.Vector3(FIX_X,1.29,.32)
+]);
+const simTrace=new THREE.Line(simTraceGeo,
+  new THREE.LineDashedMaterial({color:0x365F91,dashSize:.045,gapSize:.025,transparent:true,opacity:.8}));
+simTrace.computeLineDistances();simViz.add(simTrace);
+const targetRings=new THREE.Group();
+[.078,.105,.132].forEach((r,i)=>{
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.0035,4,24),
+    new THREE.MeshBasicMaterial({color:i===0?C.ai:C.sim,transparent:true,opacity:.72-i*.14}));
+  ring.rotation.x=-Math.PI/2;targetRings.add(ring)});
+targetRings.position.set(FIX_X,1.305,.32);simViz.add(targetRings);
+const riskVolume=new THREE.Mesh(new THREE.SphereGeometry(.105,10,6),
+  new THREE.MeshBasicMaterial({color:C.run,wireframe:true,transparent:true,opacity:.18,depthWrite:false}));
+riskVolume.position.set(FIX_X,1.34,.32);simViz.add(riskVolume);
+const sensorField=new THREE.Mesh(new THREE.ConeGeometry(.24,.42,4,1,true),
+  new THREE.MeshBasicMaterial({color:C.holo,wireframe:true,transparent:true,opacity:.12,depthWrite:false}));
+sensorField.rotation.x=-Math.PI/2;sensorField.position.set(0,.08,.27);simBot.headG.add(sensorField);
+
+const lerp=(a,b,k)=>a+(b-a)*k,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+/* Slightly softer, near-critical joint response prevents phase-boundary snaps. */
+const KS=62,DP=15;
+
+function poseStand(b,p,dt){
+  const tnow=performance.now();
+  const upperBob=Math.sin(tnow/1100)*0.002;
+  b.torsoG.position.y=0.92+upperBob;
+  b.torsoG.rotation.y=b.sYaw.to(p.yaw||0,70,11,dt);
+  b.torsoG.rotation.x=b.sLean.to((p.lean||0.06)+Math.sin(tnow/1100)*0.003,42,14,dt);
+  b.headYaw=lerp(b.headYaw,p.headYaw||0,Math.min(1,dt*6));
+  b.headPitch=lerp(b.headPitch,(p.headPitch!==undefined)?p.headPitch:0.15,Math.min(1,dt*6));
+  b.headG.rotation.y=b.headYaw;b.headG.rotation.x=b.headPitch;
+  [b.legL,b.legR].forEach(L=>{
+    L.up.position.y=.82;
+    L.up.rotation.x=0.06;
+    L.up.rotation.z=0;
+    L.lo.rotation.x=0.1});
+  function arm(A,t){
+    A.up.rotation.x=A.sU.to(t.ux,KS,DP,dt);
+    A.up.rotation.z=A.sZ.to(t.uz||0,KS,DP,dt);
+    A.lo.rotation.x=Math.min(-0.02,A.sL.to(t.lx,KS,DP,dt))}
+  arm(b.armR,p.rArm);arm(b.armL,p.lArm);
+  b.root.position.y=0.006;
+  b.led.material.color.setHex(p.led);
+  b.chest.material.color.setHex(p.led)}
+
+const POSE={
+  home:   {yaw:0,   lean:.06,headYaw:0,   rArm:{ux:-0.2,uz:-0.06,lx:-1.15},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  toTray: {yaw:-0.22,lean:.14,headYaw:-0.38,rArm:{ux:-0.55,uz:0.9,lx:-0.45},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  grasp:  {yaw:-0.22,lean:.2,headYaw:-0.38,headPitch:.34,rArm:{ux:-0.75,uz:1.0,lx:-0.15},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  lift:   {yaw:-0.08,lean:.12,headYaw:-0.1,rArm:{ux:-0.95,uz:0.6,lx:-0.4},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  align:  {yaw:0.04, lean:.2, headYaw:0.05,headPitch:.35,rArm:{ux:-0.95,uz:0.04,lx:-0.45},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  insert: {yaw:0.04, lean:.3, headYaw:0.05,headPitch:.45,rArm:{ux:-1.16,uz:0.04,lx:-0.16},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  seat:   {yaw:0.04, lean:.26,headYaw:0.05,headPitch:.4,rArm:{ux:-1.12,uz:0.04,lx:-0.2},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  retract:{yaw:-0.03,lean:.09,headYaw:0,rArm:{ux:-0.55,uz:0.15,lx:-0.9},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}},
+  out:    {yaw:0,lean:.06,headYaw:0,rArm:{ux:-0.2,uz:-0.06,lx:-1.15},lArm:{ux:-0.25,uz:-0.45,lx:-1.05}}};
+
+/* ═══════════ 浮字 ═══════════ */
+const v3=new THREE.Vector3();
+function toast3d(x,y,z,text,color){
+  v3.set(x,y,z).project(camera);
+  const r=VP.getBoundingClientRect();
+  const d=document.createElement('div');
+  d.className='t3d';d.textContent=text;d.style.color=color;
+  d.style.left=((v3.x*0.5+0.5)*r.width)+'px';
+  d.style.top=((-v3.y*0.5+0.5)*r.height)+'px';
+  VP.appendChild(d);setTimeout(()=>d.remove(),1000)}
+
+/* ═══════════ 世界状态 ═══════════ */
+const W={running:true,mode:2,view:'real',t0:performance.now(),down:0,haltAt:0,
+  good:0,scrap:0,jam:0,iters:0,
+  guide:1,
+  task:{phase:'home',t:0,part:null,corrected:false,greet:0},
+  sim:{mode:'mirror',t:0}};
+const MODE_TXT=[
+ 'MODE ① NO AI — a misaligned part jams the insertion; line halts, manual recovery only',
+ 'MODE ② AI ONLY — AI forces the insertion on REAL hardware: jam, cracked part, scrap',
+ 'MODE ③ AI + SIM TWIN — misalignment detected, corrected approach verified in sim, part saved'];
+const PHASES=[['toTray',1.28],['grasp',.74],['lift',1.06],['align',1.12],
+  ['insert',1.18],['seat',.74],['retract',1.12],['out',1.24]];
+function setMode(m){W.mode=m;
+  [m0,m1,m2].forEach((b,i)=>{b.classList.toggle('on',i===m);b.setAttribute('aria-pressed',i===m)});
+  W.guide=Math.max(W.guide,2);updateGuide();
+  announce.textContent='Control mode selected: '+modesShort[m];
+  setAI(MODE_TXT[m],true)}
+function setAI(m,idle){aitext.textContent=m;aistrip.classList.toggle('idle',!!idle)}
+function halt(msg){beep(220,.3,'square',.05);W.running=false;W.haltAt=performance.now();
+  stateBadge.textContent='■ LINE HALTED';stateBadge.classList.add('halt');
+  bC.classList.add('show');announce.textContent='Line halted. Manual recovery required.';setAI(msg,true)}
+function clearFault(){if(W.running)return;
+  pegStuck.visible=false;
+  W.down+=performance.now()-W.haltAt;W.running=true;
+  stateBadge.textContent='● RUNNING';stateBadge.classList.remove('halt');
+  bC.classList.remove('show');
+  W.task={phase:'home',t:0,part:null,corrected:false,greet:0};
+  bot.pegHand.visible=false;heldPeg.visible=false;heldPegSim.visible=false;
+  setAI(MODE_TXT[W.mode],true)}
+function injectFault(){
+  const p=trayParts[0]||trayParts[1]||trayParts[2];
+  if(p&&!p.sliding){setPegFault(p,!p.faulty);
+    if(p.faulty){W.guide=3;updateGuide();announce.textContent='Misaligned part injected. Watch the robot response and KPI results.';toast3d(p.g.position.x,1.25,0.36,'MISALIGNED','#FF9E00')}}}
+const binG=new THREE.Group();binG.position.set(-1.58,0.42,0.34);scene.add(binG);
+let binCount=0,outPart=null;
+function resetScene(){
+  trayParts.forEach((p,i)=>{if(p){releaseObject(p.g);trayParts[i]=null}});
+  partHit.length=0;refillTray();
+  pegSeated.visible=false;pegStuck.visible=false;
+  productHalo.material.opacity=0;
+  binCount=0;while(binG.children.length)releaseObject(binG.children[0]);
+  if(outPart){releaseObject(outPart.g);outPart=null}
+  W.good=0;W.scrap=0;W.jam=0;W.iters=0;
+  W.guide=1;updateGuide();
+  kG.textContent=0;kX.textContent=0;kC.textContent=0;kS.textContent=0;
+  W.t0=performance.now();W.down=0;W.running=true;
+  W.task={phase:'home',t:0,part:null,corrected:false,greet:0};
+  W.sim.mode='mirror';banner.style.opacity=0;
+  stateBadge.textContent='● RUNNING';stateBadge.classList.remove('halt');
+  bC.classList.remove('show');syncTxt.textContent='SYNC';
+  bot.pegHand.visible=false;simBot.pegHand.visible=false;
+  heldPeg.visible=false;heldPegSim.visible=false;
+  setView('sim');setAI(MODE_TXT[W.mode],true)}
+const aistrip=document.getElementById('aistrip'),aitext=document.getElementById('aitext'),
+  stateBadge=document.getElementById('stateBadge'),banner=document.getElementById('simBanner'),
+  bC=document.getElementById('bC'),bF=document.getElementById('bF'),
+  kG=document.getElementById('kG'),kX=document.getElementById('kX'),
+  kC=document.getElementById('kC'),kS=document.getElementById('kS'),kU=document.getElementById('kU'),
+  guide=document.getElementById('guide'),guideStep=document.getElementById('guideStep'),
+  phaseTxt=document.getElementById('phaseTxt'),phaseBar=document.getElementById('phaseBar'),
+  soundBtn=document.getElementById('soundBtn'),announce=document.getElementById('announce'),
+  simLab=document.getElementById('simLab'),simLive=document.getElementById('simLive'),
+  simState=document.getElementById('simState'),simIter=document.getElementById('simIter'),
+  simError=document.getElementById('simError'),simRisk=document.getElementById('simRisk'),
+  simForce=document.getElementById('simForce'),simPolicy=document.getElementById('simPolicy'),
+  simProgress=document.getElementById('simProgress');
+const modesShort=['NO AI','AI ONLY','AI + SIM TWIN'];
+function updateSimLab(state,iter,error,risk,force,policy,progress){
+  if(simState.textContent!==state)simState.textContent=state;
+  simIter.textContent=iter+' / 2';
+  simError.textContent=error.toFixed(3)+' rad';
+  simRisk.textContent=risk;simRisk.className='risk '+(risk==='HIGH'?'high':'low');
+  simForce.textContent=force.toFixed(1)+' N';
+  simPolicy.textContent='POLICY · '+policy;
+  simProgress.style.width=Math.max(0,Math.min(100,progress))+'%';
+  const danger=risk==='HIGH';
+  riskVolume.material.color.setHex(danger?C.red:C.run);
+  riskVolume.material.opacity=danger ? 0.34 : 0.18;
+}
+function updateGuide(){
+  if(W.guide===1){guideStep.textContent='STEP 1/3';guide.lastChild.textContent=' Choose a control mode, then inject the same assembly fault.'}
+  else if(W.guide===2){guideStep.textContent='STEP 2/3';guide.lastChild.textContent=' Inject a misaligned part and watch what reaches the real fixture.'}
+  else{guideStep.textContent='STEP 3/3';guide.lastChild.textContent=' Observe the response, then compare ASSEMBLED, SCRAP and REAL JAM.'}}
+function toggleSound(){
+  soundEnabled=!soundEnabled;
+  if(soundEnabled&&AC&&AC.state==='suspended')AC.resume();
+  soundBtn.textContent=soundEnabled?'SOUND ON':'SOUND OFF';
+  soundBtn.classList.toggle('on',soundEnabled);
+  soundBtn.setAttribute('aria-pressed',soundEnabled);
+  if(soundEnabled)beep(880,.06,'sine',.035)}
+soundBtn.addEventListener('click',toggleSound);
+
+/* ═══════════ 视图切换 ═══════════ */
+const bgCol=new THREE.Color(C.paper),bgTarget=new THREE.Color(C.paper);
+function setView(v){
+  W.view=v;viewSim=(v==='sim');
+  vSim.classList.toggle('simActive',viewSim);
+  vReal.classList.toggle('active',!viewSim);
+  vSim.setAttribute('aria-pressed',viewSim);
+  vReal.setAttribute('aria-pressed',!viewSim);
+  simLab.classList.toggle('show',viewSim);simLab.setAttribute('aria-hidden',!viewSim);
+  simViz.visible=viewSim;
+  if(viewSim&&W.sim.mode!=='test')
+    updateSimLab('DIGITAL TWIN · LIVE MIRROR',0,0,'LOW',0,'MONITORING',8);
+  partOutlines.forEach(line=>line.visible=viewSim);
+  bgTarget.setHex(viewSim?C.simBg:C.paper);
+  scene.fog.color.setHex(viewSim?C.simBg:C.paper);
+  dl.castShadow=!viewSim&&!PERF.low&&!PERF.adapted;blob.visible=!viewSim;
+  R.meshes.forEach(m=>{m.material=viewSim?ghostFill:m.userData.solid;m.castShadow=false});
+  R.edges.forEach(e=>{if(!e.userData.keep)e.material.color.setHex(viewSim?C.sim:e.userData.ink)});
+  grid.material.color.setHex(viewSim?C.simGrid:C.gridA);
+  ground.material=viewSim?simGroundMat:ground.userData.solid;
+  simBot.root.visible=viewSim;bot.root.visible=!viewSim}
+scene.background=bgCol;
+
+/* ═══════════ SIM 试错：插入卡滞 → 重抓修正 → 验证 → 下发 ═══════════ */
+function startSimTest(){
+  W.sim.mode='test';W.sim.t=0;
+  W.prevView=W.view;setView('sim');syncTxt.textContent='TESTING';
+  simLive.textContent='● SOLVING';
+  updateSimLab('SPAWN DIGITAL TWIN',0,.38,'LOW',0,'SAMPLING APPROACHES',3);
+  simBot.pegHand.visible=false;heldPeg.visible=false;heldPegSim.visible=true;
+  heldPegSim.position.copy(HELD_PATH.align);heldPegSim.rotation.z=0.38;
+  setAI('ANOMALY: part misalignment detected at fixture — spawning twin test…',false)}
+function runSimTest(dt){
+  const s=W.sim;s.t+=dt;
+  let P=POSE.align,led=C.ai;
+  targetRings.rotation.y+=dt*.8;
+  riskVolume.scale.setScalar(1+Math.sin(s.t*7)*.035);
+  if(s.t<1.2){P=POSE.align;
+    updateSimLab('ANALYZE MISALIGNMENT',0,.38,'LOW',0,'SAMPLING APPROACHES',s.t/6.3*100)}
+  else if(s.t<2.0){P=POSE.insert;
+    updateSimLab('ITER 1 · FORWARD SOLVE',1,.38,'HIGH',18+(s.t-1.2)*28,'CANDIDATE UNDER TEST',s.t/6.3*100);
+    if(s.t>1.7){led=C.red;
+      banner.textContent='SIM ITER 1 — INSERTION JAM ✗';banner.style.opacity=1;
+      banner.style.color='var(--amber)';banner.style.borderColor='var(--amber)';
+      boreRing.material.color.setHex(C.red)}}
+  else if(s.t<2.8){P=POSE.insert;led=C.red;
+    updateSimLab('ITER 1 · COLLISION',1,.38,'HIGH',42+Math.sin(s.t*18)*4,'REJECTED · JAM',s.t/6.3*100);
+    heldPegSim.position.x=HELD_PATH.align.x+Math.sin(s.t*45)*0.004}
+  else if(s.t<4.0){P=POSE.align;
+    const correction=Math.max(0,1-(s.t-2.8)/.9);
+    updateSimLab('ITER 2 · RE-GRIP',2,.38*correction,'LOW',2.5,'CORRECTING POSE',s.t/6.3*100);
+    if(!s.i2){s.i2=true;W.iters++;kS.textContent=W.iters;
+      boreRing.material.color.setHex(0x3A3D44);
+      heldPegSim.position.x=HELD_PATH.align.x;
+      banner.textContent='SIM ITER 2 — CORRECTED APPROACH · RE-GRIP';
+      banner.style.color='var(--sim)';banner.style.borderColor='var(--sim)'}
+    const k=Math.min(1,(s.t-2.8)/0.9);
+    heldPegSim.rotation.z=0.38*(1-k)}
+  else if(s.t<4.9){P=POSE.insert;
+    updateSimLab('ITER 2 · VERIFY INSERT',2,.006,'LOW',11.8,'WITHIN LIMITS',s.t/6.3*100);
+    if(s.t>4.6){led=C.run;
+      banner.textContent='SIM ITER 2 — INSERTION ✓';
+      banner.style.color='var(--run)';banner.style.borderColor='var(--run)'}}
+  else if(s.t<6.3){P=POSE.retract;led=C.run;
+    updateSimLab('POLICY VERIFIED',2,0,'LOW',0,'DEPLOY TO REAL',s.t/6.3*100);
+    if(!s.dep){s.dep=true;W.iters++;kS.textContent=W.iters;
+      banner.textContent='▼ DEPLOY POLICY → REAL SYSTEM (part saved)';
+      banner.style.color='var(--ai-deep)';banner.style.borderColor='var(--ai-deep)';
+      setAI('POLICY VERIFIED IN SIM — corrected approach deployed · part will be saved',false);
+      beep(660,.09,'sine',.05);setTimeout(()=>beep(990,.12,'sine',.05),120)}}
+  else{
+    W.task.corrected=true;s.mode='mirror';s.i2=false;s.dep=false;
+    simLive.textContent='● LIVE';
+    updateSimLab('DIGITAL TWIN · LIVE MIRROR',2,0,'LOW',0,'DEPLOYED',100);
+    banner.style.opacity=0;syncTxt.textContent='SYNC';
+    simBot.pegHand.visible=false;heldPegSim.visible=false;heldPeg.visible=!!W.task.part;
+    setView(W.prevView||'real');return}
+  poseStand(simBot,{...P,led},dt)}
+
+/* ═══════════ 任务状态机 ═══════════ */
+function nextPhase(){
+  const T=W.task;
+  const idx=PHASES.findIndex(p=>p[0]===T.phase);
+  const nx=PHASES[idx+1];
+  if(nx){T.phase=nx[0];T.t=nx[1]}
+  else{T.phase='home';T.t=0.3}}
+function tickTask(dt,now){
+  const T=W.task;
+  let P=POSE[T.phase]||POSE.home,led=C.run;
+  if(T.greet>0){T.greet-=dt;
+    led=(Math.sin(now/90)>0)?0xFFFFFF:C.run;
+    poseStand(bot,{...POSE.home,headYaw:clamp(camera.position.x*0.3,-0.7,0.7),led},dt);
+    if(W.sim.mode==='mirror')poseStand(simBot,{...POSE.home,led},dt);
+    return}
+  T.t-=dt;
+  if(T.phase==='home'){
+    if(T.t<=0){const p=trayParts[0];
+      if(p&&!p.sliding){T.phase='toTray';T.t=PHASES[0][1]}}}
+  else if(T.t<=0){
+    if(T.phase==='toTray')nextPhase();
+    else if(T.phase==='grasp'){
+      const p=trayParts[0];
+      if(p){T.part=p;releaseObject(p.g);
+        trayParts[0]=trayParts[1];trayParts[1]=trayParts[2];trayParts[2]=null;
+        if(trayParts[0])trayParts[0].sliding=true;
+        if(trayParts[1])trayParts[1].sliding=true;
+        bot.pegHand.visible=false;heldPeg.visible=true;
+        heldPeg.position.copy(HELD_PATH.tray);heldPeg.rotation.z=p.faulty?0.38:0;
+        T.corrected=false;
+        beep(1500,.04,'sine',.03)}
+      nextPhase()}
+    else if(T.phase==='lift')nextPhase();
+    else if(T.phase==='align'){
+      const f=T.part&&T.part.faulty&&!T.corrected;
+      if(f&&W.mode===2&&W.sim.mode!=='test'){
+        led=C.ai;
+        setAI('VISION: part pose deviation +0.38 rad — requesting twin verification',false);
+        startSimTest();T.t=0.01}
+      else if(f&&W.mode===2){T.t=0.01}
+      else{
+        if(T.corrected){heldPeg.rotation.z=0;
+          toast3d(0,1.6,0.32,'RE-GRIP','#7C5FC9')}
+        nextPhase()}}
+    else if(T.phase==='insert')nextPhase();
+    else if(T.phase==='seat'){
+      const f=T.part&&T.part.faulty&&!T.corrected;
+      if(f&&W.mode===0){
+        pegStuck.visible=true;bot.pegHand.visible=false;heldPeg.visible=false;T.part=null;
+        halt('INSERTION JAM — misaligned part stuck in fixture · operator required');
+        return}
+      else if(f&&W.mode===1){
+        W.jam++;kC.textContent=W.jam;
+        W.scrap++;kX.textContent=W.scrap;
+        ctrl.shake=0.5;beep(110,.28,'sawtooth',.06);
+        toast3d(0,1.5,0.32,'JAM','#D14836');
+        setTimeout(()=>toast3d(0.3,1.3,0.32,'SCRAP','#D14836'),250);
+        bot.sLean.kick(4);
+        const sc=makePeg(false);sc.position.set(0.15,0.93,0.55);
+        sc.rotation.set(0.5,0.3,1.2);scene.add(sc);
+        setTimeout(()=>releaseObject(sc),4000);
+        bot.pegHand.visible=false;heldPeg.visible=false;T.part=null;
+        setAI('REAL-WORLD FORCED INSERTION — jam, part cracked and scrapped',false);
+        T.phase='retract';T.t=(PHASES.find(p=>p[0]==='retract'))[1];return}
+      else{
+        pegSeated.visible=true;bot.pegHand.visible=false;heldPeg.visible=false;
+        productHalo.material.opacity=1;
+        W.good++;kG.textContent=W.good;
+        toast3d(0,1.55,0.32,'+1','#2f9e5f');
+        beep(880,.1,'sine',.045);setTimeout(()=>beep(1320,.12,'sine',.04),90);
+        if(T.part&&T.part.faulty&&T.corrected)
+          setAI('CORRECTED INSERTION OK — defective part saved by sim-verified policy',false);
+        T.part=null;nextPhase()}}
+    else if(T.phase==='retract')nextPhase();
+    else if(T.phase==='out'){
+      if(pegSeated.visible){
+        pegSeated.visible=false;
+        outPart={g:makeFinishedModule(),t:0};
+        outPart.g.scale.setScalar(.78);
+        outPart.g.position.set(FIX_X,0.93,0.34);scene.add(outPart.g)}
+      T.phase='home';T.t=0.25}}
+  if(W.sim.mode==='test'){P=POSE.align;led=C.ai}
+  if(!W.running)led=C.red;
+  poseStand(bot,{...P,led},dt);
+  if(W.sim.mode==='mirror')poseStand(simBot,{...P,led},dt)}
+
+/* 独立工件轨迹：所有关键段都先抬高，再横移，最后只做垂直压装。 */
+function updateHeldPart(){
+  if(W.sim.mode==='test'||!W.task.part){if(W.sim.mode!=='test')heldPeg.visible=false;return}
+  const T=W.task,fault=T.part.faulty&&!T.corrected;
+  heldPeg.visible=true;heldPeg.rotation.z=fault?0.38:0;
+  const ease=u=>{u=clamp(u,0,1);return u*u*(3-2*u)};
+  const dur=(PHASES.find(p=>p[0]===T.phase)||['',1])[1];
+  if(T.phase==='lift'){
+    const u=ease(1-T.t/dur);heldPeg.position.lerpVectors(HELD_PATH.tray,HELD_PATH.lift,u)}
+  else if(T.phase==='align'){
+    const u=ease(1-T.t/dur);heldPeg.position.lerpVectors(HELD_PATH.lift,HELD_PATH.align,u)}
+  else if(T.phase==='insert'){
+    const u=ease(1-T.t/dur);heldPeg.position.lerpVectors(HELD_PATH.align,HELD_PATH.insert,u)}
+  else if(T.phase==='seat')heldPeg.position.copy(HELD_PATH.insert);
+  else heldPeg.position.copy(HELD_PATH.lift)}
+
+/* 右臂两段式 IK：手由工件位置驱动，肘部自动求解，避免“手与工件分离”。 */
+const ikDown=new THREE.Vector3(0,-1,0),ikTarget=new THREE.Vector3(),ikShoulder=new THREE.Vector3(),
+  ikDir=new THREE.Vector3(),ikMid=new THREE.Vector3(),ikPerp=new THREE.Vector3(),
+  ikElbow=new THREE.Vector3(),ikD2=new THREE.Vector3(),ikQ1=new THREE.Quaternion(),
+  ikQ2=new THREE.Quaternion(),ikInv=new THREE.Quaternion(),
+  rightGoal=new THREE.Vector3(),rightIKPos=new THREE.Vector3(.30,1.14,.08),
+  simRightIKPos=new THREE.Vector3(.30,1.14,.08),
+  leftGoal=new THREE.Vector3(),leftIKPos=new THREE.Vector3(-.45,1.12,.02),
+  handOffset=new THREE.Vector3(0,.19,0),moveDelta=new THREE.Vector3();
+function aimArm(b,A,targetWorld,side){
+  b.root.updateMatrixWorld(true);
+  ikTarget.copy(targetWorld);b.torsoG.worldToLocal(ikTarget);
+  const L1=A.upLen,L2=A.loLen+.05;
+  ikShoulder.copy(A.up.position);ikDir.subVectors(ikTarget,ikShoulder);
+  const d=clamp(ikDir.length(),.08,L1+L2-.006);ikDir.normalize();
+  const a=(L1*L1-L2*L2+d*d)/(2*d),h=Math.sqrt(Math.max(0,L1*L1-a*a));
+  ikMid.copy(ikShoulder).addScaledVector(ikDir,a);
+  /* 肘部始终偏向身体右外侧，避免压装时前臂扫过头部。 */
+  ikPerp.set(.38*side,.10,-.05).addScaledVector(ikDir,-ikPerp.dot(ikDir)).normalize();
+  ikElbow.copy(ikMid).addScaledVector(ikPerp,h);
+  ikQ1.setFromUnitVectors(ikDown,ikDir.subVectors(ikElbow,ikShoulder).normalize());
+  ikQ2.setFromUnitVectors(ikDown,ikD2.subVectors(ikTarget,ikElbow).normalize());
+  A.up.quaternion.copy(ikQ1);
+  ikInv.copy(ikQ1).invert();A.lo.quaternion.copy(ikInv.multiply(ikQ2))}
+function updateArmIK(dt){
+  const phase=W.task.phase,leverTarget=
+    (phase==='insert'||phase==='seat') ? .52 : (phase==='align' ? .12 : 0);
+  const finiteVec=v=>Number.isFinite(v.x)&&Number.isFinite(v.y)&&Number.isFinite(v.z);
+  const moveLimited=(current,goal,maxStep)=>{
+    if(!finiteVec(goal))return;
+    if(!finiteVec(current)||!Number.isFinite(maxStep)||maxStep<=0){current.copy(goal);return}
+    moveDelta.subVectors(goal,current);
+    const d=moveDelta.length();
+    if(!Number.isFinite(d)||d<=maxStep)current.copy(goal);else current.addScaledVector(moveDelta,maxStep/d)};
+  if(!finiteVec(heldPegSim.position))heldPegSim.position.copy(HELD_PATH.align);
+  if(heldPeg.visible)rightGoal.copy(heldPeg.position).add(handOffset);
+  else if(phase==='toTray'||phase==='grasp')rightGoal.copy(HELD_PATH.tray).add(handOffset);
+  else if(phase==='lift')rightGoal.copy(HELD_PATH.lift).add(handOffset);
+  else if(phase==='align')rightGoal.copy(HELD_PATH.align).add(handOffset);
+  else if(phase==='insert'||phase==='seat')rightGoal.copy(HELD_PATH.insert).add(handOffset);
+  else rightGoal.set(.30,1.14,.08);
+  moveLimited(rightIKPos,rightGoal,.42*dt);
+  aimArm(bot,bot.armR,rightIKPos,1);
+  /* 被抓工件跟随平滑后的真实手位，手和工件不会在阶段切换时分离。 */
+  if(heldPeg.visible)heldPeg.position.copy(rightIKPos).sub(handOffset);
+
+  clampPivot.rotation.z=lerp(clampPivot.rotation.z,leverTarget,1-Math.exp(-dt*6));
+  clampPivot.updateMatrixWorld(true);
+  if(phase==='align'||phase==='insert'||phase==='seat')clampGrip.getWorldPosition(leftGoal);
+  else leftGoal.set(-.45,1.12,.02);
+  moveLimited(leftIKPos,leftGoal,.40*dt);
+  aimArm(bot,bot.armL,leftIKPos,-1);
+
+  if(W.sim.mode==='test'){
+    rightGoal.copy(heldPegSim.position).add(handOffset);
+    moveLimited(simRightIKPos,rightGoal,.42*dt);
+    aimArm(simBot,simBot.armR,simRightIKPos,1);
+    if(heldPegSim.visible)heldPegSim.position.copy(simRightIKPos).sub(handOffset)}
+  else{moveLimited(simRightIKPos,rightIKPos,.42*dt);aimArm(simBot,simBot.armR,simRightIKPos,1)}
+  aimArm(simBot,simBot.armL,leftIKPos,-1)}
+
+/* ═══════════ 主循环 ═══════════ */
+let last=performance.now(),nextFrame=last,uiClock=PERF.uiInterval;
+function setText(el,value){if(el.textContent!==String(value))el.textContent=value}
+function tick(now){
+  requestAnimationFrame(tick);
+  if(document.hidden){last=now;nextFrame=now;return}
+  const frameInterval=1000/PERF.fps;
+  if(now-nextFrame<frameInterval)return;
+  nextFrame=now-((now-nextFrame)%frameInterval);
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  PERF.frames++;
+  if(!PERF.sampleAt){PERF.sampleAt=now;PERF.sampleFrames=PERF.frames}
+  else if(!PERF.low&&!PERF.adapted&&now-PERF.sampleAt>=5000){
+    const measured=(PERF.frames-PERF.sampleFrames)/((now-PERF.sampleAt)/1000);
+    if(measured<36){
+      PERF.adapted=true;
+      renderer.setPixelRatio(1);
+      renderer.shadowMap.enabled=false;dl.castShadow=false;
+      fit();
+    }
+  }
+  productHalo.material.opacity=Math.max(0,productHalo.material.opacity-dt*.7);
+  bgCol.lerp(bgTarget,Math.min(1,dt*8));
+  stackLight.grn.material.opacity=W.running?(0.55+Math.sin(now/300)*0.25):0.12;
+  stackLight.amb.material.opacity=W.running?0.12:(0.55+Math.sin(now/180)*0.3);
+  stackLight.red.material.opacity=0.12;
+  cabLed.material.color.setHex(W.running?C.run:C.amber);
+  refillTray();
+  outfeedSlats.forEach(s=>{
+    s.position.x-=dt*.18;
+    if(s.position.x<-.91)s.position.x+=1.02});
+  trayParts.forEach((p,i)=>{
+    if(p){const tx=SLOTX[i];
+      if(p.sliding){p.g.position.x=lerp(p.g.position.x,tx,Math.min(1,dt*5));
+        if(Math.abs(p.g.position.x-tx)<0.01){p.g.position.x=tx;p.sliding=false}}
+      p.g.position.z=0.36;p.g.position.y=0.915}});
+  if(outPart){outPart.t+=dt;
+    const k=Math.min(1,outPart.t/1.35);
+    if(k<.58){
+      const u=k/.58,e=u*u*(3-2*u);
+      outPart.g.position.x=lerp(FIX_X,-.82,e);
+      outPart.g.position.y=.93;
+      outPart.g.rotation.z=0}
+    else{
+      const u=(k-.58)/.42,e=u*u*(3-2*u);
+      outPart.g.position.x=lerp(-.82,-1.54,e);
+      outPart.g.position.y=lerp(.922,.652,e);
+      outPart.g.rotation.z=.38*e}
+    if(k>=1){releaseObject(outPart.g);outPart=null;
+      binCount++;
+      const u=makePeg(false);u.scale.setScalar(0.85);
+      const m=(binCount-1)%4;
+      u.position.set((m%2)*0.1-0.05,Math.floor(m/2)*0.09,0);
+      u.rotation.z=1.5;binG.add(u);
+      if(binCount%4===0)setTimeout(()=>{while(binG.children.length)releaseObject(binG.children[0])},600)}}
+
+  if(W.running)tickTask(dt,now);
+  else{poseStand(bot,{...POSE.home,led:C.red},dt);
+    if(W.sim.mode==='mirror')poseStand(simBot,{...POSE.home,led:C.red},dt)}
+
+  if(W.sim.mode==='test')runSimTest(dt);
+  updateHeldPart();
+  updateArmIK(dt);
+
+  uiClock+=dt;
+  if(uiClock>=PERF.uiInterval){
+  uiClock=0;
+  const phaseIndex=Math.max(0,PHASES.findIndex(p=>p[0]===W.task.phase));
+  const phaseNames={home:'READY · FEEDING PARTS',toTray:'MOVE · SMOOTH APPROACH',grasp:'PICK · CLOSE GRIPPER',lift:'MOVE · CLEAR THE TRAY',align:'ASSIST · LEFT HAND LOCKS FIXTURE',insert:'ASSEMBLE · DUAL-HAND PRESS-FIT',seat:'VERIFY · HOLD & RELEASE CLAMP',retract:'MOVE · SMOOTH RETRACT',out:'OUTPUT · TRANSFER'};
+  phaseTxt.textContent=W.sim.mode==='test'?'TWIN · VERIFYING POLICY':(!W.running?'HALTED · RECOVERY REQUIRED':(phaseNames[W.task.phase]||'RUNNING'));
+  phaseBar.style.width=(W.sim.mode==='test'?72:(W.task.phase==='home'?4:(phaseIndex+1)/PHASES.length*100))+'%';
+  bF.disabled=!W.running||W.sim.mode==='test';
+
+  const tot=now-W.t0,dn=W.down+(W.running?0:now-W.haltAt);
+  setText(kU,Math.max(0,Math.round(100*(1-dn/tot)))+'%');
+  }
+
+  ctrl.update(dt);renderer.render(scene,camera);
+}
+
+/* ═══════════ 轨道控制 + 点击分发 ═══════════ */
+const ctrl={theta:1.12,phi:1.25,r:2.72,target:new THREE.Vector3(-0.05,1.19,0.24),
+  tv:0,pv:0,dragging:false,shake:0,
+  update(dt){
+    if(!this.dragging){this.theta+=this.tv;this.phi-=this.pv;
+      this.tv*=Math.exp(-4*dt);this.pv*=Math.exp(-4*dt)}
+    this.phi=Math.max(0.68,Math.min(1.30,this.phi));
+    this.r=Math.max(2.30,Math.min(3.60,this.r));
+    let sx=0,sy=0;
+    if(this.shake>0.002){
+      sx=(Math.random()-0.5)*this.shake*0.12;
+      sy=(Math.random()-0.5)*this.shake*0.12;
+      this.shake*=Math.exp(-6*dt)}
+    camera.position.set(
+      this.target.x+this.r*Math.sin(this.phi)*Math.cos(this.theta)+sx,
+      this.target.y+this.r*Math.cos(this.phi)+sy,
+      this.target.z+this.r*Math.sin(this.phi)*Math.sin(this.theta));
+    camera.lookAt(this.target)}};
+let drag=null,pinch=null,moved=0;
+VP.addEventListener('pointerdown',e=>{VP.setPointerCapture(e.pointerId);moved=0;
+  drag={x:e.clientX,y:e.clientY,t:performance.now(),id:e.pointerId};
+  ctrl.dragging=true;ctrl.tv=0;ctrl.pv=0;
+  VP.classList.add('dragging')});
+VP.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved+=Math.abs(dx)+Math.abs(dy);
+  ctrl.theta+=dx*0.006;ctrl.phi-=dy*0.005;
+  ctrl.tv=dx*0.006;ctrl.pv=dy*0.005;
+  drag.x=e.clientX;drag.y=e.clientY});
+VP.addEventListener('pointerup',e=>{VP.classList.remove('dragging');ctrl.dragging=false;
+  if(drag&&moved<7&&performance.now()-drag.t<400)clickPlace(e);drag=null});
+VP.addEventListener('wheel',e=>{e.preventDefault();ctrl.r*=(1+Math.sign(e.deltaY)*0.08)},{passive:false});
+VP.addEventListener('touchstart',e=>{if(e.touches.length===2){
+  pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                   e.touches[0].clientY-e.touches[1].clientY);
+  drag=null;ctrl.dragging=false}});
+VP.addEventListener('touchmove',e=>{if(pinch&&e.touches.length===2){
+  const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                     e.touches[0].clientY-e.touches[1].clientY);
+  ctrl.r*=pinch/d;pinch=d;e.preventDefault()}},{passive:false});
+VP.addEventListener('touchend',()=>pinch=null);
+const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
+function clickPlace(e){
+  const r=VP.getBoundingClientRect();
+  ptr.x=((e.clientX-r.left)/r.width)*2-1;
+  ptr.y=-((e.clientY-r.top)/r.height)*2+1;
+  ray.setFromCamera(ptr,camera);
+  if(!viewSim){
+    const hp=ray.intersectObjects(partHit,false);
+    if(hp.length){const part=hp[0].object.userData.part;
+      if(part&&!part.sliding){setPegFault(part,!part.faulty);
+        beep(part.faulty?520:760,.06,'sine',.04);
+        if(part.faulty)toast3d(part.g.position.x,1.25,0.36,'MISALIGNED','#FF9E00');
+        return}}
+    const hb=ray.intersectObjects(botHit,false);
+    if(hb.length){W.task.greet=1.4;beep(1040,.08,'sine',.04);
+      toast3d(0,1.9,-0.2,'UNIT A-01 · OK','#2E3D4D');return}}}
+function fit(){const r=VP.getBoundingClientRect();
+  renderer.setSize(r.width,r.height,false);
+  camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
+addEventListener('resize',fit);fit();
+addEventListener('keydown',e=>{
+  if(e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;
+  if(e.key==='1'||e.key==='2'||e.key==='3')setMode(Number(e.key)-1);
+  else if(e.key.toLowerCase()==='f')injectFault();
+  else if(e.key.toLowerCase()==='r')resetScene();
+  else if(e.key.toLowerCase()==='m')toggleSound();
+  else if(e.key==='ArrowLeft')ctrl.theta-=.12;
+  else if(e.key==='ArrowRight')ctrl.theta+=.12;
+  else if(e.key==='ArrowUp')ctrl.phi-=.1;
+  else if(e.key==='ArrowDown')ctrl.phi+=.1;
+  else if(e.key==='+'||e.key==='=')ctrl.r*=.9;
+  else if(e.key==='-'||e.key==='_')ctrl.r*=1.1;
+  else return;
+  e.preventDefault()});
+document.addEventListener('visibilitychange',()=>{last=performance.now();nextFrame=last});
+window.__perfStats=()=>({
+  tier:PERF.low?'low':(PERF.adapted?'adaptive':'standard'),targetFps:PERF.fps,frames:PERF.frames,
+  averageFps:+(PERF.frames/Math.max(.001,(performance.now()-PERF.started)/1000)).toFixed(1),
+  registeredMeshes:R.meshes.length,registeredEdges:R.edges.length,
+  partOutlines:partOutlines.length,hitMeshes:partHit.length,
+  geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,
+  calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,
+  good:W.good,scrap:W.scrap,phase:W.task.phase,
+  outfeed:outPart?{
+    x:+outPart.g.position.x.toFixed(3),y:+outPart.g.position.y.toFixed(3),
+    z:+outPart.g.position.z.toFixed(3),progress:+Math.min(1,outPart.t/1.35).toFixed(2)
+  }:null
+});
+function reportEmbeddedHeight(){
+  if(document.documentElement.dataset.embed!=="bauhaus") return;
+  const height=Math.ceil(document.querySelector(".cell")?.getBoundingClientRect().height||document.body.scrollHeight);
+  parent.postMessage({type:"bauhaus-hero-height",height},"*");
+}
+addEventListener("message",event=>{
+  if(event.data?.type==="bauhaus-theme"){
+    document.documentElement.dataset.theme=event.data.theme==="dark"?"dark":"light";
+    reportEmbeddedHeight();
+  }
+  if(event.data?.type==="bauhaus-host-height"){
+    const target=Math.max(520,Number(event.data.height)||0);
+    const cell=document.querySelector(".cell");
+    const chrome=Math.max(0,cell.getBoundingClientRect().height-VP.getBoundingClientRect().height);
+    VP.classList.add("host-sized");
+    VP.style.height=`${Math.max(320,target-chrome)}px`;
+    fit();
+    reportEmbeddedHeight();
+  }
+  if(event.data?.type==="bauhaus-host-reset"){
+    VP.classList.remove("host-sized");
+    VP.style.height="";
+    fit();
+    reportEmbeddedHeight();
+  }
+});
+if(document.documentElement.dataset.embed==="bauhaus"){
+  new ResizeObserver(reportEmbeddedHeight).observe(document.querySelector(".cell"));
+  addEventListener("load",reportEmbeddedHeight);
+}
+updateGuide();
+refillTray();
+setView('sim');
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

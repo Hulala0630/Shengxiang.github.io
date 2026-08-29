@@ -1,0 +1,1765 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fault Simulation Training Platform</title>
+  <link rel="icon" href="data:," />
+  <script>
+    const params = new URLSearchParams(location.search);
+    document.documentElement.dataset.theme = params.get("theme") === "dark" ? "dark" : "light";
+    document.documentElement.lang = params.get("lang") === "en" ? "en" : "zh";
+  </script>
+  <style>
+    :root {
+      --paper: #f3f0e7;
+      --card: #fffdf7;
+      --ink: #151515;
+      --muted: #66635d;
+      --faint: #8f8a80;
+      --line: #bbb6aa;
+      --red: #e94b35;
+      --blue: #2767b2;
+      --yellow: #f3b928;
+      --run: #16944f;
+      --alarm: #b75e00;
+      --ai: #7c5fc9;
+      --screen: #111318;
+      --screen-line: #343943;
+      --screen-text: #edf0f3;
+      --shadow: #151515;
+    }
+
+    [data-theme="dark"] {
+      --paper: #121316;
+      --card: #1a1b20;
+      --ink: #eeece4;
+      --muted: #aaa69c;
+      --faint: #77746d;
+      --line: #393a40;
+      --red: #ff614c;
+      --blue: #68a4e5;
+      --yellow: #ffc43d;
+      --run: #3ddc84;
+      --alarm: #ff9e00;
+      --ai: #c3a6ff;
+      --screen: #090a0e;
+      --screen-line: #292b34;
+      --screen-text: #f4f2ec;
+      --shadow: #050506;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--card);
+      color: var(--ink);
+      font: 14px/1.5 "IBM Plex Mono", "Noto Sans SC", ui-monospace, monospace;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .app {
+      min-height: 620px;
+      border: 0;
+      background: var(--card);
+    }
+
+    .topbar {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 13px;
+      border-bottom: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .topbar strong { color: var(--yellow); }
+    .topbar .session { margin-left: auto; color: var(--run); }
+
+    .steps {
+      display: grid;
+      border-bottom: 1px solid var(--ink);
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .step {
+      min-height: 38px;
+      padding: 0 8px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: var(--card);
+      color: var(--faint);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .step:last-child { border-right: 0; }
+    .step:hover { background: var(--paper); color: var(--ink); }
+    .step b {
+      display: grid;
+      width: 19px;
+      height: 19px;
+      place-items: center;
+      border: 1px solid currentColor;
+      font-size: 11px;
+    }
+    .step.active { background: var(--blue); color: #fff; }
+    [data-theme="dark"] .step.active { color: #151515; }
+    .step.done { color: var(--run); }
+
+    .connections {
+      display: grid;
+      min-height: 50px;
+      border-bottom: 1px solid var(--ink);
+      grid-template-columns: 90px repeat(3, 1fr);
+    }
+
+    .connections > span,
+    .node {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      border-right: 1px solid var(--line);
+      font-size: 11px;
+    }
+
+    .connections > span { color: var(--faint); text-transform: uppercase; }
+    .node:last-child { border-right: 0; }
+    .node { position: relative; overflow: hidden; }
+    .node::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--run);
+      content: "";
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .2s ease-out;
+    }
+    .node.connecting::after { background: var(--yellow); transform: scaleX(.55); }
+    .node.online::after { transform: scaleX(1); }
+    .node i {
+      width: 7px;
+      height: 7px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: var(--faint);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--faint) 15%, transparent);
+    }
+    .node.connecting i { background: var(--yellow); animation: pulse .7s infinite; }
+    .node.online i { background: var(--run); }
+    .node small { margin-left: auto; color: var(--faint); }
+
+    .screen { padding: 18px; }
+    .screen[hidden] { display: none; }
+
+    .screen-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .kicker {
+      margin: 0 0 4px;
+      color: var(--red);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2 { margin-bottom: 6px; line-height: 1.05; }
+    h1 { font-size: clamp(24px, 4vw, 38px); }
+    h2 { font-size: 21px; }
+    h3 { margin-bottom: 8px; font-size: 12px; }
+    .muted { color: var(--muted); }
+
+    .login-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, .8fr);
+    }
+
+    .panel {
+      border: 1px solid var(--ink);
+      background: var(--card);
+      box-shadow: 5px 5px 0 var(--shadow);
+    }
+
+    .panel-title {
+      display: flex;
+      min-height: 33px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 11px;
+      border-bottom: 1px solid var(--ink);
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .panel-body { padding: 15px; }
+
+    .field { display: grid; gap: 5px; margin-bottom: 12px; }
+    .field label { color: var(--muted); font-size: 12px; }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--paper);
+      color: var(--ink);
+    }
+    .field textarea { min-height: 68px; resize: vertical; }
+
+    .button-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
+    .btn {
+      min-height: 37px;
+      padding: 0 12px;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      background: var(--card);
+      cursor: pointer;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .btn:hover { background: var(--paper); }
+    .btn.primary { background: var(--ink); color: var(--paper); }
+    .btn.blue { background: var(--blue); color: #fff; border-color: var(--blue); }
+    [data-theme="dark"] .btn.blue { color: #151515; }
+    .btn.red { background: var(--red); color: #151515; border-color: var(--red); }
+    .btn:disabled { cursor: not-allowed; opacity: .4; }
+
+    .login-actions {
+      display: grid;
+      gap: 7px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .role-profile {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .role-profile span,
+    .role-profile strong {
+      display: block;
+    }
+
+    .role-profile span {
+      margin-bottom: 5px;
+      color: var(--faint);
+      letter-spacing: .08em;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .role-profile strong {
+      font: 600 15px "Space Grotesk", "Noto Sans SC", sans-serif;
+    }
+
+    .role-profile p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .readiness-list {
+      display: grid;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .readiness-item {
+      display: grid;
+      min-height: 46px;
+      gap: 9px;
+      align-items: center;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--line);
+      grid-template-columns: 9px 1fr auto;
+    }
+
+    .readiness-item i {
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--faint);
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .readiness-item span {
+      font-size: 11px;
+    }
+
+    .readiness-item small {
+      color: var(--faint);
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+
+    .readiness-item[data-state="checking"] i {
+      border-color: var(--yellow);
+      background: var(--yellow);
+      animation: pulse .65s infinite;
+    }
+
+    .readiness-item[data-state="checking"] small {
+      color: var(--alarm);
+    }
+
+    .readiness-item[data-state="ready"] i {
+      border-color: var(--run);
+      background: var(--run);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--run) 15%, transparent);
+    }
+
+    .readiness-item[data-state="ready"] small {
+      color: var(--run);
+    }
+
+    .readiness-summary {
+      margin: 0;
+      padding: 11px 12px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .readiness-summary.ready {
+      color: var(--run);
+    }
+
+    .library-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+    .library-tools input {
+      min-width: 170px;
+      min-height: 37px;
+      flex: 1;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--ink); }
+    table { width: 100%; border-collapse: collapse; min-width: 590px; }
+    th, td {
+      padding: 8px 9px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 11px;
+      vertical-align: middle;
+    }
+    th { background: var(--paper); color: var(--muted); text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr.selected td { background: color-mix(in srgb, var(--blue) 10%, var(--card)); }
+    .severity {
+      display: inline-block;
+      min-width: 48px;
+      padding: 2px 5px;
+      color: #151515;
+      text-align: center;
+    }
+    .severity.high { background: var(--red); }
+    .severity.medium { background: var(--yellow); }
+    .row-actions { display: flex; gap: 4px; }
+    .mini {
+      min-height: 25px;
+      padding: 0 6px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      cursor: pointer;
+      font-size: 10px;
+    }
+
+    .detail-strip,
+    .editor {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+    .detail-grid {
+      display: grid;
+      gap: 9px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .detail-grid span { display: block; color: var(--faint); font-size: 10px; text-transform: uppercase; }
+    .detail-grid b { font-size: 11px; font-weight: 500; }
+
+    .editor-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .editor[hidden], .detail-strip[hidden] { display: none; }
+
+    .training-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: minmax(0, 1.25fr) minmax(220px, .75fr);
+    }
+
+    .station-panel {
+      min-height: 244px;
+      border: 1px solid var(--screen-line);
+      background:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+        var(--screen);
+      background-size: 22px 22px;
+      color: var(--screen-text);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .station-label {
+      position: absolute;
+      top: 9px;
+      left: 10px;
+      color: #9da4ae;
+      font-size: 10px;
+      letter-spacing: .04em;
+    }
+
+    .station-process {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      left: 10px;
+      color: #8d96a3;
+      font-size: 8px;
+      letter-spacing: .035em;
+      text-align: center;
+    }
+
+    .component-tag {
+      position: absolute;
+      z-index: 2;
+      width: max-content;
+      max-width: 120px;
+      padding: 2px 4px;
+      border: 1px solid #596474;
+      background: #11161e;
+      color: #c7cdd6;
+      font-size: 8px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .conveyor {
+      position: absolute;
+      right: 8%;
+      bottom: 38px;
+      left: 8%;
+      height: 45px;
+      border: 2px solid #8893a2;
+    }
+    .conveyor::after {
+      position: absolute;
+      right: 5px;
+      bottom: 6px;
+      left: 5px;
+      height: 5px;
+      background: repeating-linear-gradient(90deg, #8893a2 0 11px, transparent 11px 18px);
+      content: "";
+      animation: belt 1.1s linear infinite;
+    }
+    .conveyor .component-tag { bottom: 13px; left: 6px; }
+    .station.fault .conveyor::after { animation-play-state: paused; opacity: .45; }
+
+    .part {
+      position: absolute;
+      bottom: 84px;
+      left: 18%;
+      width: 31px;
+      height: 25px;
+      border: 2px solid var(--yellow);
+      background: color-mix(in srgb, var(--yellow) 20%, transparent);
+      animation: partMove 4s linear infinite;
+    }
+    .station.fault .part { animation-play-state: paused; }
+    .station.sensor-fault .part { left: 49%; box-shadow: 0 0 0 3px var(--red); }
+    .part .component-tag { top: 29px; left: -4px; border-color: var(--yellow); color: var(--yellow); }
+
+    .clamp {
+      position: absolute;
+      bottom: 82px;
+      left: 58%;
+      width: 45px;
+      height: 62px;
+      border: 3px solid var(--blue);
+      border-bottom: 0;
+    }
+    .clamp::after {
+      position: absolute;
+      top: 24px;
+      left: 7px;
+      width: 25px;
+      height: 4px;
+      background: var(--blue);
+      content: "";
+    }
+    .clamp .component-tag { top: -22px; right: -2px; border-color: var(--blue); color: #8bb6ff; }
+    .station.pressure-fault .clamp { border-color: var(--red); animation: shake .3s infinite; }
+
+    .sensor {
+      position: absolute;
+      bottom: 115px;
+      left: 47%;
+      width: 12px;
+      height: 31px;
+      border: 2px solid var(--run);
+    }
+    .sensor::after {
+      position: absolute;
+      top: 9px;
+      left: 14px;
+      width: 50px;
+      border-top: 1px dashed var(--run);
+      content: "";
+    }
+    .sensor .component-tag { top: -3px; right: 17px; border-color: var(--run); color: var(--run); }
+    .station.sensor-fault .sensor { border-color: var(--red); }
+    .station.sensor-fault .sensor::after { border-color: var(--red); opacity: .25; }
+
+    .motor {
+      position: absolute;
+      right: 12%;
+      bottom: 24px;
+      display: grid;
+      width: 45px;
+      height: 45px;
+      place-items: center;
+      border: 2px solid var(--run);
+      border-radius: 50%;
+      font-size: 10px;
+    }
+    .motor .component-tag { right: -3px; bottom: 49px; border-color: var(--run); color: var(--run); }
+    .station.drive-fault .motor { border-color: var(--red); color: var(--red); animation: shake .25s infinite; }
+
+    .safety-door {
+      position: absolute;
+      top: 55px;
+      right: 5%;
+      width: 50px;
+      height: 125px;
+      border: 2px solid #8893a2;
+      transform-origin: right center;
+      transition: transform .3s;
+    }
+    .safety-door .component-tag { top: -22px; right: 0; }
+    .station.safety-fault .safety-door { border-color: var(--red); transform: perspective(120px) rotateY(-35deg); }
+
+    .fault-banner {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      max-width: 60%;
+      padding: 4px 7px;
+      border: 1px solid var(--red);
+      background: var(--screen);
+      color: var(--red);
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: .2s;
+      font-size: 10px;
+    }
+    .station.fault .fault-banner { opacity: 1; transform: none; }
+    .station.recovered .fault-banner { border-color: var(--run); color: var(--run); opacity: 1; }
+
+    .io-grid { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
+    .io-panel { border: 1px solid var(--line); background: var(--paper); }
+    .io-panel h3 {
+      margin: 0;
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .io-list { list-style: none; margin: 0; padding: 0; }
+    .io-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 5px 7px;
+      border-bottom: 1px solid var(--line);
+      font-size: 10px;
+    }
+    .io-list li:last-child { border-bottom: 0; }
+    .io-list b { color: var(--run); }
+    .io-list li.bad b { color: var(--red); }
+
+    .hmi {
+      margin-top: 8px;
+      padding: 9px;
+      border: 1px solid var(--screen-line);
+      background: var(--screen);
+      color: var(--screen-text);
+      font-size: 11px;
+    }
+    .hmi strong { display: block; margin-bottom: 5px; color: var(--alarm); }
+    .hmi p { margin: 0; color: #aeb4be; }
+
+    .answer-panel { margin-top: 12px; }
+    .feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .feedback.good { border-color: var(--run); color: var(--run); }
+    .feedback.bad { border-color: var(--red); color: var(--red); }
+
+    .screen-motion-part { will-change: transform, opacity; }
+    .signal-hit { position: relative; z-index: 1; }
+
+    .report-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 150px 1fr;
+    }
+    .score-card {
+      display: grid;
+      min-height: 150px;
+      place-items: center;
+      border: 2px solid var(--ink);
+      background: var(--yellow);
+      color: #151515;
+      text-align: center;
+    }
+    .score-card strong { display: block; font-size: 48px; line-height: 1; }
+    .score-card span { font-size: 11px; text-transform: uppercase; }
+    .report-table { border: 1px solid var(--ink); }
+    .report-row {
+      display: grid;
+      grid-template-columns: 125px 1fr;
+      border-bottom: 1px solid var(--line);
+    }
+    .report-row:last-child { border-bottom: 0; }
+    .report-row span, .report-row b { padding: 8px 9px; font-size: 11px; }
+    .report-row span { border-right: 1px solid var(--line); color: var(--faint); }
+    .report-row b { font-weight: 500; }
+    .trace {
+      margin: 14px 0;
+      padding: 11px;
+      border: 1px solid var(--screen-line);
+      background: var(--screen);
+      color: #aeb4be;
+      font-size: 11px;
+    }
+    .trace b { color: var(--run); }
+
+    .toast {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      z-index: 20;
+      max-width: 280px;
+      padding: 9px 11px;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: .2s;
+      font-size: 11px;
+    }
+    .toast.show { opacity: 1; transform: none; }
+
+    @keyframes pulse { 50% { opacity: .35; } }
+    @keyframes belt { to { background-position: 18px 0; } }
+    @keyframes partMove { 0% { left: 18%; } 70%, 100% { left: 65%; } }
+    @keyframes shake { 50% { transform: translateX(2px); } }
+
+    @media (max-width: 700px) {
+      .app { min-height: 760px; }
+      .topbar .system-name { display: none; }
+      .connections { grid-template-columns: repeat(3, 1fr); }
+      .connections > span { display: none; }
+      .login-grid, .training-grid, .report-grid { grid-template-columns: 1fr; }
+      .login-actions { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .editor-grid { grid-template-columns: 1fr; }
+      .score-card { min-height: 105px; }
+      .report-row { grid-template-columns: 95px 1fr; }
+    }
+
+    @media print {
+      .topbar, .steps, .connections, .button-row { display: none !important; }
+      .screen { padding: 0; }
+      .screen:not(#report-screen) { display: none !important; }
+      #report-screen { display: block !important; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <strong>FTS / TRAINING-01</strong>
+      <span class="system-name" data-t="systemName">故障仿真培训平台</span>
+      <span class="session" id="session-status" data-t="offline">● 未登录</span>
+    </header>
+
+    <nav class="steps" aria-label="Training steps">
+      <button class="step active" type="button" data-step="0" aria-current="step"><b>1</b><span data-t="stepLogin">登录连接</span></button>
+      <button class="step" type="button" data-step="1"><b>2</b><span data-t="stepLibrary">故障配置</span></button>
+      <button class="step" type="button" data-step="2"><b>3</b><span data-t="stepTraining">模拟验证</span></button>
+      <button class="step" type="button" data-step="3"><b>4</b><span data-t="stepReport">培训报告</span></button>
+    </nav>
+
+    <section class="connections" aria-label="System connections">
+      <span data-t="connection">系统连接</span>
+      <div class="node" id="node-plc"><i></i><b>PLC</b><small>OFFLINE</small></div>
+      <div class="node" id="node-sim"><i></i><b>SIM MODEL</b><small>OFFLINE</small></div>
+      <div class="node" id="node-hmi"><i></i><b>HMI</b><small>OFFLINE</small></div>
+    </section>
+
+    <section class="screen" id="login-screen">
+      <div class="login-grid">
+        <form class="panel" id="login-form">
+          <div class="panel-title"><span data-t="loginTitle">培训员登录</span><span>SSO / OPC UA</span></div>
+          <div class="panel-body">
+            <p class="kicker" data-t="stepOne">步骤 01</p>
+            <h1 data-t="loginHeading">进入站点训练环境</h1>
+            <p class="muted" data-t="loginBody">选择角色与站点后，系统识别站点内容并继承标准化故障列表；环境检查通过后再连接 PLC、HMI 与仿真模型。</p>
+            <div class="field">
+              <label for="user-name" data-t="userLabel">培训用户</label>
+              <input id="user-name" value="trainee.hu" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="role-select" data-t="roleLabel">会话角色</label>
+              <select id="role-select">
+                <option value="trainee" data-t="roleTrainee">受训人员</option>
+                <option value="instructor" data-t="roleInstructor">培训管理员</option>
+                <option value="maintenance" data-t="roleMaintenance">维护工程师</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="station-select" data-t="stationLabel">训练站点</label>
+              <select id="station-select">
+                <option value="A01">A01 · Assembly / 装配</option>
+                <option value="B02">B02 · Inspection / 检测</option>
+                <option value="C03">C03 · Packaging / 包装</option>
+              </select>
+            </div>
+            <div class="login-actions">
+              <button class="btn" id="check-environment" type="button" data-t="checkEnvironment">检查模拟环境</button>
+              <button class="btn primary" id="login-submit" type="submit" data-t="loginButton" disabled>登录并自动连接 →</button>
+            </div>
+          </div>
+        </form>
+
+        <aside class="panel">
+          <div class="panel-title"><span data-t="readinessTitle">会话准备</span><span id="readiness-count">0 / 4 READY</span></div>
+          <div class="role-profile">
+            <span data-t="roleScope">当前角色权限</span>
+            <strong id="role-profile-name"></strong>
+            <p id="role-profile-body"></p>
+          </div>
+          <ul class="readiness-list">
+            <li class="readiness-item" data-check="runtime" data-state="pending"><i></i><span data-t="checkRuntime">浏览器仿真运行时</span><small data-t="pending">待检查</small></li>
+            <li class="readiness-item" data-check="package" data-state="pending"><i></i><span data-t="checkPackage">标准故障列表继承</span><small data-t="pending">待检查</small></li>
+            <li class="readiness-item" data-check="plc" data-state="pending"><i></i><span data-t="checkPlc">PLC 信号沙箱</span><small data-t="pending">待检查</small></li>
+            <li class="readiness-item" data-check="hmi" data-state="pending"><i></i><span data-t="checkHmi">HMI / OPC UA 模拟通道</span><small data-t="pending">待检查</small></li>
+          </ul>
+          <p class="readiness-summary" id="readiness-summary" data-t="readinessPending">先检查所选站点的模拟环境，再建立培训会话。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="screen" id="library-screen" hidden>
+      <header class="screen-head">
+        <div>
+          <p class="kicker" data-t="stepTwo">步骤 02</p>
+          <h2 data-t="libraryHeading">站点故障场景库</h2>
+          <p class="muted" id="library-subtitle"></p>
+        </div>
+        <button class="btn blue" id="start-training" type="button" data-t="startTraining">使用所选故障开始培训 →</button>
+      </header>
+
+      <div class="library-tools">
+        <input id="fault-search" type="search" data-placeholder="searchPlaceholder" placeholder="搜索故障编号、名称或 PLC 标签" />
+        <button class="btn" id="generate-fault" type="button" data-t="generateFault">＋ 自动生成</button>
+        <button class="btn" id="add-fault" type="button" data-t="addFault">＋ 新增场景</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-t="select">选择</th>
+              <th data-t="faultId">编号</th>
+              <th data-t="faultName">错误场景</th>
+              <th data-t="severity">等级</th>
+              <th data-t="plcTag">PLC 标签</th>
+              <th data-t="actions">操作</th>
+            </tr>
+          </thead>
+          <tbody id="fault-rows"></tbody>
+        </table>
+      </div>
+
+      <section class="detail-strip" id="fault-detail" hidden></section>
+
+      <form class="editor" id="fault-editor" hidden>
+        <div class="panel-title"><span id="editor-title"></span><button class="mini" id="close-editor" type="button">×</button></div>
+        <div class="editor-grid">
+          <div class="field"><label for="edit-code" data-t="faultId">编号</label><input id="edit-code" /></div>
+          <div class="field"><label for="edit-name" data-t="faultName">错误场景</label><input id="edit-name" /></div>
+          <div class="field"><label for="edit-tag" data-t="plcTag">PLC 标签</label><input id="edit-tag" /></div>
+          <div class="field"><label for="edit-hmi" data-t="hmiAlarm">HMI 报警</label><input id="edit-hmi" /></div>
+          <div class="field"><label for="edit-cause" data-t="rootCause">正确根因</label><input id="edit-cause" /></div>
+          <div class="field"><label for="edit-action" data-t="recoveryAction">正确处置</label><input id="edit-action" /></div>
+        </div>
+        <div class="button-row">
+          <button class="btn primary" type="submit" data-t="save">保存场景</button>
+          <button class="btn" id="cancel-editor" type="button" data-t="cancel">取消</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="screen" id="training-screen" hidden>
+      <header class="screen-head">
+        <div>
+          <p class="kicker" data-t="stepThree">步骤 03</p>
+          <h2 id="training-title"></h2>
+          <p class="muted" data-t="trainingBody">观察 HMI 报警、PLC 信号与模型反应，再提交根因和恢复操作。</p>
+        </div>
+        <button class="btn" id="abort-training" type="button" data-t="backLibrary">返回故障库</button>
+      </header>
+
+      <div class="training-grid">
+        <div>
+          <div class="station-panel station" id="station-model">
+            <span class="station-label" id="station-label"></span>
+            <div class="fault-banner" id="fault-banner"></div>
+            <div class="conveyor"><span class="component-tag" id="label-conveyor"></span></div>
+            <div class="part"><span class="component-tag" id="label-part"></span></div>
+            <div class="clamp"><span class="component-tag" id="label-clamp"></span></div>
+            <div class="sensor"><span class="component-tag" id="label-sensor"></span></div>
+            <div class="motor"><b id="motor-code">M1</b><span class="component-tag" id="label-motor"></span></div>
+            <div class="safety-door"><span class="component-tag" id="label-guard"></span></div>
+            <div class="station-process" id="station-process"></div>
+          </div>
+          <div class="hmi">
+            <strong id="hmi-title">HMI · WAITING FOR FAULT</strong>
+            <p id="hmi-message"></p>
+          </div>
+        </div>
+
+        <div>
+          <div class="io-grid">
+            <section class="io-panel"><h3>PLC INPUTS</h3><ul class="io-list" id="plc-inputs"></ul></section>
+            <section class="io-panel"><h3>PLC OUTPUTS</h3><ul class="io-list" id="plc-outputs"></ul></section>
+          </div>
+          <form class="answer-panel" id="answer-form">
+            <div class="field">
+              <label for="cause-answer" data-t="causeQuestion">根因是什么？</label>
+              <select id="cause-answer"></select>
+            </div>
+            <div class="field">
+              <label for="action-answer" data-t="actionQuestion">输入你的恢复操作</label>
+              <textarea id="action-answer" data-placeholder="actionPlaceholder" placeholder="例如：检查传感器并复位信号"></textarea>
+            </div>
+            <div class="button-row">
+              <button class="btn red" id="verify-answer" type="submit" data-t="verifyAnswer">验证答案</button>
+              <button class="btn blue" id="open-report" type="button" hidden data-t="openReport">生成培训报告 →</button>
+            </div>
+          </form>
+          <div class="feedback" id="feedback" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="report-screen" hidden>
+      <header class="screen-head">
+        <div>
+          <p class="kicker" data-t="stepFour">步骤 04</p>
+          <h2 data-t="reportHeading">培训结果报告</h2>
+          <p class="muted" id="report-id"></p>
+        </div>
+        <div class="button-row">
+          <button class="btn" id="print-report" type="button" data-t="print">打印 / 保存 PDF</button>
+          <button class="btn primary" id="finish-training" type="button" data-t="finish">完成并返回故障库</button>
+        </div>
+      </header>
+
+      <div class="report-grid">
+        <div class="score-card"><div><strong id="report-score">0</strong><span data-t="score">训练得分 / 100</span></div></div>
+        <div class="report-table" id="report-table"></div>
+      </div>
+      <div class="trace" id="report-trace"></div>
+      <div class="button-row">
+        <button class="btn blue" id="retry-training" type="button" data-t="retry">重新训练此场景</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/assets/vendor/anime.umd.min.js"></script>
+  <script>
+    const lang = document.documentElement.lang === "en" ? "en" : "zh";
+    const copy = {
+      zh: {
+        systemName: "故障仿真培训平台", offline: "● 未登录", online: "● 培训会话在线",
+        stepLogin: "登录连接", stepLibrary: "故障配置", stepTraining: "模拟验证", stepReport: "培训报告",
+        connection: "系统连接", loginTitle: "培训员登录", stepOne: "步骤 01", loginHeading: "进入站点训练环境",
+        loginBody: "选择角色与站点后，系统识别设备、信号点和训练对象，从标准化故障列表继承适用场景；环境检查通过后再连接 PLC、HMI 与仿真模型。",
+        userLabel: "培训用户", roleLabel: "会话角色", stationLabel: "训练站点", loginButton: "登录并自动连接 →",
+        roleTrainee: "受训人员", roleInstructor: "培训管理员", roleMaintenance: "维护工程师",
+        roleScope: "当前角色权限", traineeScope: "运行已发布场景、提交诊断并生成个人报告。",
+        instructorScope: "维护场景库、组织培训并查看完整执行记录。",
+        maintenanceScope: "检查 PLC / HMI 信号、验证恢复步骤与设备状态。",
+        readinessTitle: "会话准备", checkEnvironment: "检查模拟环境", pending: "待检查", checking: "检查中", ready: "就绪",
+        checkRuntime: "浏览器仿真运行时", checkPackage: "标准故障列表继承", checkPlc: "PLC 信号沙箱",
+        checkHmi: "HMI / OPC UA 模拟通道", readinessPending: "先检查所选站点的模拟环境，再建立培训会话。",
+        readinessRunning: "正在识别站点内容、继承标准故障列表并验证信号通道…",
+        readinessReady: "模拟环境已就绪，可以登录并建立系统连接。",
+        environmentRequired: "请先完成模拟环境检查",
+        stepTwo: "步骤 02", libraryHeading: "站点故障场景库", startTraining: "使用所选故障开始培训 →",
+        searchPlaceholder: "搜索故障编号、名称或 PLC 标签", generateFault: "＋ 自动生成", addFault: "＋ 新增场景",
+        select: "选择", faultId: "编号", faultName: "错误场景", severity: "等级", plcTag: "PLC 标签", actions: "操作",
+        hmiAlarm: "HMI 报警", rootCause: "正确根因", recoveryAction: "正确处置", save: "保存场景", cancel: "取消",
+        stepThree: "步骤 03", trainingBody: "观察 HMI 报警、PLC 信号与模型反应，再提交根因和恢复操作。",
+        backLibrary: "返回故障库", causeQuestion: "根因是什么？", actionQuestion: "输入你的恢复操作",
+        actionPlaceholder: "例如：检查传感器并复位信号", verifyAnswer: "验证答案", openReport: "生成培训报告 →",
+        stepFour: "步骤 04", reportHeading: "培训结果报告", print: "打印 / 保存 PDF", finish: "完成并返回故障库",
+        score: "训练得分 / 100", retry: "重新训练此场景", view: "查看", edit: "修改", remove: "删除",
+        high: "高", medium: "中", connected: "已连接", selected: "已选择", generated: "已生成新故障场景",
+        saved: "场景已保存", deleted: "场景已删除", chooseFault: "请选择一个故障场景", customTitle: "新增自定义故障",
+        editTitle: "修改故障场景", detailCause: "根因", detailAction: "处置", detailHmi: "HMI 报警",
+        chooseCause: "请选择根因", genericDistractor: "PLC 主程序损坏", inject: "正在注入故障…",
+        correct: "诊断正确：PLC、HMI 与仿真模型已执行恢复逻辑。", partial: "答案未完全匹配：请结合报警和 PLC 信号修正判断。",
+        reportUser: "培训用户", reportRole: "会话角色", reportStation: "训练站点", reportScenario: "故障场景", reportCause: "根因判断",
+        reportAction: "恢复操作", reportDuration: "响应时间", reportResult: "验证结果", passed: "通过", review: "需要复训",
+        trace: "链路记录", noMatch: "未找到匹配场景", loginRequired: "请先登录并连接训练站点",
+        trainingRequired: "请先选择一个故障场景", reportRequired: "完成一次答案验证后即可查看报告"
+      },
+      en: {
+        systemName: "Fault Simulation Training Platform", offline: "● SIGNED OUT", online: "● TRAINING SESSION ONLINE",
+        stepLogin: "Login & link", stepLibrary: "Fault config", stepTraining: "Sim & verify", stepReport: "Report",
+        connection: "Connections", loginTitle: "Trainee login", stepOne: "Step 01", loginHeading: "Enter the station training environment",
+        loginBody: "Choose a role and station; the system identifies equipment, signal points and training objects, then inherits applicable scenarios from a standardized fault catalog. PLC, HMI and simulation are linked after the readiness check.",
+        userLabel: "Trainee", roleLabel: "Session role", stationLabel: "Training station", loginButton: "Login and auto-connect →",
+        roleTrainee: "Trainee", roleInstructor: "Training administrator", roleMaintenance: "Maintenance engineer",
+        roleScope: "Current role scope", traineeScope: "Run published scenarios, submit a diagnosis and generate a personal report.",
+        instructorScope: "Maintain the scenario library, organize training and inspect the full execution trace.",
+        maintenanceScope: "Inspect PLC / HMI signals, validate recovery steps and verify equipment state.",
+        readinessTitle: "Session readiness", checkEnvironment: "Check simulation environment", pending: "Pending", checking: "Checking", ready: "Ready",
+        checkRuntime: "Browser simulation runtime", checkPackage: "Standard fault catalog inheritance", checkPlc: "PLC signal sandbox",
+        checkHmi: "HMI / OPC UA simulated channel", readinessPending: "Check the selected station sandbox before starting a training session.",
+        readinessRunning: "Identifying station content, inheriting the standard fault catalog and validating signal channels…",
+        readinessReady: "The simulation environment is ready. Login can now establish the system links.",
+        environmentRequired: "Complete the simulation environment check first",
+        stepTwo: "Step 02", libraryHeading: "Station fault scenario library", startTraining: "Train with selected fault →",
+        searchPlaceholder: "Search code, name or PLC tag", generateFault: "＋ Auto-generate", addFault: "＋ Add scenario",
+        select: "Select", faultId: "Code", faultName: "Fault scenario", severity: "Level", plcTag: "PLC tag", actions: "Actions",
+        hmiAlarm: "HMI alarm", rootCause: "Correct cause", recoveryAction: "Recovery action", save: "Save scenario", cancel: "Cancel",
+        stepThree: "Step 03", trainingBody: "Read the HMI alarm, PLC signals and model response, then submit the cause and recovery action.",
+        backLibrary: "Back to library", causeQuestion: "What is the root cause?", actionQuestion: "Enter your recovery action",
+        actionPlaceholder: "Example: inspect the sensor and reset its signal", verifyAnswer: "Verify answer", openReport: "Generate report →",
+        stepFour: "Step 04", reportHeading: "Training result report", print: "Print / save PDF", finish: "Finish and return",
+        score: "Training score / 100", retry: "Retry this scenario", view: "View", edit: "Edit", remove: "Delete",
+        high: "High", medium: "Medium", connected: "Connected", selected: "Selected", generated: "New fault scenario generated",
+        saved: "Scenario saved", deleted: "Scenario deleted", chooseFault: "Select a fault scenario", customTitle: "Add custom fault",
+        editTitle: "Edit fault scenario", detailCause: "Cause", detailAction: "Recovery", detailHmi: "HMI alarm",
+        chooseCause: "Select a cause", genericDistractor: "PLC main program corrupted", inject: "Injecting fault…",
+        correct: "Correct diagnosis: the PLC, HMI and simulation model have executed the recovery logic.",
+        partial: "The answer is incomplete. Recheck the alarm and PLC signals.",
+        reportUser: "Trainee", reportRole: "Session role", reportStation: "Station", reportScenario: "Fault scenario", reportCause: "Cause answer",
+        reportAction: "Recovery action", reportDuration: "Response time", reportResult: "Validation", passed: "Passed", review: "Retraining required",
+        trace: "Execution trace", noMatch: "No matching scenario", loginRequired: "Log in and connect a training station first",
+        trainingRequired: "Select a fault scenario first", reportRequired: "Verify an answer before opening the report"
+      }
+    };
+    const t = (key) => copy[lang][key] || key;
+    document.title = t("systemName");
+    document.querySelectorAll("[data-t]").forEach((element) => {
+      element.textContent = t(element.dataset.t);
+    });
+    document.querySelectorAll("[data-placeholder]").forEach((element) => {
+      element.placeholder = t(element.dataset.placeholder);
+    });
+
+    const bilingual = (zh, en) => ({ zh, en });
+    const local = (value) => typeof value === "string" ? value : value?.[lang] || value?.zh || "";
+    const templates = {
+      A01: [
+        {
+          id: "A01-F101", name: bilingual("定位传感器 S12 无信号", "Position sensor S12 signal lost"),
+          severity: "high", plcTag: "I0.2 / S12", hmi: bilingual("ALM-101：工件到位超时", "ALM-101: Part arrival timeout"),
+          cause: bilingual("电感式传感器 S12 未检测到工件", "Inductive sensor S12 does not detect the part"),
+          action: bilingual("检查 S12 位置与接线，恢复信号后复位", "Inspect S12 position and wiring, restore the signal, then reset"),
+          keywords: ["s12", "传感器", "接线", "sensor", "wiring", "reset"], simKey: "sensor"
+        },
+        {
+          id: "A01-F204", name: bilingual("夹具气压低", "Fixture pneumatic pressure low"),
+          severity: "medium", plcTag: "I0.5 / P_CLAMP", hmi: bilingual("ALM-204：夹紧压力未达到", "ALM-204: Clamp pressure not reached"),
+          cause: bilingual("夹具气路压力不足或泄漏", "Insufficient pressure or leakage in the fixture circuit"),
+          action: bilingual("检查气源与泄漏，恢复压力并重新夹紧", "Check air supply and leakage, restore pressure, then reclamp"),
+          keywords: ["气压", "气源", "泄漏", "pressure", "leak", "reclamp"], simKey: "pressure"
+        },
+        {
+          id: "A01-F310", name: bilingual("输送电机过载", "Conveyor motor overload"),
+          severity: "high", plcTag: "DB20.DBD12 / M1", hmi: bilingual("ALM-310：驱动器过流停机", "ALM-310: Drive overcurrent stop"),
+          cause: bilingual("输送机构卡滞导致电机过流", "A conveyor jam causes motor overcurrent"),
+          action: bilingual("断能检查卡滞，清除异物后复位驱动器", "Isolate power, remove the jam, then reset the drive"),
+          keywords: ["卡滞", "异物", "驱动器", "jam", "obstruction", "drive", "reset"], simKey: "drive"
+        }
+      ],
+      B02: [
+        {
+          id: "B02-F111", name: bilingual("视觉触发信号丢失", "Vision trigger signal lost"),
+          severity: "medium", plcTag: "I1.1 / CAM_TRIG", hmi: bilingual("ALM-111：相机触发超时", "ALM-111: Camera trigger timeout"),
+          cause: bilingual("触发传感器偏移或信号中断", "Trigger sensor is misaligned or disconnected"),
+          action: bilingual("校准触发传感器并恢复输入信号", "Align the trigger sensor and restore its input"),
+          keywords: ["触发", "传感器", "校准", "trigger", "sensor", "align"], simKey: "sensor"
+        },
+        {
+          id: "B02-F216", name: bilingual("剔除气缸压力低", "Reject cylinder pressure low"),
+          severity: "medium", plcTag: "I1.5 / P_REJECT", hmi: bilingual("ALM-216：剔除执行失败", "ALM-216: Reject actuation failed"),
+          cause: bilingual("剔除气缸气压不足", "Reject cylinder pressure is insufficient"),
+          action: bilingual("检查气路与气缸，恢复压力后测试", "Inspect the pneumatic circuit and cylinder, restore pressure, then test"),
+          keywords: ["气路", "气缸", "压力", "pneumatic", "cylinder", "pressure"], simKey: "pressure"
+        },
+        {
+          id: "B02-F401", name: bilingual("安全门打开", "Safety door open"),
+          severity: "high", plcTag: "I2.0 / SAFE_DOOR", hmi: bilingual("SAFE-401：安全回路断开", "SAFE-401: Safety circuit open"),
+          cause: bilingual("安全门未闭合或安全开关未确认", "Safety door is open or its switch is not confirmed"),
+          action: bilingual("确认区域安全，关闭安全门并复位安全回路", "Confirm the area is safe, close the door, then reset the safety circuit"),
+          keywords: ["安全门", "安全回路", "关闭", "safety", "door", "close", "reset"], simKey: "safety"
+        }
+      ],
+      C03: [
+        {
+          id: "C03-F121", name: bilingual("包装到位光电无信号", "Package photoeye signal lost"),
+          severity: "medium", plcTag: "I3.2 / PE_PACK", hmi: bilingual("ALM-121：包装到位超时", "ALM-121: Package position timeout"),
+          cause: bilingual("光电传感器污染或遮挡", "Photoeye is contaminated or obstructed"),
+          action: bilingual("清洁并校准光电传感器，确认信号后复位", "Clean and align the photoeye, confirm the signal, then reset"),
+          keywords: ["光电", "清洁", "校准", "photoeye", "clean", "align"], simKey: "sensor"
+        },
+        {
+          id: "C03-F330", name: bilingual("封箱输送过载", "Case sealer conveyor overload"),
+          severity: "high", plcTag: "DB33.DBD8 / M3", hmi: bilingual("ALM-330：封箱段驱动故障", "ALM-330: Sealer drive fault"),
+          cause: bilingual("纸箱卡滞造成输送电机过流", "A jammed case causes conveyor motor overcurrent"),
+          action: bilingual("停机断能并清除卡箱，复位驱动器后试运行", "Stop and isolate, clear the jam, reset the drive, then test"),
+          keywords: ["卡箱", "断能", "驱动器", "jam", "isolate", "drive"], simKey: "drive"
+        },
+        {
+          id: "C03-F402", name: bilingual("防护门联锁断开", "Guard door interlock open"),
+          severity: "high", plcTag: "I4.0 / GUARD_OK", hmi: bilingual("SAFE-402：包装区联锁断开", "SAFE-402: Packaging guard interlock open"),
+          cause: bilingual("防护门开启或联锁开关异常", "Guard door is open or the interlock switch has failed"),
+          action: bilingual("检查区域并关闭防护门，确认联锁后复位", "Inspect the area, close the guard, confirm the interlock, then reset"),
+          keywords: ["防护门", "联锁", "关闭", "guard", "interlock", "close"], simKey: "safety"
+        }
+      ]
+    };
+
+    const screens = ["login", "library", "training", "report"];
+    let user = "";
+    let role = "trainee";
+    let station = "A01";
+    let faults = [];
+    let selectedFaultId = "";
+    let editingId = null;
+    let activeFault = null;
+    let trainingStartedAt = 0;
+    let report = null;
+    let toastTimer = 0;
+    let environmentReady = false;
+    let environmentRunId = 0;
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const runMotion = (targets, options) => {
+      if (reducedMotion.matches || !window.anime?.animate) return null;
+      const resolvedTargets = Array.isArray(targets)
+        ? targets.flatMap((target) => typeof target === "string" ? $$(target) : target)
+        : targets;
+      return window.anime.animate(resolvedTargets, options);
+    };
+    const clearMotionStyles = (targets) => {
+      (Array.isArray(targets) ? targets : [targets]).forEach((target) => {
+        target?.style?.removeProperty("opacity");
+        target?.style?.removeProperty("transform");
+      });
+    };
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    })[character]);
+    const cloneTemplates = (key) => templates[key].map((fault) => ({ ...fault }));
+    const storeKey = () => `fault-training-${lang}-${station}`;
+    const roleProfiles = {
+      trainee: {
+        label: bilingual("受训人员", "Trainee"),
+        scope: bilingual(copy.zh.traineeScope, copy.en.traineeScope)
+      },
+      instructor: {
+        label: bilingual("培训管理员", "Training administrator"),
+        scope: bilingual(copy.zh.instructorScope, copy.en.instructorScope)
+      },
+      maintenance: {
+        label: bilingual("维护工程师", "Maintenance engineer"),
+        scope: bilingual(copy.zh.maintenanceScope, copy.en.maintenanceScope)
+      }
+    };
+    const environmentChecks = [
+      ["runtime", () => typeof Promise === "function" && typeof requestAnimationFrame === "function"],
+      ["package", () => Array.isArray(templates[station]) && templates[station].length >= 3],
+      ["plc", () => ["A01", "B02", "C03"].includes(station)],
+      ["hmi", () => typeof parent?.postMessage === "function"]
+    ];
+    const stationVisuals = {
+      A01: {
+        title: bilingual("A01 · 装配数字孪生", "A01 · ASSEMBLY DIGITAL TWIN"),
+        conveyor: bilingual("CV-01 · 输送带", "CV-01 · CONVEYOR"),
+        part: bilingual("工件", "WORKPIECE"),
+        clamp: bilingual("CY-01 · 夹具", "CY-01 · CLAMP"),
+        sensor: bilingual("S12 · 到位传感器", "S12 · POSITION SENSOR"),
+        motor: bilingual("M1 · 输送驱动", "M1 · CONVEYOR DRIVE"),
+        guard: bilingual("SG-01 · 防护门", "SG-01 · SAFETY GUARD"),
+        process: bilingual("上料 → S12 到位检测 → CY-01 夹紧 → 下料", "INFEED → S12 POSITION CHECK → CY-01 CLAMP → OUTFEED")
+      },
+      B02: {
+        title: bilingual("B02 · 检测数字孪生", "B02 · INSPECTION DIGITAL TWIN"),
+        conveyor: bilingual("CV-02 · 检测输送", "CV-02 · INSPECTION CONVEYOR"),
+        part: bilingual("待检工件", "PART UNDER TEST"),
+        clamp: bilingual("RJ-01 · 剔除机构", "RJ-01 · REJECT UNIT"),
+        sensor: bilingual("CAM · 视觉触发", "CAM · VISION TRIGGER"),
+        motor: bilingual("M2 · 输送驱动", "M2 · CONVEYOR DRIVE"),
+        guard: bilingual("SG-02 · 检测区门", "SG-02 · CELL GUARD"),
+        process: bilingual("进料 → 视觉触发 → 质量判定 → 放行 / 剔除", "INFEED → VISION TRIGGER → QUALITY CHECK → PASS / REJECT")
+      },
+      C03: {
+        title: bilingual("C03 · 包装数字孪生", "C03 · PACKAGING DIGITAL TWIN"),
+        conveyor: bilingual("CV-03 · 包装输送", "CV-03 · PACKAGING CONVEYOR"),
+        part: bilingual("包装件", "PACKAGE"),
+        clamp: bilingual("CS-01 · 封箱机构", "CS-01 · CASE SEALER"),
+        sensor: bilingual("PE · 包装光电", "PE · PACKAGE PHOTOEYE"),
+        motor: bilingual("M3 · 封箱驱动", "M3 · SEALER DRIVE"),
+        guard: bilingual("SG-03 · 包装区门", "SG-03 · AREA GUARD"),
+        process: bilingual("包装到位 → 光电确认 → 封箱 → 出料", "PACKAGE ARRIVAL → PHOTOEYE CHECK → SEAL → OUTFEED")
+      }
+    };
+
+    function reportHeight() {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const activeScreen = $(".screen:not([hidden])");
+          const height = Math.max(
+            620,
+            Math.ceil((activeScreen?.offsetTop || 0) + (activeScreen?.scrollHeight || 0))
+          );
+          parent.postMessage({ type: "fault-training-height", height }, "*");
+        });
+      });
+    }
+
+    function toast(message) {
+      const box = $("#toast");
+      box.textContent = message;
+      box.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => box.classList.remove("show"), 1500);
+    }
+
+    function setScreen(name) {
+      screens.forEach((screen, index) => {
+        $(`#${screen}-screen`).hidden = screen !== name;
+        const step = $(`[data-step="${index}"]`);
+        step.classList.toggle("active", screen === name);
+        step.classList.toggle("done", index < screens.indexOf(name));
+        step.setAttribute("aria-current", screen === name ? "step" : "false");
+      });
+      const activeScreen = $(`#${name}-screen`);
+      const screenParts = activeScreen ? [...activeScreen.children] : [];
+      screenParts.forEach((part) => part.classList.add("screen-motion-part"));
+      runMotion(screenParts, {
+        opacity: [0, 1],
+        y: [7, 0],
+        duration: 220,
+        delay: window.anime?.stagger?.(32),
+        ease: "out(3)",
+        onComplete: () => clearMotionStyles(screenParts)
+      });
+      reportHeight();
+    }
+
+    function loadFaults() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storeKey()) || "null");
+        if (Array.isArray(saved) && saved.length) return saved;
+      } catch {}
+      const seeded = cloneTemplates(station);
+      saveFaults(seeded);
+      return seeded;
+    }
+
+    function saveFaults(value = faults) {
+      try { localStorage.setItem(storeKey(), JSON.stringify(value)); } catch {}
+    }
+
+    function renderRoleProfile() {
+      const profile = roleProfiles[$("#role-select").value] || roleProfiles.trainee;
+      $("#role-profile-name").textContent = local(profile.label);
+      $("#role-profile-body").textContent = local(profile.scope);
+      reportHeight();
+    }
+
+    function setReadinessItem(key, state) {
+      const item = $(`[data-check="${key}"]`);
+      if (!item) return;
+      item.dataset.state = state;
+      item.querySelector("small").textContent = t(state);
+    }
+
+    function resetEnvironmentCheck() {
+      environmentRunId += 1;
+      environmentReady = false;
+      $("#login-submit").disabled = true;
+      $("#check-environment").disabled = false;
+      $("#readiness-count").textContent = "0 / 4 READY";
+      $("#readiness-summary").textContent = t("readinessPending");
+      $("#readiness-summary").classList.remove("ready");
+      clearMotionStyles([
+        $("#login-submit"),
+        ...$$(".readiness-item")
+      ]);
+      environmentChecks.forEach(([key]) => setReadinessItem(key, "pending"));
+      reportHeight();
+    }
+
+    async function runEnvironmentCheck() {
+      const runId = ++environmentRunId;
+      environmentReady = false;
+      $("#login-submit").disabled = true;
+      $("#check-environment").disabled = true;
+      $("#readiness-summary").textContent = t("readinessRunning");
+      $("#readiness-summary").classList.remove("ready");
+      let readyCount = 0;
+
+      for (const [key, validate] of environmentChecks) {
+        setReadinessItem(key, "checking");
+        await new Promise((resolve) => setTimeout(resolve, reducedMotion.matches ? 25 : 220));
+        if (runId !== environmentRunId) return;
+        const passed = Boolean(validate());
+        setReadinessItem(key, passed ? "ready" : "pending");
+        if (!passed) {
+          $("#check-environment").disabled = false;
+          $("#readiness-count").textContent = `${readyCount} / 4 READY`;
+          return;
+        }
+        readyCount += 1;
+        $("#readiness-count").textContent = `${readyCount} / 4 READY`;
+      }
+
+      environmentReady = true;
+      $("#login-submit").disabled = false;
+      $("#check-environment").disabled = false;
+      $("#readiness-summary").textContent = t("readinessReady");
+      $("#readiness-summary").classList.add("ready");
+      runMotion([".readiness-item", "#login-submit"], {
+        opacity: [0.72, 1],
+        x: [-3, 0],
+        duration: 220,
+        delay: window.anime?.stagger?.(34),
+        ease: "out(3)",
+        onComplete: () => clearMotionStyles([
+          $("#login-submit"),
+          ...$$(".readiness-item")
+        ])
+      });
+      reportHeight();
+    }
+
+    function renderStationDiagram() {
+      const visual = stationVisuals[station] || stationVisuals.A01;
+      $("#station-label").textContent = local(visual.title);
+      $("#label-conveyor").textContent = local(visual.conveyor);
+      $("#label-part").textContent = local(visual.part);
+      $("#label-clamp").textContent = local(visual.clamp);
+      $("#label-sensor").textContent = local(visual.sensor);
+      $("#label-motor").textContent = local(visual.motor);
+      $("#label-guard").textContent = local(visual.guard);
+      $("#motor-code").textContent = station === "B02" ? "M2" : station === "C03" ? "M3" : "M1";
+      $("#station-process").textContent = local(visual.process);
+    }
+
+    function connectNode(id, delay) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const node = $(id);
+          node.classList.add("connecting");
+          node.querySelector("small").textContent = "LINKING";
+          runMotion(node, {
+            opacity: [0.58, 1],
+            x: [-5, 0],
+            duration: 210,
+            ease: "out(3)"
+          });
+          setTimeout(() => {
+            node.classList.remove("connecting");
+            node.classList.add("online");
+            node.querySelector("small").textContent = "ONLINE";
+            runMotion(node.querySelector("i"), {
+              scale: [.45, 1.65, 1],
+              duration: 330,
+              ease: "out(4)"
+            });
+            resolve();
+          }, 260);
+        }, delay);
+      });
+    }
+
+    $("#login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!environmentReady) return toast(t("environmentRequired"));
+      user = $("#user-name").value.trim() || (lang === "en" ? "Trainee" : "培训员");
+      role = $("#role-select").value;
+      station = $("#station-select").value;
+      $("#session-status").textContent = t("online");
+      await Promise.all([
+        connectNode("#node-plc", 0),
+        connectNode("#node-sim", 190),
+        connectNode("#node-hmi", 380)
+      ]);
+      faults = loadFaults();
+      selectedFaultId = faults[0]?.id || "";
+      $("#library-subtitle").textContent =
+        `${station} · ${user} · ${local(roleProfiles[role].label)} · PLC / SIM / HMI ${t("connected")}`;
+      renderFaults();
+      setScreen("library");
+    });
+
+    function renderFaults() {
+      const query = $("#fault-search").value.trim().toLowerCase();
+      const visible = faults.filter((fault) =>
+        [fault.id, local(fault.name), fault.plcTag].join(" ").toLowerCase().includes(query)
+      );
+      const rows = $("#fault-rows");
+      rows.innerHTML = visible.length ? visible.map((fault) => `
+        <tr class="${fault.id === selectedFaultId ? "selected" : ""}">
+          <td><input type="radio" name="fault-choice" value="${escapeHtml(fault.id)}" ${fault.id === selectedFaultId ? "checked" : ""} aria-label="${t("select")} ${escapeHtml(fault.id)}" /></td>
+          <td>${escapeHtml(fault.id)}</td>
+          <td>${escapeHtml(local(fault.name))}</td>
+          <td><span class="severity ${fault.severity}">${t(fault.severity)}</span></td>
+          <td>${escapeHtml(fault.plcTag)}</td>
+          <td><div class="row-actions">
+            <button class="mini" type="button" data-action="view" data-id="${escapeHtml(fault.id)}">${t("view")}</button>
+            <button class="mini" type="button" data-action="edit" data-id="${escapeHtml(fault.id)}">${t("edit")}</button>
+            <button class="mini" type="button" data-action="delete" data-id="${escapeHtml(fault.id)}">${t("remove")}</button>
+          </div></td>
+        </tr>`).join("") : `<tr><td colspan="6">${t("noMatch")}</td></tr>`;
+      reportHeight();
+    }
+
+    $("#fault-search").addEventListener("input", renderFaults);
+    $("#fault-rows").addEventListener("change", (event) => {
+      if (event.target.name !== "fault-choice") return;
+      selectedFaultId = event.target.value;
+      renderFaults();
+      toast(t("selected"));
+    });
+    $("#fault-rows").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-action]");
+      if (!button) return;
+      const fault = faults.find((item) => item.id === button.dataset.id);
+      if (!fault) return;
+      if (button.dataset.action === "view") showFault(fault);
+      if (button.dataset.action === "edit") openEditor(fault);
+      if (button.dataset.action === "delete") {
+        faults = faults.filter((item) => item.id !== fault.id);
+        if (selectedFaultId === fault.id) selectedFaultId = faults[0]?.id || "";
+        saveFaults();
+        renderFaults();
+        $("#fault-detail").hidden = true;
+        reportHeight();
+        toast(t("deleted"));
+      }
+    });
+
+    function showFault(fault) {
+      const detail = $("#fault-detail");
+      if (!detail.hidden && detail.dataset.faultId === fault.id) {
+        detail.hidden = true;
+        detail.dataset.faultId = "";
+        reportHeight();
+        return;
+      }
+      closeEditor();
+      detail.innerHTML = `<div class="detail-grid">
+        <div><span>${t("detailCause")}</span><b>${escapeHtml(local(fault.cause))}</b></div>
+        <div><span>${t("detailAction")}</span><b>${escapeHtml(local(fault.action))}</b></div>
+        <div><span>${t("detailHmi")}</span><b>${escapeHtml(local(fault.hmi))}</b></div>
+      </div>`;
+      detail.dataset.faultId = fault.id;
+      detail.hidden = false;
+      reportHeight();
+    }
+
+    function openEditor(fault = null) {
+      $("#fault-detail").hidden = true;
+      $("#fault-detail").dataset.faultId = "";
+      editingId = fault?.id || null;
+      $("#editor-title").textContent = fault ? t("editTitle") : t("customTitle");
+      $("#edit-code").value = fault?.id || `${station}-F${500 + faults.length + 1}`;
+      $("#edit-name").value = fault ? local(fault.name) : "";
+      $("#edit-tag").value = fault?.plcTag || "";
+      $("#edit-hmi").value = fault ? local(fault.hmi) : "";
+      $("#edit-cause").value = fault ? local(fault.cause) : "";
+      $("#edit-action").value = fault ? local(fault.action) : "";
+      $("#fault-editor").hidden = false;
+      reportHeight();
+    }
+
+    function closeEditor() {
+      editingId = null;
+      $("#fault-editor").hidden = true;
+      reportHeight();
+    }
+
+    $("#add-fault").addEventListener("click", () => openEditor());
+    $("#close-editor").addEventListener("click", closeEditor);
+    $("#cancel-editor").addEventListener("click", closeEditor);
+    $("#fault-editor").addEventListener("submit", (event) => {
+      event.preventDefault();
+      let code = $("#edit-code").value.trim() || `${station}-F${500 + faults.length + 1}`;
+      let suffix = 2;
+      while (faults.some((fault) => fault.id === code && fault.id !== editingId)) {
+        code = `${station}-F${500 + faults.length + suffix}`;
+        suffix += 1;
+      }
+      const action = $("#edit-action").value.trim() ||
+        (lang === "en" ? "Follow the station SOP and reset" : "按现场 SOP 检查并复位");
+      const keywords = action.toLowerCase().split(/[\s,，。;；]+/).filter((word) => word.length > 1);
+      const next = {
+        id: code,
+        name: $("#edit-name").value.trim() || (lang === "en" ? "Custom fault" : "自定义故障"),
+        severity: "medium",
+        plcTag: $("#edit-tag").value.trim() || "CUSTOM_TAG",
+        hmi: $("#edit-hmi").value.trim() || "CUSTOM ALARM",
+        cause: $("#edit-cause").value.trim() || (lang === "en" ? "Cause to be configured" : "待配置根因"),
+        action,
+        keywords: keywords.length ? keywords : ["reset", "复位"],
+        simKey: "sensor"
+      };
+      const index = faults.findIndex((fault) => fault.id === editingId);
+      if (index >= 0) faults[index] = next;
+      else faults.push(next);
+      selectedFaultId = next.id;
+      saveFaults();
+      renderFaults();
+      closeEditor();
+      toast(t("saved"));
+    });
+
+    $("#generate-fault").addEventListener("click", () => {
+      const pool = cloneTemplates(station);
+      const template = pool.find((candidate) => !faults.some((fault) => fault.id === candidate.id)) || pool[Math.floor(Math.random() * pool.length)];
+      let sequence = faults.length + 1;
+      while (faults.some((fault) => fault.id === `${template.id}-G${String(sequence).padStart(2, "0")}`)) sequence += 1;
+      const generated = { ...template, id: `${template.id}-G${String(sequence).padStart(2, "0")}` };
+      faults.push(generated);
+      selectedFaultId = generated.id;
+      saveFaults();
+      renderFaults();
+      showFault(generated);
+      toast(t("generated"));
+    });
+
+    $("#start-training").addEventListener("click", () => {
+      const fault = faults.find((item) => item.id === selectedFaultId);
+      if (!fault) return toast(t("chooseFault"));
+      startTraining(fault);
+    });
+
+    function ioRow(tag, value, bad = false) {
+      return `<li class="${bad ? "bad" : ""}"><span>${tag}</span><b>${value}</b></li>`;
+    }
+
+    function renderNormalIo() {
+      $("#plc-inputs").innerHTML = [
+        ioRow("I0.0 AUTO", "TRUE"), ioRow("I0.2 SENSOR", "TRUE"),
+        ioRow("I0.5 PRESSURE", "TRUE"), ioRow("I1.0 SAFETY", "TRUE")
+      ].join("");
+      $("#plc-outputs").innerHTML = [
+        ioRow("Q0.0 CONVEYOR", "TRUE"), ioRow("Q0.3 CLAMP", "TRUE"),
+        ioRow("DB20 DRIVE", "READY"), ioRow("DB99 ALARM", "0")
+      ].join("");
+    }
+
+    function startTraining(fault) {
+      activeFault = fault;
+      trainingStartedAt = Date.now();
+      report = null;
+      $("#training-title").textContent = `${fault.id} · ${local(fault.name)}`;
+      $("#station-model").className = "station-panel station";
+      renderStationDiagram();
+      $("#fault-banner").textContent = t("inject");
+      $("#hmi-title").textContent = "HMI · SYSTEM RUNNING";
+      $("#hmi-message").textContent = "AUTO MODE · NO ACTIVE ALARM";
+      $("#feedback").hidden = true;
+      $("#feedback").className = "feedback";
+      $("#open-report").hidden = true;
+      const causeOptions = [
+        fault,
+        ...faults.filter((item) => item.id !== fault.id).slice(0, 3)
+      ];
+      $("#cause-answer").innerHTML = `<option value="">${t("chooseCause")}</option>` +
+        causeOptions.map((item) =>
+          `<option value="${escapeHtml(item.id)}">${escapeHtml(local(item.cause))}</option>`
+        ).join("") +
+        `<option value="distractor">${t("genericDistractor")}</option>`;
+      $("#action-answer").value = "";
+      renderNormalIo();
+      setScreen("training");
+      runMotion(["#station-model", ".io-panel", ".hmi"], {
+        opacity: [0, 1],
+        y: [8, 0],
+        duration: 280,
+        delay: window.anime?.stagger?.(45),
+        ease: "out(3)"
+      });
+      setTimeout(() => applyFault(fault), 650);
+    }
+
+    function applyFault(fault) {
+      const model = $("#station-model");
+      model.className = `station-panel station fault ${fault.simKey}-fault`;
+      $("#fault-banner").textContent = `${fault.id} · FAULT ACTIVE`;
+      $("#hmi-title").textContent = `HMI · ${local(fault.hmi)}`;
+      $("#hmi-message").textContent = `${fault.plcTag} → ALARM · AUTO CYCLE HOLD`;
+
+      const badInput = fault.simKey === "sensor" ? "I0.2 SENSOR" :
+        fault.simKey === "pressure" ? "I0.5 PRESSURE" :
+        fault.simKey === "safety" ? "I1.0 SAFETY" : "DB20 CURRENT";
+      $("#plc-inputs").innerHTML = [
+        ioRow("I0.0 AUTO", fault.simKey === "safety" ? "FALSE" : "TRUE", fault.simKey === "safety"),
+        ioRow("I0.2 SENSOR", fault.simKey === "sensor" ? "FALSE" : "TRUE", fault.simKey === "sensor"),
+        ioRow("I0.5 PRESSURE", fault.simKey === "pressure" ? "FALSE" : "TRUE", fault.simKey === "pressure"),
+        ioRow("I1.0 SAFETY", fault.simKey === "safety" ? "FALSE" : "TRUE", fault.simKey === "safety"),
+        ...(fault.simKey === "drive" ? [ioRow("DB20 CURRENT", "8.4 A", true)] : [])
+      ].join("");
+      $("#plc-outputs").innerHTML = [
+        ioRow("Q0.0 CONVEYOR", "FALSE", true),
+        ioRow("Q0.3 CLAMP", fault.simKey === "pressure" ? "FALSE" : "HOLD", fault.simKey === "pressure"),
+        ioRow("DB20 DRIVE", fault.simKey === "drive" ? "FAULT" : "READY", fault.simKey === "drive"),
+        ioRow("DB99 ALARM", fault.id, true)
+      ].join("");
+      const signalTargets = [
+        "#fault-banner",
+        ...$$(".io-list li.bad"),
+        "#hmi-title",
+        "#hmi-message"
+      ].flatMap((target) => typeof target === "string" ? $$(target) : target);
+      signalTargets.forEach((target) => target?.classList.add("signal-hit"));
+      runMotion(signalTargets, {
+        opacity: [0.25, 1],
+        x: [-8, 0],
+        duration: 260,
+        delay: window.anime?.stagger?.(48),
+        ease: "out(4)"
+      });
+      runMotion("#station-model", {
+        scale: [1, 1.012, 1],
+        duration: 360,
+        ease: "out(3)"
+      });
+    }
+
+    $("#answer-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!activeFault) return;
+      const selectedCause = $("#cause-answer").value;
+      const answer = $("#action-answer").value.trim().toLowerCase();
+      const causeCorrect = selectedCause === activeFault.id;
+      const actionCorrect = activeFault.keywords.some((keyword) => answer.includes(keyword.toLowerCase()));
+      const score = (causeCorrect ? 50 : 0) + (actionCorrect ? 50 : 0);
+      const passed = score === 100;
+      const duration = Math.max(1, Math.round((Date.now() - trainingStartedAt) / 1000));
+
+      report = { score, passed, duration, causeCorrect, actionCorrect, answer };
+      const feedback = $("#feedback");
+      feedback.hidden = false;
+      feedback.className = `feedback ${passed ? "good" : "bad"}`;
+      feedback.textContent = passed ? t("correct") : t("partial");
+      $("#open-report").hidden = false;
+      runMotion(["#feedback", "#open-report"], {
+        opacity: [0, 1],
+        y: [6, 0],
+        duration: 240,
+        delay: window.anime?.stagger?.(45),
+        ease: "out(3)"
+      });
+      reportHeight();
+
+      if (passed) {
+        $("#station-model").className = "station-panel station recovered";
+        $("#fault-banner").textContent = "RECOVERY VERIFIED · LINE READY";
+        $("#hmi-title").textContent = "HMI · ALARM ACKNOWLEDGED";
+        $("#hmi-message").textContent = "PLC RESET COMPLETE · AUTO CYCLE READY";
+        renderNormalIo();
+        runMotion(["#station-model", "#hmi-title", "#hmi-message"], {
+          opacity: [.42, 1],
+          scale: [.99, 1],
+          duration: 330,
+          delay: window.anime?.stagger?.(45),
+          ease: "out(4)"
+        });
+      }
+    });
+
+    $("#open-report").addEventListener("click", renderReport);
+    function renderReport() {
+      if (!report || !activeFault) return;
+      const id = `TR-${station}-${Date.now().toString().slice(-6)}`;
+      $("#report-id").textContent = `${id} · ${new Date().toLocaleString(lang === "en" ? "en-GB" : "zh-CN")}`;
+      const scoreTarget = $("#report-score");
+      scoreTarget.textContent = reducedMotion.matches ? report.score : "0";
+      const rows = [
+        [t("reportUser"), user],
+        [t("reportRole"), local(roleProfiles[role].label)],
+        [t("reportStation"), station],
+        [t("reportScenario"), `${activeFault.id} · ${local(activeFault.name)}`],
+        [t("reportCause"), report.causeCorrect ? local(activeFault.cause) : t("review")],
+        [t("reportAction"), report.answer],
+        [t("reportDuration"), `${report.duration}s`],
+        [t("reportResult"), report.passed ? t("passed") : t("review")]
+      ];
+      $("#report-table").innerHTML = rows.map(([label, value]) =>
+        `<div class="report-row"><span>${escapeHtml(label)}</span><b>${escapeHtml(value)}</b></div>`).join("");
+      $("#report-trace").innerHTML =
+        `<b>${t("trace")}</b><br>LOGIN [${escapeHtml(role.toUpperCase())}] → ENVIRONMENT READY → PLC/HMI/SIM LINKED → ${escapeHtml(activeFault.id)} INJECTED → ` +
+        `PLC ${escapeHtml(activeFault.plcTag)} REACTED → HMI ALARM → ANSWER VERIFIED → ${report.passed ? "RECOVERY DEPLOYED" : "RETRAINING REQUIRED"}`;
+      setScreen("report");
+      if (!reducedMotion.matches) {
+        const scoreCounter = { value: 0 };
+        runMotion(scoreCounter, {
+          value: report.score,
+          duration: 680,
+          ease: "out(4)",
+          onUpdate: () => {
+            scoreTarget.textContent = String(Math.round(scoreCounter.value));
+          }
+        });
+        runMotion([".score-card", ".report-row", "#report-trace"], {
+          opacity: [0, 1],
+          y: [8, 0],
+          duration: 300,
+          delay: window.anime?.stagger?.(38),
+          ease: "out(3)"
+        });
+      }
+    }
+
+    $("#abort-training").addEventListener("click", () => setScreen("library"));
+    $("#finish-training").addEventListener("click", () => setScreen("library"));
+    $("#retry-training").addEventListener("click", () => activeFault && startTraining(activeFault));
+    $("#print-report").addEventListener("click", () => print());
+    $("#role-select").addEventListener("change", renderRoleProfile);
+    $("#station-select").addEventListener("change", () => {
+      station = $("#station-select").value;
+      renderStationDiagram();
+      $("#session-status").textContent = t("offline");
+      $$(".node").forEach((node) => {
+        node.classList.remove("connecting", "online");
+        node.querySelector("small").textContent = "OFFLINE";
+      });
+      resetEnvironmentCheck();
+    });
+    $("#check-environment").addEventListener("click", runEnvironmentCheck);
+
+    $$(".step").forEach((step) => {
+      step.addEventListener("click", () => {
+        const index = Number(step.dataset.step);
+        if (index === 0) return setScreen("login");
+        if (!faults.length) return toast(t("loginRequired"));
+        if (index === 1) {
+          closeEditor();
+          $("#fault-detail").hidden = true;
+          return setScreen("library");
+        }
+        if (index === 2) {
+          if (activeFault) return setScreen("training");
+          const fault = faults.find((item) => item.id === selectedFaultId);
+          return fault ? startTraining(fault) : toast(t("trainingRequired"));
+        }
+        if (index === 3) return report ? renderReport() : toast(t("reportRequired"));
+      });
+    });
+
+    addEventListener("message", (event) => {
+      if (event.data?.type === "bauhaus-theme") {
+        document.documentElement.dataset.theme = event.data.theme === "dark" ? "dark" : "light";
+      }
+    });
+    addEventListener("resize", () => {
+      reportHeight();
+    });
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(reportHeight).observe($(".app"));
+    }
+    renderRoleProfile();
+    renderStationDiagram();
+    resetEnvironmentCheck();
+    reportHeight();
+  </script>
+</body>
+</html>

@@ -12,56 +12,57 @@ const projectsData = [
     items: [
       {
         title: {
-          en: "VC Line Auto Builder",
-          zh: "产线自动建模 Demo"
+          en: "Production Line Auto Builder",
+          zh: "产线自动生成器"
         },
+        cover: "assets/images/production-line-auto-modeler-cover.png",
         description: {
-          en: "A configuration-driven Unity demo that builds industrial production lines from JSON.",
-          zh: "一个基于 JSON 配置自动生成工业产线结构的 Unity Demo。"
+          en: "A Unity-based tool that rapidly generates industrial production-line scenes from structured JSON, with component inspection and basic fault simulation.",
+          zh: "基于 Unity 与 JSON 结构化文本快速生成工业产线场景，支持组件信息查看与基础故障模拟。"
         },
         overview: {
-          en: "A Unity-based industrial line auto builder that reads JSON configuration and generates a Line / Station / Device hierarchy.",
-          zh: "这是一个基于 Unity 的工业产线自动建模 Demo，读取 JSON 配置后自动生成 Line / Station / Device 层级结构。"
+          en: "Manually assembling industrial scenes and organizing their components can be time-consuming, making it difficult to quickly validate different production-line structures. This project explores a structured approach to scene generation while keeping component identities and functions clear and traceable.",
+          zh: "工业场景的手动搭建与组件整理较为耗时，也难以快速验证不同产线结构。该项目尝试通过统一的结构化描述生成场景，同时让产线组件及其功能信息保持清晰、可追踪。"
         },
         keyFeatures: {
           en: [
-            "JSON-driven modeling.",
-            "Automatic hierarchy generation.",
-            "Device types: Conveyor, Sensor, RobotBase.",
-            "Scene interaction with selection and UI panel.",
-            "Fault simulation with conveyor jam.",
-            "Layout switching between simple and complex scenes."
+            "JSON-driven production-line modeling.",
+            "Automatic Line / Station / Device hierarchy generation.",
+            "Conveyor, Sensor, RobotBase, and other component types.",
+            "Consistent structured naming for generated components.",
+            "Simple and complex scene layouts.",
+            "Conveyor blockage triggering and recovery."
           ],
           zh: [
             "基于 JSON 的配置驱动建模。",
-            "自动生成层级结构。",
-            "支持 Conveyor、Sensor、RobotBase 等设备类型。",
-            "支持场景选择交互与信息面板显示。",
-            "支持传送带卡滞故障模拟。",
-            "支持 simple / complex 两种布局切换。"
+            "自动生成 Line / Station / Device 层级结构。",
+            "支持 Conveyor、Sensor、RobotBase 等组件类型。",
+            "按统一规则生成结构化组件名称。",
+            "支持 simple / complex 两种场景布局。",
+            "支持传送带阻塞故障的触发与恢复。"
           ]
         },
         interaction: {
           en: [
-            "Camera movement with WASD and mouse.",
-            "Click a device to show its info panel.",
-            "Trigger fault and reset actions.",
-            "Switch between layout presets."
+            "Navigate the scene using WASD and the mouse.",
+            "Hover over components to inspect information such as name, type, and function.",
+            "Switch between simple and complex layouts.",
+            "Trigger and reset a conveyor blockage."
           ],
           zh: [
-            "使用 WASD 和鼠标进行相机移动。",
-            "点击设备显示信息面板。",
-            "触发故障与复位操作。",
-            "切换不同布局预设。"
+            "使用 WASD 与鼠标控制场景视角。",
+            "指针悬浮在组件上时显示名称、类型和功能等信息。",
+            "切换简单与复杂场景布局。",
+            "触发并恢复传送带阻塞故障。"
           ]
         },
         systemIdea: {
-          en: "The core idea is configuration → structure → visualization. It focuses on rapid modeling and system expression rather than full industrial simulation fidelity.",
-          zh: "核心思路是 configuration → structure → visualization，重点在于快速建模与系统表达，而不是完整工业仿真精度。"
+          en: "The system reads JSON configuration to automatically generate a Line / Station / Device hierarchy in Unity and names components according to consistent rules. The same data structure can produce simple or complex scenes while preserving layout, component relationships, and functional information.",
+          zh: "系统读取 JSON 配置，在 Unity 中自动生成 Line / Station / Device 层级结构，并按照统一规则为组件命名。相同的数据结构可用于生成简单或复杂场景，使产线布局、组件关系与功能信息保持一致。"
         },
         note: {
-          en: "This is a rapid prototype created as a vibe coding demo, not a full industrial system.",
-          zh: "这是一个面向快速验证的 vibe coding 原型 Demo，并不是完整的工业系统。"
+          en: "The resulting prototype validates a configuration-to-scene workflow for rapid production-line modeling and interactive representation. It focuses on fast modeling and system communication rather than full industrial simulation fidelity.",
+          zh: "完成了一个结构化文本驱动的产线快速建模原型，验证了从配置到场景结构与交互展示的生成流程。该项目侧重快速建模和系统表达，不代表完整的工业仿真系统。"
         },
         technologies: ["Unity", "JSON", "Configuration-driven Design", "Scene Interaction", "Fault Simulation"],
         video: {
@@ -72,62 +73,61 @@ const projectsData = [
       },
       {
         title: {
-          en: "Aster Desktop Agent",
-          zh: "Aster 桌面智能助手"
+          en: "Aster Desktop Assistant",
+          zh: "Aster 桌面助手"
         },
+        cover: "assets/images/aster-desktop-assistant-cover-v3.png",
         description: {
-          en: "A lightweight desktop AI assistant that integrates local memory, offline voice input, and real-time LLM interaction.",
-          zh: "一个集成本地记忆、离线语音输入与实时大模型交互的桌面智能助手。"
+          en: "A personal desktop assistant that keeps track of long- and short-term goals, follows topics of interest, and delivers relevant news and information.",
+          zh: "一个能够记录长期与短期目标、关注个人兴趣，并持续筛选和推送相关新闻与信息的桌面私人助理。"
         },
         overview: {
-          en: "Aster is a vibe-coded desktop assistant built with Electron, React, and TypeScript. Unlike browser-based AI tools, it lives directly on the desktop as an interactive companion, combining chat, reminders, local memory, and AI news aggregation.",
-          zh: "Aster 是一个基于 Electron、React 和 TypeScript 构建的桌面智能助手。不同于网页端 AI 工具，它以桌面交互形式存在，将对话、提醒、本地记忆与 AI 信息整合在一个轻量系统中。"
+          en: "In the fast-moving AI era, useful information is easily buried in constant updates. People often need to repeatedly search for news, remember unfinished plans, and reconnect scattered information with their personal goals. Aster brings these needs together in a desktop companion that stays close at hand.",
+          zh: "在快节奏的 AI 时代，有价值的信息很容易被持续更新的内容淹没。人们往往需要反复搜索新闻、记住尚未完成的计划，再把零散信息与个人目标重新联系起来。Aster 将这些需求集中到一个随时可用的桌面助手中。"
         },
         keyFeatures: {
           en: [
-            "Desktop-native assistant (not browser-based).",
-            "Draggable \"pet-style\" UI interaction.",
-            "Local memory storage using SQLite.",
-            "Reminder system with desktop notifications.",
-            "Streaming LLM responses via OpenAI API.",
-            "Offline voice transcription (Whisper-based).",
-            "AI news aggregation from model providers and engineering blogs."
+            "Keep long-term goals visible and easy to revisit.",
+            "Turn short-term plans into reminders and next actions.",
+            "Follow personal interests and preferred topics.",
+            "Collect and filter relevant AI news and updates.",
+            "Deliver personalized information directly on the desktop.",
+            "Support natural text and voice conversations.",
+            "Remember useful context across conversations."
           ],
           zh: [
-            "桌面原生助手（非浏览器应用）。",
-            "可拖拽的“桌面宠物式”交互。",
-            "基于 SQLite 的本地记忆存储。",
-            "提醒系统与桌面通知。",
-            "基于 OpenAI API 的流式对话。",
-            "离线语音转文本（Whisper）。",
-            "AI 新闻聚合（模型厂商与技术博客）。"
+            "记录长期目标，并在需要时随时回顾。",
+            "将短期计划转化为提醒和下一步行动。",
+            "持续关注个人兴趣与偏好主题。",
+            "收集并筛选相关的 AI 新闻与动态。",
+            "将个性化信息直接推送到桌面。",
+            "支持自然的文字与语音交流。",
+            "在不同对话之间保留有用信息。"
           ]
         },
         interaction: {
           en: [
-            "Hover to preview panel.",
-            "Click to expand assistant interface.",
-            "Drag to reposition the assistant.",
-            "Right-click to close.",
-            "Voice input via microphone button.",
-            "Text input for reminders and context storage."
+            "Hover to quickly preview the assistant.",
+            "Click to open conversations, goals, reminders, and news.",
+            "Drag Aster to a comfortable position on the desktop.",
+            "Use voice or text to record plans and interests.",
+            "Receive reminders and relevant updates through desktop notifications."
           ],
           zh: [
-            "悬停预览界面。",
-            "点击展开助手面板。",
-            "拖拽调整位置。",
-            "右键关闭应用。",
-            "麦克风进行语音输入。",
-            "文本输入用于提醒与上下文记录。"
+            "悬停即可快速预览助手。",
+            "点击查看对话、目标、提醒与兴趣新闻。",
+            "拖拽 Aster，将它放在桌面上的合适位置。",
+            "通过语音或文字记录计划与兴趣。",
+            "通过桌面通知接收提醒和相关动态。"
           ]
         },
         systemIdea: {
-          en: "Aster explores how lightweight agent systems can exist outside the browser, combining local state, memory, and multimodal interaction into a persistent desktop experience.",
-          zh: "Aster 探索了轻量级 Agent 系统如何脱离浏览器存在，通过本地状态、记忆与多模态交互构建持续运行的桌面体验。"
+          en: "Instead of waiting for the user to repeatedly search and reorganize information, Aster connects goals, reminders, interests, and news in one continuous personal context. It helps turn incoming information into something relevant, timely, and easier to act on.",
+          zh: "Aster 不再让用户反复搜索和整理信息，而是把目标、提醒、兴趣与新闻放进同一份持续更新的个人上下文中，让收到的信息更相关、更及时，也更容易转化为行动。"
         },
         note: {
-          en: "This is a vibe coding prototype focused on exploring desktop agent interaction patterns rather than production-level system design.",
-          zh: "该项目为 vibecoding 原型，重点在于探索桌面 Agent 的交互与系统模式，而非生产级系统实现。"
+          en: "Aster brings conversations, goals, reminders, and selected news into one desktop experience, reducing the effort needed to follow important information and keep daily actions connected to longer-term direction.",
+          zh: "Aster 将对话、目标、提醒与筛选后的新闻集中在桌面端，减少追踪重要信息所需的精力，也让每天的行动能够持续连接到更长期的方向。"
         },
         technologies: [
           "Electron",
@@ -140,18 +140,18 @@ const projectsData = [
         ],
         technicalHighlights: {
           en: [
-            "Local-first memory architecture using SQLite.",
-            "Agent context persistence across sessions.",
-            "Integration of offline voice pipeline with LLM interaction.",
-            "Streaming response handling.",
-            "Electron-based desktop interaction layer."
+            "Keeps personal goals, interests, and conversation context available across sessions.",
+            "Stores personal information locally for a more private experience.",
+            "Accepts voice input even when online speech services are unavailable.",
+            "Displays responses as they are generated for a smoother conversation.",
+            "Lives directly on the desktop instead of requiring a browser tab."
           ],
           zh: [
-            "基于 SQLite 的本地优先记忆架构。",
-            "跨会话的 Agent 上下文保持。",
-            "离线语音输入与 LLM 推理结合。",
-            "流式响应处理机制。",
-            "基于 Electron 的桌面交互层。"
+            "在不同使用阶段持续保留个人目标、兴趣和对话信息。",
+            "个人信息优先保存在本地，使用起来更加安心。",
+            "没有在线语音服务时，也可以使用语音输入。",
+            "回答生成时即时显示，让对话更加流畅。",
+            "直接驻留在桌面，不需要一直打开浏览器页面。"
           ]
         },
         video: {
@@ -162,156 +162,82 @@ const projectsData = [
       },
       {
         title: {
-          en: "PLC Platform Benchmark & Migration Decision Copilot",
-          zh: "PLC平台选型与迁移决策智能助手"
+          en: "PLC Selection Decision Assistant",
+          zh: "PLC 选型智能决策助手"
         },
+        cover: "assets/images/plc-selection-migration-assistant-cover.png",
         description: {
-          en: "A local-first decision-support workspace for PLC ecosystem selection, weighted benchmarking, migration-risk discussion, and consulting-style report drafting.",
-          zh: "一个本地优先的PLC平台决策工作台，支持生态选型、加权Benchmark、迁移风险分析与咨询式报告生成。"
+          en: "An AI-assisted decision workspace that helps engineers compare PLC platforms by combining objective evidence with project experience and preferences.",
+          zh: "一个面向工程设备选型的 AI 决策工作台，帮助工程师结合客观比较、项目经验与实际偏好选择合适的 PLC 平台。"
         },
         overview: {
-          en: "This is a vibe-coded industrial decision-support application for PLC platform selection and migration planning. It helps users create decision projects, fill project intake information, register attachment metadata, set platform preferences, run deterministic benchmarks, review AI-assisted analysis, edit report sections, and export consulting-style reports.",
-          zh: "这是一个面向PLC平台选型与迁移规划的 vibe coding 工业决策支持应用。系统支持创建决策项目、填写项目信息、登记附件元信息、设置平台偏好、运行确定性Benchmark、审阅AI辅助分析、编辑报告分区并导出咨询式报告。"
+          en: "Equipment selection in engineering rarely depends on a single specification. Engineers must balance performance, cost, existing systems, team experience, future maintenance, and project risk. This project explores how AI can support that decision process by organizing requirements, comparing candidate PLC platforms, and explaining the trade-offs between objective results and practical preferences.",
+          zh: "工程领域的设备选型很少由单一参数决定。工程师需要同时权衡性能、成本、现有系统、团队经验、后续维护与项目风险。该项目探索 AI 如何参与决策端：整理项目需求、比较候选 PLC 平台，并解释客观结果与实际偏好之间的取舍。"
         },
         keyFeatures: {
           en: [
-            "Project-loop workspace for PLC platform decision support.",
-            "Weighted benchmark and deterministic ranking.",
-            "Project readiness scoring and lifecycle status.",
-            "Local SQLite persistence as the project-loop source of truth.",
-            "FastAPI backend with structured API routes.",
-            "AI-assisted analysis through backend-only provider boundary.",
-            "Report drafting and report section rewrite suggestions.",
-            "Markdown / browser PDF / local PowerPoint export.",
-            "Safe product boundary: no PLC programming, no PLC code conversion, no direct PLC connection.",
-            "Attachment metadata registration without file parsing in the current version."
+            "Collect project goals, constraints, existing systems, and team experience in one place.",
+            "Compare candidate PLC platforms using the same set of requirements.",
+            "Combine objective scores with project-specific priorities and preferences.",
+            "Use AI to explain differences, risks, and recommended choices.",
+            "Highlight missing information and suggest the next decision steps.",
+            "Turn the completed analysis into an editable selection report."
           ],
           zh: [
-            "面向PLC平台决策支持的项目闭环工作台。",
-            "加权Benchmark与确定性排序。",
-            "项目成熟度评分与生命周期状态管理。",
-            "以本地SQLite作为项目闭环数据事实来源。",
-            "基于FastAPI的结构化后端接口。",
-            "通过后端Provider边界实现AI辅助分析。",
-            "报告草稿与报告分区改写建议。",
-            "支持Markdown / 浏览器PDF / 本地PowerPoint导出。",
-            "明确产品边界：不做PLC编程、不做PLC代码转换、不直连PLC。",
-            "当前版本附件仅登记元信息，不解析文件内容。"
+            "集中整理项目目标、约束、现有系统与团队经验。",
+            "使用同一组需求比较多个候选 PLC 平台。",
+            "将客观评分与项目偏好、实际经验结合起来。",
+            "利用 AI 解释平台差异、潜在风险与选择建议。",
+            "提示仍缺少的信息，并给出下一步决策建议。",
+            "将完整分析整理为可继续编辑的选型报告。"
           ]
         },
         interaction: {
           en: [
-            "Create a PLC decision project.",
-            "Fill intake information such as industry, goal, I/O scale, existing platform, constraints, and team experience.",
-            "Register attachment metadata.",
-            "Select candidate PLC platforms.",
-            "Set platform preferences and weights.",
-            "Run benchmark analysis.",
-            "Review readiness score, missing inputs, confidence level, and next actions.",
-            "Ask AI or use deterministic baseline analysis.",
-            "Review report suggestions.",
-            "Edit report sections.",
-            "Export or finalize the consulting report."
+            "Create a selection project, enter its goals, scale, existing platform, constraints, and team experience, then add reference materials and candidate PLC platforms.",
+            "Set the comparison criteria and project priorities, then run the platform analysis.",
+            "Review the objective comparison together with AI explanations, risks, missing information, and recommended next steps.",
+            "Adjust the decision when needed, edit the generated report, and export the final selection recommendation."
           ],
           zh: [
-            "创建PLC决策项目。",
-            "填写行业、目标、I/O规模、既有平台、约束条件与团队经验等信息。",
-            "登记附件元信息。",
-            "选择候选PLC平台。",
-            "设置平台偏好与权重。",
-            "运行Benchmark分析。",
-            "查看成熟度评分、缺失项、置信等级与下一步建议。",
-            "使用AI辅助分析或确定性基础分析。",
-            "审阅报告建议。",
-            "编辑报告分区。",
-            "导出或定稿咨询报告。"
+            "创建选型项目，填写目标、规模、现有平台、限制条件与团队经验，并加入参考资料和候选 PLC 平台。",
+            "设置比较标准与项目侧重点，然后运行平台分析。",
+            "结合客观比较与 AI 解释，查看平台差异、风险、缺失信息和下一步建议。",
+            "根据需要调整选择，编辑自动整理的报告，并导出最终选型建议。"
           ]
         },
         systemIdea: {
-          en: "This demo explores how PLC platform selection can be transformed from informal experience-based discussion into a structured decision workflow. Deterministic benchmark scoring remains the source of truth, while AI is used as an advisory layer for explanation, migration-risk discussion, and report drafting.",
-          zh: "该Demo探索如何把PLC平台选型从经验式讨论转化为结构化决策流程。确定性Benchmark评分作为事实来源，AI作为解释、迁移风险讨论与报告生成的辅助层，而不是替代评分逻辑。"
+          en: "The decision method separates evidence from judgment without forcing one to replace the other. Objective comparison provides a stable baseline, project priorities reflect real engineering conditions, and AI connects both sides by explaining trade-offs, questioning incomplete assumptions, and organizing the reasoning into a reviewable recommendation.",
+          zh: "这套决策方法把客观依据与主观判断分开处理，但不让两者相互替代：客观比较提供稳定基线，项目偏好反映真实工程条件，AI 则负责连接两者，解释取舍、提示不完整的判断，并将决策过程整理成可复核的建议。"
         },
         technicalHighlights: {
           en: [
-            "FastAPI backend with SQLite local persistence.",
-            "Backend-owned readiness scoring and status lifecycle.",
-            "Deterministic benchmark scoring as immutable source data.",
-            "AI provider boundary with deterministic baseline / OpenAI-compatible routing.",
-            "Backend-only API key handling through local .env configuration.",
-            "Structured project, readiness, benchmark, and report data consumed by frontend.",
-            "Report export workflow supporting Markdown, browser PDF, and local PowerPoint generation.",
-            "Clear boundary between deterministic calculations and AI advisory output."
+            "FastAPI service with SQLite-based local project persistence.",
+            "Deterministic weighted scoring keeps platform comparisons repeatable and traceable.",
+            "Subjective preferences are modeled separately from objective platform data.",
+            "AI analysis is isolated from the scoring engine, preventing generated advice from changing source results.",
+            "Readiness and confidence indicators expose missing inputs before a recommendation is finalized.",
+            "Structured project, comparison, analysis, and report data remain connected throughout the workflow.",
+            "Report output supports Markdown, browser PDF, and locally generated PowerPoint files."
           ],
           zh: [
-            "FastAPI后端与SQLite本地持久化。",
-            "后端负责成熟度评分与项目状态生命周期。",
-            "确定性Benchmark评分作为不可变事实数据。",
-            "通过Provider边界支持确定性基础分析与OpenAI兼容AI路由。",
-            "API Key仅由后端通过本地.env配置管理。",
-            "前端消费结构化项目、成熟度、Benchmark与报告数据。",
-            "报告导出支持Markdown、浏览器PDF与本地PowerPoint生成。",
-            "明确区分确定性计算与AI顾问建议的边界。"
+            "使用 FastAPI 服务与 SQLite 在本地持续保存项目数据。",
+            "确定性的加权评分使平台比较可以重复计算并追溯依据。",
+            "主观偏好与客观平台数据分开建模，避免相互覆盖。",
+            "AI 分析与评分引擎相互隔离，生成的建议不会改变原始结果。",
+            "通过准备度与置信度提示，在形成建议前暴露缺失信息。",
+            "项目、比较、分析与报告采用相互关联的结构化数据。",
+            "报告支持 Markdown、浏览器 PDF 与本地 PowerPoint 输出。"
           ]
         },
+        structureStyle: "horizontal",
         structure: {
-          en: [
-            "User Project",
-            "   |",
-            "   v",
-            "Frontend Project Workspace",
-            "   |",
-            "   v",
-            "FastAPI Backend",
-            "   |",
-            "   v",
-            "SQLite Local Source of Truth",
-            "   |",
-            "   +--> Readiness Scoring",
-            "   +--> Platform Benchmark",
-            "   +--> Report Sections",
-            "   +--> Attachment Metadata",
-            "   |",
-            "   v",
-            "Intelligence Provider Boundary",
-            "   |",
-            "   +--> Deterministic Baseline Analysis",
-            "   +--> OpenAI-compatible Provider",
-            "   |",
-            "   v",
-            "Consulting Report Export",
-            "(Markdown / PDF / PowerPoint)"
-          ].join("\n"),
-          zh: [
-            "用户项目",
-            "   |",
-            "   v",
-            "前端项目工作台",
-            "   |",
-            "   v",
-            "FastAPI后端",
-            "   |",
-            "   v",
-            "SQLite本地事实来源",
-            "   |",
-            "   +--> 成熟度评分",
-            "   +--> 平台Benchmark",
-            "   +--> 报告分区",
-            "   +--> 附件元信息",
-            "   |",
-            "   v",
-            "智能Provider边界",
-            "   |",
-            "   +--> 确定性基础分析",
-            "   +--> OpenAI兼容Provider",
-            "   |",
-            "   v",
-            "咨询报告导出",
-            "（Markdown / PDF / PowerPoint）"
-          ].join("\n")
+          en: "Project Input  →  Comparison Criteria  →  Objective + Subjective Evaluation  →  AI Explanation  →  Risk & Gap Review  →  Selection Report",
+          zh: "项目输入  →  比较标准  →  主客观评估  →  AI 解释  →  风险与缺口检查  →  选型报告"
         },
         note: {
-          en: "This is a vibe coding prototype focused on PLC platform selection and migration decision support. It is not a PLC programming tool, not a PLC code converter, and does not connect to PLC hardware or control networks.",
-          zh: "该项目是一个面向PLC平台选型与迁移决策支持的 vibe coding 原型。它不是PLC编程工具，不做PLC代码转换，也不直接连接PLC硬件或控制网络。"
+          en: "The assistant turns an experience-heavy selection discussion into a transparent decision record. Engineers can see why a platform ranks higher, where personal preferences influence the result, which information is still missing, and how the final recommendation was formed.",
+          zh: "该助手将高度依赖经验的选型讨论转化为透明的决策记录。工程师可以看到某个平台为何更合适、个人偏好如何影响结果、当前还缺少哪些信息，以及最终建议是如何形成的。"
         },
         technologies: [
           "FastAPI",
@@ -334,100 +260,112 @@ const projectsData = [
   },
   {
     title: {
-      en: "Production Line Diagnostics Agent",
-      zh: "产线状态分析与故障诊断Agent"
+      en: "Production Line Status & Fault Diagnosis Agent",
+      zh: "产线状态分析与故障诊断 Agent"
     },
+    cover: "assets/images/production-line-fault-analysis-diagnosis-cover.png",
     pitch: {
-      en: "A workflow-based industrial agent for production line diagnostics, tool orchestration, and closed-loop reasoning.",
-      zh: "一个面向产线诊断的工作流式工业智能助手，支持工具编排、上下文推理与闭环决策。"
+      en: "An industrial AI assistant that helps interpret production-line conditions, route diagnostic tasks, and explain likely fault causes.",
+      zh: "一个辅助判断产线状态、分配诊断路径并分析潜在故障原因的工业 AI 助手。"
     },
     summary: {
-      en: "An industrial agent system designed for production line status analysis and fault diagnosis. The system combines workflow-based reasoning, tool calling, context engineering, and execution trace visualization to support multi-turn diagnosis in manufacturing scenarios.",
-      zh: "这是一个面向产线状态分析与故障诊断的工业智能助手系统，结合工作流式推理、多工具调用、上下文工程和执行路径可视化，支持制造场景下的多轮诊断与分析。"
+      en: "A technical exploration of how an Agent can combine production status, alarms, operating context, and specialized tools to support repeatable and explainable fault diagnosis in industrial environments.",
+      zh: "这是一次面向工业故障诊断的 Agent 技术探索：将产线状态、报警信息、运行背景与专用工具连接起来，形成可重复、可解释的故障分析过程。"
     },
     problem: {
-      en: "Traditional single-turn LLM interactions are weak at structured diagnosis in industrial scenarios because they lack explicit workflow control, tool grounding, memory mechanisms, and execution transparency.",
-      zh: "传统的单轮 LLM 调用在工业诊断场景中能力有限，因为它缺少显式的工作流控制、工具支撑、记忆机制以及执行过程透明度。"
+      en: "Fault diagnosis in industrial environments requires engineers to connect alarms, equipment status, production context, and past observations under time pressure. AI can help organize these clues, route each question to the right source, compare possible causes, and keep the diagnostic path visible instead of reducing the task to a one-off answer.",
+      zh: "工业环境中的故障判断，往往要求工程师在有限时间内关联报警、设备状态、生产背景与历史观察。AI 的优势在于整理这些线索、将不同问题路由到合适的信息来源、比较可能原因，并持续呈现诊断路径，而不是只给出一次性的答案。"
     },
     solution: {
-      en: "I designed and implemented a workflow-based production diagnostics agent with a modular Plan–Execute–Review/Replan architecture. The system combines industrial semantic tools, structured memory, and traceable execution to support fault detection, root cause analysis, and next-step recommendations.",
-      zh: "我设计并实现了一套基于工作流的产线诊断智能体，采用模块化的 Plan–Execute–Review/Replan 架构，并结合工业语义工具、结构化记忆与可追踪执行流程，以支持故障检测、原因分析和下一步操作建议。"
+      en: "The solution explores an Agent workflow that plans the diagnosis, calls the appropriate industrial tools, reviews the collected evidence, and revises the route when information is incomplete. Memory keeps multi-turn context connected, while a visible execution record allows each conclusion and recommendation to be reviewed.",
+      zh: "方案探索了一套 Agent 工作方式：先规划诊断步骤，再调用合适的工业工具收集信息，对证据进行复核，并在信息不足时调整诊断路线。记忆机制负责连接多轮上下文，可见的执行记录则让每项判断和建议都能被复核。"
     },
-    highlights: {
+    keyFeatures: {
       en: [
-        "Designed a multi-stage Plan–Execute–Review/Replan agent architecture instead of relying on a single LLM call.",
-        "Built modular components: Planner, Executor, Reviewer, and Orchestrator.",
-        "Implemented multi-tool orchestration via function calling.",
-        "Abstracted manufacturing data into structured semantic interfaces: system state, alarms, and production context.",
-        "Designed a full context engineering pipeline including short-term memory, summary memory, and structured memory.",
-        "Enabled multi-turn reasoning with contextual continuity and coreference resolution.",
-        "Logged full execution traces including planning, tool usage, execution results, and observations.",
-        "Developed a Streamlit-based interactive UI with chat interaction, collapsible tool outputs, and a dedicated trace panel.",
-        "Modeled real manufacturing scenarios such as conveyor jams, sensor blocking, and alarm trigger logic.",
-        "Implemented closed-loop reasoning through execution validation and automatic replanning."
+        "Understand fault descriptions together with current production-line conditions.",
+        "Collect equipment status, alarms, and relevant operating information.",
+        "Send each diagnostic question to the most suitable information source or tool.",
+        "Compare symptoms with possible fault causes and supporting evidence.",
+        "Keep previous questions and observations connected during the diagnosis.",
+        "Present likely causes, supporting clues, and recommended next actions."
       ],
       zh: [
-        "自主设计多阶段 Plan–Execute–Review/Replan Agent 架构，而非依赖单次 LLM 调用。",
-        "构建模块化组件：Planner、Executor、Reviewer 和 Orchestrator。",
-        "实现基于 function calling 的多工具调用与编排。",
-        "将制造数据抽象为结构化工业语义接口：system state、alarms、production context。",
-        "设计完整的 Context Engineering 机制，包括 short-term memory、summary memory 和 structured memory。",
-        "支持上下文延续推理与指代解析，实现多轮诊断能力。",
-        "记录完整执行路径，包括规划、工具调用、执行结果与观察信息。",
-        "基于 Streamlit 开发交互式 UI，支持聊天式交互、可折叠工具输出和独立 trace 面板。",
-        "建模真实工业场景，如传送带堵塞、传感器遮挡和报警触发逻辑。",
-        "通过执行校验与自动重规划实现闭环推理能力。"
+        "结合当前产线状态理解故障描述。",
+        "收集设备状态、报警与相关运行信息。",
+        "将不同诊断问题交给最合适的信息来源或工具。",
+        "对照故障现象、可能原因与支持证据。",
+        "在诊断过程中持续关联之前的问题和观察。",
+        "给出可能原因、判断依据与下一步建议。"
       ]
     },
-    structure: {
+    technicalHighlights: {
       en: [
-        "User Query",
-        "    |",
-        "   UI",
-        "    |",
-        "    v",
-        "Orchestrator",
-        "    |",
-        "    v",
-        "Planner -> Executor -> Reviewer",
-        "    |         |           |",
-        "    |         |           v",
-        "    |         |       Replan",
-        "    |         v",
-        "    |   Tool Interfaces",
-        "    |",
-        "    v",
-        "Memory Layer",
-        "    |",
-        "    v",
-        "UI + Execution Trace"
-      ].join("\n"),
+        "Plan–Execute–Review/Replan workflow replaces one-shot model responses with staged diagnosis.",
+        "Planner, Executor, Reviewer, and Orchestrator modules keep responsibilities separated.",
+        "Function calling routes diagnostic tasks across multiple industrial tools.",
+        "Structured semantic interfaces unify system state, alarms, and production context.",
+        "Short-term, summary, and structured memory preserve continuity across diagnostic turns.",
+        "Context continuation and coreference handling support follow-up questions without losing the fault context.",
+        "Execution traces connect plans, tool calls, observations, reviews, and route revisions.",
+        "Conveyor jams, sensor obstruction, and alarm-trigger logic provide repeatable manufacturing cases."
+      ],
       zh: [
-        "用户请求",
-        "   |",
-        "   UI",
-        "   |",
-        "   v",
-        "Orchestrator",
-        "   |",
-        "   v",
-        "Planner -> Executor -> Reviewer",
-        "   |         |           |",
-        "   |         |           v",
-        "   |         |        Replan",
-        "   |         v",
-        "   |     工业语义工具",
-        "   |",
-        "   v",
-        "记忆层",
-        "   |",
-        "   v",
-        "UI 与执行路径展示"
-      ].join("\n")
+        "使用 Plan–Execute–Review/Replan 工作流，以分阶段诊断替代单次模型回答。",
+        "Planner、Executor、Reviewer 与 Orchestrator 模块保持职责分离。",
+        "通过 Function Calling 将诊断任务路由到多个工业工具。",
+        "使用结构化语义接口统一表达系统状态、报警与生产背景。",
+        "短期记忆、摘要记忆与结构化记忆保持多轮诊断的连续性。",
+        "上下文延续与指代处理支持在不丢失故障背景的情况下继续追问。",
+        "执行记录关联计划、工具调用、观察、复核与路线调整。",
+        "传送带堵塞、传感器遮挡与报警触发逻辑构成可重复的制造场景。"
+      ]
+    },
+    structureStyle: "agent-architecture",
+    architecture: {
+      input: {
+        en: "Fault Query + Production Context",
+        zh: "故障请求 + 生产背景"
+      },
+      orchestrator: {
+        en: "Orchestrator",
+        zh: "Orchestrator"
+      },
+      planner: {
+        en: "Planner",
+        zh: "Planner"
+      },
+      executor: {
+        en: "Executor",
+        zh: "Executor"
+      },
+      reviewer: {
+        en: "Reviewer",
+        zh: "Reviewer"
+      },
+      replan: {
+        en: "Review + Replan Loop",
+        zh: "复核 + 重规划回路"
+      },
+      tools: {
+        en: "Industrial Semantic Tools",
+        zh: "工业语义工具"
+      },
+      memory: {
+        en: "Context Memory Layer",
+        zh: "上下文记忆层"
+      },
+      output: {
+        en: "Execution Trace + Diagnosis Output",
+        zh: "执行记录 + 诊断输出"
+      }
+    },
+    structure: {
+      en: "Fault input and production context enter an Orchestrator, which coordinates Planner, Executor and Reviewer modules. A review and replanning loop works with industrial semantic tools and context memory before producing a traceable diagnosis output.",
+      zh: "故障请求与生产背景进入 Orchestrator，由其协调 Planner、Executor 与 Reviewer；复核与重规划回路结合工业语义工具和上下文记忆，最终形成可追踪的诊断输出。"
     },
     result: {
-      en: "The project demonstrates an end-to-end industrial agent system that combines workflow reasoning, tool execution, contextual memory, and execution transparency. It extends beyond chat interaction into structured diagnosis, explainability, and closed-loop decision support for manufacturing operations.",
-      zh: "该项目展示了一套端到端的工业智能体系统，融合工作流式推理、工具执行、上下文记忆和执行透明性，使其不再只是简单对话，而是面向制造场景的结构化诊断、可解释分析与闭环决策支持系统。"
+      en: "The project shows how an industrial Agent can move beyond conversation and support a complete diagnostic path: organizing evidence, routing tools, comparing causes, preserving context, and making every recommendation reviewable. It provides a practical foundation for exploring explainable AI assistance in manufacturing fault analysis.",
+      zh: "该项目说明工业 Agent 可以超越简单对话，支持一条完整的诊断路径：整理证据、路由工具、比较原因、保持上下文，并让每项建议都可复核。它为探索制造故障分析中的可解释 AI 辅助方式提供了实践基础。"
     },
     technologies: [
       "Python",
@@ -459,6 +397,7 @@ const projectsData = [
       en: "Industrial Digital Twin Demo",
       zh: "工业数字孪生演示系统"
     },
+    cover: "assets/images/industrial-digital-twin-demo-cover.png",
     projectType: {
       en: "Personal Project",
       zh: "个人项目"
@@ -468,73 +407,68 @@ const projectsData = [
       zh: "技术项目"
     },
     pitch: {
-      en: "Connect PLC logic, OPC UA, REST services, and Unity into one readable industrial system.",
-      zh: "把 PLC 逻辑、OPC UA、REST 服务与 Unity 可视化连接成一个可读、可验证的工业系统。"
+      en: "Synchronize PLC-controlled equipment states with Unity through OPC UA and REST, presenting the industrial control process as a complete digital chain that reproduces a production digital-twin workflow.",
+      zh: "通过 OPC UA 与 REST 将 PLC 控制的设备状态同步到 Unity，让工业控制过程以完整连贯的数字形式呈现，复现生产数字孪生链路。"
     },
     summary: {
-      en: "A digital twin demonstration project that links simulated industrial control logic to an OPC UA layer, a REST API service, and a Unity front-end to show how physical processes can be mirrored and inspected in software.",
-      zh: "这是一个数字孪生演示项目，通过将工业控制逻辑仿真连接到 OPC UA 数据层、REST API 服务以及 Unity 前端，实现对物理过程的软件映射与可视化检查。"
+      en: "A compact industrial digital-twin system that connects PLC logic simulation, industrial communication, application services, and a Unity scene so equipment and logic state changes can be observed and understood across the complete data path.",
+      zh: "这是一个简单的工业数字孪生系统，将 PLC 逻辑仿真、工业通信、应用服务与 Unity 场景连接起来，使设备与逻辑状态变化能够沿完整数据链路被观察和理解。"
     },
     problem: {
-      en: "Industrial systems are often hard to review before deployment because control data, integration services, and visualization are discussed separately. That makes system behavior difficult to explain and validate as one coherent whole.",
-      zh: "工业系统在部署前往往难以整体评审，因为控制数据、集成服务和可视化通常被分开讨论，导致系统行为难以作为一个完整对象被解释和验证。"
+      en: "Control logic, communication services, and 3D visualization in industrial digitalization are often understood separately. Engineers have difficulty seeing how a PLC signal becomes an application state, how equipment changes pass through each software layer, and whether the digital scene remains consistent with control behavior.",
+      zh: "工业系统数字化中的控制逻辑、通信服务与三维可视化经常被分开理解。工程人员很难直观看到一个 PLC 信号如何转化为应用状态、设备变化如何穿过各个软件层，以及数字场景是否始终与控制行为保持一致。"
     },
     solution: {
-      en: "I built a demonstration stack in which PLC-side simulation exposes process state through OPC UA, a REST layer organizes selected data for application use, and Unity renders the machine state as an interactive digital twin view.",
-      zh: "我搭建了一套演示架构：PLC 侧仿真通过 OPC UA 暴露过程状态，REST 层负责整理和转发关键数据，Unity 则将这些状态渲染成可交互的数字孪生界面。"
+      en: "The system exposes the inputs and outputs of simulated PLC states through OPC UA, organizes equipment data through a REST service, and maps it to corresponding objects and behaviors in Unity. Unity interactions can change interface variables, which are transmitted through OPC UA to a PLC simulated with C# scripts for logic processing. The results return as Unity object behaviors, keeping the entire path clear and traceable.",
+      zh: "系统通过 OPC UA 提供 PLC 仿真状态的输入输出，由 REST 服务整理设备数据，再将其映射到 Unity 中对应的对象与行为。Unity 交互可改变接口变量，经 OPC UA 与 C# 脚本模拟的 PLC 完成数据传输与逻辑运算，再将结果返回为 Unity 对象行为，使整个链路清晰可追溯。"
     },
-    highlights: {
+    keyFeatures: {
       en: [
-        "Connected PLC simulation data to software-facing interfaces through OPC UA.",
-        "Used a REST service layer to separate industrial communication from front-end consumption.",
-        "Mapped machine states and process changes to real-time Unity visualization logic.",
-        "Designed the demo as an explainable architecture, not only as a visual scene."
+        "Simulate equipment and control states to verify that the logic behaves correctly.",
+        "Transfer selected PLC data through a standard industrial connection.",
+        "Organize equipment information for use by software applications.",
+        "Reflect machine states and process changes in a Unity scene.",
+        "Observe the same state across control, service, and visualization layers."
       ],
       zh: [
-        "通过 OPC UA 将 PLC 仿真数据连接到软件可用的数据接口。",
-        "使用 REST 服务层将工业通信与前端消费逻辑解耦。",
-        "把设备状态与过程变化映射到 Unity 的实时可视化逻辑中。",
-        "将该项目设计为一个可解释的系统架构，而不仅仅是一个三维场景。"
+        "模拟设备与控制状态，验证逻辑正确性。",
+        "通过标准工业连接传递所需的 PLC 数据。",
+        "将设备信息整理为软件应用可以直接使用的内容。",
+        "在 Unity 场景中同步呈现设备状态与过程变化。",
+        "从控制、服务到可视化层观察同一份状态。"
       ]
     },
-    structure: {
+    technicalHighlights: {
       en: [
-        "PLC / Logic Simulation",
-        "         |",
-        "         v",
-        "OPC UA Server",
-        "         |",
-        "         v",
-        "REST API Layer",
-        "         |",
-        "         v",
-        "Unity Digital Twin View"
-      ].join("\n"),
+        "OPC UA exposes simulated PLC variables through a standardized industrial data model.",
+        "The REST layer separates industrial protocol handling from application-facing data access.",
+        "A shared state mapping connects PLC variables, service data, and Unity object behavior.",
+        "Unity components translate equipment states into visible motion, status, and process changes.",
+        "Layered responsibilities make signal paths easier to inspect and integration issues easier to locate.",
+        "The complete PLC → OPC UA → REST → Unity path provides a reusable reference for digital-twin integration."
+      ],
       zh: [
-        "PLC / 逻辑仿真",
-        "      |",
-        "      v",
-        "OPC UA 服务器",
-        "      |",
-        "      v",
-        "REST API 服务层",
-        "      |",
-        "      v",
-        "Unity 数字孪生界面"
-      ].join("\n")
+        "OPC UA 通过标准化工业数据模型提供 PLC 仿真变量。",
+        "REST 服务层将工业协议处理与面向应用的数据访问分离。",
+        "统一状态映射连接 PLC 变量、服务数据与 Unity 对象行为。",
+        "Unity 组件将设备状态转换为可见的运动、状态与过程变化。",
+        "清晰的分层职责使信号路径更容易检查，也便于定位集成问题。",
+        "完整的 PLC → OPC UA → REST → Unity 链路可作为数字孪生集成的复用参考。"
+      ]
+    },
+    structureStyle: "horizontal",
+    structure: {
+      en: "Control path: PLC Logic Simulation → OPC UA Data Layer → REST Application Service → Unity State Mapping → Digital Twin Interface\nInteraction path: Digital Twin Interface → Unity Interaction Variables → REST Application Service → OPC UA Data Layer → PLC Logic Simulation → State Feedback",
+      zh: "控制链路：PLC 逻辑仿真 → OPC UA 数据层 → REST 应用服务 → Unity 状态映射 → 数字孪生界面\n交互链路：数字孪生界面 → Unity 交互变量 → REST 应用服务 → OPC UA 数据层 → PLC 逻辑仿真 → 状态反馈"
     },
     result: {
-      en: "The demo shows how industrial control behavior can be translated into a software-facing system model, making integration architecture easier to present, test, and discuss with both engineering and non-engineering stakeholders.",
-      zh: "该演示证明了工业控制行为如何转化为面向软件的系统模型，使集成架构更容易被展示、验证，并被工程与非工程角色共同讨论。"
+      en: "The system organizes the complete path from industrial control logic to a visual digital scene as one coherent model, providing a compact reproduction of the framework used in current digital-twin systems.",
+      zh: "该系统将工业控制逻辑到可视化数字场景的完整路径组织成一个连贯模型，简单复现了现行数字孪生的框架结构。"
     },
     technologies: ["PLC", "OPC UA", "REST API", "Unity", "C#", "Digital Twin", "Simulation"],
     video: {
       type: "embed",
       url: "assets/videos/DemoVideoDigitalTwin.mp4"
-    },
-    demo: {
-      type: "optional",
-      note: "Future support for WebGL or interactive demo"
     }
   },
   {
@@ -543,36 +477,40 @@ const projectsData = [
       zh: "工业故障仿真与培训系统"
     },
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "BMW Group · Enterprise System",
+      zh: "BMW Group · 企业系统"
     },
     technicalType: {
       en: "Technical Project",
       zh: "技术项目"
     },
     pitch: {
-      en: "Turn unpredictable industrial failures into controllable digital training scenarios.",
-      zh: "把不可控的工业故障转化为可控、可复现的数字化训练场景。"
+      en: "Extend virtual-commissioning assets into a digital-twin training platform with automated station recognition and standardized fault inheritance.",
+      zh: "复用虚拟调试资产，自动识别站点并继承标准故障库，构建覆盖设备生命周期的数字孪生培训平台。"
     },
     summary: {
-      en: "A multi-layer training system for simulating industrial faults through software, allowing troubleshooting capabilities to be trained without relying on real equipment or accidental site failures.",
-      zh: "这是一个面向工业故障排除训练的多层级仿真系统，通过纯软件方式模拟异常场景，使培训不再依赖真实设备或现场偶发故障。"
+      en: "A digital-twin training platform that reuses models and control logic created for virtual commissioning, then extends them into reproducible fault training and verification throughout the production-system lifecycle.",
+      zh: "这是一个基于数字孪生的工业培训平台：复用虚拟调试阶段建立的模型与控制逻辑，并将其拓展为贯穿生产系统生命周期的可复现故障培训与验证能力。"
     },
     problem: {
-      en: "Industrial troubleshooting training was expensive, risky, and difficult to scale because it depended on real hardware and non-reproducible failures.",
-      zh: "工业故障排除培训长期依赖真实硬件和不可稳定复现的故障，导致培训成本高、风险大，也难以规模化。"
+      en: "Industrial troubleshooting training depended on real equipment and non-reproducible failures, making it expensive, risky and difficult to scale. Building a separate digital twin would add substantial modeling cost, while models already created for virtual commissioning were often underused after launch. The opportunity was to extend those assets across the production-system lifecycle, reduce duplicate engineering effort and establish a new training service.",
+      zh: "工业故障排除培训长期依赖真实设备和难以稳定复现的现场故障，成本高、风险大，也难以规模化；如果为培训单独重建数字孪生，又会带来可观的建模成本。与此同时，虚拟调试阶段已经完成的模型与控制逻辑在投产后往往没有被持续利用，因此需要把既有资产拓展到生产系统全生命周期，减少重复工程投入，并形成新的培训业务。"
     },
     solution: {
-      en: "I designed a multi-layer fault injection system that could trigger abnormal conditions through PLC variables, simulation object properties, and HMI interactions, making fault scenarios testable and reusable.",
-      zh: "我设计了一套多层级故障注入系统，通过 PLC 变量、仿真对象属性和 HMI 交互层主动触发异常状态，使故障场景变得可测试、可复用。"
+      en: "The platform connects the virtual-commissioning model, PLCSim and the OPC UA-based HMI through a shared interface layer. It identifies station equipment, signal points and training objects, inherits applicable scenarios from a standardized fault catalog, and automatically generates the station-level training configuration. Multi-layer fault injection then synchronizes PLC variables, digital-twin object behavior and HMI alarms, allowing users to configure, reproduce, diagnose and verify the complete fault-and-recovery workflow without disrupting production equipment.",
+      zh: "平台通过统一接口层连接虚拟调试模型、PLCSim 与基于 OPC UA 的 HMI：系统自动识别站点设备、信号点和训练对象，从标准化故障库继承适用场景并生成站点级培训配置，再通过多层级故障注入同步驱动 PLC 变量、数字孪生对象行为和 HMI 报警，使用户能够在不影响生产设备的情况下完成故障配置、复现、诊断与恢复验证的完整流程。"
     },
     highlights: {
       en: [
+        "Identified station equipment, signal points and training objects to reduce manual modeling and configuration work.",
+        "Inherited applicable scenarios from a standardized fault catalog to generate station-level fault libraries and training configurations.",
         "Injected faults across signal level, simulation object level, and HMI interaction level.",
         "Used an interface layer to bridge simulation runtime, PLCSim, and OPC UA-based HMI control.",
         "Built scenario-based fault logic so training could move from passive troubleshooting to deliberate validation."
       ],
       zh: [
+        "自动识别站点设备、信号点和训练对象，减少手动建模与配置工作。",
+        "从标准化故障列表继承适用场景，自动形成站点级故障库和训练配置。",
         "在信号层、仿真对象层和 HMI 交互层进行多层级故障注入。",
         "通过接口层连接仿真运行环境、PLCSim 和基于 OPC UA 的 HMI 控制。",
         "将故障逻辑构造成基于场景的训练机制，使测试从被动排障转向主动验证。"
@@ -604,93 +542,103 @@ const projectsData = [
         "PLCSim 仿真系统  OPC UA HMI"
       ].join("\n")
     },
-    result: {
-      en: "The system enabled 200+ fault scenarios, supported 1000+ training users, and improved troubleshooting capability by 25% through scalable digital training.",
-      zh: "该系统支持 200+ 故障场景，覆盖 1000+ 培训用户，并通过可规模化的数字训练将故障排除能力提升了 25%。"
+    cardResult: {
+      en: "The global rollout supported 1000+ training users, standardized 200+ reusable fault scenarios and improved troubleshooting capability by 25%.",
+      zh: "全球部署覆盖 1000+ 培训用户，沉淀 200+ 可复用故障场景，并将故障排除能力提升了 25%。"
     },
+    result: {
+      en: "The platform was deployed across five factories in Germany, Hungary, Mexico, China and the United States, including development and training use cases for next-generation battery production. The global rollout supported 1000+ training users, standardized 200+ reusable fault scenarios and improved troubleshooting capability by 25%.",
+      zh: "平台已在德国、匈牙利、墨西哥、中国和美国的五座工厂落地，并支持新一代电池生产相关的开发与培训场景。全球部署覆盖 1000+ 培训用户，沉淀 200+ 可复用故障场景，并将故障排除能力提升了 25%。"
+    },
+    metrics: [
+      {
+        value: "200+",
+        label: {
+          en: "reusable fault scenarios",
+          zh: "可复用故障场景"
+        }
+      },
+      {
+        value: "1000+",
+        label: {
+          en: "training users supported",
+          zh: "培训用户覆盖"
+        }
+      },
+      {
+        value: "25%",
+        label: {
+          en: "troubleshooting improvement",
+          zh: "故障排除能力提升"
+        }
+      }
+    ],
     technologies: ["C#", ".NET", "PLCSim", "OPC UA", "Fault Injection", "Simulation", "HMI"]
   },
 
   {
     title: {
-      en: "Plugin-based System Decoupling",
-      zh: "基于插件的系统解耦"
+      en: "Digital Twin IT Communication Plugin Integration",
+      zh: "数字孪生 IT 通信插件集成"
     },
+    cover: "assets/images/plugin-system-decoupling-cover.png",
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "BMW Group · Enterprise Project",
+      zh: "企业项目 · BMW Group"
     },
     technicalType: {
       en: "Technical Project",
       zh: "技术项目"
     },
     pitch: {
-      en: "Replace costly external dependencies with a local plugin architecture.",
-      zh: "用本地插件架构替代高成本的外部依赖。"
+      en: "Use a local plugin to handle telegram transfer between IT and industrial control systems, replacing costly external dependencies.",
+      zh: "用本地插件实现 IT 系统与工业控制系统的 Telegram 传输，替代高成本的外部依赖。"
     },
     summary: {
-      en: "A toolchain optimization project that removed a critical dependency on external RFC-based IT interaction by embedding the required functionality directly into the digital simulation software.",
-      zh: "这是一个工具链优化项目，通过将关键功能直接嵌入数字仿真软件内部，替代原有基于 RFC 的外部 IT 系统交互依赖。"
+      en: "A toolchain optimization project that embeds IT communication directly into digital simulation software, replacing the original external IT-system interaction based on RFC.",
+      zh: "这是一个工具链优化项目，通过将 IT 通信功能直接嵌入数字仿真软件内部，替代原有基于 RFC 的外部 IT 系统交互依赖。"
     },
     problem: {
-      en: "A key function in the workflow depended on RFC-based interaction with external IT systems, which increased cost, reduced flexibility, and created long-term dependency on external infrastructure.",
-      zh: "工作流中的关键功能依赖于与外部 IT 系统的 RFC 交互，这不仅带来了较高成本，也削弱了系统灵活性，并形成长期的外部依赖。"
+      en: "A digital twin needs to reproduce the real communication between external IT and industrial control systems, but direct reliance on the original IT system adds cost. The project therefore needed to integrate this communication into the digital-twin solution while reducing external-system dependency.",
+      zh: "数字孪生需要复现外部 IT 系统与工业控制系统的实际通信，但直接依赖原有 IT 系统会产生额外成本。项目需要将对应通信能力集成到数字孪生方案中，同时降低外部系统依赖。"
     },
     solution: {
-      en: "I helped redesign the dependency path by replacing the external interaction with a custom plugin running inside the digital simulation software.",
-      zh: "我参与重构了这一依赖路径，通过在数字仿真软件内部开发自定义插件，替代原有的外部交互方式。"
+      en: "The telegram transfer path between the IT and industrial control systems was identified and reproduced in C#, then integrated into the digital simulation software as a plugin.",
+      zh: "识别 IT 系统与工业控制系统之间的 Telegram 传输链路，通过 C# 脚本实现对应的通信逻辑，并以插件形式集成到数字仿真软件中。"
     },
-    highlights: {
+    keyFeatures: {
       en: [
-        "Replaced RFC-based external dependency with embedded functional modules.",
-        "Used plugin architecture to keep the new logic modular and reusable.",
-        "Improved maintainability and reduced dependency on supplier-controlled infrastructure."
+        "Simulate telegram data transfer between the IT system and PLC.",
+        "Receive and process PLC data, then return the corresponding IT communication information.",
+        "Integrate IT–PLC interaction into the digital-twin environment.",
+        "Reuse the communication function across production lines and digital models."
       ],
       zh: [
-        "用嵌入式功能模块替代基于 RFC 的外部依赖。",
-        "通过插件架构保持新逻辑的模块化和可复用性。",
-        "降低对供应商控制基础设施的依赖，提升可维护性。"
+        "模拟 IT 系统与 PLC 之间的 Telegram 数据传输。",
+        "接收和处理 PLC 数据，并返回对应的 IT 通信信息。",
+        "将 IT 与 PLC 的交互集成到数字孪生环境中。",
+        "在不同产线与数字模型中复用通信功能。"
       ]
     },
-    structure: {
+    technicalHighlights: {
       en: [
-        "Original Path",
-        "Simulation",
-        "   |",
-        "   v",
-        "External IT System (RFC)",
-        "",
-        "Refactored Path",
-        "Simulation",
-        "   |",
-        "   v",
-        "Custom Plugin",
-        "   |",
-        "   v",
-        "Local Functional Logic"
-      ].join("\n"),
+        "Identified and reproduced the telegram communication path between the IT system and PLC.",
+        "Implemented the communication logic in C# and integrated it into the simulation software as a plugin.",
+        "An embedded functional module replaces the original RFC-dependent execution path.",
+        "The plugin design supports reuse of communication logic across different models and production lines."
+      ],
       zh: [
-        "原始路径",
-        "仿真系统",
-        "   |",
-        "   v",
-        "外部 IT 系统（RFC）",
-        "",
-        "重构后路径",
-        "仿真系统",
-        "   |",
-        "   v",
-        "自定义插件",
-        "   |",
-        "   v",
-        "本地功能逻辑"
-      ].join("\n")
+        "识别并复现 IT 系统与 PLC 之间的 Telegram 通信链路。",
+        "使用 C# 实现通信逻辑，并以插件形式集成至仿真软件。",
+        "使用嵌入式功能模块替换原有依赖 RFC 的执行路径。",
+        "插件化设计支持通信逻辑在不同模型与产线中的复用。"
+      ]
     },
     result: {
-      en: "The refactor significantly reduced annual cost, improved scalability across models and lines, and made the system less dependent on external IT infrastructure.",
-      zh: "这次重构显著降低了年度成本，提升了跨模型和跨产线的扩展性，也让系统摆脱了对外部 IT 基础设施的强依赖。"
+      en: "The solution reduced dependency on the external IT system and its associated costs, and was applied to digital models spanning 10 production lines and 20 related modules.",
+      zh: "方案降低了外部 IT 系统依赖及相关成本，并应用于 10 条产线、20 个相关模块的数字模型。"
     },
-    technologies: ["Plugin Architecture", "Simulation Software", "RFC Replacement", "System Decoupling", "Integration Logic"]
+    technologies: ["C#", "Plugin Architecture", "Telegram Communication", "RFC Replacement", "IT/OT Integration", "Digital Twin"]
   },
 
   {
@@ -699,43 +647,49 @@ const projectsData = [
       zh: "基于视觉的人体动作评估与反馈系统"
     },
     projectType: {
-      en: "Personal Project",
-      zh: "个人项目"
+      en: "TUM · Human Factors Project",
+      zh: "TUM · 人因工程项目"
     },
     technicalType: {
-      en: "Technical Project",
-      zh: "技术项目"
+      en: "Motion Evaluation Research",
+      zh: "运动评估研究"
     },
     pitch: {
-      en: "Turn human motion into measurable metrics and corrective feedback.",
-      zh: "把人体动作转化为可量化的指标与可执行的纠正反馈。"
+      en: "Turn abstract Qigong movement into personalized scores, statistical evidence and joint-level feedback, validated with more than 20 participants.",
+      zh: "把抽象的气功动作转化为个体相对评分、统计证据与关节级反馈，并通过 20 余名被试验证。"
     },
     summary: {
-      en: "A skeleton-based motion analysis system that compares user movement against expert references, computes multi-dimensional scores, and generates joint-level improvement feedback.",
-      zh: "这是一个基于骨架数据的人体动作分析系统，通过将用户动作与专业标准动作对比，生成多维评分，并输出关节级的改进反馈。"
+      en: "A human-factors study that turns expert movement into a reusable relative-scoring framework, combining experiment design, kinematic data processing, statistical visualization and participant-specific feedback.",
+      zh: "一项将资深动作转化为可复用相对评价框架的人因工程研究，覆盖实验设计、运动学数据处理、统计可视化与个体反馈。"
     },
     problem: {
-      en: "Traditional motion evaluation relied heavily on expert observation, making it difficult to standardize, scale, and give precise feedback on where a user should improve.",
-      zh: "传统动作评估高度依赖专业人员观察，难以标准化、规模化，也很难准确指出用户应当在哪个关节或动作阶段改进。"
+      en: "Qigong quality is abstract and difficult to evaluate with one absolute target. Body proportions, mobility and movement amplitude differ between participants, while visual coaching provides little objective evidence about which joint or phase needs correction. The study therefore needed a measurable but individualized evaluation basis, a statistically defensible comparison across participants, and evidence for how teaching videos should frame the movement.",
+      zh: "气功动作较为抽象，难以用单一绝对值评价。被试的身体比例、活动范围与动作幅度各不相同，单纯观察既主观，也难以定位需要修正的关节和动作阶段。因此，项目需要建立兼顾客观性与个体差异的评价依据，通过群体统计验证其稳定性，并说明教学视频应如何呈现动作。"
     },
     solution: {
-      en: "I built a vision-based evaluation pipeline using supplier-provided skeleton models to extract motion features, compare them against expert reference actions, and translate the results into multi-dimensional scoring and intuitive user feedback.",
-      zh: "我构建了一条基于视觉的人体动作评估流程，利用供应商提供的骨架模型提取动作特征，再与专业标准动作进行对比，并将结果转化为多维评分与直观反馈。"
+      en: "The study defined the experiment, reference actions and scoring logic from experienced athletes and teaching videos. A company partner supplied the computer-vision skeleton sequences; based on the movement characteristics of Qigong, the project researched and selected joint angle, velocity, acceleration, angular velocity and angular acceleration as the evaluation dimensions, then cleaned and processed the sequences in MATLAB and RStudio. Correlations and movement patterns were used to build participant-relative scores rather than relying on raw magnitude. Dynamic joint diagnostics were combined with box plots, mean, median, quartiles and confidence intervals so individual feedback and cohort evidence could be examined together. Eye tracking added areas-of-interest evidence and practical filming guidance for teaching videos.",
+      zh: "项目基于资深运动员和教学视频完成实验设计、参考动作定义与评分逻辑设计；合作企业提供计算机视觉识别与骨架序列，项目则依据气功运动的动作特征研究并筛选关节角度、速度、加速度、角速度与角加速度作为评价维度，再使用 MATLAB、RStudio 完成数据清洗与处理，并依据相关性和动作模式建立不依赖绝对幅值的个体相对评分。动态关节诊断与箱型图、平均数、中位数、四分位数和置信区间结合，使个体反馈与群体统计证据可以共同验证。配套眼动实验进一步形成兴趣区域分析与教学视频拍摄规范。"
     },
     highlights: {
       en: [
-        "Processed skeleton-based motion data at around 30 fps.",
-        "Designed custom metrics including joint angles, angle change rate, and joint acceleration.",
-        "Compared user motion against expert reference actions to build a scoring framework.",
-        "Generated multi-dimensional feedback for shoulder, elbow, wrist, waist, knee, and ankle.",
-        "Used backend charts for analysis and red / yellow / green indicators for user-facing feedback."
+        "Defined the experiment and objective scoring criteria for an otherwise abstract movement from expert athletes and teaching videos.",
+        "Kept the project boundary explicit: the company partner supplied CV skeleton sequences; study design, data processing, scoring and evaluation formed the project contribution.",
+        "Used relative correlation across angle, velocity, acceleration, angular velocity and angular acceleration instead of one absolute threshold.",
+        "Connected dynamic neck, shoulder, elbow, wrist, hip and knee feedback with cohort-level statistical analysis.",
+        "Used box plots, mean, median, quartiles and confidence intervals to reveal variation and show greater evaluation stability as the participant sample grows.",
+        "Validated the framework with more than 20 participants and used the feedback to improve Qigong performance.",
+        "Combined eye-tracking areas of interest with motion analysis to define teaching-video filming guidance.",
+        "Designed the data and visualization pipeline as a reusable evaluation framework for other sports."
       ],
       zh: [
-        "以约 30 fps 处理基于骨架的人体动作数据。",
-        "设计了包含关节角度、角度变化速率和关节加速度在内的自定义指标。",
-        "通过用户动作与专业标准动作对比建立评分框架。",
-        "针对肩、肘、腕、腰、膝、踝等关键部位生成多维反馈。",
-        "后台通过图表分析，面向用户则采用红 / 黄 / 绿颜色提示。"
+        "从资深运动员与教学视频出发设计实验并提炼评分标准，使抽象动作能够被客观评价。",
+        "明确项目边界：合作企业提供 CV 骨架序列，项目工作集中于实验设计、数据处理、评分体系与评价框架。",
+        "使用角度、速度、加速度、角速度和角加速度的相对相关关系，而不是统一的绝对阈值。",
+        "把颈、肩、肘、腕、胯与膝的动态反馈和群体统计分析连接在同一评价流程中。",
+        "通过箱型图、平均数、中位数、四分位数与置信区间呈现个体差异，并展示样本增加后评判稳定性的提升。",
+        "在 20 余名被试中验证评价框架，并通过反馈优化气功运动表现。",
+        "结合眼动兴趣区域与动作分析，形成教学视频拍摄指导规范。",
+        "数据处理、评分与可视化流程可复用于其他运动项目。"
       ]
     },
     structure: {
@@ -775,10 +729,28 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "The system established a quantifiable motion evaluation framework and enabled actionable feedback at joint level instead of generic coaching advice.",
-      zh: "该系统建立了可量化的人体动作评估框架，使反馈能够精确到关节层级，而不再停留在笼统的训练建议。"
+      en: "Testing with more than 20 participants connected participant-relative joint scoring with dynamic and cohort-level evidence. Statistical views exposed variation, central tendency and uncertainty, while larger participant samples made the evaluation basis progressively more stable. The outcome was a reusable experimental and data-evaluation framework for other sports, plus evidence-based filming guidance from eye-tracking areas of interest.",
+      zh: "20 余名被试的测试把个体相对关节评分与动态、群体两级证据连接起来；统计图表呈现差异、集中趋势与不确定性，参与者增加后评价依据也逐步稳定。项目最终沉淀出可迁移到其他运动的实验与数据评价框架，以及基于眼动兴趣区域形成的教学视频拍摄规范。"
     },
-    technologies: ["Computer Vision", "Skeleton Model", "Motion Analysis", "Feature Engineering", "Scoring Model", "Feedback Design"]
+    cardResult: {
+      en: "The study validated relative scoring across 6 joint groups with 20+ participants and integrated dynamic and cohort statistics into a reusable motion-evaluation framework.",
+      zh: "项目通过 20+ 名被试验证了 6 组关节相对评分，并将动态与群体统计可视化整合为可复用的运动评价框架。"
+    },
+    metrics: [
+      {
+        value: "20+",
+        label: { en: "Participants", zh: "测试被试" }
+      },
+      {
+        value: "06",
+        label: { en: "Joint groups", zh: "关键关节组" }
+      },
+      {
+        value: "05",
+        label: { en: "Kinematic metrics", zh: "运动学指标" }
+      }
+    ],
+    technologies: ["Human Factors", "Experimental Design", "MATLAB", "RStudio", "Statistical Analysis", "Data Visualization", "Relative Scoring", "Skeleton Data", "Eye Tracking"]
   },
 
   {
@@ -786,73 +758,65 @@ const projectsData = [
       en: "Multimodal 3D Navigation System",
       zh: "多模态三维导航系统"
     },
+    cover: "assets/images/sound-guided-navigation-cover.png",
     projectType: {
-      en: "Personal Project",
-      zh: "个人项目"
+      en: "TUM · Personal Project",
+      zh: "个人项目 · TUM"
     },
     technicalType: {
       en: "Extended Technical Project",
       zh: "技术延展项目"
     },
     pitch: {
-      en: "Guide people through complex spaces using more than just arrows.",
-      zh: "不只依赖箭头，而是用多模态线索引导用户穿越复杂空间。"
+      en: "Use multimodal cues to guide users through complex spaces and toward their destination.",
+      zh: "多模态线索引导用户穿越复杂空间，寻找目标。"
     },
     summary: {
-      en: "A 3D navigation and interaction system that combines visual, auditory, and environmental cues to improve spatial understanding in complex scenes.",
-      zh: "这是一个结合视觉、听觉和环境交互线索的三维导航与交互系统，用于提升用户在复杂场景中的空间理解能力。"
+      en: "A 3D navigation and interaction system that combines visual, auditory, and environmental interaction cues to improve immersion and perceptual quality in complex scenes.",
+      zh: "这是一个结合视觉、听觉和环境交互线索的三维导航与交互系统，提升用户在复杂场景中的沉浸体验和感知质感。"
     },
     problem: {
-      en: "Traditional navigation methods in 3D environments often relied on single-mode guidance, which increased cognitive load and made it harder for users to build spatial understanding.",
-      zh: "传统三维场景中的导航方式往往依赖单一模式的提示，这会增加认知负担，也不利于用户建立稳定的空间理解。"
+      en: "Traditional navigation in 3D scenes often relies on map-based prompts. This increases cognitive load and can disrupt the experience in scenes designed for immersion.",
+      zh: "传统三维场景中的导航方式往往依赖地图侧的提示，这会增加认知负担，对于需要沉浸体验的场景会破坏体验感。"
     },
     solution: {
-      en: "I designed a multimodal navigation system that combined scene interaction, changing streetlight intensity, footstep echo, and firefly guidance to direct users toward their targets.",
-      zh: "我设计了一套多模态导航系统，通过场景交互、路灯光强变化、脚步回音和萤火虫引导等方式，帮助用户逐步接近目标。"
+      en: "The navigation system combines scene interaction with changing streetlight intensity, footstep echoes, and firefly cues, helping users move progressively closer to the target.",
+      zh: "导航系统结合场景交互，让路灯光强变化、脚步回音与萤火虫引导用户，帮助用户逐步接近目标。"
     },
-    highlights: {
+    keyFeatures: {
       en: [
-        "Built navigation logic around current position, predicted position, and target point.",
-        "Defined a dynamic triangular navigation region to trigger environment-based feedback.",
-        "Used light, audio, and interactive cues instead of relying solely on conventional UI directions.",
-        "Validated the interaction design through user evaluation and cognitive-load analysis."
+        "Guide users with light, sound, and environmental changes instead of arrows alone.",
+        "Adapt the guidance to the user's current position and target location.",
+        "Use a human-factors evaluation framework to verify whether guidance reduces workload and improves spatial understanding."
       ],
       zh: [
-        "围绕用户当前位置、预测位置和目标点建立导航逻辑。",
-        "通过动态三角导航区域触发环境反馈。",
-        "不只依赖传统 UI 提示，而是结合光、声音和交互线索进行引导。",
-        "通过用户实验和认知负担分析验证交互设计效果。"
+        "使用光线、声音和环境变化引导用户，而不只依赖箭头。",
+        "根据用户当前位置与目标位置调整引导方式。",
+        "人因学评估体系验证引导方式是否降低操作负担并改善空间理解。"
       ]
     },
-    structure: {
+    technicalHighlights: {
       en: [
-        "User Position",
-        "     |",
-        "     v",
-        "Predicted Position + Target Point",
-        "     |",
-        "     v",
-        "Dynamic Navigation Region",
-        "     |",
-        "     v",
-        "Light / Audio / Interactive Feedback"
-      ].join("\n"),
+        "Navigation state combines current position, predicted position, and target point.",
+        "A dynamic triangular navigation region controls when environmental feedback is activated.",
+        "Streetlight intensity, footstep echo, and firefly guidance form complementary visual and auditory channels.",
+        "User evaluation and NASA-TLX analysis measure satisfaction and cognitive load."
+      ],
       zh: [
-        "用户位置",
-        "   |",
-        "   v",
-        "预测位置 + 目标点",
-        "   |",
-        "   v",
-        "动态导航区域",
-        "   |",
-        "   v",
-        "光 / 声 / 交互反馈"
-      ].join("\n")
+        "导航状态结合用户当前位置、预测位置与目标点。",
+        "动态三角导航区域控制环境反馈的触发时机。",
+        "路灯光强、脚步回音与萤火虫引导构成互补的视觉和听觉通道。",
+        "通过用户评价与 NASA-TLX 分析衡量满意度和认知负担。"
+      ]
+    },
+    structureStyle: "horizontal",
+    structure: {
+      en: "Algorithm: Actual User Position + Target Point + Environmental Trigger Point → Triangle Area Evaluation → Determine Interaction Trigger Direction\nInteraction: User Movement Direction + Next Action → Select Environmental Node → Light / Sound / Environmental Feedback",
+      zh: "算法部分：用户实际位置 + 目标点 + 环境触发点 → 三角形面积判断 → 确定交互触发方向\n交互部分：用户移动方向 + 下一步行为 → 选择环境节点 → 光线 / 声音 / 环境反馈"
     },
     result: {
-      en: "The project improved user satisfaction by 30%, reduced cognitive load, and demonstrated how multimodal guidance could make 3D navigation more intuitive.",
-      zh: "该项目将用户满意度提升了 30%，降低了认知负担，并验证了多模态引导能够让三维导航更直观。"
+      en: "The project improved user satisfaction by 30%, reduced cognitive load, and demonstrated that multimodal guidance can outperform conventional map guidance in specific scenarios.",
+      zh: "该项目将用户满意度提升了 30%，降低了认知负担，并验证了多模态引导对比传统地图指引在特定场景的更优表现。"
     },
     technologies: ["Unity", "3D Interaction", "Navigation Design", "NASA-TLX", "UX Evaluation", "Multimodal Feedback"]
   },
@@ -862,9 +826,10 @@ const projectsData = [
       en: "Matrix-based Production Scheduling Model",
       zh: "基于矩阵的生产调度模型"
     },
+    cover: "assets/images/matrix-production-scheduling-model-cover-v2.png",
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "ZF Group · Enterprise Project",
+      zh: "企业项目 · ZF Group"
     },
     technicalType: {
       en: "Extended Technical Project",
@@ -875,60 +840,48 @@ const projectsData = [
       zh: "把生产冲突转化为可计算的调度模型。"
     },
     summary: {
-      en: "A scheduling prototype designed to balance standardized production efficiency with customized product demand using weighted matrix logic.",
-      zh: "这是一个调度原型，利用加权矩阵逻辑，在标准化生产效率与客制化产品需求之间寻找平衡。"
+      en: "A scheduling model based on weighted matrix logic that automatically generates production plans for customized product requirements.",
+      zh: "这是一个基于加权矩阵逻辑的调度模型，针对客制化产品需求完成生产计划的自动排班。"
     },
     problem: {
       en: "Production planning had to manage the conflict between standardized throughput and customized order requirements, but existing planning methods lacked a structured optimization model.",
       zh: "生产计划需要同时兼顾标准化吞吐效率和客制化订单要求，但现有排产方式缺乏结构化的优化模型。"
     },
     solution: {
-      en: "I reframed the scheduling challenge as a matrix problem by combining a remaining workload matrix with a workload distribution matrix and adjusting weights to prioritize customized demand.",
-      zh: "我将这一调度挑战重构为矩阵问题，通过剩余工作量矩阵和工时分布矩阵的组合，再辅以权重调整来优先满足客制化需求。"
+      en: "To resolve the conflict between the remaining workload of different orders and limited working hours, the model converts the production state into a remaining-workload matrix and a working-time distribution matrix. Weights then adjust the priority of customized demand before the model generates the corresponding production schedule.",
+      zh: "面对不同订单剩余工作量与有限工时之间的冲突，模型将生产状态转化为剩余工作量矩阵与工时分布矩阵，再通过权重调整客制化需求的优先级，最终生成对应的生产调度结果。"
     },
-    highlights: {
+    keyFeatures: {
       en: [
-        "Defined remaining workload matrix as the basis for current production status.",
-        "Used workload distribution matrix to represent available capacity allocation.",
-        "Adjusted weights to generate different scheduling priorities under customization constraints.",
-        "Implemented the first calculation prototype in MATLAB."
+        "Represent the remaining work for each production task.",
+        "Describe how available working time can be distributed.",
+        "Adjust priorities when customized orders require different treatment.",
+        "Generate a scheduling result from the combined production conditions."
       ],
       zh: [
-        "以剩余工作量矩阵作为当前生产状态的核心表示。",
-        "使用工时分布矩阵表达可分配产能。",
-        "通过权重调整在客制化约束下生成不同调度优先级。",
-        "在 MATLAB 中实现了第一版计算原型。"
+        "表示每项生产任务尚未完成的工作量。",
+        "描述可用工时应当如何分配。",
+        "在客制化订单出现时调整生产优先级。",
+        "根据组合后的生产条件生成调度结果。"
       ]
     },
-    structure: {
+    technicalHighlights: {
       en: [
-        "Remaining Workload Matrix",
-        "          |",
-        "          v",
-        "Workload Distribution Matrix",
-        "          |",
-        "          v",
-        "Weight Adjustment Strategy",
-        "          |",
-        "          v",
-        "Scheduling Output"
-      ].join("\n"),
+        "A remaining-workload matrix represents the current production state.",
+        "A workload-distribution matrix models available capacity allocation.",
+        "A configurable weight strategy converts customization constraints into scheduling priorities.",
+        "MATLAB provides the calculation environment for the initial scheduling model."
+      ],
       zh: [
-        "剩余工作量矩阵",
-        "      |",
-        "      v",
-        "工时分布矩阵",
-        "      |",
-        "      v",
-        "权重调整策略",
-        "      |",
-        "      v",
-        "调度输出"
-      ].join("\n")
+        "使用剩余工作量矩阵表示当前生产状态。",
+        "使用工时分布矩阵建模可分配产能。",
+        "可调整的权重策略将客制化约束转化为调度优先级。",
+        "通过 MATLAB 实现初始调度模型与计算过程。"
+      ]
     },
     result: {
-      en: "The prototype provided a structured way to balance efficiency and customization, and demonstrated how scheduling decisions could be made computable rather than purely experience-based.",
-      zh: "该原型为效率与客制化之间的平衡提供了结构化方法，也证明了调度决策可以从经验判断转化为可计算逻辑。"
+      en: "The model provides a structured method for balancing efficiency and customization, validating an approach that turns scheduling decisions from experience-based judgment into computable logic.",
+      zh: "该模型为效率与客制化之间的平衡提供了结构化方法，验证了调度决策从经验判断转化为可计算逻辑的方案。"
     },
     technologies: ["MATLAB", "Scheduling Model", "Matrix Modeling", "Weight Strategy", "Production Planning"]
   },
@@ -938,73 +891,64 @@ const projectsData = [
       en: "Lean Process Optimization",
       zh: "精益流程优化"
     },
+    cover: "assets/images/lean-production-process-optimization-cover.png",
     projectType: {
-      en: "Industry Project",
-      zh: "企业项目"
+      en: "Esquel Group · Enterprise Project",
+      zh: "企业项目 · 溢达集团"
     },
     technicalType: {
       en: "Extended Technical Project",
       zh: "技术延展项目"
     },
     pitch: {
-      en: "Reveal bottlenecks by making process flow visible end to end.",
-      zh: "通过让流程全链路可见，识别真正的瓶颈所在。"
+      en: "Optimize lean production for a button manufacturing line.",
+      zh: "纽扣产线的精益生产方案优化。"
     },
     summary: {
-      en: "A process optimization project that used value stream mapping to identify waste, bottlenecks, and non-value-added steps in manufacturing workflows.",
-      zh: "这是一个流程优化项目，通过价值流图分析识别制造流程中的浪费、瓶颈和非增值步骤。"
+      en: "A process optimization project that uses value stream mapping to identify bottlenecks and non-value-added steps in button manufacturing, then applies established industrial-engineering methods to improve process layout and production efficiency.",
+      zh: "这是一个流程优化项目，通过价值流图分析识别纽扣制造流程中的瓶颈和非增值步骤，并使用经典工业工程方法优化流程布局，提高生产效率。"
     },
     problem: {
-      en: "Production workflows contained hidden inefficiencies, but teams lacked a structured way to visualize process flow and distinguish value-added from non-value-added work.",
-      zh: "生产流程中存在隐性低效问题，但团队缺少一套结构化方法去可视化流程全貌，并区分增值与非增值活动。"
+      en: "The button manufacturing process contained workflow waste, and actual production efficiency diverged from the overall capacity plan. Industrial-engineering methods were needed to identify bottlenecks and improve efficiency.",
+      zh: "纽扣生产制造过程中存在流程浪费，实际生产效率与整体产能计划出现偏差，需要结合工业工程方法识别瓶颈并提高生产效率。"
     },
     solution: {
-      en: "I applied value stream mapping to analyze the end-to-end workflow, identify bottlenecks, and propose process improvements based on lean principles.",
-      zh: "我利用价值流图分析端到端流程，识别瓶颈位置，并基于精益原则提出流程改进方案。"
+      en: "VSM was used to map the production process and locate problem points and bottlenecks. Video analysis and standard work-cell analysis then informed an optimization proposal for equipment layout and workflow.",
+      zh: "通过 VSM 梳理生产流程并定位问题节点与瓶颈，结合视频分析与标准工作单元分析，形成设备布局与工作流程的优化方案。"
     },
-    highlights: {
+    keyFeatures: {
       en: [
-        "Mapped the workflow end to end to make bottlenecks visible.",
-        "Separated value-added and non-value-added activities.",
-        "Used structured process analysis to support optimization proposals."
+        "Map the complete production process with VSM and identify bottlenecks.",
+        "Break down the actual production process through video analysis.",
+        "Use standard work-cell analysis to examine specific operations.",
+        "Optimize equipment layout and workflow based on the findings."
       ],
       zh: [
-        "对端到端流程进行映射，使瓶颈位置可视化。",
-        "区分增值与非增值活动。",
-        "通过结构化流程分析支持优化方案设计。"
+        "通过 VSM 梳理完整生产流程并识别瓶颈。",
+        "通过视频分析拆解实际生产过程。",
+        "使用标准工作单元分析具体作业环节。",
+        "根据分析结果优化设备布局与工作流程。"
       ]
     },
-    structure: {
+    technicalHighlights: {
       en: [
-        "Current Workflow Mapping",
-        "         |",
-        "         v",
-        "Bottleneck Identification",
-        "         |",
-        "         v",
-        "Waste Analysis",
-        "         |",
-        "         v",
-        "Optimized Process Proposal"
-      ].join("\n"),
+        "Value stream mapping identifies bottlenecks and waste across the end-to-end production process.",
+        "Video analysis reveals additional efficiency issues in actual operations.",
+        "Standard work-cell analysis breaks down and compares specific production activities.",
+        "The findings are translated into equipment-layout and workflow optimization proposals."
+      ],
       zh: [
-        "当前流程映射",
-        "     |",
-        "     v",
-        "瓶颈识别",
-        "     |",
-        "     v",
-        "浪费分析",
-        "     |",
-        "     v",
-        "优化方案"
-      ].join("\n")
+        "使用价值流图定位端到端生产流程中的瓶颈与浪费。",
+        "结合视频分析进一步识别实际作业过程中的效率问题。",
+        "使用标准工作单元分析拆解并比较具体生产作业。",
+        "将分析结果转化为设备布局与工作流程优化方案。"
+      ]
     },
     result: {
-      en: "The analysis improved process transparency and created a clearer basis for workflow optimization and resource utilization improvements.",
-      zh: "该分析提升了流程透明度，也为后续流程优化与资源利用改善建立了更清晰的依据。"
+      en: "The optimization proposal improved production efficiency, shifted the original bottleneck away from the critical production stage, and improved the capacity performance of the overall process.",
+      zh: "优化方案提升了生产效率，并将原有瓶颈从关键生产节点转移，改善了整体流程的产能表现。"
     },
-    technologies: ["Lean", "Value Stream Mapping", "Process Analysis", "Workflow Optimization", "Industrial Engineering"]
+    technologies: ["Lean", "Value Stream Mapping", "Video Analysis", "Standard Work", "Process Analysis", "Industrial Engineering"]
   },
   {
     title: {
@@ -1012,45 +956,45 @@ const projectsData = [
       zh: "工业仿真数据智能 Agent"
     },
     projectType: {
-      en: "Personal Project",
-      zh: "个人项目"
+      en: "S.Hu · Personal Project",
+      zh: "S.Hu · 个人项目"
     },
     technicalType: {
       en: "Extended Technical Project",
       zh: "技术延展项目"
     },
     pitch: {
-      en: "A configuration-driven industrial simulation framework that turns scene intent into reusable Isaac Sim worlds and synthetic data outputs.",
-      zh: "一个配置驱动的工业仿真框架，将场景意图转化为可复用的 Isaac Sim 环境与合成数据输出。"
+      en: "Use structured documents to describe industrial scenes, interpret configuration intent, generate digital twins, and support defect simulation and engineering outputs in one framework.",
+      zh: "使用结构化文档描述工业场景，通过意图识别自动生成数字孪生，并在同一框架中完成缺陷模拟与工程输出。"
     },
     summary: {
-      en: "An AI-assisted industrial simulation framework that converts structured scene configurations into reusable Isaac Sim environments, defect scenarios, and synthetic data pipelines.",
-      zh: "一个面向工业场景的 AI 辅助仿真框架，将结构化场景配置自动转换为可复用的 Isaac Sim 环境、缺陷场景与合成数据生成流程。"
+      en: "A configuration-driven industrial simulation framework that turns structured scene descriptions into digital twins, while supporting defect simulation, 3D parameter write-back and on-demand outputs.",
+      zh: "这是一个配置驱动的工业仿真框架：以结构化文档统一描述场景，自动搭建数字孪生，同时支持缺陷模拟、三维参数回写与按需输出。"
     },
     problem: {
-      en: "Industrial AI and embodied intelligence systems need large-scale, high-quality simulation data, but traditional industrial simulation workflows still depend heavily on manual USD scene construction, asset placement, parameter tuning, and scenario reproduction. That makes dataset creation expensive, difficult to reproduce, and hard to scale.",
-      zh: "工业 AI 与具身智能系统需要大规模、高质量的仿真数据，但传统工业仿真流程仍然高度依赖人工完成 USD 场景搭建、资产摆放、参数调节与异常场景复现，导致数据集构建成本高、复现困难且难以规模化。"
+      en: "Industrial digital twins and simulation-data production still rely heavily on manually building USD scenes, placing assets and tuning parameters. Each scene variant or defect case often requires repeated modeling and a new set of output files, increasing engineering cost, weakening reproducibility and making scene knowledge difficult to reuse across stations and projects.",
+      zh: "工业数字孪生和仿真数据生产仍高度依赖人工搭建 USD 场景、摆放资产和调节参数；当场景发生变体或需要复现缺陷时，工程师往往需要重复建模并重新整理输出资料，导致成本高、复现性不足，也难以把场景知识复用到其他站点和项目。"
     },
     solution: {
-      en: "I designed a YAML-driven simulation generation workflow that separates scene description, simulation construction, and data export. The pipeline turns configuration into scene intent processing, USD stage generation, and synthetic data export so simulation creation becomes reproducible and reusable rather than purely manual.",
-      zh: "我设计了一套 YAML 驱动的仿真生成流程，将场景描述、仿真构建与数据导出解耦。整个链路从配置出发，经由场景意图解析、USD Stage 自动生成与合成数据导出，把传统依赖手工操作的仿真流程转化为可复用、可复现的工程管线。"
+      en: "The framework connects intent interpretation, structured scene description, digital-twin construction, defect simulation and output generation in one configuration-driven workflow. Scene requirements are converted into YAML, which assembles reusable assets, materials and object relationships into a USD Stage and hierarchy. Direct 3D edits write transforms back to the document, normal and parameterized defect states share the same scene definition, and reports, hierarchy trees, metadata and scene captures are generated on demand from the synchronized state.",
+      zh: "框架将意图识别、结构化描述、数字孪生构建、缺陷模拟和输出生成串联为一条配置驱动的流程：场景需求被转换为 YAML 配置，可复用资产、材质和对象关系据此自动组合为 USD Stage 与层级树；三维编辑会把位姿回写文档，参数化缺陷与正常状态共用同一场景定义，报告、结构树、Metadata 和场景截图则从同步后的状态按需生成。"
     },
     highlights: {
       en: [
-        "Built configuration-driven scene generation from structured YAML files.",
-        "Supported reusable industrial components such as floor, conveyor, robot, battery module, sensor, storage rack, and camera.",
-        "Modeled configurable defect scenarios including normal state, box misalignment, missing part, and placed-on-table cases.",
-        "Integrated reusable USD assets for industrial environments and custom simulation content.",
-        "Automated export of metadata JSON, scene reports, viewpoint images, camera captures, and stage-to-YAML configuration snapshots.",
-        "Developed an interactive Isaac Sim extension for selecting YAML configurations, generating scenes, switching defect cases, and exporting outputs."
+        "Uses structured documents as the shared entry point for scene configuration and 3D construction.",
+        "Translates scene intent into asset, parameter and relationship configurations.",
+        "Builds digital twins from reusable industrial components and a modular USD asset library.",
+        "Represents defects as parameterized states so normal and abnormal conditions share one scene definition.",
+        "Synchronizes YAML, 3D transforms and the USD hierarchy around one scene state.",
+        "Extends assets, defect rules and output modules independently, including hierarchy trees, reports and scene captures."
       ],
       zh: [
-        "基于结构化 YAML 文件实现配置驱动的场景生成。",
-        "支持地板、传送线、工业机器人、电池模组、传感器、货架与相机等可复用工业组件。",
-        "可配置异常场景建模，包括正常状态、箱体偏移、部件缺失与放置异常等情况。",
-        "集成可复用的 USD 工业资产与自定义仿真资产。",
-        "自动导出 Metadata JSON、场景报告、视角截图、相机图像以及 Stage-to-YAML 配置快照。",
-        "开发交互式 Isaac Sim Extension，支持选择 YAML、生成场景、切换异常场景并导出仿真数据。"
+        "以结构化文档作为场景配置和三维建模的统一入口。",
+        "根据场景意图生成资产、参数和对象关系配置。",
+        "通过可复用工业组件和模块化 USD 资产库搭建数字孪生。",
+        "以参数化状态模拟缺陷与错误，使正常与异常工况共用一套场景定义。",
+        "同步 YAML、三维位姿与 USD 层级结构，保持统一的场景状态。",
+        "资产、故障规则和输出模块均可独立扩展，并按需生成结构树、报告和场景截图。"
       ]
     },
     structure: {
@@ -1112,9 +1056,36 @@ const projectsData = [
       ].join("\n")
     },
     result: {
-      en: "The project shows how AI agents can transform industrial simulation from a manual engineering task into a scalable, reusable, and data-oriented generation pipeline. It connects industrial digital twins, simulation engineering, and future embodied AI data production into one coherent workflow.",
-      zh: "该项目展示了 AI Agent 如何将工业仿真从人工工程任务转化为可扩展、可复用、面向数据生成的流程，也把工业数字孪生、仿真工程与未来具身智能数据生产连接成了统一工作流。"
+      en: "The framework combines scene construction, defect reproduction and engineering outputs into one reusable workflow. A single structured document can continuously drive the digital twin and multiple output formats, while assets, intent rules, defect models and output modules remain independently extensible for use across stations, projects and simulation-data tasks.",
+      zh: "框架将原本分散的场景搭建、缺陷复现和资料输出整合为可复用流程。同一份结构化文档可以持续驱动数字孪生与多种工程输出，资产、意图规则、故障模型和输出模块也能够独立扩展，便于迁移到不同站点、项目和仿真数据任务。"
     },
+    cardResult: {
+      en: "Structured YAML and 3D transforms stay synchronized across four reproducible defect cases, with USD, metadata and camera outputs generated from one scene state.",
+      zh: "结构化 YAML 与三维位姿在四类可复现缺陷场景中保持双向同步，并从统一场景状态生成 USD、Metadata 与相机输出。"
+    },
+    metrics: [
+      {
+        value: "YAML ↔ 3D",
+        label: {
+          en: "bidirectional scene mapping",
+          zh: "场景双向映射"
+        }
+      },
+      {
+        value: "04",
+        label: {
+          en: "reproducible defect cases",
+          zh: "可复现缺陷场景"
+        }
+      },
+      {
+        value: "USD + JSON",
+        label: {
+          en: "shared output state",
+          zh: "统一输出状态"
+        }
+      }
+    ],
     technologies: [
       "NVIDIA Isaac Sim",
       "OpenUSD",

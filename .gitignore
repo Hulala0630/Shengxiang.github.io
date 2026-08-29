@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.npm-cache/
+public/assets/
+src/data/projects.generated.json
+.DS_Store
+npm-debug.log*
+.astro-preview.*.log
+.claude/

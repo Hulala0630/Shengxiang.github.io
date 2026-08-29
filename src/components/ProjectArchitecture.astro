@@ -1,0 +1,42 @@
+---
+type ProjectArchitectureData = {
+  title: string;
+  intro: string;
+  flow: ReadonlyArray<ReadonlyArray<string>>;
+  outputs: ReadonlyArray<ReadonlyArray<string>>;
+};
+
+interface Props {
+  architecture: ProjectArchitectureData;
+}
+
+const { architecture } = Astro.props;
+const columnCount = Math.min(Math.max(architecture.flow.length, 1), 4);
+---
+
+<section
+  class="project-architecture"
+  style={`--architecture-columns: ${columnCount}`}
+>
+  <header>
+    <span>{architecture.title}</span>
+    <p>{architecture.intro}</p>
+  </header>
+  <ol>
+    {architecture.flow.map(([number, title, body]) => (
+      <li>
+        <b>{number}</b>
+        <strong>{title}</strong>
+        <small>{body}</small>
+      </li>
+    ))}
+  </ol>
+  <div class="project-architecture-branches">
+    {architecture.outputs.map(([title, body]) => (
+      <article>
+        <strong>{title}</strong>
+        <small>{body}</small>
+      </article>
+    ))}
+  </div>
+</section>

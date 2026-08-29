@@ -1,0 +1,50 @@
+name: Build and deploy
+
+# The deploy job only ever runs for `main` or a manual dispatch, so work on
+# websiteRebuild is built and checked without touching the live domain.
+on:
+  push:
+    branches: [main, websiteRebuild]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Validate bilingual project data
+        run: npm run check:content
+      - name: Build static site
+        run: npm run build
+      - name: Verify build output
+        run: |
+          test -f dist/index.html
+          test -f dist/en/index.html
+          test -f dist/CNAME
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

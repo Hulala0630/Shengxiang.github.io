@@ -1,0 +1,105 @@
+---
+import { siteCopy, type Locale } from "../data/site";
+import { list, text, type Project } from "../lib/projects";
+
+interface Props {
+  project: Project;
+  locale: Locale;
+  /** "narrative" and "lists" split the same blocks across a two-column layout. */
+  group?: "narrative" | "lists" | "all";
+  hideSummary?: boolean;
+  hideStructure?: boolean;
+}
+
+const {
+  project,
+  locale,
+  group = "all",
+  hideSummary = false,
+  hideStructure = false
+} = Astro.props;
+const c = siteCopy[locale];
+
+const overview =
+  text(project.problem, locale) ||
+  text(project.overview, locale) ||
+  text(project.description, locale);
+const solution =
+  text(project.solution, locale) ||
+  text(project.systemIdea, locale) ||
+  text(project.note, locale);
+const result =
+  text(project.result, locale) ||
+  text(project.note, locale) ||
+  text(project.overview, locale);
+const headline =
+  text(project.pitch, locale) ||
+  text(project.summary, locale) ||
+  text(project.description, locale);
+
+// Fields already visible through the blocks above or the card headline must not
+// be repeated; everything else in projects.js has to reach the page.
+const shown = new Set([overview, solution, result, headline].filter(Boolean));
+const once = (value: string) => {
+  if (!value || shown.has(value)) return "";
+  shown.add(value);
+  return value;
+};
+
+const narrative: [string, string][] = (
+  [
+    [c.summary, hideSummary ? "" : once(text(project.summary, locale))],
+    [c.overview, overview],
+    [c.solution, solution],
+    [c.result, result],
+    [c.systemIdea, once(text(project.systemIdea, locale))],
+    [c.note, once(text(project.note, locale))]
+  ] as [string, string][]
+).filter(([, value]) => value);
+
+const bullets: [string, string[]][] = (
+  [
+    [c.highlights, list(project.highlights, locale)],
+    [c.keyFeatures, list(project.keyFeatures, locale)],
+    [c.technicalHighlights, list(project.technicalHighlights, locale)],
+    [c.interaction, list(project.interaction, locale)]
+  ] as [string, string[]][]
+).filter(([, items]) => items.length > 0);
+
+const structure = text(project.structure, locale);
+const technologies = project.technologies ?? [];
+
+const showNarrative = group !== "lists";
+const showLists = group !== "narrative";
+---
+
+{showNarrative &&
+  narrative.map(([label, value]) => (
+    <>
+      <h4>{label}</h4>
+      <p>{value}</p>
+    </>
+  ))}
+
+{showLists && (
+  <>
+    {bullets.map(([label, items]) => (
+      <>
+        <h4>{label}</h4>
+        <ul>{items.map((item) => <li>{item}</li>)}</ul>
+      </>
+    ))}
+    {structure && !hideStructure && (
+      <>
+        <h4>{c.structure}</h4>
+        <pre>{structure}</pre>
+      </>
+    )}
+    {technologies.length > 0 && (
+      <>
+        <h4>{c.technologies}</h4>
+        <ul class="tags">{technologies.map((item: string) => <li>{item}</li>)}</ul>
+      </>
+    )}
+  </>
+)}

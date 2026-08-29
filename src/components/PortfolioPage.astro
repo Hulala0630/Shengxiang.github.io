@@ -1,0 +1,1284 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  capabilities,
+  career,
+  siteCopy,
+  type Locale
+} from "../data/site";
+import ProjectFacts from "./ProjectFacts.astro";
+import ProjectArchitecture from "./ProjectArchitecture.astro";
+import {
+  assetPath,
+  otherProjects,
+  projectKind,
+  selectedProjects,
+  text,
+  type Project
+} from "../lib/projects";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const c = siteCopy[locale];
+const alternateHref = locale === "zh" ? "/en/" : "/";
+const alternateLabel = locale === "zh" ? "EN" : "中文";
+
+const selectedLabels = [
+  c.enterpriseSystem,
+  c.simulationSystem,
+  c.researchProject
+];
+
+const faultTrainingFlow = locale === "zh"
+  ? [
+      ["01", "站点识别与环境检查", "选择角色和站点，识别设备、信号点与训练对象并确认模拟环境。"],
+      ["02", "标准故障继承", "从标准化故障列表生成站点场景，并支持增删查改。"],
+      ["03", "模拟验证", "同一故障同步驱动 PLC 信号、HMI 报警与二维模型。"],
+      ["04", "培训报告", "验证诊断和恢复答案，记录得分与完整执行链路。"]
+    ]
+  : [
+      ["01", "Station scan & readiness", "Choose a role and station, identify equipment, signals and training objects, then verify the sandbox."],
+      ["02", "Standard fault inheritance", "Generate station scenarios from a standardized fault catalog, with full CRUD controls."],
+      ["03", "Sim & verify", "One fault drives PLC signals, HMI alarms and the 2D model together."],
+      ["04", "Training report", "Validate diagnosis and recovery answers and retain the execution trace."]
+    ];
+
+const sceneBuilderFlow = locale === "zh"
+  ? [
+      ["01", "识别意图并配置", "将场景需求映射为结构化文档、资产引用和参数规则。"],
+      ["02", "生成数字孪生", "根据文档自动组合工业组件、对象关系与 USD 场景树。"],
+      ["03", "模拟缺陷与错误", "复用同一场景定义切换正常状态与四类参数化异常。"],
+      ["04", "按需组织输出", "从统一场景状态生成结构树、报告、Metadata 与场景截图。"]
+    ]
+  : [
+      ["01", "Interpret & configure", "Map scene requirements to structured documents, asset references and parameter rules."],
+      ["02", "Generate the digital twin", "Assemble industrial components, relationships and the USD scene tree from the document."],
+      ["03", "Simulate defects & errors", "Reuse one scene definition across normal operation and four parameterized anomalies."],
+      ["04", "Compose outputs on demand", "Generate hierarchy trees, reports, metadata and scene captures from one scene state."]
+    ];
+
+const motionEvaluationFlow = locale === "zh"
+  ? [
+      ["01", "比较动作表现", "切换参考动作与待改进动作，查看整体评分和关键关节变化。"],
+      ["02", "进行局部修正", "定位颈、肩、肘、腕、胯或膝，并拖动关节测试修正方向。"],
+      ["03", "检查评价依据", "比较个体相对与绝对阈值，并查看五类运动学指标。"],
+      ["04", "验证群体证据", "调节被试数量，在箱型图、集中趋势与评判精度之间切换。"]
+    ]
+  : [
+      ["01", "Compare performance", "Switch between a reference movement and a sample that needs correction."],
+      ["02", "Test a local correction", "Locate a joint and drag it to explore a possible correction direction."],
+      ["03", "Inspect the evaluation basis", "Compare participant-relative and absolute scoring across five kinematic metrics."],
+      ["04", "Validate cohort evidence", "Change sample size and move between box plot, central tendency and precision views."]
+    ];
+
+const faultArchitecture = locale === "zh"
+  ? {
+      title: "系统拓扑",
+      intro: "站点内容经识别后继承标准化故障列表，形成站点训练配置，再同步驱动三个验证对象。",
+      flow: [
+        ["01", "站点识别", "设备、信号点与训练对象"],
+        ["02", "标准故障继承", "生成站点级场景与训练配置"],
+        ["03", "同步执行接口", "统一映射状态、信号与命令"]
+      ],
+      outputs: [
+        ["PLC / PLCSim", "输入、输出与安全互锁"],
+        ["Simulation Model", "对象行为与可视化反应"],
+        ["HMI / OPC UA", "报警、状态与操作反馈"]
+      ]
+    }
+  : {
+      title: "System topology",
+      intro: "Recognized station content inherits the standardized fault catalog to form a station training configuration before three verification targets are driven in sync.",
+      flow: [
+        ["01", "Station recognition", "Equipment, signal points and training objects"],
+        ["02", "Standard fault inheritance", "Station scenarios and training configuration"],
+        ["03", "Synchronized interface", "Unified state, signal and command mapping"]
+      ],
+      outputs: [
+        ["PLC / PLCSim", "Inputs, outputs and safety interlocks"],
+        ["Simulation Model", "Object behavior and visual response"],
+        ["HMI / OPC UA", "Alarms, state and operator feedback"]
+      ]
+    };
+
+const sceneArchitecture = locale === "zh"
+  ? {
+      title: "配置驱动的应用闭环",
+      intro: "场景需求先被识别并写入结构化文档，文档驱动数字孪生场景与层级树自动生成；三维编辑和缺陷模拟持续更新统一场景状态，报告、结构树与场景截图再从该状态按需输出。",
+      flow: [
+        ["01", "场景意图", "将任务需求解析为配置目标与规则"],
+        ["02", "结构化描述", "YAML 定义资产、参数、关系与缺陷"],
+        ["03", "数字孪生运行时", "自动构建 USD Stage 并维护统一状态"],
+        ["04", "按需输出", "从场景树生成资料与工程证据"]
+      ],
+      outputs: [
+        ["文档 ↔ 三维", "结构参数与对象位姿双向同步"],
+        ["缺陷与错误模拟", "正常状态和参数化异常共享同一场景"],
+        ["结构树与可视证据", "层级树、报告、Metadata 和场景截图"]
+      ]
+    }
+  : {
+      title: "Configuration-driven application loop",
+      intro: "Scene requirements are interpreted into structured documents that automatically generate the digital-twin scene and hierarchy. Direct 3D edits and defect simulation keep one scene state current, while reports, hierarchy trees and scene captures are produced from it on demand.",
+      flow: [
+        ["01", "Scene intent", "Interpret task requirements into configuration goals and rules"],
+        ["02", "Structured description", "YAML defines assets, parameters, relations and defects"],
+        ["03", "Digital-twin runtime", "Build the USD Stage and maintain one shared state"],
+        ["04", "On-demand outputs", "Generate engineering evidence from the scene tree"]
+      ],
+      outputs: [
+        ["Document ↔ 3D", "Bidirectional structure and transform synchronization"],
+        ["Defect & error simulation", "Normal and parameterized abnormal states share one scene"],
+        ["Hierarchy & visual evidence", "Scene trees, reports, metadata and captures"]
+      ]
+    };
+
+const motionArchitecture = locale === "zh"
+  ? {
+      title: "实验设计、数据处理与评价闭环",
+      intro: "合作企业提供 CV 骨架序列作为数据输入；项目贡献从实验与评分标准设计开始，贯穿运动学数据处理、相对评价、统计验证与可视化反馈，并通过眼动研究补充教学视频规范。",
+      flow: [
+        ["01", "实验与标准设计", "从资深动作、教学视频和研究问题定义评价依据"],
+        ["02", "指标研究与数据处理", "依据运动特点筛选五类指标，并处理六组关节数据"],
+        ["03", "相对评分与统计验证", "结合个体动作模式、群体分布和样本不确定性"],
+        ["04", "动态与群体可视化", "输出关节反馈、箱型图、集中趋势与评判精度"]
+      ],
+      outputs: [
+        ["个体与群体证据", "连接关节级反馈、统计分布与评价稳定性"],
+        ["可复用评价框架", "实验、数据、评分和可视化流程可迁移到其他运动"],
+        ["教学视频规范", "依据眼动兴趣区域形成镜头与构图指导"]
+      ]
+    }
+  : {
+      title: "Experiment, data processing and evaluation loop",
+      intro: "A company partner supplied CV skeleton sequences as the data input. The project contribution begins with experiment and scoring-criteria design, then spans kinematic processing, relative evaluation, statistical validation and visual feedback, with eye tracking adding teaching-video guidance.",
+      flow: [
+        ["01", "Experiment & criteria", "Define the evaluation basis from experts, teaching videos and research questions"],
+        ["02", "Metric research & processing", "Select five metrics from the movement characteristics, then process six joint groups"],
+        ["03", "Relative scoring & statistics", "Combine individual movement patterns, cohort distributions and uncertainty"],
+        ["04", "Dynamic & cohort visualization", "Return joint feedback, box plots, central tendency and precision"]
+      ],
+      outputs: [
+        ["Individual & cohort evidence", "Connect joint feedback, statistical distributions and evaluation stability"],
+        ["Reusable evaluation framework", "Transfer experiment, data, scoring and visualization to other sports"],
+        ["Teaching-video guidance", "Turn eye-tracking areas of interest into filming rules"]
+      ]
+    };
+
+const projectSummary = (project: Project) =>
+  text(project.pitch, locale) ||
+  text(project.summary, locale) ||
+  text(project.description, locale);
+---
+
+<BaseLayout
+  locale={locale}
+  title={c.metaTitle}
+  description={c.metaDescription}
+>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label={c.profileNav}>
+      <a class="mark" href="#top" aria-label={c.profileNav}>HS</a>
+      <span class="brand">Hu Shengxiang / 胡生翔</span>
+      <div class="reading-signal" aria-hidden="true">
+        <span id="reading-section">01 · {c.profileNav}</span>
+        <i><b id="reading-progress"></b></i>
+        <strong id="reading-percent">00%</strong>
+      </div>
+      <div class="theme-switch" aria-label="Theme">
+        <button id="light-theme" type="button">{c.light}</button>
+        <button id="dark-theme" type="button">{c.dark}</button>
+      </div>
+      <a
+        class="language-link"
+        id="language-link"
+        href={alternateHref}
+        data-base-href={alternateHref}
+        hreflang={locale === "zh" ? "en" : "zh"}
+      >
+        {alternateLabel}
+      </a>
+    </nav>
+  </header>
+
+  <aside class="side-nav" id="side-nav" aria-label="Section navigation">
+    <button class="side-step" id="section-up" type="button" aria-label={c.previous}>↑</button>
+    <div class="side-nav-track">
+      <i class="side-nav-cursor" id="side-nav-cursor" aria-hidden="true"></i>
+      <a href="#top" data-section="top" aria-label={c.profileNav}>01<span>{c.profileNav}</span></a>
+      <a href="#work" data-section="work" aria-label={c.workNav}>02<span>{c.workNav}</span></a>
+      <a href="#projects" data-section="projects" aria-label={c.projectsNav}>03<span>{c.projectsNav}</span></a>
+      <a href="#capabilities" data-section="capabilities" aria-label={c.capabilitiesNav}>04<span>{c.capabilitiesNav}</span></a>
+      <a href="#contact" data-section="contact" aria-label={c.contactNav}>05<span>{c.contactNav}</span></a>
+    </div>
+    <button class="side-step" id="section-down" type="button" aria-label={c.next}>↓</button>
+    <button class="side-hide" id="side-hide" type="button" aria-label={c.hideNav}>×</button>
+  </aside>
+  <button class="side-nav-reopen" id="side-show" type="button" aria-label={c.showNav}>›</button>
+
+  <main id="main">
+    <section class="hero section-shell" id="top">
+      <div class="wrap hero-grid">
+        <div class="hero-left">
+          <article class="identity" data-reveal>
+            <p class="eyebrow">{c.profileEyebrow}</p>
+            <h1>{c.name}<span>{c.latinName}</span></h1>
+            <p class="role">{c.role}</p>
+            <p class="intro">{c.intro}</p>
+            <dl class="identity-meta">
+              <dt>{c.current}</dt><dd>{c.currentValue}</dd>
+              <dt>{c.education}</dt><dd>{c.educationValue}</dd>
+              <dt>{c.focus}</dt><dd>{c.focusValue}</dd>
+              <dt>{c.contact}</dt><dd>hushengxiang0630@163.com</dd>
+            </dl>
+            <div class="identity-actions">
+              <a class="button primary" href="#work">{c.selectedWork}</a>
+              <a class="button" href="#projects">{c.projectIndex}</a>
+            </div>
+          </article>
+
+          <article class="history" data-reveal>
+            <div class="panel-head">
+              <span>{c.career}</span>
+              <span class="drag-guide" aria-hidden="true"><i></i></span>
+            </div>
+            <div
+              class="history-scroll"
+              id="history-rail"
+              role="region"
+              aria-label={`${c.career} · ${c.swipe}`}
+              tabindex="0"
+            >
+              {career.map((item) => (
+                <article class:list={["history-item", { current: item.current }]}>
+                  <span>{typeof item.period === "string" ? item.period : item.period[locale]}</span>
+                  <h2>{item.title[locale]}</h2>
+                  {item.role[locale] && <b>{item.role[locale]}</b>}
+                  <p>{item.body[locale]}</p>
+                </article>
+              ))}
+            </div>
+            <div class="rail-progress" aria-hidden="true"><i id="history-progress"></i></div>
+          </article>
+        </div>
+
+        <article class="hero-game" data-reveal>
+          <div class="game-title">
+            <b>{c.heroLive}</b>
+            <span>{c.heroSystem}</span>
+            <span>● {c.online}</span>
+          </div>
+          <iframe
+            id="hero-frame"
+            data-theme-frame
+            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=theme-shell-4"
+            loading="eager"
+            scrolling="no"
+            title="Interactive assembly digital twin"
+          ></iframe>
+        </article>
+      </div>
+    </section>
+
+    <section class="page-section" id="work">
+      <div class="wrap">
+        <header class="section-head" data-reveal>
+          <span class="section-no">{c.selectedNo}</span>
+          <h2>{c.selectedTitle}</h2>
+          <p>{c.selectedIntro}</p>
+        </header>
+
+        <div class="selected-list">
+          {selectedProjects.map((project, index) => (
+            <article
+              id={`selected-project-${index + 1}`}
+              class:list={["selected-project", `selected-${index + 1}`]}
+              data-reveal
+              data-proof-target={index + 1}
+              tabindex="-1"
+            >
+              <div class="project-bar">
+                <span>{text(project.projectType, locale) || selectedLabels[index]}</span>
+                <b>{text(project.technicalType, locale) || selectedLabels[index]}</b>
+                <i class="project-locator" aria-hidden="true"></i>
+              </div>
+              <div class="selected-copy">
+                <h3>{text(project.title, locale)}</h3>
+                <p>{projectSummary(project)}</p>
+                {text(project.cardResult, locale) && (
+                  <p class="selected-outcome">
+                    <span>{locale === "zh" ? "成果" : "Outcome"}</span>
+                    <strong>{text(project.cardResult, locale) || text(project.result, locale)}</strong>
+                  </p>
+                )}
+                <ul>
+                  {(project.technologies ?? []).slice(0, 5).map((technology) => (
+                    <li>{technology}</li>
+                  ))}
+                </ul>
+                {index <= 2 && (
+                  <div class="fault-flow-summary">
+                    <p class="fault-flow-label">
+                      {index === 0
+                        ? (locale === "zh" ? "操作步骤" : "Operation steps")
+                        : (locale === "zh" ? "交互路径" : "Interaction path")}
+                    </p>
+                    <ol>
+                      {(index === 0
+                        ? faultTrainingFlow
+                        : index === 1
+                          ? sceneBuilderFlow
+                          : motionEvaluationFlow
+                      ).map(([number, title, body]) => (
+                        <li>
+                          <b>{number}</b>
+                          <span><strong>{title}</strong><small>{body}</small></span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+              </div>
+
+              <div
+                class:list={["selected-effect", `effect-${index + 1}`]}
+                aria-hidden={index <= 2 ? undefined : "true"}
+              >
+                {index === 0 && (
+                  <iframe
+                    id="fault-training-frame"
+                    class="fault-demo-frame"
+                    data-theme-frame
+                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-6`}
+                    loading="lazy"
+                    scrolling="no"
+                    title={locale === "zh"
+                      ? "工业故障仿真培训平台交互演示"
+                      : "Interactive industrial fault simulation training demo"}
+                  ></iframe>
+                )}
+                {index === 1 && (
+                  <iframe
+                    id="isaac-builder-frame"
+                    class="isaac-demo-frame"
+                    data-theme-frame
+                    src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-1`}
+                    loading="lazy"
+                    scrolling="no"
+                    title={locale === "zh"
+                      ? "YAML 与 Three.js 双向工业场景生成器"
+                      : "Bidirectional YAML and Three.js industrial scene builder"}
+                  ></iframe>
+                )}
+                {index === 2 && (
+                  <iframe
+                    id="motion-evaluation-frame"
+                    class="motion-demo-frame"
+                    data-theme-frame
+                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-6`}
+                    loading="lazy"
+                    scrolling="no"
+                    title={locale === "zh"
+                      ? "人体动作相对评分与关节反馈交互演示"
+                      : "Interactive relative motion scoring and joint feedback demo"}
+                  ></iframe>
+                )}
+              </div>
+
+              <details class="selected-details">
+                <summary>
+                  <b>{c.projectContext}</b>
+                  <span class="details-trigger-signal" aria-hidden="true"><i></i><b></b></span>
+                </summary>
+                <div class="selected-detail-content">
+                  {index <= 2 && (
+                    <section class="fault-detail-lead">
+                      <div>
+                        <span>{c.summary}</span>
+                        <p>{text(project.summary, locale)}</p>
+                      </div>
+                      <ul>
+                        {(project.metrics ?? []).map((metric: any) => (
+                          <li>
+                            <strong>{metric.value}</strong>
+                            <span>{text(metric.label, locale)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                  <div class="details-grid">
+                    <div class="detail-column narrative">
+                      <ProjectFacts
+                        project={project}
+                        locale={locale}
+                        group="narrative"
+                        hideSummary={index <= 2}
+                      />
+                      {index === 1 && project.video?.url && (
+                        <figure class="project-video-card project-video-inline">
+                          <figcaption>
+                            <span>{locale === "zh" ? "ISAAC SIM 应用闭环实录" : "ISAAC SIM APPLICATION LOOP"}</span>
+                            <div class="project-video-actions">
+                              <button
+                                type="button"
+                                data-video-expand
+                                data-expand-label={locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                                data-shrink-label={locale === "zh" ? "缩小 ↙" : "Reduce ↙"}
+                                aria-pressed="false"
+                              >
+                                {locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                              </button>
+                              <button type="button" data-video-fullscreen>
+                                {locale === "zh" ? "全屏 ⛶" : "Fullscreen ⛶"}
+                              </button>
+                            </div>
+                          </figcaption>
+                          <video controls preload="none" playsinline>
+                            <source src={assetPath(project.video.url)} type="video/mp4" />
+                          </video>
+                        </figure>
+                      )}
+                    </div>
+                    <div class="detail-column evidence">
+                      <ProjectFacts
+                        project={project}
+                        locale={locale}
+                        group="lists"
+                        hideStructure={index <= 2}
+                      />
+                    </div>
+                  </div>
+                  {index === 0 && (
+                    <ProjectArchitecture architecture={faultArchitecture} />
+                  )}
+                  {index === 1 && (
+                    <ProjectArchitecture architecture={sceneArchitecture} />
+                  )}
+                  {index === 2 && (
+                    <ProjectArchitecture architecture={motionArchitecture} />
+                  )}
+                  {project.video?.url && index !== 1 ? (
+                    <video controls preload="none" playsinline>
+                      <source src={assetPath(project.video.url)} type="video/mp4" />
+                    </video>
+                  ) : null}
+                </div>
+              </details>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section archive-section" id="projects">
+      <div class="wrap">
+        <header class="section-head" data-reveal>
+          <span class="section-no">{c.archiveNo}</span>
+          <h2>{c.archiveTitle}</h2>
+          <p>{c.archiveIntro}</p>
+        </header>
+        <div class="tabs" role="tablist" aria-label={c.projectsNav}>
+          <button class="active" data-filter="all" type="button">{c.all}</button>
+          <button data-filter="enterprise" type="button">{c.enterprise}</button>
+          <button data-filter="personal" type="button">{c.personal}</button>
+        </div>
+
+        <div class="archive-list">
+          {otherProjects.map((project) => (
+            <details class="archive-item" data-kind={projectKind(project)} data-reveal>
+              <summary>
+                <span>{text(project.projectType, locale)}</span>
+                <div>
+                  <h3>{text(project.title, locale)}</h3>
+                  <p>{projectSummary(project)}</p>
+                </div>
+                <div class:list={["project-effect", { "no-media-preview": !project.cover && !project.video?.url }]}>
+                  {project.cover ? (
+                    <img
+                      src={assetPath(project.cover)}
+                      alt=""
+                      width="1536"
+                      height="512"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : project.video?.url ? (
+                    <video
+                      muted
+                      loop
+                      playsinline
+                      preload="none"
+                      data-preview-src={assetPath(project.video.url)}
+                    ></video>
+                  ) : (
+                    <span>{(project.technologies ?? []).slice(0, 3).join(" · ")}</span>
+                  )}
+                </div>
+                <b class="plus">+</b>
+              </summary>
+              <div class="archive-detail">
+                <section class="archive-detail-lead">
+                  <span>{c.summary}</span>
+                  <p>{text(project.summary, locale) || projectSummary(project)}</p>
+                </section>
+                <div class="archive-detail-body">
+                  <div class="archive-detail-column narrative">
+                    <ProjectFacts
+                      project={project}
+                      locale={locale}
+                      group="narrative"
+                      hideSummary
+                    />
+                    {project.video?.url && (
+                      <figure class="project-video-card archive-video-card">
+                        <figcaption>
+                          <span>
+                            {locale === "zh" ? "项目实录" : "Project evidence"}
+                            <b> · {text(project.title, locale)}</b>
+                          </span>
+                          <div class="project-video-actions">
+                            <button
+                              type="button"
+                              data-video-expand
+                              data-expand-label={locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                              data-shrink-label={locale === "zh" ? "缩小 ↙" : "Reduce ↙"}
+                              aria-pressed="false"
+                            >
+                              {locale === "zh" ? "放大 ↗" : "Expand ↗"}
+                            </button>
+                            <button type="button" data-video-fullscreen>
+                              {locale === "zh" ? "全屏 ⛶" : "Fullscreen ⛶"}
+                            </button>
+                          </div>
+                        </figcaption>
+                        <video controls preload="none" playsinline>
+                          <source src={assetPath(project.video.url)} type="video/mp4" />
+                        </video>
+                      </figure>
+                    )}
+                  </div>
+                  <div class="archive-detail-column evidence">
+                    <ProjectFacts
+                      project={project}
+                      locale={locale}
+                      group="lists"
+                      hideStructure
+                    />
+                  </div>
+                </div>
+                {text(project.structure, locale) && (
+                  <div class="archive-detail-support is-single">
+                    <section
+                      class:list={[
+                        "archive-structure",
+                        {
+                          "is-horizontal": project.structureStyle === "horizontal",
+                          "is-agent-architecture": project.structureStyle === "agent-architecture"
+                        }
+                      ]}
+                    >
+                      <span>{c.structure}</span>
+                      {project.structureStyle === "agent-architecture" && project.architecture ? (
+                        <div class="agent-architecture" aria-label={text(project.structure, locale)}>
+                          <code class="agent-architecture-node">[ {text(project.architecture.input, locale)} ]</code>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <code class="agent-architecture-node is-primary">[ {text(project.architecture.orchestrator, locale)} ]</code>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <div class="agent-architecture-row is-three">
+                            <code class="agent-architecture-node">[ {text(project.architecture.planner, locale)} ]</code>
+                            <code class="agent-architecture-node">[ {text(project.architecture.executor, locale)} ]</code>
+                            <code class="agent-architecture-node">[ {text(project.architecture.reviewer, locale)} ]</code>
+                          </div>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <code class="agent-architecture-node is-loop">[ {text(project.architecture.replan, locale)} ]</code>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <div class="agent-architecture-row is-two">
+                            <code class="agent-architecture-node">[ {text(project.architecture.tools, locale)} ]</code>
+                            <code class="agent-architecture-node">[ {text(project.architecture.memory, locale)} ]</code>
+                          </div>
+                          <i class="agent-architecture-connector" aria-hidden="true"></i>
+                          <code class="agent-architecture-node is-output">[ {text(project.architecture.output, locale)} ]</code>
+                        </div>
+                      ) : (
+                        <pre>{text(project.structure, locale)}</pre>
+                      )}
+                    </section>
+                  </div>
+                )}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="capabilities">
+      <div class="wrap">
+        <header class="section-head" data-reveal>
+          <span class="section-no">{c.capabilityNo}</span>
+          <h2>{c.capabilityTitle}</h2>
+          <p>{c.capabilityIntro}</p>
+        </header>
+        <div class="cap-grid">
+          {capabilities.map((capability) => (
+            <article class="capability" data-reveal>
+              <span>{capability.code}</span>
+              <div>
+                <h3>{capability.title[locale]}</h3>
+                <p>{capability.description[locale]}</p>
+                <p class="capability-topics"><small>{c.capabilityTopics}</small>{capability.body[locale]}</p>
+                <div class="capability-evidence">
+                  <small>{c.evidenceLabel}</small>
+                  {capability.evidence.map((projectNumber) => (
+                    <a
+                      href={`#selected-project-${projectNumber}`}
+                      data-proof-link={projectNumber}
+                      aria-label={`${c.evidenceHint}: ${projectNumber}`}
+                    >
+                      {String(projectNumber).padStart(2, "0")}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section contact-section" id="contact">
+      <div class="wrap">
+        <header class="section-head" data-reveal>
+          <span class="section-no">{c.contactNo}</span>
+          <h2>{c.contactSectionTitle}</h2>
+        </header>
+        <aside class="contact-card" data-reveal>
+          <div class="contact-card-intro">
+            <p class="eyebrow">{c.contactLead}</p>
+            <h3>{c.contactTitle.split("\n").map((line) => <>{line}<br /></>)}</h3>
+          </div>
+          <div class="contact-card-links">
+            <p>{c.contactText}</p>
+            <a class="contact-link" href="mailto:hushengxiang0630@163.com">
+              <small>{c.email}</small>
+              <strong>hushengxiang0630@163.com</strong>
+            </a>
+            <a class="contact-link" href="https://www.linkedin.com/in/shengxiang-hu-269787252/" target="_blank" rel="noreferrer">
+              <small>{c.linkedin}</small>
+              <strong>{locale === "zh" ? "查看 LinkedIn 主页 ↗" : "Open LinkedIn profile ↗"}</strong>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div
+    class="video-lightbox-backdrop"
+    id="video-lightbox-backdrop"
+    aria-hidden="true"
+    hidden
+  ></div>
+
+  <footer>
+    <div class="wrap foot">
+      <span>© 2026 HU SHENGXIANG</span>
+      <span>{c.footer}</span>
+    </div>
+  </footer>
+
+  <script>
+    import { animate } from "animejs/animation";
+    import { stagger } from "animejs/utils";
+
+    const $ = (selector: string, root: Document | Element = document) =>
+      root.querySelector(selector) as HTMLElement | null;
+    const $$ = (selector: string, root: Document | Element = document) =>
+      [...root.querySelectorAll(selector)] as HTMLElement[];
+
+    const frame = $("#hero-frame") as HTMLIFrameElement | null;
+    const faultFrame = $("#fault-training-frame") as HTMLIFrameElement | null;
+    const isaacFrame = $("#isaac-builder-frame") as HTMLIFrameElement | null;
+    const motionFrame = $("#motion-evaluation-frame") as HTMLIFrameElement | null;
+    const themeFrames = $$("iframe[data-theme-frame]") as HTMLIFrameElement[];
+    const setTheme = (theme: "light" | "dark") => {
+      document.documentElement.dataset.theme = theme;
+      try {
+        localStorage.setItem("bauhaus-theme", theme);
+      } catch {}
+      $("#light-theme")?.classList.toggle("active", theme === "light");
+      $("#dark-theme")?.classList.toggle("active", theme === "dark");
+      themeFrames.forEach((themeFrame) =>
+        themeFrame.contentWindow?.postMessage({ type: "bauhaus-theme", theme }, "*")
+      );
+    };
+
+    $("#light-theme")?.addEventListener("click", () => setTheme("light"));
+    $("#dark-theme")?.addEventListener("click", () => setTheme("dark"));
+    themeFrames.forEach((themeFrame) =>
+      themeFrame.addEventListener("load", () =>
+        themeFrame.contentWindow?.postMessage(
+          {
+            type: "bauhaus-theme",
+            theme: document.documentElement.dataset.theme === "dark" ? "dark" : "light"
+          },
+          "*"
+        )
+      )
+    );
+
+    const rail = $("#history-rail");
+    const progress = $("#history-progress");
+    const historyPanel = $(".history");
+    let historyAnimation: ReturnType<typeof animate> | null = null;
+    const stopHistoryAnimation = () => {
+      historyAnimation?.pause();
+      historyAnimation = null;
+      rail?.classList.remove("is-programmatic-scroll");
+    };
+    const snapHistory = (direction = 0) => {
+      const card = $(".history-item", rail ?? document);
+      if (!rail || !card) return;
+      const step = card.offsetWidth + 1;
+      const max = Math.max(0, rail.scrollWidth - rail.clientWidth);
+      const target = Math.max(
+        0,
+        Math.min(max, Math.round((rail.scrollLeft + direction * step) / step) * step)
+      );
+      stopHistoryAnimation();
+      if (reducedMotion.matches) {
+        rail.scrollLeft = target;
+        return;
+      }
+      rail.classList.add("is-programmatic-scroll");
+      historyAnimation = animate(rail, {
+        scrollLeft: target,
+        duration: 280,
+        ease: "out(3)",
+        onComplete: () => {
+          rail.classList.remove("is-programmatic-scroll");
+          historyAnimation = null;
+        }
+      });
+    };
+    const updateHistoryProgress = () => {
+      if (!rail || !progress) return;
+      const max = Math.max(1, rail.scrollWidth - rail.clientWidth);
+      progress.style.width = `${25 + 75 * Math.min(1, rail.scrollLeft / max)}%`;
+      if (rail.scrollLeft > 2) historyPanel?.classList.add("has-interacted");
+    };
+    rail?.addEventListener("scroll", updateHistoryProgress, { passive: true });
+    rail?.addEventListener("wheel", stopHistoryAnimation, { passive: true });
+    rail?.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      historyPanel?.classList.add("has-interacted");
+      snapHistory(event.key === "ArrowRight" ? 1 : -1);
+    });
+
+    let dragPointerId: number | null = null;
+    let dragStartX = 0;
+    let dragStartScroll = 0;
+    let dragMoved = false;
+    const endHistoryDrag = (event: PointerEvent) => {
+      if (!rail || dragPointerId !== event.pointerId) return;
+      if (rail.hasPointerCapture(event.pointerId)) rail.releasePointerCapture(event.pointerId);
+      rail.classList.remove("is-dragging");
+      dragPointerId = null;
+      if (dragMoved) snapHistory();
+    };
+    rail?.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      stopHistoryAnimation();
+      dragPointerId = event.pointerId;
+      dragStartX = event.clientX;
+      dragStartScroll = rail.scrollLeft;
+      dragMoved = false;
+      rail.setPointerCapture(event.pointerId);
+      rail.classList.add("is-dragging");
+      historyPanel?.classList.add("has-interacted");
+    });
+    rail?.addEventListener("pointermove", (event) => {
+      if (dragPointerId !== event.pointerId) return;
+      const distance = event.clientX - dragStartX;
+      if (Math.abs(distance) > 3) dragMoved = true;
+      if (!dragMoved) return;
+      event.preventDefault();
+      rail.scrollLeft = dragStartScroll - distance;
+    });
+    rail?.addEventListener("pointerup", endHistoryDrag);
+    rail?.addEventListener("pointercancel", endHistoryDrag);
+    rail?.addEventListener("lostpointercapture", (event) => {
+      if (dragPointerId === event.pointerId) endHistoryDrag(event);
+    });
+
+    const fitHeroFrame = () => {
+      if (!frame?.contentDocument) return;
+      const contentHeight =
+        frame.contentDocument.querySelector(".cell")?.getBoundingClientRect().height ||
+        frame.contentDocument.body?.scrollHeight ||
+        704;
+      frame.style.height = `${Math.max(520, Math.min(900, Math.ceil(contentHeight)))}px`;
+    };
+    const alignHeroColumns = () => {
+      const left = $(".hero-left");
+      const title = $(".game-title");
+      if (!frame?.contentWindow || !left || !title) return;
+      if (window.innerWidth <= 980) {
+        frame.contentWindow.postMessage({ type: "bauhaus-host-reset" }, "*");
+        window.setTimeout(fitHeroFrame, 0);
+        return;
+      }
+      const target = Math.max(
+        520,
+        Math.ceil(left.getBoundingClientRect().height - title.getBoundingClientRect().height - 4)
+      );
+      frame.style.height = `${target}px`;
+      frame.contentWindow.postMessage({ type: "bauhaus-host-height", height: target }, "*");
+    };
+    const initHero = () => {
+      setTheme((document.documentElement.dataset.theme === "dark" ? "dark" : "light"));
+      fitHeroFrame();
+      requestAnimationFrame(alignHeroColumns);
+    };
+    frame?.addEventListener("load", initHero);
+    window.addEventListener("message", (event) => {
+      if (event.data?.type === "bauhaus-hero-height" && frame) {
+        frame.style.height = `${Math.max(520, Math.min(900, Number(event.data.height) || 704))}px`;
+      }
+      if (
+        event.data?.type === "fault-training-height" &&
+        faultFrame &&
+        event.source === faultFrame.contentWindow
+      ) {
+        faultFrame.style.height = `${Math.max(620, Math.min(1400, Number(event.data.height) || 620))}px`;
+      }
+      if (
+        event.data?.type === "isaac-builder-height" &&
+        isaacFrame &&
+        event.source === isaacFrame.contentWindow
+      ) {
+        isaacFrame.style.height = `${Math.max(640, Math.min(980, Number(event.data.height) || 680))}px`;
+      }
+      if (
+        event.data?.type === "motion-evaluation-height" &&
+        motionFrame &&
+        event.source === motionFrame.contentWindow
+      ) {
+        motionFrame.style.height = `${Math.max(680, Math.min(1500, Number(event.data.height) || 720))}px`;
+      }
+    });
+
+    const videoBackdrop = $("#video-lightbox-backdrop");
+    let enlargedVideoCard: HTMLElement | null = null;
+    let enlargedVideoButton: HTMLButtonElement | null = null;
+    let enlargedVideoAnchor: Comment | null = null;
+    const closeVideoLightbox = (restoreFocus = false) => {
+      if (!enlargedVideoCard || !enlargedVideoButton) return;
+      const previousCard = enlargedVideoCard;
+      enlargedVideoButton.setAttribute("aria-pressed", "false");
+      enlargedVideoButton.textContent = enlargedVideoButton.dataset.expandLabel ?? "Expand ↗";
+      document.body.classList.remove("video-lightbox-open");
+      if (videoBackdrop) {
+        videoBackdrop.hidden = true;
+        videoBackdrop.setAttribute("aria-hidden", "true");
+      }
+      const previousButton = enlargedVideoButton;
+      previousCard.classList.remove("is-enlarged");
+      if (enlargedVideoAnchor?.parentNode) {
+        enlargedVideoAnchor.parentNode.insertBefore(previousCard, enlargedVideoAnchor);
+        enlargedVideoAnchor.remove();
+      }
+      enlargedVideoCard = null;
+      enlargedVideoButton = null;
+      enlargedVideoAnchor = null;
+      if (restoreFocus) previousButton.focus();
+    };
+    $$("[data-video-expand]").forEach((control) => {
+      const button = control as HTMLButtonElement;
+      button.addEventListener("click", () => {
+        const card = button.closest(".project-video-card") as HTMLElement | null;
+        if (!card) return;
+        if (enlargedVideoCard === card) {
+          closeVideoLightbox(true);
+          return;
+        }
+        closeVideoLightbox();
+        const anchor = document.createComment("project-video-card-anchor");
+        card.parentNode?.insertBefore(anchor, card);
+        document.body.append(card);
+        enlargedVideoCard = card;
+        enlargedVideoButton = button;
+        enlargedVideoAnchor = anchor;
+        card.classList.add("is-enlarged");
+        button.setAttribute("aria-pressed", "true");
+        button.textContent = button.dataset.shrinkLabel ?? "Reduce ↙";
+        document.body.classList.add("video-lightbox-open");
+        if (videoBackdrop) {
+          videoBackdrop.hidden = false;
+          videoBackdrop.setAttribute("aria-hidden", "false");
+        }
+      });
+    });
+    $$("[data-video-fullscreen]").forEach((control) => {
+      control.addEventListener("click", async () => {
+        const video = control.closest(".project-video-card")?.querySelector("video");
+        if (!video) return;
+        try {
+          if (video.requestFullscreen) await video.requestFullscreen();
+        } catch {}
+      });
+    });
+    videoBackdrop?.addEventListener("click", () => closeVideoLightbox(true));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && enlargedVideoCard && !document.fullscreenElement) {
+        closeVideoLightbox(true);
+      }
+    });
+    window.addEventListener("resize", () => requestAnimationFrame(alignHeroColumns));
+
+    const nav = $("#side-nav");
+    const navShow = $("#side-show");
+    let userHidNavigation = false;
+    const hideNavigation = (userAction = false) => {
+      if (userAction) userHidNavigation = true;
+      nav?.classList.add("is-hidden");
+      navShow?.classList.add("show");
+    };
+    const showNavigation = () => {
+      userHidNavigation = false;
+      nav?.classList.remove("is-hidden");
+      navShow?.classList.remove("show");
+    };
+    $("#side-hide")?.addEventListener("click", () => hideNavigation(true));
+    navShow?.addEventListener("click", showNavigation);
+
+    const mobileNavigation = window.matchMedia("(max-width:650px)");
+    const syncNavigationForWidth = (mobile: boolean) => {
+      if (mobile) hideNavigation(false);
+      else if (!userHidNavigation) showNavigation();
+    };
+    mobileNavigation.addEventListener("change", (event) =>
+      syncNavigationForWidth(event.matches)
+    );
+    syncNavigationForWidth(mobileNavigation.matches);
+
+    const sectionIds = ["top", "work", "projects", "capabilities", "contact"];
+    const sectionLinks = $$(".side-nav a");
+    const sideNavCursor = $("#side-nav-cursor");
+    const readingSection = $("#reading-section");
+    const readingProgress = $("#reading-progress");
+    const readingPercent = $("#reading-percent");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const languageLink = $("#language-link") as HTMLAnchorElement | null;
+    const syncLanguageHref = () => {
+      if (!languageLink) return;
+      const baseHref = languageLink.dataset.baseHref || languageLink.getAttribute("href") || "/";
+      languageLink.href = `${baseHref}${window.location.hash}`;
+    };
+    syncLanguageHref();
+    window.addEventListener("hashchange", syncLanguageHref);
+
+    let activeSection = 0;
+    const setActiveSection = (index: number) => {
+      const nextSection = Math.max(0, Math.min(sectionIds.length - 1, index));
+      const sectionChanged = activeSection !== nextSection;
+      activeSection = nextSection;
+      sectionLinks.forEach((link, linkIndex) =>
+        link.classList.toggle("active", linkIndex === activeSection)
+      );
+      if (sideNavCursor) {
+        if (reducedMotion.matches) {
+          sideNavCursor.style.transform = `translateY(${activeSection * 44}px)`;
+        } else if (sectionChanged) {
+          animate(sideNavCursor, {
+            y: activeSection * 44,
+            duration: 260,
+            ease: "out(3)"
+          });
+        }
+      }
+      if (readingSection) {
+        readingSection.textContent =
+          `${String(activeSection + 1).padStart(2, "0")} · ${sectionLinks[activeSection]?.querySelector("span")?.textContent ?? ""}`;
+        if (sectionChanged && !reducedMotion.matches) {
+          animate(readingSection, {
+            opacity: [0.25, 1],
+            x: [8, 0],
+            duration: 320,
+            ease: "out(3)"
+          });
+        }
+      }
+    };
+    const scrollToTarget = (target: HTMLElement, onComplete?: () => void) => {
+      if (target.id === "top") window.scrollTo(0, 0);
+      else target.scrollIntoView({ block: "start" });
+      onComplete?.();
+    };
+    const navigateToSection = (sectionId: string, onComplete?: () => void) => {
+      const target = document.getElementById(sectionId);
+      if (!target) return;
+      history.pushState(null, "", `#${sectionId}`);
+      syncLanguageHref();
+      scrollToTarget(target, onComplete);
+    };
+    const goSection = (delta: number) => {
+      const nextSection = Math.max(0, Math.min(sectionIds.length - 1, activeSection + delta));
+      setActiveSection(nextSection);
+      navigateToSection(sectionIds[nextSection]);
+    };
+    $("#section-up")?.addEventListener("click", () => goSection(-1));
+    $("#section-down")?.addEventListener("click", () => goSection(1));
+    $$('a[href^="#"]').forEach((link) => {
+      link.addEventListener("click", (event) => {
+        const mouseEvent = event as MouseEvent;
+        if (mouseEvent.button !== 0 || mouseEvent.metaKey || mouseEvent.ctrlKey || mouseEvent.shiftKey || mouseEvent.altKey) return;
+        const href = (link as HTMLAnchorElement).getAttribute("href");
+        if (!href || href === "#") return;
+        const targetId = href.slice(1);
+        if (!document.getElementById(targetId)) return;
+        event.preventDefault();
+        const proofNumber = link.dataset.proofLink;
+        navigateToSection(targetId, proofNumber ? () => locateEvidence(proofNumber) : undefined);
+      });
+    });
+    let scrollTicking = false;
+    const syncPageSignal = () => {
+      const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const ratio = Math.max(0, Math.min(1, window.scrollY / scrollRange));
+      const percent = Math.round(ratio * 100);
+      if (readingProgress) readingProgress.style.transform = `scaleX(${ratio})`;
+      if (readingPercent) readingPercent.textContent = `${String(percent).padStart(2, "0")}%`;
+      document.documentElement.style.setProperty("--page-progress", `${ratio}`);
+    };
+    const syncActiveSection = () => {
+      let index = 0;
+      sectionIds.forEach((id, sectionIndex) => {
+        if (
+          (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) <=
+          window.innerHeight * 0.3
+        ) {
+          index = sectionIndex;
+        }
+      });
+      setActiveSection(index);
+      syncPageSignal();
+      scrollTicking = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(syncActiveSection);
+    }, { passive: true });
+    window.addEventListener("hashchange", () => requestAnimationFrame(syncActiveSection));
+    requestAnimationFrame(syncActiveSection);
+
+    const revealItems = $$("[data-reveal]");
+    if (!reducedMotion.matches && "IntersectionObserver" in window) {
+      revealItems.forEach((item) => {
+        item.style.opacity = "0";
+      });
+      const revealObserver = new IntersectionObserver((entries) => {
+        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
+        visibleEntries.forEach((entry, index) => {
+          const item = entry.target as HTMLElement;
+          animate(item, {
+            opacity: [0, 1],
+            y: [16, 0],
+            duration: 480,
+            delay: Math.min(index * 45, 180),
+            ease: "out(3)",
+            onComplete: () => {
+              item.style.removeProperty("opacity");
+              item.style.removeProperty("transform");
+            }
+          });
+          revealObserver.unobserve(item);
+        });
+      }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
+      revealItems.forEach((item) => revealObserver.observe(item));
+    }
+
+    const locateEvidence = (projectNumber: string) => {
+      const target = $(`[data-proof-target="${projectNumber}"]`);
+      if (!target) return;
+      target.classList.add("is-evidence-target");
+      target.focus({ preventScroll: true });
+      const locator = $(".project-locator", target);
+      if (locator && !reducedMotion.matches) {
+        animate(locator, {
+          opacity: [1, 1, 0],
+          scaleX: [0, 1],
+          duration: 760,
+          ease: "out(3)"
+        });
+      }
+      window.setTimeout(() => target.classList.remove("is-evidence-target"), 1100);
+    };
+
+    const locateHashEvidence = () => {
+      const match = window.location.hash.match(/^#selected-project-(\d)$/);
+      if (match) window.setTimeout(() => locateEvidence(match[1]), 120);
+    };
+    window.addEventListener("hashchange", locateHashEvidence);
+    locateHashEvidence();
+
+    const controlAnimations = new WeakMap<HTMLElement, ReturnType<typeof animate>>();
+    const animateControl = (
+      control: HTMLElement,
+      y: number | number[],
+      scale: number | number[],
+      duration: number
+    ) => {
+      controlAnimations.get(control)?.pause();
+      if (reducedMotion.matches) return;
+      controlAnimations.set(control, animate(control, {
+        y,
+        scale,
+        duration,
+        ease: "out(4)"
+      }));
+    };
+    const motionControls = $$(
+      ".button, .language-link, .theme-switch button, .side-nav button, .tabs button, .capability-evidence a"
+    );
+    motionControls.forEach((control) => {
+      control.classList.add("motion-control");
+      control.addEventListener("pointerenter", () => {
+        control.classList.add("is-hovered");
+        animateControl(control, -2, 1.025, 160);
+      });
+      control.addEventListener("pointerleave", () => {
+        control.classList.remove("is-hovered", "is-pressed");
+        animateControl(control, 0, 1, 200);
+      });
+      control.addEventListener("pointerdown", () => {
+        control.classList.add("is-pressed");
+        animateControl(control, 2, 0.94, 85);
+      });
+      control.addEventListener("pointerup", () => {
+        control.classList.remove("is-pressed");
+        animateControl(control, [2, -2, 0], [0.94, 1.035, 1], 260);
+      });
+      control.addEventListener("blur", () => {
+        control.classList.remove("is-hovered", "is-pressed");
+        animateControl(control, 0, 1, 160);
+      });
+    });
+
+    const cleanupDetailsContent = (content: HTMLElement) => {
+      content.style.removeProperty("opacity");
+      content.style.removeProperty("transform");
+      content.style.removeProperty("clip-path");
+    };
+    $$("details").forEach((detail) => {
+      const details = detail as HTMLDetailsElement;
+      const summary = $("summary", details);
+      const content = $(".selected-detail-content, .archive-detail", details);
+      if (!summary || !content) return;
+      summary.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (details.dataset.animating === "true") return;
+        if (reducedMotion.matches) {
+          details.open = !details.open;
+          return;
+        }
+        details.dataset.animating = "true";
+        if (!details.open) {
+          details.open = true;
+          details.classList.add("is-opening");
+          animate(content, {
+            opacity: [0, 1],
+            y: [5, 0],
+            clipPath: ["inset(0 0 5% 0)", "inset(0 0 0% 0)"],
+            duration: 180,
+            ease: "out(3)",
+            onComplete: () => {
+              cleanupDetailsContent(content);
+              details.classList.remove("is-opening");
+              delete details.dataset.animating;
+            }
+          });
+          const detailParts = $$(
+            ".details-grid .detail-column, .archive-detail > *",
+            content
+          );
+          if (detailParts.length) {
+            animate(detailParts, {
+              opacity: [0, 1],
+              y: [7, 0],
+              duration: 220,
+              delay: stagger(24),
+              ease: "out(3)"
+            });
+          }
+        } else {
+          animate(content, {
+            opacity: [1, 0],
+            y: [0, -3],
+            clipPath: ["inset(0 0 0% 0)", "inset(0 0 4% 0)"],
+            duration: 110,
+            ease: "in(2)",
+            onComplete: () => {
+              details.open = false;
+              cleanupDetailsContent(content);
+              delete details.dataset.animating;
+            }
+          });
+        }
+      });
+    });
+
+    $$(".tabs button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const filter = button.dataset.filter;
+        $$(".tabs button").forEach((item) =>
+          item.classList.toggle("active", item === button)
+        );
+        $$(".archive-item").forEach((item) => {
+          item.hidden = filter !== "all" && item.dataset.kind !== filter;
+        });
+        if (!reducedMotion.matches) {
+          const visibleItems = $$(".archive-item").filter((item) => !item.hidden);
+          animate(visibleItems.slice(0, 8), {
+            opacity: [0, 1],
+            y: [8, 0],
+            duration: 320,
+            delay: stagger(28),
+            ease: "out(3)"
+          });
+        }
+      });
+    });
+
+    $$(".archive-item").forEach((detail) => {
+      const preview = $("summary video", detail) as HTMLVideoElement | null;
+      // The preview file is only fetched once the visitor actually hovers the card,
+      // so a page load costs no video bytes at all.
+      detail.addEventListener("mouseenter", () => {
+        if (!preview) return;
+        if (!preview.src && preview.dataset.previewSrc) {
+          preview.src = preview.dataset.previewSrc;
+        }
+        preview.play().catch(() => {});
+      });
+      detail.addEventListener("mouseleave", () => {
+        if (!preview) return;
+        preview.pause();
+        preview.currentTime = 0;
+      });
+      detail.addEventListener("toggle", () => {
+        const plus = $(".plus", detail);
+        if (plus) plus.textContent = (detail as HTMLDetailsElement).open ? "−" : "+";
+      });
+    });
+
+    setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+    window.setTimeout(initHero, 0);
+  </script>
+</BaseLayout>

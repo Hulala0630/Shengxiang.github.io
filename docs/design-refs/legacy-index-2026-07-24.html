@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="胡生翔的工业 AI、数字孪生与仿真工程作品集。">
+  <title>胡生翔｜Industrial AI & Digital Twin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳转到正文</a>
+  <header class="site-header">
+    <nav class="shell nav" aria-label="主导航">
+      <a class="brand" href="#home"><span>HS</span><b>胡生翔</b></a>
+      <div class="nav-links">
+        <a href="#work" data-copy="navProjects">代表成果</a>
+        <a href="#building" data-copy="navBuilding">正在构建</a>
+        <a href="#archive" data-copy="navArchive">项目档案</a>
+        <a href="#profile" data-copy="navAbout">关于</a>
+      </div>
+      <button class="quiet-button" id="language-toggle" type="button">EN</button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="home">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <p class="kicker" data-copy="heroKicker">INDUSTRIAL AI × DIGITAL TWIN</p>
+          <h1 data-copy="heroTitle">把工业知识变成<br><em>可运行的系统</em></h1>
+          <p class="hero-lead" data-copy="heroLead">我连接自动化、仿真、软件与 AI，将复杂的物理过程转化为可建模、可测试、可监视的数字系统。</p>
+          <div class="metrics" aria-label="项目成果">
+            <div><b>80+</b><span data-copy="metricModels">数字孪生模型</span></div>
+            <div><b>5</b><span data-copy="metricPlants">国际工厂</span></div>
+            <div><b>3</b><span data-copy="metricFlagships">旗舰系统方向</span></div>
+          </div>
+          <div class="hero-actions">
+            <a class="button primary" href="#work" data-copy="explore">查看代表成果</a>
+            <button class="button secondary" id="play-hero" type="button" data-copy="takeControl">进入交互</button>
+          </div>
+        </div>
+
+        <div class="twin-stage" id="twin-stage" aria-label="自动运行的数字孪生单元演示">
+          <div class="stage-bar">
+            <span><i class="status-dot"></i><b id="stage-mode">AUTOPILOT</b></span>
+            <span id="stage-cycle">CYCLE 001</span>
+          </div>
+          <div class="cell">
+            <div class="grid-floor"></div>
+            <div class="conveyor"><span class="part part-a"></span><span class="part part-b"></span><span class="part part-c"></span></div>
+            <button class="robot robot-left" type="button" aria-label="左侧机器人"><i></i></button>
+            <button class="robot robot-right" type="button" aria-label="右侧机器人"><i></i></button>
+            <button class="fault-node" id="hero-fault" type="button" disabled><span>STN-04</span></button>
+            <div class="scan-line"></div>
+          </div>
+          <div class="stage-console">
+            <p><span data-copy="stageState">系统状态</span><b id="stage-state">RUNNING</b></p>
+            <p><span data-copy="stageOutput">本周期产出</span><b id="stage-output">24</b></p>
+            <p><span data-copy="stageHint">当前动作</span><b id="stage-hint">PROCESS SIMULATION</b></p>
+          </div>
+          <div class="stage-controls" id="stage-controls" hidden>
+            <button type="button" data-hero-action="fault">注入故障</button>
+            <button type="button" data-hero-action="reset">复位单元</button>
+            <button type="button" data-hero-action="exit">返回自动播放</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="work">
+      <header class="section-head">
+        <p class="kicker">PROVEN WORK</p>
+        <h2 data-copy="flagshipTitle">先用已经完成的工作建立可信度</h2>
+        <p data-copy="flagshipIntro">生产项目、完整原型与研究项目分别标注；成果、边界和证据不混在一起。</p>
+      </header>
+
+      <article class="flagship" data-accent="amber">
+        <div class="flagship-copy">
+          <span class="index">01</span>
+          <p class="type"><span class="work-status delivered" data-copy="delivered">已交付</span><span data-copy="enterpriseSystem">企业级系统</span></p>
+          <h3 data-copy="faultTitle">BMW 工业错误仿真培训平台</h3>
+          <p data-copy="faultDesc">把难以复现、成本高昂的真实故障，转化为可控、可重复训练的数字场景。</p>
+          <div class="impact-row"><b>200+</b><span>故障场景</span><b>1000+</b><span>培训用户</span><b>+25%</b><span>排障能力</span></div>
+          <ul><li>PLC / 仿真对象 / HMI 多层故障注入</li><li>面向不同工厂与培训任务的场景复用</li><li>训练过程不依赖真实设备停机</li></ul>
+        </div>
+        <div class="demo fault-demo">
+          <div class="demo-head"><span>FAULT TRAINER / CELL 04</span><b id="fault-status">SYSTEM READY</b></div>
+          <div class="fault-layout">
+            <div class="machine-map">
+              <span class="machine m1">PLC</span><span class="machine m2">OPC UA</span><span class="machine m3">HMI</span>
+              <i></i><i></i>
+            </div>
+            <div class="demo-panel">
+              <label for="fault-select">故障场景</label>
+              <select id="fault-select"><option value="sensor">传感器持续占用</option><option value="jam">输送线卡滞</option><option value="drive">驱动器过载</option></select>
+              <button class="demo-action" id="inject-fault" type="button">注入并观察</button>
+              <p id="fault-log">等待教员选择训练场景。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="flagship reverse" data-accent="blue">
+        <div class="flagship-copy">
+          <span class="index">02</span>
+          <p class="type"><span class="work-status complete" data-copy="complete">完整原型</span><span data-copy="twinSystem">个人技术项目</span></p>
+          <h3 data-copy="twinTitle">工业数字孪生演示系统</h3>
+          <p data-copy="twinDesc">将 PLC 仿真、OPC UA、REST 服务和 Unity 可视化连接成一条可读、可验证的数据链路。</p>
+          <ul><li>控制逻辑与软件视图双向映射</li><li>工业通信与前端消费解耦</li><li>本地演示视频作为系统证据</li></ul>
+        </div>
+        <div class="demo twin-demo">
+          <div class="demo-head"><span>DIGITAL TWIN / DATA PATH</span><b id="twin-link-status">SYNCHRONIZED</b></div>
+          <div class="twin-flow">
+            <button class="flow-node active" type="button"><small>CONTROL</small>PLC SIM</button><i></i>
+            <button class="flow-node active" type="button"><small>DATA</small>OPC UA</button><i></i>
+            <button class="flow-node active" type="button"><small>SERVICE</small>REST API</button><i></i>
+            <button class="flow-node active" type="button"><small>VIEW</small>UNITY</button>
+          </div>
+          <div class="twin-controls">
+            <button id="pause-twin" type="button">PAUSE DATA</button>
+            <span>STATE <b id="twin-value">RUN · 36.2/h · 8.4s</b></span>
+          </div>
+          <video controls preload="metadata"><source src="assets/videos/DemoVideoDigitalTwin.mp4" type="video/mp4"></video>
+        </div>
+      </article>
+
+      <article class="flagship" data-accent="violet">
+        <div class="flagship-copy">
+          <span class="index">03</span>
+          <p class="type"><span class="work-status research" data-copy="research">完成研究项目</span><span data-copy="motionSystem">视觉与数据评估</span></p>
+          <h3 data-copy="motionTitle">基于视觉的人体动作评估与反馈</h3>
+          <p data-copy="motionDesc">把约 30 fps 的骨架数据转化为关节角度、变化率和加速度指标，并与专家动作进行对比。</p>
+          <ul><li>肩、肘、腕、腰、膝、踝多关节评分</li><li>特征工程与标准动作对比</li><li>从分析结果生成可执行反馈</li></ul>
+        </div>
+        <div class="demo motion-demo">
+          <div class="demo-head"><span>MOTION EVALUATION / FRAME 0184</span><b id="motion-score">READY</b></div>
+          <div class="motion-layout">
+            <div class="skeleton" id="skeleton">
+              <span class="joint head"></span><span class="bone torso"></span>
+              <span class="bone arm-left"></span><span class="bone arm-right"></span>
+              <span class="bone leg-left"></span><span class="bone leg-right"></span>
+              <span class="joint shoulder-left"></span><span class="joint shoulder-right"></span>
+              <span class="joint hand-left"></span><span class="joint hand-right"></span>
+              <span class="joint knee-left"></span><span class="joint knee-right"></span>
+              <span class="joint foot-left"></span><span class="joint foot-right"></span>
+            </div>
+            <div class="motion-panel">
+              <p>SHOULDER <b id="shoulder-value">—</b></p><p>KNEE <b id="knee-value">—</b></p><p>STABILITY <b id="stability-value">—</b></p>
+              <button class="demo-action ai-action" id="evaluate-motion" type="button">运行一次评估</button>
+              <small id="motion-feedback">用户动作将与专家参考轨迹进行对比。</small>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="section building-section" id="building">
+      <div class="shell">
+        <header class="section-head">
+          <p class="kicker">BUILDING NOW</p>
+          <h2 data-copy="buildingTitle">正在构建，不包装成已经完成</h2>
+          <p data-copy="buildingIntro">这里展示方向、当前完成度和下一步。页面里的交互是概念化预览，不代表完整生产系统。</p>
+        </header>
+        <div class="building-grid">
+          <article class="build-card">
+            <div class="build-card-head"><span class="work-status progress" data-copy="prototype">原型开发中</span><b>01 / SIMULATION</b></div>
+            <h3 data-copy="modelTitle">Unity 数字孪生 + Isaac Sim 自动建模</h3>
+            <p data-copy="modelDesc">通过结构化配置生成产线、设备层级、USD 场景与合成数据输出。</p>
+            <div class="progress-list"><p class="done">Unity JSON 产线生成</p><p class="done">YAML / USD 场景构建</p><p>自然语言意图与验证闭环</p></div>
+            <div class="demo builder-demo">
+              <div class="demo-head"><span>SCENE BUILDER / CONCEPT PREVIEW</span><b id="builder-count">3 NODES</b></div>
+              <div class="builder-layout">
+                <div class="config-panel">
+                  <button class="preset active" data-preset="compact" type="button">COMPACT CELL</button>
+                  <button class="preset" data-preset="assembly" type="button">ASSEMBLY LINE</button>
+                  <pre id="config-code">line:
+  stations: 1
+  robot: true
+  sensor: 2</pre>
+                </div>
+                <div class="scene" id="builder-scene"><span class="scene-node conveyor-node">CONVEYOR</span><span class="scene-node sensor-node">SENSOR</span><span class="scene-node robot-node">ROBOT</span></div>
+              </div>
+            </div>
+          </article>
+          <article class="build-card">
+            <div class="build-card-head"><span class="work-status progress" data-copy="inDevelopment">开发中</span><b>02 / AGENT</b></div>
+            <h3 data-copy="agentTitle">Industrial Diagnostics Agent</h3>
+            <p data-copy="agentDesc">让 Agent 调用工程工具，对模型状态和故障执行可追踪推理。</p>
+            <div class="progress-list"><p class="done">Plan–Execute–Review 工作流</p><p class="done">工具调用与执行轨迹</p><p>真实仿真系统闭环与长期验证</p></div>
+            <div class="demo agent-demo">
+              <div class="demo-head"><span>RECORDED TRACE / CONCEPT PREVIEW</span><b>NO LIVE LLM</b></div>
+              <div class="agent-log" id="agent-log"><p class="user-line">发现 Cell 04 节拍下降，请定位原因。</p><p class="muted">选择“运行诊断”查看脚本化执行轨迹。</p></div>
+              <button class="demo-action ai-action" id="run-agent" type="button">播放诊断轨迹</button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section archive-section" id="archive">
+      <div class="shell">
+        <header class="section-head compact">
+          <p class="kicker">PROJECT ARCHIVE</p>
+          <h2 data-copy="archiveTitle">企业项目与个人实验，按需展开</h2>
+          <p data-copy="archiveIntro">默认只保留关键信息；视频、系统结构与完整技术说明在展开后显示。</p>
+        </header>
+        <div class="archive-tabs" role="tablist">
+          <button class="active" data-filter="enterprise" type="button" data-copy="enterpriseTab">企业项目</button>
+          <button data-filter="personal" type="button" data-copy="personalTab">个人项目</button>
+        </div>
+        <div class="archive-list" id="archive-list"></div>
+      </div>
+    </section>
+
+    <section class="section shell evidence-section" id="evidence">
+      <header class="section-head compact">
+        <p class="kicker">BACKGROUND & CAPABILITIES</p>
+        <h2 data-copy="evidenceTitle">经历与能力不是装饰，而是项目证据的上下文</h2>
+        <p data-copy="evidenceIntro">恢复原网站中的教育、职业路径和完整能力范围。</p>
+      </header>
+      <div class="career-grid" id="career-grid"></div>
+      <div class="capability-grid" id="capability-grid"></div>
+    </section>
+
+    <section class="section shell profile" id="profile">
+      <p class="kicker">PROFILE</p>
+      <h2 data-copy="profileTitle">跨越自动化、仿真、软件与 AI，交付复杂系统。</h2>
+      <p data-copy="profileText">我的工作从物理过程出发：先把边界、状态与接口说清楚，再用软件和仿真提前验证，最后让 AI 在可靠的数据与工具之上工作。</p>
+      <div class="contact"><a href="mailto:hushengxiang0630@163.com">hushengxiang0630@163.com</a><a href="https://www.linkedin.com/in/shengxiang-hu-269787252/" target="_blank" rel="noreferrer">LinkedIn ↗</a></div>
+    </section>
+  </main>
+
+  <footer><div class="shell"><span>© <span id="year"></span> Hu Shengxiang</span><span>DESIGNING SYSTEMS THAT CAN BE TESTED.</span></div></footer>
+  <script src="projects.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
