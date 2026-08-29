@@ -655,7 +655,6 @@ const projectSummary = (project: Project) =>
         <header class="section-head" data-reveal>
           <span class="section-no">{c.contactNo}</span>
           <h2>{c.contactSectionTitle}</h2>
-          <p>{c.contactLead}</p>
         </header>
         <aside class="contact-card" data-reveal>
           <div class="contact-card-intro">
@@ -664,9 +663,13 @@ const projectSummary = (project: Project) =>
           </div>
           <div class="contact-card-links">
             <p>{c.contactText}</p>
-            <a href="mailto:hushengxiang0630@163.com">{c.email} · hushengxiang0630@163.com</a>
-            <a href="https://www.linkedin.com/in/shengxiang-hu-269787252/" target="_blank" rel="noreferrer">
-              {c.linkedin} · OPEN PROFILE ↗
+            <a class="contact-link" href="mailto:hushengxiang0630@163.com">
+              <small>{c.email}</small>
+              <strong>hushengxiang0630@163.com</strong>
+            </a>
+            <a class="contact-link" href="https://www.linkedin.com/in/shengxiang-hu-269787252/" target="_blank" rel="noreferrer">
+              <small>{c.linkedin}</small>
+              <strong>{locale === "zh" ? "查看 LinkedIn 主页 ↗" : "Open LinkedIn profile ↗"}</strong>
             </a>
           </div>
         </aside>

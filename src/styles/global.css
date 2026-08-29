@@ -2231,6 +2231,51 @@ summary:focus-visible {
   font: 11px "IBM Plex Mono", monospace;
 }
 
+.contact-card .contact-link {
+  padding: 15px 14px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  text-decoration: none;
+  transition:
+    background 0.16s,
+    color 0.16s,
+    transform 0.16s;
+}
+
+.contact-card .contact-link + .contact-link {
+  margin-top: 10px;
+}
+
+.contact-link small,
+.contact-link strong {
+  display: block;
+}
+
+.contact-link small {
+  margin-bottom: 7px;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  font: 600 9px "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+}
+
+.contact-link strong {
+  overflow-wrap: anywhere;
+  font: 600 clamp(14px, 1.35vw, 20px) "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
+.contact-card .contact-link:hover,
+.contact-card .contact-link:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+  transform: translateX(4px);
+}
+
+.contact-card .contact-link:hover small,
+.contact-card .contact-link:focus-visible small {
+  color: var(--paper);
+}
+
 footer {
   padding: 28px 0 50px;
 }

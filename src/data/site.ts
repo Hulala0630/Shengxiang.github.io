@@ -26,16 +26,16 @@ export const siteCopy = {
     heroSystem: "THREE.JS · 工业场景模拟",
     online: "在线",
     selectedNo: "02 / 重点项目",
-    selectedTitle: "三个项目，三种把想法带进实际场景的方式。",
+    selectedTitle: "体验三个有趣场景",
     selectedIntro:
-      "它们来自企业实践、个人探索和研究工作，也记录了我如何在工业仿真、工具构建、数据分析与人机交互之间寻找合适的解法。",
+      "体验企业实践、个人探索和研究工作的有趣项目，感受在工业仿真、工具构建、数据分析与人机交互方面的不同想法。",
     enterpriseSystem: "企业系统",
     simulationSystem: "仿真系统",
     researchProject: "研究项目",
     projectContext: "项目详情",
     projectVideo: "项目与视频",
     archiveNo: "03 / 其他项目",
-    archiveTitle: "更多项目与实践。",
+    archiveTitle: "更多项目与实践",
     archiveIntro:
       "其他企业项目、个人项目与研究实践。展开后可以查看完整背景、方案、结果与相关技术。",
     all: "全部项目",
@@ -62,11 +62,11 @@ export const siteCopy = {
     evidenceLabel: "关联项目",
     evidenceHint: "点击编号查看相关重点项目",
     contactLead: "如果你也在关注这些方向",
-    contactSectionTitle: "保持联系。",
+    contactSectionTitle: "联系方式",
     contactTitle: "工业系统。\n数字孪生。\nAI 应用。",
     contactText:
       "欢迎和我交流工业数字孪生、仿真工具、AI 应用，以及技术如何进入真实工作流程。",
-    contactNo: "05 / 联系",
+    contactNo: "05 / 保持联系",
     email: "邮件",
     linkedin: "LinkedIn",
     light: "明亮",
@@ -79,7 +79,7 @@ export const siteCopy = {
     workNav: "重点项目",
     projectsNav: "其他项目",
     capabilitiesNav: "技能点",
-    contactNav: "联系",
+    contactNav: "保持联系",
     footer: "让复杂的系统更容易被理解、连接和使用"
   },
   en: {
@@ -107,16 +107,16 @@ export const siteCopy = {
     heroSystem: "THREE.JS · INDUSTRIAL SCENE SIMULATION",
     online: "Online",
     selectedNo: "02 / SELECTED WORK",
-    selectedTitle: "Three projects, and three ways of bringing ideas into real settings.",
+    selectedTitle: "Explore three engaging scenarios",
     selectedIntro:
-      "Drawn from enterprise practice, personal exploration and research, they show how I look for fitting solutions across industrial simulation, tool building, data analysis and human-system interaction.",
+      "Explore engaging projects from enterprise practice, personal exploration and research, and experience different ideas across industrial simulation, tool building, data analysis and human-system interaction.",
     enterpriseSystem: "Enterprise system",
     simulationSystem: "Simulation system",
     researchProject: "Research project",
     projectContext: "Project context",
     projectVideo: "Project + video",
     archiveNo: "03 / OTHER PROJECTS",
-    archiveTitle: "More projects and practical work.",
+    archiveTitle: "More projects and practical work",
     archiveIntro:
       "More enterprise projects, personal work and research practice. Expand an item to read its complete background, solution, result and technologies.",
     all: "All projects",
@@ -143,11 +143,11 @@ export const siteCopy = {
     evidenceLabel: "Related projects",
     evidenceHint: "Open the related selected project",
     contactLead: "IF YOU ARE EXPLORING SIMILAR DIRECTIONS",
-    contactSectionTitle: "Stay in touch.",
+    contactSectionTitle: "Contact details",
     contactTitle: "Industrial systems.\nDigital twins.\nAI applications.",
     contactText:
       "I am open to conversations about industrial digital twins, simulation tools, AI applications and how technology can enter real working processes.",
-    contactNo: "05 / CONTACT",
+    contactNo: "05 / STAY IN TOUCH",
     email: "Email",
     linkedin: "LinkedIn",
     light: "Light",
@@ -160,7 +160,7 @@ export const siteCopy = {
     workNav: "Selected work",
     projectsNav: "Other projects",
     capabilitiesNav: "Skills",
-    contactNav: "Contact",
+    contactNav: "Stay in touch",
     footer: "MAKING COMPLEX SYSTEMS EASIER TO UNDERSTAND, CONNECT AND USE"
   }
 } as const;
