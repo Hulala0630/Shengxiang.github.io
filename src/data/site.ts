@@ -26,9 +26,9 @@ export const siteCopy = {
     heroSystem: "THREE.JS · 工业场景模拟",
     online: "在线",
     selectedNo: "02 / 重点项目",
-    selectedTitle: "体验三个有趣，也有实际价值的项目。",
+    selectedTitle: "三个项目，三种把想法带进实际场景的方式。",
     selectedIntro:
-      "体验来自企业实践、个人探索和研究工作的有趣项目，感受工业仿真、工具构建、数据分析与人机交互中的不同想法。",
+      "它们来自企业实践、个人探索和研究工作，也记录了我如何在工业仿真、工具构建、数据分析与人机交互之间寻找合适的解法。",
     enterpriseSystem: "企业系统",
     simulationSystem: "仿真系统",
     researchProject: "研究项目",
@@ -54,17 +54,19 @@ export const siteCopy = {
     note: "说明",
     technologies: "技术",
     noMedia: "该项目目前没有公开演示视频",
-    capabilityNo: "04 / 能力与联系",
+    capabilityNo: "04 / 技能点",
     capabilityTitle: "技能点范围",
     capabilityIntro:
-      "这些能力并不是独立罗列的技术关键词，而是来自前面项目中的实际工作、研究和个人探索。每项能力都可以回到对应项目中查看具体内容。",
+      "这些能力来自实际工作、研究和个人探索，也在不同项目中以不同方式交叉出现。",
     capabilityTopics: "涉及内容",
-    evidenceLabel: "对应项目",
+    evidenceLabel: "关联项目",
     evidenceHint: "点击编号查看相关重点项目",
     contactLead: "如果你也在关注这些方向",
+    contactSectionTitle: "保持联系。",
     contactTitle: "工业系统。\n数字孪生。\nAI 应用。",
     contactText:
       "欢迎和我交流工业数字孪生、仿真工具、AI 应用，以及技术如何进入真实工作流程。",
+    contactNo: "05 / 联系",
     email: "邮件",
     linkedin: "LinkedIn",
     light: "明亮",
@@ -76,7 +78,8 @@ export const siteCopy = {
     profileNav: "关于我",
     workNav: "重点项目",
     projectsNav: "其他项目",
-    capabilitiesNav: "能力与联系",
+    capabilitiesNav: "技能点",
+    contactNav: "联系",
     footer: "让复杂的系统更容易被理解、连接和使用"
   },
   en: {
@@ -104,9 +107,9 @@ export const siteCopy = {
     heroSystem: "THREE.JS · INDUSTRIAL SCENE SIMULATION",
     online: "Online",
     selectedNo: "02 / SELECTED WORK",
-    selectedTitle: "Explore three projects that are both engaging and useful.",
+    selectedTitle: "Three projects, and three ways of bringing ideas into real settings.",
     selectedIntro:
-      "Explore projects from enterprise practice, personal experimentation and research, and see different ideas across industrial simulation, tool building, data analysis and human-system interaction.",
+      "Drawn from enterprise practice, personal exploration and research, they show how I look for fitting solutions across industrial simulation, tool building, data analysis and human-system interaction.",
     enterpriseSystem: "Enterprise system",
     simulationSystem: "Simulation system",
     researchProject: "Research project",
@@ -132,17 +135,19 @@ export const siteCopy = {
     note: "Note",
     technologies: "Technologies",
     noMedia: "No public demonstration video is available for this project.",
-    capabilityNo: "04 / CAPABILITY + CONTACT",
+    capabilityNo: "04 / SKILLS",
     capabilityTitle: "Range of skills",
     capabilityIntro:
-      "These capabilities are not an isolated list of technical terms. They come from the practical work, research and personal exploration shown above, and each one links back to the projects where it was applied.",
+      "These capabilities come from practical work, research and personal exploration, often overlapping in different ways across projects.",
     capabilityTopics: "Areas involved",
     evidenceLabel: "Related projects",
     evidenceHint: "Open the related selected project",
     contactLead: "IF YOU ARE EXPLORING SIMILAR DIRECTIONS",
+    contactSectionTitle: "Stay in touch.",
     contactTitle: "Industrial systems.\nDigital twins.\nAI applications.",
     contactText:
       "I am open to conversations about industrial digital twins, simulation tools, AI applications and how technology can enter real working processes.",
+    contactNo: "05 / CONTACT",
     email: "Email",
     linkedin: "LinkedIn",
     light: "Light",
@@ -154,7 +159,8 @@ export const siteCopy = {
     profileNav: "About me",
     workNav: "Selected work",
     projectsNav: "Other projects",
-    capabilitiesNav: "Capabilities + contact",
+    capabilitiesNav: "Skills",
+    contactNav: "Contact",
     footer: "MAKING COMPLEX SYSTEMS EASIER TO UNDERSTAND, CONNECT AND USE"
   }
 } as const;

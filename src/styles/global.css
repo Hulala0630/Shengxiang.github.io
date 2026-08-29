@@ -2188,10 +2188,13 @@ summary:focus-visible {
 }
 
 .contact-card {
+  display: grid;
+  gap: 32px;
   padding: 24px;
   border: 2px solid var(--ink);
   background: var(--card);
   box-shadow: 7px 7px 0 var(--red);
+  grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.15fr);
 }
 
 .contact-card h3 {
@@ -2200,6 +2203,23 @@ summary:focus-visible {
 }
 
 .contact-card > p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.contact-card-intro,
+.contact-card-links {
+  min-width: 0;
+}
+
+.contact-card-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-card-links > p {
+  margin: 0 0 20px;
   color: var(--muted);
   font-size: 14px;
 }
@@ -2575,6 +2595,11 @@ footer {
   }
 
   .cap-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-card {
+    gap: 8px;
     grid-template-columns: 1fr;
   }
 

@@ -211,7 +211,8 @@ const projectSummary = (project: Project) =>
       <a href="#top" data-section="top" aria-label={c.profileNav}>01<span>{c.profileNav}</span></a>
       <a href="#work" data-section="work" aria-label={c.workNav}>02<span>{c.workNav}</span></a>
       <a href="#projects" data-section="projects" aria-label={c.projectsNav}>03<span>{c.projectsNav}</span></a>
-      <a href="#contact" data-section="contact" aria-label={c.capabilitiesNav}>04<span>{c.capabilitiesNav}</span></a>
+      <a href="#capabilities" data-section="capabilities" aria-label={c.capabilitiesNav}>04<span>{c.capabilitiesNav}</span></a>
+      <a href="#contact" data-section="contact" aria-label={c.contactNav}>05<span>{c.contactNav}</span></a>
     </div>
     <button class="side-step" id="section-down" type="button" aria-label={c.next}>↓</button>
     <button class="side-hide" id="side-hide" type="button" aria-label={c.hideNav}>×</button>
@@ -615,48 +616,60 @@ const projectSummary = (project: Project) =>
       </div>
     </section>
 
-    <section class="page-section" id="contact">
+    <section class="page-section" id="capabilities">
       <div class="wrap">
         <header class="section-head" data-reveal>
           <span class="section-no">{c.capabilityNo}</span>
           <h2>{c.capabilityTitle}</h2>
           <p>{c.capabilityIntro}</p>
         </header>
-        <div class="last-grid">
-          <div class="cap-grid">
-            {capabilities.map((capability) => (
-              <article class="capability" data-reveal>
-                <span>{capability.code}</span>
-                <div>
-                  <h3>{capability.title[locale]}</h3>
-                  <p>{capability.description[locale]}</p>
-                  <p class="capability-topics"><small>{c.capabilityTopics}</small>{capability.body[locale]}</p>
-                  <div class="capability-evidence">
-                    <small>{c.evidenceLabel}</small>
-                    {capability.evidence.map((projectNumber) => (
-                      <a
-                        href={`#selected-project-${projectNumber}`}
-                        data-proof-link={projectNumber}
-                        aria-label={`${c.evidenceHint}: ${projectNumber}`}
-                      >
-                        {String(projectNumber).padStart(2, "0")}
-                      </a>
-                    ))}
-                  </div>
+        <div class="cap-grid">
+          {capabilities.map((capability) => (
+            <article class="capability" data-reveal>
+              <span>{capability.code}</span>
+              <div>
+                <h3>{capability.title[locale]}</h3>
+                <p>{capability.description[locale]}</p>
+                <p class="capability-topics"><small>{c.capabilityTopics}</small>{capability.body[locale]}</p>
+                <div class="capability-evidence">
+                  <small>{c.evidenceLabel}</small>
+                  {capability.evidence.map((projectNumber) => (
+                    <a
+                      href={`#selected-project-${projectNumber}`}
+                      data-proof-link={projectNumber}
+                      aria-label={`${c.evidenceHint}: ${projectNumber}`}
+                    >
+                      {String(projectNumber).padStart(2, "0")}
+                    </a>
+                  ))}
                 </div>
-              </article>
-            ))}
-          </div>
-          <aside class="contact-card" data-reveal>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section contact-section" id="contact">
+      <div class="wrap">
+        <header class="section-head" data-reveal>
+          <span class="section-no">{c.contactNo}</span>
+          <h2>{c.contactSectionTitle}</h2>
+          <p>{c.contactLead}</p>
+        </header>
+        <aside class="contact-card" data-reveal>
+          <div class="contact-card-intro">
             <p class="eyebrow">{c.contactLead}</p>
             <h3>{c.contactTitle.split("\n").map((line) => <>{line}<br /></>)}</h3>
+          </div>
+          <div class="contact-card-links">
             <p>{c.contactText}</p>
             <a href="mailto:hushengxiang0630@163.com">{c.email} · hushengxiang0630@163.com</a>
             <a href="https://www.linkedin.com/in/shengxiang-hu-269787252/" target="_blank" rel="noreferrer">
               {c.linkedin} · OPEN PROFILE ↗
             </a>
-          </aside>
-        </div>
+          </div>
+        </aside>
       </div>
     </section>
   </main>
@@ -951,7 +964,7 @@ const projectSummary = (project: Project) =>
     );
     syncNavigationForWidth(mobileNavigation.matches);
 
-    const sectionIds = ["top", "work", "projects", "contact"];
+    const sectionIds = ["top", "work", "projects", "capabilities", "contact"];
     const sectionLinks = $$(".side-nav a");
     const sideNavCursor = $("#side-nav-cursor");
     const readingSection = $("#reading-section");
