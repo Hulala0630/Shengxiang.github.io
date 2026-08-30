@@ -862,18 +862,17 @@ const projectSummary = (project: Project) =>
       frame.style.height = `${Math.max(520, Math.min(900, Math.ceil(contentHeight)))}px`;
     };
     const alignHeroColumns = () => {
-      const left = $(".hero-left");
+      const identity = $(".identity");
       const title = $(".game-title");
-      if (!frame?.contentWindow || !left || !title) return;
+      if (!frame?.contentWindow || !identity || !title) return;
       if (window.innerWidth <= 980) {
         frame.contentWindow.postMessage({ type: "bauhaus-host-reset" }, "*");
         window.setTimeout(fitHeroFrame, 0);
         return;
       }
-      const target = Math.max(
-        520,
-        Math.ceil(left.getBoundingClientRect().height - title.getBoundingClientRect().height - 4)
-      );
+      const identityHeight = Math.ceil(identity.getBoundingClientRect().height);
+      const titleHeight = Math.ceil(title.getBoundingClientRect().height);
+      const target = Math.max(620, Math.min(820, identityHeight - titleHeight - 4));
       frame.style.height = `${target}px`;
       frame.contentWindow.postMessage({ type: "bauhaus-host-height", height: target }, "*");
     };
