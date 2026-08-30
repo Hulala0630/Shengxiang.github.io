@@ -352,8 +352,7 @@ const projectSummary = (project: Project) =>
                     id="fault-training-frame"
                     class="fault-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-6`}
-                    loading="lazy"
+                    data-demo-src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-6`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "工业故障仿真培训平台交互演示"
@@ -365,8 +364,7 @@ const projectSummary = (project: Project) =>
                     id="isaac-builder-frame"
                     class="isaac-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-1`}
-                    loading="lazy"
+                    data-demo-src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-1`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "YAML 与 Three.js 双向工业场景生成器"
@@ -378,13 +376,18 @@ const projectSummary = (project: Project) =>
                     id="motion-evaluation-frame"
                     class="motion-demo-frame"
                     data-theme-frame
-                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-6`}
-                    loading="lazy"
+                    data-demo-src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-6`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "人体动作相对评分与关节反馈交互演示"
                       : "Interactive relative motion scoring and joint feedback demo"}
                   ></iframe>
+                )}
+                {index <= 2 && (
+                  <button class="demo-load-gate" type="button" data-load-demo>
+                    <b>{locale === "zh" ? "打开交互演示" : "Open interactive demo"}</b>
+                    <span>{locale === "zh" ? "点击后加载，减少手机等待时间" : "Loads on tap to keep mobile browsing fast"}</span>
+                  </button>
                 )}
               </div>
 
@@ -498,14 +501,20 @@ const projectSummary = (project: Project) =>
                 </div>
                 <div class:list={["project-effect", { "no-media-preview": !project.cover && !project.video?.url }]}>
                   {project.cover ? (
-                    <img
-                      src={assetPath(project.cover)}
-                      alt=""
-                      width="1536"
-                      height="512"
-                      loading="eager"
-                      decoding="async"
-                    />
+                    <picture>
+                      <source
+                        media="(max-width: 650px)"
+                        srcset={assetPath(project.cover.replace(/\.png$/i, "-mobile.jpg"))}
+                      />
+                      <img
+                        src={assetPath(project.cover)}
+                        alt=""
+                        width="1536"
+                        height="512"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
                   ) : project.video?.url ? (
                     <video
                       muted
@@ -705,6 +714,34 @@ const projectSummary = (project: Project) =>
     const isaacFrame = $("#isaac-builder-frame") as HTMLIFrameElement | null;
     const motionFrame = $("#motion-evaluation-frame") as HTMLIFrameElement | null;
     const themeFrames = $$("iframe[data-theme-frame]") as HTMLIFrameElement[];
+    const mobileDemos = window.matchMedia("(max-width:650px)");
+    const loadDemoFrame = (demoFrame: HTMLIFrameElement) => {
+      if (demoFrame.dataset.loaded === "true") return;
+      const source = demoFrame.dataset.demoSrc;
+      if (!source) return;
+      const effect = demoFrame.closest(".selected-effect");
+      effect?.classList.remove("is-demo-deferred");
+      effect?.classList.add("is-demo-loading");
+      demoFrame.addEventListener("load", () => {
+        effect?.classList.remove("is-demo-loading");
+        effect?.classList.add("is-demo-loaded");
+      }, { once: true });
+      demoFrame.src = source;
+      demoFrame.dataset.loaded = "true";
+    };
+    themeFrames.forEach((demoFrame) => {
+      if (mobileDemos.matches) {
+        demoFrame.closest(".selected-effect")?.classList.add("is-demo-deferred");
+      } else {
+        loadDemoFrame(demoFrame);
+      }
+    });
+    $$("[data-load-demo]").forEach((trigger) =>
+      trigger.addEventListener("click", () => {
+        const demoFrame = trigger.parentElement?.querySelector("iframe[data-demo-src]") as HTMLIFrameElement | null;
+        if (demoFrame) loadDemoFrame(demoFrame);
+      })
+    );
     const setTheme = (theme: "light" | "dark") => {
       document.documentElement.dataset.theme = theme;
       try {
@@ -984,8 +1021,20 @@ const projectSummary = (project: Project) =>
     );
     syncNavigationForWidth(mobileNavigation.matches);
 
+    document.addEventListener("pointerdown", (event) => {
+      if (!mobileNavigation.matches || nav?.classList.contains("is-hidden")) return;
+      const target = event.target as Node;
+      if (nav?.contains(target) || navShow?.contains(target)) return;
+      hideNavigation(false);
+    });
+
     const sectionIds = ["top", "work", "projects", "capabilities", "contact"];
     const sectionLinks = $$(".side-nav a");
+    sectionLinks.forEach((link) =>
+      link.addEventListener("click", () => {
+        if (mobileNavigation.matches) hideNavigation(false);
+      })
+    );
     const sideNavCursor = $("#side-nav-cursor");
     const readingSection = $("#reading-section");
     const readingProgress = $("#reading-progress");
