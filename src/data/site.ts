@@ -2,7 +2,7 @@ export type Locale = "zh" | "en";
 
 export const siteCopy = {
   zh: {
-    metaTitle: "胡生翔｜工业数字孪生与 AI 应用",
+    metaTitle: "这里是胡生翔",
     metaDescription:
       "工业 AI、数字孪生、仿真工程与工业软件项目作品集",
     profileEyebrow: "个人信息 / 上海 / 工业与 AI",
@@ -83,7 +83,7 @@ export const siteCopy = {
     footer: "让复杂的系统更容易被理解、连接和使用"
   },
   en: {
-    metaTitle: "Hu Shengxiang | Industrial Digital Twins & AI Applications",
+    metaTitle: "This is HuShengxiang",
     metaDescription:
       "A portfolio of industrial AI, digital twins, simulation engineering and industrial software projects.",
     profileEyebrow: "PROFILE / SHANGHAI / INDUSTRY + AI",

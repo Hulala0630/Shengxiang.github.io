@@ -7,4 +7,5 @@ src/data/projects.generated.json
 .DS_Store
 npm-debug.log*
 .astro-preview.*.log
+.codex-dev.log
 .claude/
