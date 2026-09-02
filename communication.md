@@ -1330,3 +1330,18 @@ Codex 这轮改完后没有回报结果，由 Claude 接手复核（`npm run bui
 | 2026-08-29 | Codex | [USER] 要求恢复重点项目原副标题、使用无句号的新主标题，并强化独立联系模块的跳转入口。[CODEX] 完成精确文案校正和邮件 / LinkedIn 大尺寸入口；详见 8.42。本轮为打磨，未单独提交。 |
 | 2026-08-29 | Codex | [USER] 要求统一移除模块大标题句号，并提交、合并当前成果。[CODEX] 完成中英文标题标点检查，将累计联系模块打磨提交并本地合并至 `main`；详见 8.43。 |
 | 2026-08-29 | Codex | [USER] 反馈手机端 Hero 遮挡、交互内容裁切、封面和视频不可见及全屏失效。[CODEX] 完成面板收起、动态 iframe 高度、媒体加载和 iPhone 全屏兼容修复，并通过 375px 完整回归；详见 8.44。 |
+### Mobile loading and bilingual interaction reliability (2026-09-02)
+
+#### [USER] Request and judgment
+- Remove the visually inconsistent mobile demo load gate, restore hidden interaction content, keep English interactions in English, reduce video waiting, and make the Hero load reliably.
+
+#### [CODEX] Implementation
+- Replaced the manual mobile demo gate with native lazy iframe loading and versioned locale-aware demo URLs.
+- Removed mobile iframe height caps that clipped active demo screens, while retaining bounded desktop sizing.
+- Deferred MP4 source attachment until the visitor interacts with a video, preserving posters without requesting video metadata during initial browsing.
+- Added a visible bilingual Hero startup state and a timed reload action, then clears it when the embedded scene is ready.
+
+#### [CODEX] Verification and boundary
+- Passed content validation, production build, and diff checks.
+- Verified at 390 × 844 in Chinese and English: iframe language, dynamic heights, Hero ready state, light/dark propagation, and zero hydrated project-video sources before interaction.
+- The only local browser console error was Astro's development toolbar returning `504 Outdated Optimize Dep`; no matching production source request exists.

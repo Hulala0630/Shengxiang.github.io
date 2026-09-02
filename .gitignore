@@ -8,4 +8,5 @@ src/data/projects.generated.json
 npm-debug.log*
 .astro-preview.*.log
 .codex-dev.log
+.playwright-cli/
 .claude/

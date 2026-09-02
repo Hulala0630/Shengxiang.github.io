@@ -661,6 +661,7 @@ summary:focus-visible {
 }
 
 .hero-game {
+  position: relative;
   min-width: 0;
   overflow: hidden;
   border: 2px solid var(--ink);
@@ -999,9 +1000,26 @@ summary:focus-visible {
   background: var(--card);
 }
 
-.demo-load-gate {
-  display: none;
+.hero-frame-status {
+  position: absolute;
+  z-index: 2;
+  inset: 44px 0 0;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 28px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--blue) 16%, transparent), transparent 55%),
+    repeating-linear-gradient(90deg, transparent 0 31px, color-mix(in srgb, var(--ink) 5%, transparent) 32px),
+    var(--card);
+  text-align: center;
+  transition: opacity 180ms ease-out;
 }
+
+.hero-frame-status b { font: 600 18px "Space Grotesk", "Noto Sans SC", sans-serif; }
+.hero-frame-status span { color: var(--muted); font: 11px/1.5 "IBM Plex Mono", "Noto Sans SC", monospace; }
+.hero-frame-status button { min-height: 42px; margin-top: 8px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); font: 600 11px "IBM Plex Mono", "Noto Sans SC", monospace; }
+.hero-game.is-hero-ready .hero-frame-status { opacity: 0; pointer-events: none; }
 
 .fault-demo-frame {
   display: block;
@@ -2433,46 +2451,6 @@ footer {
 
   .selected-effect {
     min-height: 330px;
-  }
-
-  .selected-effect.is-demo-deferred {
-    min-height: 220px;
-    background:
-      linear-gradient(135deg, rgba(39, 103, 178, 0.16), transparent 52%),
-      repeating-linear-gradient(90deg, transparent 0 31px, rgba(20, 20, 20, 0.05) 32px),
-      var(--card);
-  }
-
-  .selected-effect.is-demo-deferred iframe {
-    min-height: 0 !important;
-    height: 0 !important;
-    visibility: hidden;
-  }
-
-  .demo-load-gate {
-    display: grid;
-    min-width: min(78%, 320px);
-    min-height: 92px;
-    padding: 18px 20px;
-    place-content: center;
-    gap: 6px;
-    border: 1px solid var(--ink);
-    background: var(--card);
-    color: var(--ink);
-    text-align: left;
-  }
-
-  .demo-load-gate b {
-    font: 650 16px "Space Grotesk", "Noto Sans SC", sans-serif;
-  }
-
-  .demo-load-gate span {
-    color: var(--muted);
-    font: 11px/1.5 "IBM Plex Mono", "Noto Sans SC", monospace;
-  }
-
-  .selected-effect:not(.is-demo-deferred) .demo-load-gate {
-    display: none;
   }
 
   .selected-1 .selected-effect {

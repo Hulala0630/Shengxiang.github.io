@@ -271,10 +271,17 @@ const projectSummary = (project: Project) =>
             <span>{c.heroSystem}</span>
             <span>● {c.online}</span>
           </div>
+          <div class="hero-frame-status" aria-live="polite">
+            <b>{locale === "zh" ? "正在启动工业场景" : "Starting industrial scene"}</b>
+            <span>{locale === "zh" ? "正在准备轻量移动端渲染…" : "Preparing the lightweight mobile renderer…"}</span>
+            <button type="button" data-retry-hero hidden>
+              {locale === "zh" ? "重新加载" : "Reload scene"}
+            </button>
+          </div>
           <iframe
             id="hero-frame"
             data-theme-frame
-            src="/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&amp;theme=light&amp;v=mobile-panel-1"
+            src={`/assets/hero/HERO_GAME_ASM_FLUID_SIM_v2.0.html?embed=bauhaus&theme=light&lang=${locale}&v=mobile-resilience-1`}
             loading="eager"
             scrolling="no"
             title="Interactive assembly digital twin"
@@ -352,7 +359,8 @@ const projectSummary = (project: Project) =>
                     id="fault-training-frame"
                     class="fault-demo-frame"
                     data-theme-frame
-                    data-demo-src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-6`}
+                    src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-7`}
+                    loading="lazy"
                     scrolling="no"
                     title={locale === "zh"
                       ? "工业故障仿真培训平台交互演示"
@@ -364,7 +372,8 @@ const projectSummary = (project: Project) =>
                     id="isaac-builder-frame"
                     class="isaac-demo-frame"
                     data-theme-frame
-                    data-demo-src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-1`}
+                    src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-2`}
+                    loading="lazy"
                     scrolling="no"
                     title={locale === "zh"
                       ? "YAML 与 Three.js 双向工业场景生成器"
@@ -376,18 +385,13 @@ const projectSummary = (project: Project) =>
                     id="motion-evaluation-frame"
                     class="motion-demo-frame"
                     data-theme-frame
-                    data-demo-src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-6`}
+                    src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-7`}
+                    loading="lazy"
                     scrolling="no"
                     title={locale === "zh"
                       ? "人体动作相对评分与关节反馈交互演示"
                       : "Interactive relative motion scoring and joint feedback demo"}
                   ></iframe>
-                )}
-                {index <= 2 && (
-                  <button class="demo-load-gate" type="button" data-load-demo>
-                    <b>{locale === "zh" ? "打开交互演示" : "Open interactive demo"}</b>
-                    <span>{locale === "zh" ? "点击后加载，减少手机等待时间" : "Loads on tap to keep mobile browsing fast"}</span>
-                  </button>
                 )}
               </div>
 
@@ -440,8 +444,8 @@ const projectSummary = (project: Project) =>
                               </button>
                             </div>
                           </figcaption>
-                          <video controls preload="metadata" playsinline poster={project.cover ? assetPath(project.cover) : undefined}>
-                            <source src={assetPath(project.video.url)} type="video/mp4" />
+                          <video controls preload="none" playsinline poster={project.cover ? assetPath(project.cover) : undefined} data-deferred-video>
+                            <source data-video-src={assetPath(project.video.url)} type="video/mp4" />
                           </video>
                         </figure>
                       )}
@@ -465,8 +469,8 @@ const projectSummary = (project: Project) =>
                     <ProjectArchitecture architecture={motionArchitecture} />
                   )}
                   {project.video?.url && index !== 1 ? (
-                    <video controls preload="metadata" playsinline poster={project.cover ? assetPath(project.cover) : undefined}>
-                      <source src={assetPath(project.video.url)} type="video/mp4" />
+                    <video controls preload="none" playsinline poster={project.cover ? assetPath(project.cover) : undefined} data-deferred-video>
+                      <source data-video-src={assetPath(project.video.url)} type="video/mp4" />
                     </video>
                   ) : null}
                 </div>
@@ -564,8 +568,8 @@ const projectSummary = (project: Project) =>
                             </button>
                           </div>
                         </figcaption>
-                        <video controls preload="metadata" playsinline poster={project.cover ? assetPath(project.cover) : undefined}>
-                          <source src={assetPath(project.video.url)} type="video/mp4" />
+                        <video controls preload="none" playsinline poster={project.cover ? assetPath(project.cover) : undefined} data-deferred-video>
+                          <source data-video-src={assetPath(project.video.url)} type="video/mp4" />
                         </video>
                       </figure>
                     )}
@@ -714,34 +718,6 @@ const projectSummary = (project: Project) =>
     const isaacFrame = $("#isaac-builder-frame") as HTMLIFrameElement | null;
     const motionFrame = $("#motion-evaluation-frame") as HTMLIFrameElement | null;
     const themeFrames = $$("iframe[data-theme-frame]") as HTMLIFrameElement[];
-    const mobileDemos = window.matchMedia("(max-width:650px)");
-    const loadDemoFrame = (demoFrame: HTMLIFrameElement) => {
-      if (demoFrame.dataset.loaded === "true") return;
-      const source = demoFrame.dataset.demoSrc;
-      if (!source) return;
-      const effect = demoFrame.closest(".selected-effect");
-      effect?.classList.remove("is-demo-deferred");
-      effect?.classList.add("is-demo-loading");
-      demoFrame.addEventListener("load", () => {
-        effect?.classList.remove("is-demo-loading");
-        effect?.classList.add("is-demo-loaded");
-      }, { once: true });
-      demoFrame.src = source;
-      demoFrame.dataset.loaded = "true";
-    };
-    themeFrames.forEach((demoFrame) => {
-      if (mobileDemos.matches) {
-        demoFrame.closest(".selected-effect")?.classList.add("is-demo-deferred");
-      } else {
-        loadDemoFrame(demoFrame);
-      }
-    });
-    $$("[data-load-demo]").forEach((trigger) =>
-      trigger.addEventListener("click", () => {
-        const demoFrame = trigger.parentElement?.querySelector("iframe[data-demo-src]") as HTMLIFrameElement | null;
-        if (demoFrame) loadDemoFrame(demoFrame);
-      })
-    );
     const setTheme = (theme: "light" | "dark") => {
       document.documentElement.dataset.theme = theme;
       try {
@@ -877,13 +853,28 @@ const projectSummary = (project: Project) =>
       frame.contentWindow.postMessage({ type: "bauhaus-host-height", height: target }, "*");
     };
     const initHero = () => {
+      frame?.closest(".hero-game")?.classList.add("is-hero-ready");
       setTheme((document.documentElement.dataset.theme === "dark" ? "dark" : "light"));
       fitHeroFrame();
       requestAnimationFrame(alignHeroColumns);
     };
     frame?.addEventListener("load", initHero);
+    const retryHero = $("[data-retry-hero]") as HTMLButtonElement | null;
+    const heroStatus = $(".hero-frame-status");
+    const heroTimeout = window.setTimeout(() => {
+      if (frame?.closest(".hero-game")?.classList.contains("is-hero-ready")) return;
+      heroStatus?.classList.add("is-delayed");
+      if (retryHero) retryHero.hidden = false;
+    }, 8000);
+    retryHero?.addEventListener("click", () => {
+      retryHero.hidden = true;
+      heroStatus?.classList.remove("is-delayed");
+      if (frame) frame.src = frame.src;
+    });
     window.addEventListener("message", (event) => {
       if (event.data?.type === "bauhaus-hero-height" && frame) {
+        window.clearTimeout(heroTimeout);
+        frame.closest(".hero-game")?.classList.add("is-hero-ready");
         frame.style.height = `${Math.max(520, Math.min(900, Number(event.data.height) || 704))}px`;
       }
       if (
@@ -891,7 +882,9 @@ const projectSummary = (project: Project) =>
         faultFrame &&
         event.source === faultFrame.contentWindow
       ) {
-        faultFrame.style.height = `${Math.max(620, Math.min(1400, Number(event.data.height) || 620))}px`;
+        const requestedHeight = Number(event.data.height) || 620;
+        const maximumHeight = window.innerWidth <= 650 ? 3200 : 1800;
+        faultFrame.style.height = `${Math.max(620, Math.min(maximumHeight, requestedHeight))}px`;
       }
       if (
         event.data?.type === "isaac-builder-height" &&
@@ -914,6 +907,19 @@ const projectSummary = (project: Project) =>
     });
 
     const videoBackdrop = $("#video-lightbox-backdrop");
+    const hydrateVideo = (video: HTMLVideoElement | null) => {
+      if (!video || video.dataset.hydrated === "true") return;
+      const source = video.querySelector("source[data-video-src]") as HTMLSourceElement | null;
+      if (!source?.dataset.videoSrc) return;
+      source.src = source.dataset.videoSrc;
+      video.dataset.hydrated = "true";
+      video.load();
+    };
+    $$('video[data-deferred-video]').forEach((element) => {
+      const video = element as HTMLVideoElement;
+      video.addEventListener("pointerdown", () => hydrateVideo(video), { once: true });
+      video.addEventListener("keydown", () => hydrateVideo(video), { once: true });
+    });
     let enlargedVideoCard: HTMLElement | null = null;
     let enlargedVideoButton: HTMLButtonElement | null = null;
     let enlargedVideoAnchor: Comment | null = null;
@@ -971,6 +977,7 @@ const projectSummary = (project: Project) =>
           | (HTMLVideoElement & { webkitEnterFullscreen?: () => void })
           | null;
         if (!video) return;
+        hydrateVideo(video);
         try {
           if (video.requestFullscreen) {
             await video.requestFullscreen();
@@ -1344,6 +1351,6 @@ const projectSummary = (project: Project) =>
     });
 
     setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
-    window.setTimeout(initHero, 0);
+    if (frame?.contentDocument?.readyState === "complete") initHero();
   </script>
 </BaseLayout>
