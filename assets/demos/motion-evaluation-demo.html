@@ -512,6 +512,7 @@
     }
 
     @media (max-width: 620px) {
+      html, body, .app { min-height: 0; }
       .lab-tabs button { align-items: flex-start; flex-direction: column; justify-content: center; gap: 2px; }
       .control-strip { grid-template-columns: 1fr; }
       .transport { border-top: 1px solid var(--ink); border-left: 0; }
@@ -1347,7 +1348,7 @@
       function reportHeight() {
         requestAnimationFrame(() => {
           const app = document.querySelector(".app");
-          const contentHeight = app ? Math.ceil(app.getBoundingClientRect().height + 8) : 720;
+          const contentHeight = app ? Math.ceil(app.getBoundingClientRect().height) : 720;
           parent.postMessage({
             type: "motion-evaluation-height",
             height: contentHeight

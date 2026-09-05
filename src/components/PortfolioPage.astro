@@ -364,7 +364,7 @@ const mobileVideoPath = (url?: string) =>
                     id="fault-training-frame"
                     class="fault-demo-frame"
                     data-theme-frame
-                    data-demo-src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-8`}
+                    data-demo-src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-9`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "工业故障仿真培训平台交互演示"
@@ -376,7 +376,7 @@ const mobileVideoPath = (url?: string) =>
                     id="isaac-builder-frame"
                     class="isaac-demo-frame"
                     data-theme-frame
-                    data-demo-src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-3`}
+                    data-demo-src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-4`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "YAML 与 Three.js 双向工业场景生成器"
@@ -388,7 +388,7 @@ const mobileVideoPath = (url?: string) =>
                     id="motion-evaluation-frame"
                     class="motion-demo-frame"
                     data-theme-frame
-                    data-demo-src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-8`}
+                    data-demo-src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-9`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "人体动作相对评分与关节反馈交互演示"
@@ -955,7 +955,7 @@ const mobileVideoPath = (url?: string) =>
       ) {
         const requestedHeight = Number(event.data.height) || 620;
         const height = window.innerWidth <= 650
-          ? Math.max(620, requestedHeight)
+          ? Math.max(1, requestedHeight)
           : Math.max(620, Math.min(1800, requestedHeight));
         faultFrame.style.height = `${height}px`;
       }
@@ -966,7 +966,7 @@ const mobileVideoPath = (url?: string) =>
       ) {
         const requestedHeight = Number(event.data.height) || 680;
         const height = window.innerWidth <= 650
-          ? Math.max(640, requestedHeight)
+          ? Math.max(1, requestedHeight)
           : Math.max(640, Math.min(980, requestedHeight));
         isaacFrame.style.height = `${height}px`;
       }
@@ -977,7 +977,7 @@ const mobileVideoPath = (url?: string) =>
       ) {
         const requestedHeight = Number(event.data.height) || 720;
         const height = window.innerWidth <= 650
-          ? Math.max(680, requestedHeight)
+          ? Math.max(1, requestedHeight)
           : Math.max(680, Math.min(1500, requestedHeight));
         motionFrame.style.height = `${height}px`;
       }

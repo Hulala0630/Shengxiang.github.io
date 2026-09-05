@@ -2544,6 +2544,12 @@ footer {
     height: 1240px;
   }
 
+  .selected-1 .selected-effect.is-demo-ready,
+  .selected-2 .selected-effect.is-demo-ready,
+  .selected-3 .selected-effect.is-demo-ready {
+    min-height: 0;
+  }
+
   .fault-chain,
   .scene-chain {
     width: 92%;

@@ -1361,3 +1361,17 @@ Codex 这轮改完后没有回报结果，由 Claude 接手复核（`npm run bui
 - At 390 × 844, confirmed zero demo iframe requests at the top of the page, automatic loading near the viewport, exact iframe/document height parity, visible bottom text, Hero readiness, and mobile video source selection.
 - At 1280 × 900, confirmed loading status UI is hidden, all demos load normally, desktop height caps remain active, and the original Isaac Sim video is selected.
 - Content validation, production build, and diff checks pass. The recurring local console entry is limited to Astro's development toolbar dependency optimization and is absent from production source.
+
+### Mobile iframe intrinsic sizing correction (2026-09-05)
+
+#### [USER] Request and judgment
+- Mobile project demos still showed incorrect proportions, stretched panels, and large blank areas after loading; desktop presentation must remain unchanged.
+
+#### [CODEX] Implementation
+- Removed mobile-only `min-height: 100%` and fixed demo minimum heights inside the three embedded applications so iframe height changes can no longer stretch their content and feed a larger height back to the parent.
+- Switched mobile height messages to each demo application's natural rendered height and removed the ready-state wrapper minimums; desktop minimums and height caps are unchanged.
+- Bumped all three embedded demo versions so deployed phones do not reuse the faulty cached documents.
+
+#### [CODEX] Verification and boundary
+- Content validation, production build, generated-content parity, and diff checks pass.
+- The configured local browser rejected localhost responsive automation under its URL safety policy, so final device rendering is intentionally left for the authorized remote phone check after push; the sizing feedback path was verified directly in all three implementations.

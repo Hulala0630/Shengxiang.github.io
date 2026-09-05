@@ -310,7 +310,7 @@
     .toast.show { opacity: 1; transform: none; }
 
     @media (max-width: 720px) {
-      .app { min-height: 890px; }
+      html, body, .app { min-height: 0; }
       .builder { grid-template-columns: 1fr; }
       .yaml-panel { border-right: 0; border-bottom: 1px solid var(--ink); }
       #yaml-editor { height: 215px; }
@@ -857,7 +857,7 @@
         camera.updateProjectionMatrix();
         parent.postMessage({
           type: "isaac-builder-height",
-          height: document.documentElement.scrollHeight
+          height: Math.ceil(document.querySelector(".app")?.getBoundingClientRect().height || 674)
         }, "*");
       }
 
