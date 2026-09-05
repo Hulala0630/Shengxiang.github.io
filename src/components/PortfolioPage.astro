@@ -359,11 +359,29 @@ const mobileVideoPath = (url?: string) =>
                 class:list={["selected-effect", `effect-${index + 1}`]}
                 aria-hidden={index <= 2 ? undefined : "true"}
               >
+                {index <= 2 && (
+                  <div class="demo-mobile-gate" data-demo-gate>
+                    <span>
+                      <b>{locale === "zh" ? "移动端互动体验" : "Mobile interactive experience"}</b>
+                      <small>{locale === "zh" ? "展开后可在当前页面完成操作，收起不会清除状态" : "Operate here; collapsing preserves your state"}</small>
+                    </span>
+                    <button
+                      type="button"
+                      data-demo-toggle
+                      aria-expanded="false"
+                      aria-controls={index === 0 ? "fault-training-frame" : index === 1 ? "isaac-builder-frame" : "motion-evaluation-frame"}
+                    >
+                      <span data-expand-copy>{locale === "zh" ? "展开互动体验" : "Expand demo"}</span>
+                      <span data-collapse-copy hidden>{locale === "zh" ? "收起体验" : "Collapse demo"}</span>
+                    </button>
+                  </div>
+                )}
                 {index === 0 && (
                   <iframe
                     id="fault-training-frame"
                     class="fault-demo-frame"
                     data-theme-frame
+                    data-demo-id="fault-training"
                     data-demo-src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-9`}
                     scrolling="no"
                     title={locale === "zh"
@@ -376,6 +394,7 @@ const mobileVideoPath = (url?: string) =>
                     id="isaac-builder-frame"
                     class="isaac-demo-frame"
                     data-theme-frame
+                    data-demo-id="isaac-builder"
                     data-demo-src={`/assets/demos/isaac-yaml-builder.html?embed=bauhaus&theme=light&lang=${locale}&v=builder-4`}
                     scrolling="no"
                     title={locale === "zh"
@@ -388,6 +407,7 @@ const mobileVideoPath = (url?: string) =>
                     id="motion-evaluation-frame"
                     class="motion-demo-frame"
                     data-theme-frame
+                    data-demo-id="motion-evaluation"
                     data-demo-src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-9`}
                     scrolling="no"
                     title={locale === "zh"
@@ -731,7 +751,7 @@ const mobileVideoPath = (url?: string) =>
     const motionFrame = $("#motion-evaluation-frame") as HTMLIFrameElement | null;
     const themeFrames = $$("iframe[data-theme-frame]") as HTMLIFrameElement[];
     const demoFrames = $$("iframe[data-demo-src]") as HTMLIFrameElement[];
-    const mobileLayout = window.matchMedia("(max-width: 650px)");
+    const mobileLayout = window.matchMedia("(max-width: 650px), (max-width: 960px) and (orientation: landscape)");
     const demoStatusCopy = document.body.dataset.locale === "zh"
       ? { loading: "正在准备，通常只需几秒", slow: "网络有点慢，可以继续浏览或再试一次" }
       : { loading: "Preparing — this usually takes a few seconds", slow: "The network is slow. Keep browsing or try again" };
@@ -747,12 +767,16 @@ const mobileVideoPath = (url?: string) =>
       effect.classList.add("is-demo-loading");
       if (status) status.textContent = demoStatusCopy.loading;
       if (retryButton) retryButton.hidden = true;
-      if (retry) source += `${source.includes("?") ? "&" : "?"}retry=${Date.now()}`;
+      const sourceUrl = new URL(source, location.href);
+      if (mobileLayout.matches) sourceUrl.searchParams.set("mobile", "1");
+      if (retry) sourceUrl.searchParams.set("retry", String(Date.now()));
       demoFrame.addEventListener("load", () => {
         effect.classList.remove("is-demo-loading", "is-demo-slow");
         effect.classList.add("is-demo-ready");
+        demoFrame.contentWindow?.postMessage({ type: "demo-host-visibility", project: demoFrame.dataset.demoId, visible: effect.classList.contains("is-demo-expanded") || !mobileLayout.matches }, location.origin);
+        demoFrame.contentWindow?.postMessage({ type: "demo-host-measure", project: demoFrame.dataset.demoId }, location.origin);
       }, { once: true });
-      demoFrame.src = source;
+      demoFrame.src = sourceUrl.toString();
       demoFrame.dataset.loaded = "true";
       window.setTimeout(() => {
         if (effect.classList.contains("is-demo-ready")) return;
@@ -762,26 +786,33 @@ const mobileVideoPath = (url?: string) =>
       }, 10000);
     };
 
+    const setDemoExpanded = (demoFrame: HTMLIFrameElement, expanded: boolean) => {
+      const effect = demoFrame.closest(".selected-effect");
+      const toggle = effect?.querySelector("[data-demo-toggle]") as HTMLButtonElement | null;
+      if (!effect) return;
+      effect.classList.toggle("is-demo-expanded", expanded);
+      effect.classList.toggle("is-demo-collapsed", !expanded);
+      toggle?.setAttribute("aria-expanded", String(expanded));
+      toggle?.querySelector("[data-expand-copy]")?.toggleAttribute("hidden", expanded);
+      toggle?.querySelector("[data-collapse-copy]")?.toggleAttribute("hidden", !expanded);
+      if (expanded) {
+        loadDemoFrame(demoFrame);
+        const rememberedHeight = Number(demoFrame.dataset.reportedHeight);
+        if (Number.isFinite(rememberedHeight) && rememberedHeight > 0) demoFrame.style.height = `${rememberedHeight}px`;
+        requestAnimationFrame(() => demoFrame.contentWindow?.postMessage({ type: "demo-host-measure", project: demoFrame.dataset.demoId }, location.origin));
+      }
+      demoFrame.contentWindow?.postMessage({ type: "demo-host-visibility", project: demoFrame.dataset.demoId, visible: expanded }, location.origin);
+    };
+
     demoFrames.forEach((demoFrame) => {
       const effect = demoFrame.closest(".selected-effect");
       if (!mobileLayout.matches) return loadDemoFrame(demoFrame);
-      effect?.classList.add("is-demo-pending");
+      effect?.classList.add("is-demo-pending", "is-demo-collapsed");
       effect?.querySelector("[data-retry-demo]")?.addEventListener("click", () => loadDemoFrame(demoFrame, true));
-    });
-    if (mobileLayout.matches) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const demoFrame = entry.target.querySelector("iframe[data-demo-src]") as HTMLIFrameElement | null;
-          if (demoFrame) loadDemoFrame(demoFrame);
-          observer.unobserve(entry.target);
-        });
-      }, { rootMargin: "240px 0px" });
-      demoFrames.forEach((demoFrame) => {
-        const effect = demoFrame.closest(".selected-effect");
-        if (effect) observer.observe(effect);
+      effect?.querySelector("[data-demo-toggle]")?.addEventListener("click", () => {
+        setDemoExpanded(demoFrame, !effect.classList.contains("is-demo-expanded"));
       });
-    }
+    });
     const setTheme = (theme: "light" | "dark") => {
       document.documentElement.dataset.theme = theme;
       try {
@@ -790,7 +821,7 @@ const mobileVideoPath = (url?: string) =>
       $("#light-theme")?.classList.toggle("active", theme === "light");
       $("#dark-theme")?.classList.toggle("active", theme === "dark");
       themeFrames.forEach((themeFrame) =>
-        themeFrame.contentWindow?.postMessage({ type: "bauhaus-theme", theme }, "*")
+        themeFrame.contentWindow?.postMessage({ type: "bauhaus-theme", theme }, location.origin)
       );
     };
 
@@ -803,7 +834,7 @@ const mobileVideoPath = (url?: string) =>
             type: "bauhaus-theme",
             theme: document.documentElement.dataset.theme === "dark" ? "dark" : "light"
           },
-          "*"
+          location.origin
         )
       )
     );
@@ -906,7 +937,7 @@ const mobileVideoPath = (url?: string) =>
       const title = $(".game-title");
       if (!frame?.contentWindow || !identity || !title) return;
       if (window.innerWidth <= 980) {
-        frame.contentWindow.postMessage({ type: "bauhaus-host-reset" }, "*");
+        frame.contentWindow.postMessage({ type: "bauhaus-host-reset" }, location.origin);
         window.setTimeout(fitHeroFrame, 0);
         return;
       }
@@ -914,7 +945,7 @@ const mobileVideoPath = (url?: string) =>
       const titleHeight = Math.ceil(title.getBoundingClientRect().height);
       const target = Math.max(620, Math.min(820, identityHeight - titleHeight - 4));
       frame.style.height = `${target}px`;
-      frame.contentWindow.postMessage({ type: "bauhaus-host-height", height: target }, "*");
+      frame.contentWindow.postMessage({ type: "bauhaus-host-height", height: target }, location.origin);
     };
     const initHero = () => {
       setTheme((document.documentElement.dataset.theme === "dark" ? "dark" : "light"));
@@ -943,44 +974,27 @@ const mobileVideoPath = (url?: string) =>
       }
     });
     window.addEventListener("message", (event) => {
-      if (event.data?.type === "bauhaus-hero-height" && frame) {
+      if (event.origin === location.origin && event.source === frame?.contentWindow && event.data?.type === "bauhaus-hero-height" && frame) {
         window.clearTimeout(heroTimeout);
         frame.closest(".hero-game")?.classList.add("is-hero-ready");
         frame.style.height = `${Math.max(520, Math.min(900, Number(event.data.height) || 704))}px`;
       }
-      if (
-        event.data?.type === "fault-training-height" &&
-        faultFrame &&
-        event.source === faultFrame.contentWindow
-      ) {
-        const requestedHeight = Number(event.data.height) || 620;
-        const height = window.innerWidth <= 650
-          ? Math.max(1, requestedHeight)
-          : Math.max(620, Math.min(1800, requestedHeight));
-        faultFrame.style.height = `${height}px`;
-      }
-      if (
-        event.data?.type === "isaac-builder-height" &&
-        isaacFrame &&
-        event.source === isaacFrame.contentWindow
-      ) {
-        const requestedHeight = Number(event.data.height) || 680;
-        const height = window.innerWidth <= 650
-          ? Math.max(1, requestedHeight)
-          : Math.max(640, Math.min(980, requestedHeight));
-        isaacFrame.style.height = `${height}px`;
-      }
-      if (
-        event.data?.type === "motion-evaluation-height" &&
-        motionFrame &&
-        event.source === motionFrame.contentWindow
-      ) {
-        const requestedHeight = Number(event.data.height) || 720;
-        const height = window.innerWidth <= 650
-          ? Math.max(1, requestedHeight)
-          : Math.max(680, Math.min(1500, requestedHeight));
-        motionFrame.style.height = `${height}px`;
-      }
+      if (event.origin !== location.origin || event.data?.type !== "demo-content-height") return;
+      const projectFrames: Record<string, HTMLIFrameElement | null> = {
+        "fault-training": faultFrame,
+        "isaac-builder": isaacFrame,
+        "motion-evaluation": motionFrame
+      };
+      const project = String(event.data.project || "");
+      const demoFrame = projectFrames[project];
+      const requestedHeight = Number(event.data.height);
+      if (!demoFrame || event.source !== demoFrame.contentWindow || !Number.isFinite(requestedHeight) || requestedHeight < 120 || requestedHeight > 5000) return;
+      demoFrame.dataset.reportedHeight = String(Math.ceil(requestedHeight));
+      const effect = demoFrame.closest(".selected-effect");
+      if (mobileLayout.matches && !effect?.classList.contains("is-demo-expanded")) return;
+      const desktopMinimums: Record<string, number> = { "fault-training": 620, "isaac-builder": 640, "motion-evaluation": 680 };
+      const height = mobileLayout.matches ? Math.ceil(requestedHeight) : Math.max(desktopMinimums[project], Math.ceil(requestedHeight));
+      if (Math.abs(demoFrame.getBoundingClientRect().height - height) > 1) demoFrame.style.height = `${height}px`;
     });
 
     const videoBackdrop = $("#video-lightbox-backdrop");
@@ -1096,7 +1110,7 @@ const mobileVideoPath = (url?: string) =>
     $("#side-hide")?.addEventListener("click", () => hideNavigation(true));
     navShow?.addEventListener("click", showNavigation);
 
-    const mobileNavigation = window.matchMedia("(max-width:650px)");
+    const mobileNavigation = window.matchMedia("(max-width:650px), (max-width:960px) and (orientation:landscape)");
     const syncNavigationForWidth = (mobile: boolean) => {
       if (mobile) hideNavigation(false);
       else if (!userHidNavigation) showNavigation();

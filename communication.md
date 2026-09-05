@@ -1375,3 +1375,18 @@ Codex 这轮改完后没有回报结果，由 Claude 接手复核（`npm run bui
 #### [CODEX] Verification and boundary
 - Content validation, production build, generated-content parity, and diff checks pass.
 - The configured local browser rejected localhost responsive automation under its URL safety policy, so final device rendering is intentionally left for the authorized remote phone check after push; the sizing feedback path was verified directly in all three implementations.
+
+### Mobile demo interaction shells and verified height lifecycle (2026-09-05)
+
+#### [USER] Request and judgment
+- Preserve every function in the three flagship demos while removing mobile blank space, stretched controls/cards, scroll conflicts, eager heavy initialization, and unsafe or unstable iframe sizing. Keep the Bauhaus language and desktop content/layout unchanged; do not deploy.
+
+#### [CODEX] Implementation
+- Replaced automatic near-viewport demo loading on phones with explicit compact expand/collapse controls. Iframes stay mounted after first use so user input and view state survive collapse, while animation/WebGL loops pause offscreen.
+- Reorganized the Isaac demo into Scene / Config / Output mobile views and the motion demo into Performance / Joint diagnostic / Cohort statistics views. The fault-training workflow keeps all four steps and gains a compact expandable connection summary.
+- Replaced per-demo wildcard height messages with one project-identified protocol that validates origin, source, finite bounds, and expansion state; measurements are deduplicated, support growth and shrinkage, rerun after fonts/view changes, and stay independent of iframe viewport height.
+- Added mobile-safe touch targets, phone-landscape behavior, safe-area spacing, Canvas resize recovery, a clear exit-camera action, and a WebGL failure/retry state.
+
+#### [CODEX] Verification and boundary
+- Production-browser workflows passed at 360, 390, 430 CSS px, 932 × 430 landscape, and 1440 × 900 desktop with no page or iframe horizontal overflow. Fault training reached a generated report; Isaac preserved YAML/defect/output state across views and collapse; motion preserved performance, joint, metric, cohort, and chart state.
+- The production build, content validation, and diff checks pass. Browser automation used installed desktop Chrome with responsive viewports, not iOS Safari hardware. WebGL rendered successfully in local Chrome; the two blocked-resource console entries are external font requests denied by the sandbox, not new application errors.

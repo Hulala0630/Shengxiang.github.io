@@ -101,6 +101,7 @@
     .lab-tabs button span { color: var(--muted); font: 11px "IBM Plex Sans", sans-serif; text-transform: none; }
     .lab-tabs button.active { background: var(--yellow); color: #17181a; }
     .lab-tabs button.active span { color: #4f4630; }
+    .lab-tabs .joint-tab { display: none; }
     .lab-view[hidden] { display: none !important; }
 
     .control-strip {
@@ -540,6 +541,50 @@
       .analytics-pipeline article:not(:last-child)::after { top: auto; right: 14px; bottom: -9px; content: "↓"; }
     }
 
+    html[data-mobile="true"],
+    html[data-mobile="true"] body,
+    html[data-mobile="true"] .app { min-height: 0; }
+    [data-mobile="true"] .topline { min-height: 44px; padding: 8px 10px; }
+    [data-mobile="true"] .topline > span:first-child > span { display: none; }
+    [data-mobile="true"] .lab-tabs { min-height: 50px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    [data-mobile="true"] .lab-tabs .joint-tab { display: flex; }
+    [data-mobile="true"] .lab-tabs button { min-height: 50px; align-items: center; justify-content: center; padding: 5px 4px; font-size: 10px; text-align: center; }
+    [data-mobile="true"] .lab-tabs button span { display: none; }
+    [data-mobile="true"] .control-strip { grid-template-columns: 1fr; }
+    [data-mobile="true"] .performance-switch button,
+    [data-mobile="true"] .transport button,
+    [data-mobile="true"] .joint-grid button,
+    [data-mobile="true"] .metric-tabs button,
+    [data-mobile="true"] .score-basis button { min-height: 44px; }
+    [data-mobile="true"] .transport { border-top: 1px solid var(--ink); border-left: 0; }
+    [data-mobile="true"] .timeline { flex: 1; }
+    [data-mobile="true"] .performance-switch button { min-width: 0; flex: 1; }
+    [data-mobile="true"] .performance-switch button span:last-child { display: none; }
+    [data-mobile="true"] .workspace { min-height: 0; grid-template-columns: 1fr; }
+    [data-mobile="true"] .motion-stage { border-right: 0; border-bottom: 1px solid var(--ink); }
+    [data-mobile="true"] #skeleton-stage { height: 410px; flex-basis: 410px; }
+    [data-mobile="true"] .phase-plot { grid-template-columns: 1fr; }
+    [data-mobile="true"] #phase-deviation-chart { border-right: 0; border-bottom: 1px solid var(--screen-line); }
+    [data-mobile="true"] .phase-readout { grid-template-columns: repeat(2, 1fr); }
+    [data-mobile="true"] .phase-samples { overflow-x: auto; grid-template-columns: repeat(5, minmax(92px, 1fr)); overscroll-behavior-inline: contain; }
+    [data-mobile="true"] .evidence-strip { align-items: start; grid-template-columns: 1fr; }
+    [data-mobile="true"] .evidence-strip article { min-height: 0; align-self: start; padding: 12px 14px; border-right: 0; border-bottom: 1px solid var(--ink); }
+    [data-mobile="true"] .evidence-strip article:last-child { border-bottom: 0; }
+    [data-mobile="true"] #motion-view[data-mobile-panel="performance"] .analysis-panel { display: none; }
+    [data-mobile="true"] #motion-view[data-mobile-panel="joint"] .control-strip,
+    [data-mobile="true"] #motion-view[data-mobile-panel="joint"] .motion-stage,
+    [data-mobile="true"] #motion-view[data-mobile-panel="joint"] .evidence-strip { display: none; }
+    [data-mobile="true"] #motion-view[data-mobile-panel="joint"] .workspace { display: block; }
+    [data-mobile="true"] .stats-controls,
+    [data-mobile="true"] .stats-layout { grid-template-columns: 1fr; }
+    [data-mobile="true"] .stats-intro { border-right: 0; border-bottom: 1px solid var(--ink); }
+    [data-mobile="true"] .stats-toolbar { grid-template-columns: 1fr; }
+    [data-mobile="true"] .chart-modes { overflow-x: auto; border-top: 1px solid var(--ink); border-left: 0; }
+    [data-mobile="true"] .chart-modes button { min-width: 92px; min-height: 44px; flex: 1; }
+    [data-mobile="true"] .stats-chart-card { border-right: 0; border-bottom: 1px solid var(--ink); }
+    [data-mobile="true"] .analytics-pipeline { align-items: start; grid-template-columns: 1fr; }
+    [data-mobile="true"] .analytics-pipeline article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--ink); }
+
     @media (max-width: 480px) {
       .topline { align-items: flex-start; padding-block: 10px; }
       .topline > span:first-child { max-width: 68%; }
@@ -568,8 +613,12 @@
         <b data-copy="motion-tab">01 · MOTION DIAGNOSTIC</b>
         <span data-copy="motion-tab-note">individual relative scoring</span>
       </button>
+      <button class="joint-tab" type="button" data-lab-view="joint">
+        <b data-copy="joint-tab">02 · JOINT DIAGNOSTIC</b>
+        <span data-copy="joint-tab-note">joint and kinematics</span>
+      </button>
       <button type="button" data-lab-view="stats">
-        <b data-copy="stats-tab">02 · COHORT ANALYTICS</b>
+        <b data-copy="stats-tab">03 · COHORT ANALYTICS</b>
         <span data-copy="stats-tab-note">statistics and visualization</span>
       </button>
     </nav>
@@ -745,6 +794,7 @@
       const locale = params.get("lang") === "en" ? "en" : "zh";
       document.documentElement.lang = locale;
       document.documentElement.dataset.theme = params.get("theme") === "dark" ? "dark" : "light";
+      document.documentElement.dataset.mobile = params.get("mobile") === "1" ? "true" : "false";
 
       const copy = {
         zh: {
@@ -755,7 +805,8 @@
           "evidence-1-body": "评分适配每位被试自身的动作特征。", "evidence-2-title": "动态关节反馈", "evidence-2-body": "五类运动学指标与骨架动作保持同步。",
           "evidence-3-title": "可迁移评估框架", "evidence-3-body": "同一流程可以拓展到其他运动项目。",
           "motion-tab": "01 · 动作诊断", "motion-tab-note": "个体相对评分",
-          "stats-tab": "02 · 群体统计", "stats-tab-note": "统计分析与可视化",
+          "joint-tab": "02 · 关节诊断", "joint-tab-note": "关节与运动学",
+          "stats-tab": "03 · 群体统计", "stats-tab-note": "统计分析与可视化",
           "phase-diagnostic": "动作相位诊断", "peak-phase": "最大偏差阶段", "predicted-score": "修正后预计分数",
           "basis-title": "评分基准", "basis-meta": "比较评价模型", absolute: "绝对阈值", individual: "个体相对",
           "stats-kicker": "群体分析 / 合成演示数据", "stats-title": "从动作序列建立稳定的评价模型。",
@@ -796,6 +847,7 @@
       const scoreOrbit = document.querySelector("#score-orbit");
       const overallScore = document.querySelector("#overall-score");
       const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+      const isMobile = document.documentElement.dataset.mobile === "true";
 
       const state = {
         mode: "reference",
@@ -1329,44 +1381,62 @@
         button.addEventListener("click", () => {
           const view = button.dataset.labView;
           document.querySelectorAll("[data-lab-view]").forEach((item) => item.classList.toggle("active", item === button));
-          document.querySelector("#motion-view").hidden = view !== "motion";
+          document.querySelector("#motion-view").hidden = view === "stats";
+          document.querySelector("#motion-view").dataset.mobilePanel = view === "joint" ? "joint" : "performance";
           document.querySelector("#stats-view").hidden = view !== "stats";
           if (view === "stats") renderStats();
-          reportHeight();
+          reportHeight(true);
         });
       });
 
+      let animationActive = true;
+      let animationRequest = 0;
       function tick(now) {
+        if (!animationActive) return;
         if (state.playing) {
           state.progress = (state.progress + Math.min(40, now - state.lastFrame) / 8000) % 1;
           renderFrame();
         }
         state.lastFrame = now;
-        requestAnimationFrame(tick);
+        animationRequest = requestAnimationFrame(tick);
       }
 
-      function reportHeight() {
-        requestAnimationFrame(() => {
+      let lastReportedHeight = 0;
+      function reportHeight(force = false) {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
           const app = document.querySelector(".app");
           const contentHeight = app ? Math.ceil(app.getBoundingClientRect().height) : 720;
-          parent.postMessage({
-            type: "motion-evaluation-height",
-            height: contentHeight
-          }, "*");
-        });
+          if (!Number.isFinite(contentHeight) || contentHeight < 120 || (!force && Math.abs(contentHeight - lastReportedHeight) < 2)) return;
+          lastReportedHeight = contentHeight;
+          parent.postMessage({ type: "demo-content-height", project: "motion-evaluation", height: contentHeight }, location.origin);
+        }));
       }
       addEventListener("message", (event) => {
+        if (event.origin !== location.origin || event.source !== parent) return;
         if (event.data?.type === "bauhaus-theme") {
           document.documentElement.dataset.theme = event.data.theme === "dark" ? "dark" : "light";
         }
+        if (event.data?.project === "motion-evaluation" && event.data?.type === "demo-host-visibility") {
+          const active = Boolean(event.data.visible);
+          document.documentElement.classList.toggle("host-paused", !active);
+          if (animationActive !== active) {
+            animationActive = active;
+            if (!active) cancelAnimationFrame(animationRequest);
+            else { state.lastFrame = performance.now(); animationRequest = requestAnimationFrame(tick); }
+          }
+          if (active) reportHeight(true);
+        }
+        if (event.data?.project === "motion-evaluation" && event.data?.type === "demo-host-measure") reportHeight(true);
       });
       addEventListener("resize", reportHeight);
       if ("ResizeObserver" in window) new ResizeObserver(reportHeight).observe(document.querySelector(".app"));
       renderControls();
       renderFrame();
       renderStats();
-      requestAnimationFrame(tick);
-      reportHeight();
+      document.querySelector("#motion-view").dataset.mobilePanel = "performance";
+      animationRequest = requestAnimationFrame(tick);
+      document.fonts?.ready.then(() => reportHeight(true));
+      reportHeight(true);
     })();
   </script>
 </body>

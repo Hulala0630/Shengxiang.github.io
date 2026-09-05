@@ -1204,9 +1204,10 @@ window.__perfStats=()=>({
 function reportEmbeddedHeight(){
   if(document.documentElement.dataset.embed!=="bauhaus") return;
   const height=Math.ceil(document.querySelector(".cell")?.getBoundingClientRect().height||document.body.scrollHeight);
-  parent.postMessage({type:"bauhaus-hero-height",height},"*");
+  parent.postMessage({type:"bauhaus-hero-height",height},location.origin);
 }
 addEventListener("message",event=>{
+  if(event.origin!==location.origin||event.source!==parent) return;
   if(event.data?.type==="bauhaus-theme"){
     document.documentElement.dataset.theme=event.data.theme==="dark"?"dark":"light";
     reportEmbeddedHeight();

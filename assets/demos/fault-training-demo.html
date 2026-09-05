@@ -9,6 +9,7 @@
     const params = new URLSearchParams(location.search);
     document.documentElement.dataset.theme = params.get("theme") === "dark" ? "dark" : "light";
     document.documentElement.lang = params.get("lang") === "en" ? "en" : "zh";
+    document.documentElement.dataset.mobile = params.get("mobile") === "1" ? "true" : "false";
   </script>
   <style>
     :root {
@@ -135,6 +136,8 @@
       border-bottom: 1px solid var(--ink);
       grid-template-columns: 90px repeat(3, 1fr);
     }
+
+    .connection-shell > summary { display: none; }
 
     .connections > span,
     .node {
@@ -729,6 +732,54 @@
       .report-row { grid-template-columns: 95px 1fr; }
     }
 
+    html[data-mobile="true"],
+    html[data-mobile="true"] body,
+    html[data-mobile="true"] .app { min-height: 0; }
+    [data-mobile="true"] .topbar { min-height: 44px; padding-inline: 10px; }
+    [data-mobile="true"] .topbar .system-name { display: none; }
+    [data-mobile="true"] .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    [data-mobile="true"] .step { min-height: 54px; justify-content: center; gap: 4px; padding: 5px 2px; flex-direction: column; font-size: 9px; line-height: 1.15; text-align: center; }
+    [data-mobile="true"] .connection-shell > summary {
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 11px;
+      border-bottom: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 10px;
+      list-style: none;
+      text-transform: uppercase;
+    }
+    [data-mobile="true"] .connection-shell > summary::-webkit-details-marker { display: none; }
+    [data-mobile="true"] .connection-shell > summary::after { color: var(--blue); content: "+"; font-size: 18px; }
+    [data-mobile="true"] .connection-shell[open] > summary::after { content: "−"; }
+    [data-mobile="true"] .connections { min-height: 0; grid-template-columns: 1fr; }
+    [data-mobile="true"] .connections > span { display: none; }
+    [data-mobile="true"] .node { min-height: 40px; border-right: 0; border-bottom: 1px solid var(--line); }
+    [data-mobile="true"] .node:last-child { border-bottom: 1px solid var(--ink); }
+    [data-mobile="true"] .screen { padding: 13px 11px 18px; }
+    [data-mobile="true"] .screen-head { align-items: start; gap: 10px; margin-bottom: 13px; flex-direction: column; }
+    [data-mobile="true"] .login-grid,
+    [data-mobile="true"] .training-grid,
+    [data-mobile="true"] .report-grid { grid-template-columns: 1fr; }
+    [data-mobile="true"] .login-actions,
+    [data-mobile="true"] .detail-grid,
+    [data-mobile="true"] .editor-grid { grid-template-columns: 1fr; }
+    [data-mobile="true"] .readiness-item { min-height: 0; padding-block: 10px; }
+    [data-mobile="true"] .btn,
+    [data-mobile="true"] .field input,
+    [data-mobile="true"] .field select { min-height: 44px; }
+    [data-mobile="true"] .mini { min-height: 36px; }
+    [data-mobile="true"] .table-wrap { max-width: 100%; overscroll-behavior-inline: contain; }
+    [data-mobile="true"] .score-card { min-height: 105px; }
+    [data-mobile="true"] .report-row { grid-template-columns: 95px 1fr; }
+    [data-mobile="true"].host-paused *,
+    [data-mobile="true"].host-paused *::before,
+    [data-mobile="true"].host-paused *::after { animation-play-state: paused !important; }
+
     @media print {
       .topbar, .steps, .connections, .button-row { display: none !important; }
       .screen { padding: 0; }
@@ -761,12 +812,15 @@
       <button class="step" type="button" data-step="3"><b>4</b><span data-t="stepReport">培训报告</span></button>
     </nav>
 
-    <section class="connections" aria-label="System connections">
-      <span data-t="connection">系统连接</span>
-      <div class="node" id="node-plc"><i></i><b>PLC</b><small>OFFLINE</small></div>
-      <div class="node" id="node-sim"><i></i><b>SIM MODEL</b><small>OFFLINE</small></div>
-      <div class="node" id="node-hmi"><i></i><b>HMI</b><small>OFFLINE</small></div>
-    </section>
+    <details class="connection-shell" id="connection-shell" open>
+      <summary><span data-t="connection">系统连接</span><b id="connection-summary">3 · OFFLINE</b></summary>
+      <section class="connections" aria-label="System connections">
+        <span data-t="connection">系统连接</span>
+        <div class="node" id="node-plc"><i></i><b>PLC</b><small>OFFLINE</small></div>
+        <div class="node" id="node-sim"><i></i><b>SIM MODEL</b><small>OFFLINE</small></div>
+        <div class="node" id="node-hmi"><i></i><b>HMI</b><small>OFFLINE</small></div>
+      </section>
+    </details>
 
     <section class="screen" id="login-screen">
       <div class="login-grid">
@@ -1198,12 +1252,15 @@
       }
     };
 
+    let lastReportedHeight = 0;
     function reportHeight() {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const app = document.querySelector(".app");
           const height = Math.ceil(app?.getBoundingClientRect().height || 620);
-          parent.postMessage({ type: "fault-training-height", height }, "*");
+          if (!Number.isFinite(height) || height < 120 || Math.abs(height - lastReportedHeight) < 2) return;
+          lastReportedHeight = height;
+          parent.postMessage({ type: "demo-content-height", project: "fault-training", height }, location.origin);
         });
       });
     }
@@ -1372,6 +1429,7 @@
       role = $("#role-select").value;
       station = $("#station-select").value;
       $("#session-status").textContent = t("online");
+      $("#connection-summary").textContent = `3 · ${t("connected")}`;
       await Promise.all([
         connectNode("#node-plc", 0),
         connectNode("#node-sim", 190),
@@ -1715,6 +1773,7 @@
       station = $("#station-select").value;
       renderStationDiagram();
       $("#session-status").textContent = t("offline");
+      $("#connection-summary").textContent = "3 · OFFLINE";
       $$(".node").forEach((node) => {
         node.classList.remove("connecting", "online");
         node.querySelector("small").textContent = "OFFLINE";
@@ -1743,8 +1802,17 @@
     });
 
     addEventListener("message", (event) => {
+      if (event.origin !== location.origin || event.source !== parent) return;
       if (event.data?.type === "bauhaus-theme") {
         document.documentElement.dataset.theme = event.data.theme === "dark" ? "dark" : "light";
+      }
+      if (event.data?.project === "fault-training" && event.data?.type === "demo-host-visibility") {
+        document.documentElement.classList.toggle("host-paused", !event.data.visible);
+        if (event.data.visible) { lastReportedHeight = 0; reportHeight(); }
+      }
+      if (event.data?.project === "fault-training" && event.data?.type === "demo-host-measure") {
+        lastReportedHeight = 0;
+        reportHeight();
       }
     });
     addEventListener("resize", () => {
@@ -1753,6 +1821,9 @@
     if ("ResizeObserver" in window) {
       new ResizeObserver(reportHeight).observe($(".app"));
     }
+    $("#connection-shell")?.addEventListener("toggle", reportHeight);
+    if (document.documentElement.dataset.mobile === "true") $("#connection-shell").open = false;
+    document.fonts?.ready.then(() => { lastReportedHeight = 0; reportHeight(); });
     renderRoleProfile();
     renderStationDiagram();
     resetEnvironmentCheck();

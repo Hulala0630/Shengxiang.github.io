@@ -101,6 +101,7 @@ summary:focus-visible {
   border-bottom: 2px solid var(--ink);
   background: var(--nav);
   backdrop-filter: blur(10px);
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .topbar::after {
@@ -1022,6 +1023,8 @@ summary:focus-visible {
 .hero-game.is-hero-ready .hero-frame-status { opacity: 0; pointer-events: none; }
 
 .demo-frame-status { display: none; }
+
+.demo-mobile-gate { display: none; }
 
 .fault-demo-frame {
   display: block;
@@ -2306,7 +2309,7 @@ summary:focus-visible {
 }
 
 footer {
-  padding: 28px 0 50px;
+  padding: 28px 0 calc(50px + env(safe-area-inset-bottom, 0px));
 }
 
 .foot {
@@ -2392,6 +2395,11 @@ footer {
 
   .theme-switch {
     margin-left: auto;
+  }
+
+  .theme-switch button,
+  .language-link {
+    min-height: 44px;
   }
 
   .hero {
@@ -2484,6 +2492,54 @@ footer {
       var(--card);
   }
 
+  .selected-1 .selected-effect.is-demo-pending,
+  .selected-2 .selected-effect.is-demo-pending,
+  .selected-3 .selected-effect.is-demo-pending,
+  .selected-1 .selected-effect.is-demo-collapsed,
+  .selected-2 .selected-effect.is-demo-collapsed,
+  .selected-3 .selected-effect.is-demo-collapsed {
+    min-height: 0;
+  }
+
+  .demo-mobile-gate {
+    display: flex;
+    min-height: 92px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--project-accent) 12%, transparent), transparent 64%),
+      var(--card);
+    color: var(--ink);
+  }
+
+  .demo-mobile-gate span { display: grid; min-width: 0; gap: 3px; }
+  .demo-mobile-gate b { font: 600 13px "Space Grotesk", "Noto Sans SC", sans-serif; }
+  .demo-mobile-gate small { color: var(--muted); font: 9px/1.45 "IBM Plex Mono", "Noto Sans SC", monospace; }
+  .demo-mobile-gate button {
+    min-width: 112px;
+    min-height: 44px;
+    padding: 7px 10px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+    font: 600 10px/1.25 "IBM Plex Mono", "Noto Sans SC", monospace;
+  }
+
+  .selected-effect.is-demo-expanded .demo-mobile-gate {
+    min-height: 58px;
+    padding-block: 7px;
+    border-top: 0;
+  }
+
+  .selected-effect.is-demo-expanded .demo-mobile-gate small { display: none; }
+  .demo-mobile-gate [hidden] { display: none !important; }
+  .selected-effect.is-demo-collapsed iframe { position: absolute; width: 1px; height: 1px !important; opacity: 0; pointer-events: none; }
+
   .selected-effect.is-demo-pending iframe,
   .selected-effect.is-demo-loading iframe {
     position: absolute;
@@ -2492,6 +2548,9 @@ footer {
     opacity: 0;
     pointer-events: none;
   }
+
+  .selected-effect.is-demo-collapsed .demo-frame-status,
+  .selected-effect.is-demo-pending .demo-frame-status { display: none; }
 
   .demo-frame-status {
     display: flex;
@@ -2776,6 +2835,47 @@ footer {
     flex-direction: column;
     gap: 8px;
   }
+}
+
+@media (max-width: 960px) and (orientation: landscape) {
+  .theme-switch button,
+  .language-link { min-height: 44px; }
+  .side-nav-reopen,
+  .side-nav-reopen.show {
+    z-index: 42;
+    top: 8px;
+    left: 68px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--ink);
+    opacity: 0;
+    transform: none;
+  }
+  .side-nav-reopen.show { opacity: 1; }
+  .selected-1 .selected-effect.is-demo-pending,
+  .selected-2 .selected-effect.is-demo-pending,
+  .selected-3 .selected-effect.is-demo-pending,
+  .selected-1 .selected-effect.is-demo-collapsed,
+  .selected-2 .selected-effect.is-demo-collapsed,
+  .selected-3 .selected-effect.is-demo-collapsed { min-height: 0; }
+
+  .demo-mobile-gate {
+    display: flex;
+    min-height: 64px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 9px 16px;
+    border-block: 1px solid var(--ink);
+    background: var(--card);
+    color: var(--ink);
+  }
+  .demo-mobile-gate span { display: grid; gap: 2px; }
+  .demo-mobile-gate b { font: 600 13px "Space Grotesk", "Noto Sans SC", sans-serif; }
+  .demo-mobile-gate small { color: var(--muted); font: 9px/1.35 "IBM Plex Mono", monospace; }
+  .demo-mobile-gate button { min-height: 44px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); }
+  .demo-mobile-gate [hidden] { display: none !important; }
+  .selected-effect.is-demo-collapsed iframe { position: absolute; width: 1px; height: 1px !important; opacity: 0; pointer-events: none; }
 }
 
 @keyframes demo-status-pulse {
