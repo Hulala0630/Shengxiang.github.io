@@ -1345,3 +1345,19 @@ Codex 这轮改完后没有回报结果，由 Claude 接手复核（`npm run bui
 - Passed content validation, production build, and diff checks.
 - Verified at 390 × 844 in Chinese and English: iframe language, dynamic heights, Hero ready state, light/dark propagation, and zero hydrated project-video sources before interaction.
 - The only local browser console error was Astro's development toolbar returning `504 Outdated Optimize Dep`; no matching production source request exists.
+
+### Mobile-only progressive loading and media slimming (2026-09-05)
+
+#### [USER] Request and judgment
+- Keep desktop presentation unchanged and address mobile blank demos, incorrect panel sizing, hidden text, slow video startup, and the overly rigid Hero loading treatment.
+
+#### [CODEX] Implementation
+- Replaced mobile native iframe lazy loading with an intersection-driven queue: each demo remains a compact, informative status row until it approaches the viewport, then loads automatically and expands only after it is ready.
+- Removed mobile height ceilings and corrected the fault-training document measurement so embedded content is not clipped; desktop caps remain unchanged.
+- Added a mobile-only Hero lite tier at 20 fps, 0.8 pixel ratio, disabled secondary lights, and softened its loading state without changing desktop rendering.
+- Generated a 480p fast-start Isaac Sim video for mobile (19.0 MB to 7.0 MB); desktop continues to select the original file. Other videos were already efficiently encoded and were left unchanged after comparison.
+
+#### [CODEX] Verification and boundary
+- At 390 × 844, confirmed zero demo iframe requests at the top of the page, automatic loading near the viewport, exact iframe/document height parity, visible bottom text, Hero readiness, and mobile video source selection.
+- At 1280 × 900, confirmed loading status UI is hidden, all demos load normally, desktop height caps remain active, and the original Isaac Sim video is selected.
+- Content validation, production build, and diff checks pass. The recurring local console entry is limited to Astro's development toolbar dependency optimization and is absent from production source.

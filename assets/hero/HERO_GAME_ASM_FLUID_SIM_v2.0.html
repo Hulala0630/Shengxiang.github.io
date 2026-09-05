@@ -7,6 +7,7 @@
 <link rel="icon" href="data:,">
 <script>
 const heroQuery=new URLSearchParams(location.search);
+const HERO_LITE=heroQuery.get("lite")==="1"&&matchMedia('(max-width:720px)').matches;
 if(heroQuery.get("embed")==="bauhaus") document.documentElement.dataset.embed="bauhaus";
 document.documentElement.dataset.theme=heroQuery.get("theme")==="dark"?"dark":"light";
 </script>
@@ -196,13 +197,13 @@ addEventListener('pointerdown',()=>{
 /* ═══════════ 渲染 ═══════════ */
 const VP=document.getElementById('viewport');
 const PERF={
-  low:(navigator.hardwareConcurrency||8)<=4||matchMedia('(max-width:720px)').matches,
+  low:HERO_LITE||(navigator.hardwareConcurrency||8)<=4||matchMedia('(max-width:720px)').matches,
   fps:45,uiInterval:.12,frames:0,started:performance.now(),
   adapted:false,sampleAt:0,sampleFrames:0
 };
-if(PERF.low)PERF.fps=30;
+if(PERF.low)PERF.fps=HERO_LITE?20:30;
 const renderer=new THREE.WebGLRenderer({antialias:!PERF.low&&devicePixelRatio>1,powerPreference:'high-performance'});
-renderer.setPixelRatio(PERF.low?1:Math.min(devicePixelRatio,1.25));
+renderer.setPixelRatio(HERO_LITE ? 0.8 : (PERF.low ? 1 : Math.min(devicePixelRatio, 1.25)));
 renderer.shadowMap.enabled=!PERF.low;
 renderer.shadowMap.type=THREE.PCFShadowMap;
 renderer.outputEncoding=THREE.sRGBEncoding;
@@ -218,9 +219,9 @@ dl.shadow.camera.left=-5;dl.shadow.camera.right=5;
 dl.shadow.camera.top=5;dl.shadow.camera.bottom=-5;
 scene.add(dl);
 const rim=new THREE.DirectionalLight(0xdde6f0,0.35);
-rim.position.set(-4,3,-3);scene.add(rim);
+rim.position.set(-4,3,-3);if(!HERO_LITE)scene.add(rim);
 const spot=new THREE.PointLight(0xfff0d8,0.45,4.5);
-spot.position.set(0,2.2,0.4);scene.add(spot);
+spot.position.set(0,2.2,0.4);if(!HERO_LITE)scene.add(spot);
 
 const C={paper:0xF5F5F2,ink:0x2A2B30,box:0xFFFFFF,gear:0xE8E7E2,wall:0xEFEEEA,
   armor:0xB9C5D0,dark:0x26282E,joint:0x1E2026,glass:0x101216,

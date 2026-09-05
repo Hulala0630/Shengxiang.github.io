@@ -1201,10 +1201,9 @@
     function reportHeight() {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          const activeScreen = $(".screen:not([hidden])");
           const height = Math.max(
             620,
-            Math.ceil((activeScreen?.offsetTop || 0) + (activeScreen?.scrollHeight || 0))
+            Math.ceil(document.documentElement.scrollHeight)
           );
           parent.postMessage({ type: "fault-training-height", height }, "*");
         });
