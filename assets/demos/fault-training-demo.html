@@ -735,6 +735,10 @@
     html[data-mobile="true"],
     html[data-mobile="true"] body,
     html[data-mobile="true"] .app { min-height: 0; }
+    html[data-mobile="true"] {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
     [data-mobile="true"] .topbar { min-height: 44px; padding-inline: 10px; }
     [data-mobile="true"] .topbar .system-name { display: none; }
     [data-mobile="true"] .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -768,7 +772,11 @@
     [data-mobile="true"] .login-actions,
     [data-mobile="true"] .detail-grid,
     [data-mobile="true"] .editor-grid { grid-template-columns: 1fr; }
-    [data-mobile="true"] .readiness-item { min-height: 0; padding-block: 10px; }
+    [data-mobile="true"] .readiness-list {
+      align-content: start;
+      grid-auto-rows: max-content;
+    }
+    [data-mobile="true"] .readiness-item { height: auto; min-height: 0; padding-block: 10px; }
     [data-mobile="true"] .btn,
     [data-mobile="true"] .field input,
     [data-mobile="true"] .field select { min-height: 44px; }

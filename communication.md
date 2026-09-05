@@ -1390,3 +1390,18 @@ Codex 这轮改完后没有回报结果，由 Claude 接手复核（`npm run bui
 #### [CODEX] Verification and boundary
 - Production-browser workflows passed at 360, 390, 430 CSS px, 932 × 430 landscape, and 1440 × 900 desktop with no page or iframe horizontal overflow. Fault training reached a generated report; Isaac preserved YAML/defect/output state across views and collapse; motion preserved performance, joint, metric, cohort, and chart state.
 - The production build, content validation, and diff checks pass. Browser automation used installed desktop Chrome with responsive viewports, not iOS Safari hardware. WebGL rendered successfully in local Chrome; the two blocked-resource console entries are external font requests denied by the sandbox, not new application errors.
+
+### Mobile fault and motion acceptance corrections (2026-09-06)
+
+#### [USER] Request and judgment
+- Fix only the fault-training and motion-evaluation mobile regressions shown in the current local build: language-dependent stretching, blank evidence cards, missing sample labels, score/skeleton overlap, and unstable iframe height after repeated collapse.
+
+#### [CODEX] Implementation
+- Kept fault-training Chinese and English on one layout path, stabilized mobile text autosizing, made readiness rows explicitly content-sized, and versioned the iframe URL so phones cannot retain the previous static document.
+- Restored the two visible motion sample labels, tightened the three mobile tabs, moved the score ring out of the skeleton overlay, and changed the three evidence cards to normal block flow with intrinsic height.
+- Fixed the confirmed collapse feedback loop: collapsed iframes retain their real width, and height messages received while collapsed are no longer stored as the next expansion height.
+
+#### [CODEX] Verification and boundary
+- At 390 CSS px, fault buttons measured 44 px and all readiness rows 37.5 px in both languages and before/after the readiness check; motion tabs measured 48 px, evidence cards 80.4 / 80.4 / 79.4 px, and score/skeleton overlap measured zero.
+- Three consecutive motion collapse/expand cycles returned to 1326 px each time while preserving sample, joint, and timeline state. Responsive checks at 360, 430, 844 × 390 landscape, and 1440 × 900 desktop found no page or iframe horizontal overflow and no application console errors.
+- Isaac source and behavior, project copy, desktop styling, and production deployment were not changed. Validation used desktop Chrome responsive viewports, not iOS Safari hardware; sandbox-blocked Google Fonts requests remain an environment limitation.

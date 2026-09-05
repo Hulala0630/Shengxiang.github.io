@@ -382,7 +382,7 @@ const mobileVideoPath = (url?: string) =>
                     class="fault-demo-frame"
                     data-theme-frame
                     data-demo-id="fault-training"
-                    data-demo-src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-9`}
+                    data-demo-src={`/assets/demos/fault-training-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=training-10`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "工业故障仿真培训平台交互演示"
@@ -408,7 +408,7 @@ const mobileVideoPath = (url?: string) =>
                     class="motion-demo-frame"
                     data-theme-frame
                     data-demo-id="motion-evaluation"
-                    data-demo-src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-9`}
+                    data-demo-src={`/assets/demos/motion-evaluation-demo.html?embed=bauhaus&theme=light&lang=${locale}&v=motion-10`}
                     scrolling="no"
                     title={locale === "zh"
                       ? "人体动作相对评分与关节反馈交互演示"
@@ -989,9 +989,9 @@ const mobileVideoPath = (url?: string) =>
       const demoFrame = projectFrames[project];
       const requestedHeight = Number(event.data.height);
       if (!demoFrame || event.source !== demoFrame.contentWindow || !Number.isFinite(requestedHeight) || requestedHeight < 120 || requestedHeight > 5000) return;
-      demoFrame.dataset.reportedHeight = String(Math.ceil(requestedHeight));
       const effect = demoFrame.closest(".selected-effect");
       if (mobileLayout.matches && !effect?.classList.contains("is-demo-expanded")) return;
+      demoFrame.dataset.reportedHeight = String(Math.ceil(requestedHeight));
       const desktopMinimums: Record<string, number> = { "fault-training": 620, "isaac-builder": 640, "motion-evaluation": 680 };
       const height = mobileLayout.matches ? Math.ceil(requestedHeight) : Math.max(desktopMinimums[project], Math.ceil(requestedHeight));
       if (Math.abs(demoFrame.getBoundingClientRect().height - height) > 1) demoFrame.style.height = `${height}px`;
