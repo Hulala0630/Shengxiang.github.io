@@ -578,8 +578,8 @@ const projectsData = [
 
   {
     title: {
-      en: "Digital Twin IT Communication Plugin Integration",
-      zh: "数字孪生 IT 通信插件集成"
+      en: "Digital Twin Communication Plugin Integration",
+      zh: "数字孪生通信插件集成"
     },
     cover: "assets/images/plugin-system-decoupling-cover.png",
     projectType: {
@@ -591,54 +591,54 @@ const projectsData = [
       zh: "技术项目"
     },
     pitch: {
-      en: "Use a local plugin to handle telegram transfer between IT and industrial control systems, replacing costly external dependencies.",
-      zh: "用本地插件实现 IT 系统与工业控制系统的 Telegram 传输，替代高成本的外部依赖。"
+      en: "Integrate external-system communication into a digital-twin environment through a plugin, reducing additional software dependencies and improving model reuse across projects.",
+      zh: "通过插件将外部系统通信能力集成到数字孪生环境中，减少额外软件依赖，并提升模型在不同项目中的复用能力。"
     },
     summary: {
-      en: "A toolchain optimization project that embeds IT communication directly into digital simulation software, replacing the original external IT-system interaction based on RFC.",
-      zh: "这是一个工具链优化项目，通过将 IT 通信功能直接嵌入数字仿真软件内部，替代原有基于 RFC 的外部 IT 系统交互依赖。"
+      en: "A digital-twin integration project that packages external-system communication as a reusable plugin within the simulation environment, reducing additional dependencies while preserving the required system-integration capability.",
+      zh: "这是一个数字孪生系统集成项目，通过可复用插件在仿真环境中封装外部系统通信能力，在保留系统集成能力的同时减少额外依赖。"
     },
     problem: {
-      en: "A digital twin needs to reproduce the real communication between external IT and industrial control systems, but direct reliance on the original IT system adds cost. The project therefore needed to integrate this communication into the digital-twin solution while reducing external-system dependency.",
-      zh: "数字孪生需要复现外部 IT 系统与工业控制系统的实际通信，但直接依赖原有 IT 系统会产生额外成本。项目需要将对应通信能力集成到数字孪生方案中，同时降低外部系统依赖。"
+      en: "The existing digital-twin workflow relied on additional software for communication with external systems. This increased configuration and maintenance effort, added cost, and made digital models harder to reuse across projects.",
+      zh: "原有数字孪生工作流需要依赖额外软件与外部系统通信，增加了配置、维护与成本负担，也限制了数字模型在不同项目中的复用效率。"
     },
     solution: {
-      en: "The telegram transfer path between the IT and industrial control systems was identified and reproduced in C#, then integrated into the digital simulation software as a plugin.",
-      zh: "识别 IT 系统与工业控制系统之间的 Telegram 传输链路，通过 C# 脚本实现对应的通信逻辑，并以插件形式集成到数字仿真软件中。"
+      en: "The work covered analysis of the existing communication requirement, plugin-architecture design, development, and integration into the digital simulation environment. Encapsulating the required communication capability in the plugin reduced coupling between digital-twin models and the external implementation, supporting reuse across production-line projects and digital models.",
+      zh: "项目工作覆盖现有通信需求分析、插件架构设计、开发与数字仿真环境集成。通过插件封装所需的通信能力，降低数字孪生模型与外部实现之间的耦合，并支持该能力在不同产线项目与数字模型中复用。"
     },
     keyFeatures: {
       en: [
-        "Simulate telegram data transfer between the IT system and PLC.",
-        "Receive and process PLC data, then return the corresponding IT communication information.",
-        "Integrate IT–PLC interaction into the digital-twin environment.",
-        "Reuse the communication function across production lines and digital models."
+        "Package external-system communication as a plugin for the digital-twin environment.",
+        "Separate communication integration from project-specific digital-model logic.",
+        "Reuse the communication capability across production-line projects and digital models.",
+        "Deliver IT/OT integration with fewer additional software dependencies."
       ],
       zh: [
-        "模拟 IT 系统与 PLC 之间的 Telegram 数据传输。",
-        "接收和处理 PLC 数据，并返回对应的 IT 通信信息。",
-        "将 IT 与 PLC 的交互集成到数字孪生环境中。",
-        "在不同产线与数字模型中复用通信功能。"
+        "将外部系统通信能力封装为数字孪生环境中的插件。",
+        "把通信集成与项目特定的数字模型逻辑分离。",
+        "在不同产线项目与数字模型中复用通信能力。",
+        "以更少的额外软件依赖完成 IT/OT 系统集成。"
       ]
     },
     technicalHighlights: {
       en: [
-        "Identified and reproduced the telegram communication path between the IT system and PLC.",
-        "Implemented the communication logic in C# and integrated it into the simulation software as a plugin.",
-        "An embedded functional module replaces the original RFC-dependent execution path.",
-        "The plugin design supports reuse of communication logic across different models and production lines."
+        "Analyzed the existing communication requirement and designed the plugin architecture.",
+        "Developed and integrated the communication plugin within the digital simulation software.",
+        "Reduced coupling between digital-twin models and the external communication implementation.",
+        "Designed the integration for reuse across different models and production-line projects."
       ],
       zh: [
-        "识别并复现 IT 系统与 PLC 之间的 Telegram 通信链路。",
-        "使用 C# 实现通信逻辑，并以插件形式集成至仿真软件。",
-        "使用嵌入式功能模块替换原有依赖 RFC 的执行路径。",
-        "插件化设计支持通信逻辑在不同模型与产线中的复用。"
+        "分析现有通信需求并完成插件架构设计。",
+        "开发通信插件并完成与数字仿真软件的集成。",
+        "降低数字孪生模型与外部通信实现之间的耦合。",
+        "面向不同模型与产线项目设计可复用的集成方式。"
       ]
     },
     result: {
-      en: "The solution reduced dependency on the external IT system and its associated costs, and was applied to digital models spanning 10 production lines and 20 related modules.",
-      zh: "方案降低了外部 IT 系统依赖及相关成本，并应用于 10 条产线、20 个相关模块的数字模型。"
+      en: "The solution reduced reliance on additional software and its associated costs, while improving reuse across multiple production-line projects and related digital-twin models.",
+      zh: "方案减少了额外软件依赖及相关成本，并提升了通信能力在多个产线项目与相关数字孪生模型中的复用效率。"
     },
-    technologies: ["C#", "Plugin Architecture", "Telegram Communication", "RFC Replacement", "IT/OT Integration", "Digital Twin"]
+    technologies: ["Plugin Architecture", "System Integration", "Industrial Communication", "IT/OT Integration"]
   },
 
   {
