@@ -236,6 +236,8 @@
     .score-orbit b { z-index: 1; font: 600 27px/1 "Space Grotesk", sans-serif; }
     .score-orbit small { position: relative; z-index: 1; color: #aab2bf; font: 9px/1.1 "IBM Plex Mono", monospace; }
     .score-orbit.attention::before { border-color: var(--red); border-top-color: transparent; }
+    .score-summary { display: contents; }
+    .score-summary-label { display: none; }
 
     .phase-diagnostic {
       margin: 0 14px 10px;
@@ -550,9 +552,9 @@
     }
     [data-mobile="true"] .topline { min-height: 44px; padding: 8px 10px; }
     [data-mobile="true"] .topline > span:first-child > span { display: none; }
-    [data-mobile="true"] .lab-tabs { min-height: 48px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    [data-mobile="true"] .lab-tabs { min-height: 56px; flex: 0 0 auto; align-content: start; grid-template-rows: 56px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
     [data-mobile="true"] .lab-tabs .joint-tab { display: flex; }
-    [data-mobile="true"] .lab-tabs button { min-height: 48px; align-items: center; justify-content: center; padding: 4px; font-size: 10px; line-height: 1.2; text-align: center; }
+    [data-mobile="true"] .lab-tabs button { appearance: none; box-sizing: border-box; height: 56px; min-height: 0; min-width: 0; align-items: center; justify-content: center; padding: 4px; font-size: 10px; line-height: 14px; white-space: normal; text-align: center; }
     [data-mobile="true"] .lab-tabs button span { display: none; }
     [data-mobile="true"] .control-strip { grid-template-columns: 1fr; }
     [data-mobile="true"] .performance-switch button,
@@ -566,15 +568,52 @@
     [data-mobile="true"] .performance-switch button span:last-child { display: none; }
     [data-mobile="true"] .workspace { min-height: 0; grid-template-columns: 1fr; }
     [data-mobile="true"] .motion-stage { border-right: 0; border-bottom: 1px solid var(--ink); }
-    [data-mobile="true"] #skeleton-stage { height: 410px; flex-basis: 410px; }
+    [data-mobile="true"] .score-summary {
+      display: flex;
+      min-height: 76px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--screen-line);
+      background: rgba(9, 12, 18, .72);
+    }
+    [data-mobile="true"] .score-summary-label {
+      display: block;
+      color: #d8dde6;
+      font: 600 11px/1.35 "IBM Plex Mono", "Noto Sans SC", monospace;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    [data-mobile="true"] .stage-head {
+      position: static;
+      min-height: 46px;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      padding: 8px 14px;
+    }
+    [data-mobile="true"] #skeleton-stage {
+      height: auto;
+      aspect-ratio: 680 / 445;
+      flex: 0 0 auto;
+    }
     [data-mobile="true"] .score-orbit {
       position: static;
-      width: 76px;
-      height: 76px;
-      margin: 12px 14px;
-      align-self: flex-end;
-      flex: 0 0 76px;
+      width: 60px;
+      height: 60px;
+      margin: 0;
+      flex: 0 0 60px;
     }
+    .score-gauge { display: none; }
+    [data-mobile="true"] .score-orbit { display: block; border: 0; background: none; }
+    [data-mobile="true"] .score-orbit::before { content: none; }
+    [data-mobile="true"] .score-orbit > b { display: none; }
+    [data-mobile="true"] .score-gauge { display: block; width: 60px; height: 60px; }
+    .score-gauge .gauge-progress { stroke: var(--blue); }
+    .score-orbit.attention .gauge-progress { stroke: var(--red); }
+    [data-mobile="true"] .score-orbit small { display: none; }
+    [data-mobile="true"] .phase-diagnostic { margin-top: 0; }
     [data-mobile="true"] .phase-plot { grid-template-columns: 1fr; }
     [data-mobile="true"] #phase-deviation-chart { border-right: 0; border-bottom: 1px solid var(--screen-line); }
     [data-mobile="true"] .phase-readout { grid-template-columns: repeat(2, 1fr); }
@@ -603,9 +642,6 @@
       .performance-switch button span:first-child { display: block; margin-top: 0; }
       .performance-switch button span:last-child { display: none; }
       .joint-grid { grid-template-columns: repeat(2, 1fr); }
-      .score-orbit::before { width: 58px; height: 58px; }
-      .score-orbit b { font-size: 22px; }
-      .score-orbit small { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -661,6 +697,10 @@
 
     <section class="workspace">
       <div class="motion-stage">
+        <div class="score-summary">
+          <span class="score-summary-label" data-copy="overall">OVERALL SCORE</span>
+          <div class="score-orbit" id="score-orbit"><b id="overall-score">92</b><small data-copy="overall">OVERALL</small><svg class="score-gauge" viewBox="0 0 60 60" role="img" aria-label="92 / 100"><circle cx="30" cy="30" r="29" fill="none" stroke="#596372" stroke-width="1"/><circle cx="30" cy="30" r="24" fill="none" stroke="#343b49" stroke-width="3"/><circle class="gauge-progress" cx="30" cy="30" r="24" fill="none" stroke-width="3" pathLength="100" stroke-dasharray="92 100" transform="rotate(-90 30 30)"/><text x="30" y="30" text-anchor="middle" dominant-baseline="central" fill="#eef1f5" font-family="Arial, sans-serif" font-size="20" font-weight="600">92</text></svg></div>
+        </div>
         <div class="stage-head">
           <span data-copy="stage">2D SKELETON · FRONT / SIDE</span>
           <span class="legend"><span><i></i><b data-copy="live">CURRENT</b></span><span><i></i><b data-copy="ref">REFERENCE</b></span></span>
@@ -675,7 +715,6 @@
           <g id="front-live"></g>
           <g id="side-live"></g>
         </svg>
-        <div class="score-orbit" id="score-orbit"><b id="overall-score">92</b><small data-copy="overall">OVERALL</small></div>
         <section class="phase-diagnostic" aria-label="Movement phase diagnostic">
           <header class="phase-diagnostic-head">
             <b data-copy="phase-diagnostic">MOVEMENT PHASE DIAGNOSTIC</b>
@@ -860,6 +899,7 @@
       const overallScore = document.querySelector("#overall-score");
       const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
       const isMobile = document.documentElement.dataset.mobile === "true";
+      if (isMobile) document.querySelector("#skeleton-stage")?.setAttribute("viewBox", "0 20 680 445");
 
       const state = {
         mode: "reference",
@@ -1164,6 +1204,10 @@
         const scores = allScores();
         const overall = Math.round(Object.values(scores).reduce((sum, value) => sum + value, 0) / joints.length);
         overallScore.textContent = overall;
+        const gauge = scoreOrbit.querySelector('.score-gauge');
+        gauge.querySelector('text').textContent = overall;
+        gauge.querySelector('.gauge-progress').setAttribute('stroke-dasharray', `${Math.max(0, Math.min(100, overall))} 100`);
+        gauge.setAttribute('aria-label', `${overall} / 100`);
         scoreOrbit.classList.toggle("attention", overall < 80);
         const selected = scores[state.joint];
         document.querySelector("#callout-title").textContent = `${labels[state.joint]} · ${selected}`;

@@ -1405,3 +1405,24 @@ Codex 这轮改完后没有回报结果，由 Claude 接手复核（`npm run bui
 - At 390 CSS px, fault buttons measured 44 px and all readiness rows 37.5 px in both languages and before/after the readiness check; motion tabs measured 48 px, evidence cards 80.4 / 80.4 / 79.4 px, and score/skeleton overlap measured zero.
 - Three consecutive motion collapse/expand cycles returned to 1326 px each time while preserving sample, joint, and timeline state. Responsive checks at 360, 430, 844 × 390 landscape, and 1440 × 900 desktop found no page or iframe horizontal overflow and no application console errors.
 - Isaac source and behavior, project copy, desktop styling, and production deployment were not changed. Validation used desktop Chrome responsive viewports, not iOS Safari hardware; sandbox-blocked Google Fonts requests remain an environment limitation.
+
+### Mobile motion score-flow correction (2026-09-06)
+
+Follow-up [USER + CODEX]: fixed all three mobile entry rows before first interaction. Pending/loading parent grid centering shrank the gate to 275 px inside 358 px; expanded rules additionally changed padding, borders, height and subtitle visibility. Removed these state-dependent geometries, gave the shared gate full width and a stable button basis, and kept status centering local to the status row. At 390 px, all three projects in both languages remained 358 × 92 px with 14 × 16 px padding through initial/expand/collapse/re-expand. Same-project screenshots are under output/playwright/gate-layout (untracked). Desktop gates remain hidden. No deployment or polish commit.
+
+Follow-up [USER + CODEX]: keep the currently accepted English login-button height and constrain both mobile language layouts to explicit 48 px rows/buttons with 16 px line-height, replacing automatic height. Homepage iframe checks at 360/390/430 found both languages identical (274/304/344 px wide, 48 px high), before and after readiness, without text overflow. Changed the mobile shell invitation to “亲自试一试 / 展开体验，探索项目如何运作” and matching English. iOS hardware confirmation remains with the user; no claim that Chrome reproduced the earlier device-specific growth. No commit or publication in this polish round.
+
+Follow-up [USER + CODEX]: unified mobile login actions with 48 px minimum and equal intrinsic grid rows; standardized mobile tabs at 56 px; replaced only the mobile decorative score arc with a concentric 60 px SVG using the same score as the numeral. Chrome checks in both languages at 360/390/430 passed before/after enabling login and switching tabs. Route-only score injections verified 0/50/92/100 mappings without adding test controls. The reported iOS Chinese-only stretching was not reproduced in Chrome: translation uses textContent and identical DOM, so its device-specific cause remains unconfirmed. Desktop score presentation is retained. This polish remains uncommitted; no production publication.
+
+#### [USER] Request and judgment
+- Fix only the motion-evaluation mobile skeleton/score region shown in the latest local screenshots: place the score in normal flow before the skeleton, remove the large post-skeleton blank space, preserve the full animation and joint interaction, and leave desktop and the other demos unchanged.
+
+#### [CODEX] Implementation
+- Added a mobile-only 60 px overall-score summary row before the skeleton heading and removed the score ring from the post-SVG flow position without using absolute positioning or clipping.
+- Replaced the mobile skeleton SVG's fixed 410 px height with its intrinsic responsive aspect ratio and a mobile-only viewBox that includes the full animated skeleton plus a normal baseline margin. Desktop keeps its original DOM presentation, 356 px stage height, score overlay, and viewBox.
+- Bumped only the motion iframe document version so phones load the corrected local asset.
+
+#### [CODEX] Verification and boundary
+- At 390 CSS px, the SVG changed from 410 px to 233 px, the score ring from 76 px to 60 px, and the baseline-to-diagnostic gap from 107.1 px to 18.3 px. Chinese and English share the same structure and dimensions.
+- Checked 41 animation positions across the complete timeline with no skeleton clipping, verified wrist dragging against the SVG coordinate transform, and confirmed view switching plus collapse/reopen preserves timeline and joint state. Width checks at 360 and 430 CSS px found no horizontal overflow; desktop remained on the original presentation.
+- Validation used desktop Chrome responsive viewports, not iOS Safari hardware. Fault training, Isaac, project copy, and production deployment were not changed.
